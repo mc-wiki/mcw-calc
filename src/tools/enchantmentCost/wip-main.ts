@@ -1,7 +1,9 @@
 import * as vue from 'vue'
 import App from './App.vue'
 
-const targetEl = document.querySelector('.mcw-calc[data-type="netherCoords"]')
+const targetEl = document.querySelector(
+  '.mcw-calc[data-type="enchantmentCost"]'
+)
 const createApp =
   process.env.NODE_ENV === 'development'
     ? vue.createApp

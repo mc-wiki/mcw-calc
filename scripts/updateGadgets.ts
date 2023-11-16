@@ -16,7 +16,9 @@ const bot = await Mwn.init({
   username: env.USERNAME,
   password: env.PASSWORD,
 
-  userAgent: env.USER_AGENT ?? 'MCWTools (mwn/1; +https://github.com/not/yet)',
+  userAgent:
+    env.USER_AGENT ??
+    'MCWCalcs (mwn/1; +https://github.com/Dianliang233/mcw-calc)',
 
   defaultParams: {
     assert: 'user',

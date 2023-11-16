@@ -6,14 +6,22 @@ let def = [
   '* mcw-calc-core[ResourceLoader|targets=desktop,mobile|type=general|default|hidden]|mcw-calc-core.js',
 ]
 
-const files = await glob('./src/tools/**/main.ts')
-const names = files.map((file) => file.match(/tools\/(.*)\/main.ts/)![1])
+const files = await glob('./dist/Gadget-mcw-calc-*.js')
+const names = files.map(
+  (file) => file.match(/dist\/Gadget-mcw-calc-(.*).js/)![1]
+)
+const cssFiles = await glob('./dist/Gadget-mcw-calc-*.css')
+const cssNames = cssFiles.map(
+  (file) => file.match(/dist\/Gadget-mcw-calc-(.*).css/)![1]
+)
 console.log(`These tools are found: ${names.join(', ')}`)
 
 names.forEach((name) => {
   if (name === 'core') return
   def.push(
-    `* mcw-calc-${name}[ResourceLoader|targets=desktop,mobile|type=general|dependencies=vue,@wikimedia/codex|hidden]|mcw-calc-${name}.js`
+    `* mcw-calc-${name}[ResourceLoader|targets=desktop,mobile|type=general|dependencies=vue,@wikimedia/codex|hidden]|mcw-calc-${name}.js${
+      cssNames.includes(name) ? `|mcw-calc-${name}.css` : ''
+    }`
   )
 })
 

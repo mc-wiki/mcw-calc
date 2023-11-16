@@ -5,6 +5,8 @@ const count = ref(0)
 const increment = () => count.value++
 </script>
 <template>
-  Count: {{ count }}
-  <CdxButton @click="increment">Increment</CdxButton>
+  <Field>
+    Count: {{ count }}
+    <CdxButton @click="increment">Increment</CdxButton>
+  </Field>
 </template>
