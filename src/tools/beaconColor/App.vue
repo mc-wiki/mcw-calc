@@ -42,14 +42,9 @@ const colorLabMap = Object.fromEntries(
 type Color = (keyof typeof colorMap)[]
 
 function sequenceToColor(c: Color): number[] {
-  let color = 0
-  const k = c.length - 1
+  let color = colorMap[c[0]]
   for (let i = 0; i < c.length; i++) {
-    if (i === 0) {
-      color += 2 ** -k * colorMap[c[i]]
-    } else {
-      color += 2 ** (i - k - 1) * colorMap[c[i]]
-    }
+    color = (color + colorMap[c[i]]) / 2
   }
   return separateRgb(color)
 }
@@ -149,10 +144,7 @@ function best3Sequences(sequence: Color, deltaEs: number[]) {
     <li
       v-for="seq in best3Sequences(...colorToSequence(colorStringToRgb(color)))"
     >
-      <template v-for="color in seq[0]">
-        {{ color }} <template v-if="color !== seq[0].at(-1)">→</template>
-      </template>
-      (dE = {{ seq[1].toFixed(2) }})
+      {{ seq[0].join(' -> ') }} (dE = {{ seq[1].toFixed(2) }})
       <span
         :style="{
           borderRadius: '50%',
