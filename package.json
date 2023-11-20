@@ -11,7 +11,9 @@
     "color": "ts-node --esm ./scripts/color.ts"
   },
   "dependencies": {
+    "@observablehq/plot": "^0.6.11",
     "@wikimedia/codex": "^1.0.1",
+    "d3": "^7.8.5",
     "vue": "3.2.45"
   },
   "devDependencies": {
@@ -19,6 +21,7 @@
     "@babel/preset-env": "^7.23.3",
     "@babel/preset-typescript": "^7.23.3",
     "@tsconfig/node18": "^18.2.2",
+    "@types/d3": "^7.4.3",
     "@types/node": "^20.9.0",
     "@vue/tsconfig": "^0.4.0",
     "babel-loader": "^9.1.3",
