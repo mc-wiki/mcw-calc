@@ -6,22 +6,23 @@ import { blockMap, getColor } from './data.ts'
 <template>
   <PlotFigure
     :options="{
+      marginLeft: 70,
       color: { legend: true },
-      x: {
-        label: 'Y Level',
-      },
+      x: { label: 'Y Level', grid: true },
       y: {
-        label: 'Block count',
+        label: 'Number of X found among 100,000 blocks',
         type: 'log',
+        tickFormat: 'f',
       },
       marks: [
-        Plot.ruleY([0]),
         Plot.line(blockMap, {
           x: 'pos',
           y: 'count',
           z: 'block',
           stroke: 'block',
+          curve: 'catmull-rom',
         }),
+        Plot.crosshair(blockMap, { x: 'pos', y: 'count' }),
       ],
     }"
   />

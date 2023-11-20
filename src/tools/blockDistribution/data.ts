@@ -983,6 +983,8 @@ export function getColor(key: string) {
   return '#' + key in colors ? colors[key] : '000000'
 }
 
+const totalBlocks = 588885504
+
 export const blockMap: {
   block: string
   count: number
@@ -991,11 +993,18 @@ export const blockMap: {
 }[] = []
 
 for (const key in raw) {
-  if (key !== 'minecraft:stone' && key !== 'minecraft:grass_block') continue
+  if (
+    key !== 'minecraft:stone' &&
+    key !== 'minecraft:grass_block' &&
+    key !== 'minecraft:deepslate' &&
+    key !== 'minecraft:bedrock'
+  )
+    continue
   for (const [index, count] of raw[key].entries()) {
     blockMap.push({
       block: key,
-      count,
+      // number of X found in 100,000 blocks
+      count: count === 0 ? 0.0001 : (count / totalBlocks) * 100000,
       pos: index - 64,
       color: getColor(key),
     })
