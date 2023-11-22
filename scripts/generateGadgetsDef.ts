@@ -16,14 +16,19 @@ const cssNames = cssFiles.map(
 )
 console.log(`These tools are found: ${names.join(', ')}`)
 
-names.forEach((name) => {
-  if (name === 'core') return
+for (const name of names) {
+  if (name === 'core') continue
+  const module = await fs.readFile(`./src/tools/${name}/main.ts`, {
+    encoding: 'utf-8',
+  })
+  let dependencies = module.match(/\/\*\*\n \* @dependencies (.*)\n \*\//)![1].replace(/ /g, '')
+  if (dependencies === 'null') dependencies = ''
   def.push(
-    `* mcw-calc-${name}[ResourceLoader|targets=desktop,mobile|type=general|dependencies=vue,@wikimedia/codex|hidden]|mcw-calc-${name}.js${
+    `* mcw-calc-${name}[ResourceLoader|targets=desktop,mobile|type=general${dependencies ? `|dependencies=${dependencies}` : ''}|hidden]|mcw-calc-${name}.js${
       cssNames.includes(name) ? `|mcw-calc-${name}.css` : ''
     }`
   )
-})
+}
 
 const now = new Date()
 def.push(

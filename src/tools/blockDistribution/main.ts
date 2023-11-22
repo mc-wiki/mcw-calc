@@ -1,3 +1,6 @@
+/**
+ * @dependencies vue, @wikimedia/codex
+ */
 import * as vue from 'vue'
 import App from './App.vue'
 
@@ -9,4 +12,8 @@ const createApp =
     ? vue.createApp
     : // @ts-expect-error
       vue.createMwApp || vue.createApp
-createApp(App).mount(targetEl)
+createApp(App, {
+  blocks: targetEl?.getAttribute('data-blocks')?.split(',') || [
+    'minecraft:diamond_ore',
+  ],
+}).mount(targetEl)

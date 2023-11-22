@@ -1,3 +1,6 @@
+/**
+ * @dependencies vue, @wikimedia/codex
+ */
 import * as vue from 'vue'
 import App from './App.vue'
 

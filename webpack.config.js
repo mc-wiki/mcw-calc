@@ -59,6 +59,9 @@ const config = (env, argv) => {
     watchOptions: {
       aggregateTimeout: 200,
     },
+    devServer: {
+      hot: false,
+    },
     plugins: [
       new VueLoaderPlugin(),
       prodDev(new BundleAnalyzerPlugin({ analyzerMode: 'static' }), ''),
@@ -70,19 +73,23 @@ const config = (env, argv) => {
         '',
         new HtmlWebpackPlugin({
           templateContent: ({ htmlWebpackPlugin }) => `
-        <html>
-          <head>
-            <meta charset="utf-8">
-            <link rel="stylesheet" href="@wikimedia/codex/dist/codex.style.css">
-          </head>
-          <body>
-            ${names
-              .map((name) => `<div class="mcw-calc" data-type="${name}"></div>`)
-              .join('')}
-            ${htmlWebpackPlugin.tags.bodyTags}
-          </body>
-        </html>
-      `,
+          <!DOCTYPE html>
+            <html>
+              <head>
+                <meta charset="utf-8">
+                <link rel="stylesheet" href="@wikimedia/codex/dist/codex.style.css">
+              </head>
+              <body>
+                <div class="mcw-calc" data-type="blockDistribution" data-blocks="minecraft:diamond_ore,minecraft:deepslate_diamond_ore"></div>
+                ${names
+                  .map(
+                    (name) => `<div class="mcw-calc" data-type="${name}"></div>`
+                  )
+                  .join('')}
+                ${htmlWebpackPlugin.tags.bodyTags}
+              </body>
+            </html>
+          `,
         })
       ),
       new webpack.DefinePlugin({
