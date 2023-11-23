@@ -198,157 +198,223 @@ const actualDamage = computed(() => {
 })
 </script>
 <template>
+  <table class="wikitable" style="margin: auto">
+    <caption>
+      Actual damage taken
+    </caption>
+    <tbody>
+      <tr>
+        <th scope="col">Slot</th>
+        <th scope="col">Material</th>
+        <th scope="col">Enchantment 1</th>
+        <th scope="col">Enchantment 2</th>
+      </tr>
+      <tr>
+        <th scope="row">Helmet</th>
+        <td>
+          <CdxSelect
+            v-model:selected="helmet.material"
+            :menu-items="[
+              { label: 'Empty', value: 'empty' },
+              { label: 'Turtle Shell', value: 'turtle' },
+              { label: 'Leather', value: 'leather' },
+              { label: 'Golden', value: 'golden' },
+              { label: 'Chainmail', value: 'chainmail' },
+              { label: 'Iron', value: 'iron' },
+              { label: 'Diamond', value: 'diamond' },
+              { label: 'Netherite', value: 'netherite' },
+            ]"
+          />
+        </td>
+        <td>
+          <div style="display: flex; flex-direction: row">
+            <CdxSelect
+              v-model:selected="helmet.enchantment"
+              :menu-items="[
+                { label: 'Empty', value: 'empty' },
+                { label: 'Protection', value: 'protection' },
+                { label: 'Fire Protection', value: 'fireProtection' },
+                { label: 'Blast Protection', value: 'blastProtection' },
+                {
+                  label: 'Projectile Protection',
+                  value: 'projectileProtection',
+                },
+              ]"
+            />
+            <CdxSelect
+              v-if="helmet.enchantment !== 'empty'"
+              v-model:selected="helmet.enchantmentLevel"
+              :menu-items="[
+                { label: 'I', value: 1 },
+                { label: 'II', value: 2 },
+                { label: 'III', value: 3 },
+                { label: 'IV', value: 4 },
+              ]"
+            />
+          </div>
+        </td>
+        <td>N/A</td>
+      </tr>
+      <tr>
+        <th scope="row">Chestplate</th>
+        <td>
+          <CdxSelect
+            v-model:selected="chestplate.material"
+            :menu-items="[
+              { label: 'Empty', value: 'empty' },
+              { label: 'Leather', value: 'leather' },
+              { label: 'Golden', value: 'golden' },
+              { label: 'Chainmail', value: 'chainmail' },
+              { label: 'Iron', value: 'iron' },
+              { label: 'Diamond', value: 'diamond' },
+              { label: 'Netherite', value: 'netherite' },
+            ]"
+          />
+        </td>
+        <td>
+          <div style="display: flex; flex-direction: row">
+            <CdxSelect
+              v-model:selected="chestplate.enchantment"
+              :menu-items="[
+                { label: 'Empty', value: 'empty' },
+                { label: 'Protection', value: 'protection' },
+                { label: 'Fire Protection', value: 'fireProtection' },
+                { label: 'Blast Protection', value: 'blastProtection' },
+                {
+                  label: 'Projectile Protection',
+                  value: 'projectileProtection',
+                },
+              ]"
+            />
+            <CdxSelect
+              v-if="chestplate.enchantment !== 'empty'"
+              v-model:selected="chestplate.enchantmentLevel"
+              :menu-items="[
+                { label: 'I', value: 1 },
+                { label: 'II', value: 2 },
+                { label: 'III', value: 3 },
+                { label: 'IV', value: 4 },
+              ]"
+            />
+          </div>
+        </td>
+        <td>N/A</td>
+      </tr>
+      <tr>
+        <th scope="row">Leggings</th>
+        <td>
+          <CdxSelect
+            v-model:selected="leggings.material"
+            :menu-items="[
+              { label: 'Empty', value: 'empty' },
+              { label: 'Leather', value: 'leather' },
+              { label: 'Golden', value: 'golden' },
+              { label: 'Chainmail', value: 'chainmail' },
+              { label: 'Iron', value: 'iron' },
+              { label: 'Diamond', value: 'diamond' },
+              { label: 'Netherite', value: 'netherite' },
+            ]"
+          />
+        </td>
+        <td>
+          <div style="display: flex; flex-direction: row">
+            <CdxSelect
+              v-model:selected="leggings.enchantment"
+              :menu-items="[
+                { label: 'Empty', value: 'empty' },
+                { label: 'Protection', value: 'protection' },
+                { label: 'Fire Protection', value: 'fireProtection' },
+                { label: 'Blast Protection', value: 'blastProtection' },
+                {
+                  label: 'Projectile Protection',
+                  value: 'projectileProtection',
+                },
+              ]"
+            />
+            <CdxSelect
+              v-if="leggings.enchantment !== 'empty'"
+              v-model:selected="leggings.enchantmentLevel"
+              :menu-items="[
+                { label: 'I', value: 1 },
+                { label: 'II', value: 2 },
+                { label: 'III', value: 3 },
+                { label: 'IV', value: 4 },
+              ]"
+            />
+          </div>
+        </td>
+        <td>N/A</td>
+      </tr>
+      <tr>
+        <th scope="row">Boots</th>
+        <td>
+          <CdxSelect
+            v-model:selected="boots.material"
+            :menu-items="[
+              { label: 'Empty', value: 'empty' },
+              { label: 'Leather', value: 'leather' },
+              { label: 'Golden', value: 'golden' },
+              { label: 'Chainmail', value: 'chainmail' },
+              { label: 'Iron', value: 'iron' },
+              { label: 'Diamond', value: 'diamond' },
+              { label: 'Netherite', value: 'netherite' },
+            ]"
+          />
+        </td>
+        <td>
+          <div style="display: flex; flex-direction: row">
+            <CdxSelect
+              v-model:selected="boots.enchantment"
+              :menu-items="[
+                { label: 'Empty', value: 'empty' },
+                { label: 'Protection', value: 'protection' },
+                { label: 'Fire Protection', value: 'fireProtection' },
+                { label: 'Blast Protection', value: 'blastProtection' },
+                {
+                  label: 'Projectile Protection',
+                  value: 'projectileProtection',
+                },
+                { label: 'Feather Falling', value: 'featherFalling' },
+              ]"
+            />
+            <CdxSelect
+              v-if="boots.enchantment !== 'empty'"
+              v-model:selected="boots.enchantmentLevel"
+              :menu-items="[
+                { label: 'I', value: 1 },
+                { label: 'II', value: 2 },
+                { label: 'III', value: 3 },
+                { label: 'IV', value: 4 },
+              ]"
+            />
+          </div>
+        </td>
+        <td>
+          <div style="display: flex; flex-direction: row">
+            <CdxSelect
+              v-model:selected="boots.featherFalling"
+              :menu-items="[
+                { label: 'Empty', value: 'empty' },
+                { label: 'Feather Falling', value: 'featherFalling' },
+              ]"
+            />
+            <CdxSelect
+              v-if="boots.featherFalling !== 'empty'"
+              v-model:selected="boots.featherFallingLevel"
+              :menu-items="[
+                { label: 'I', value: 1 },
+                { label: 'II', value: 2 },
+                { label: 'III', value: 3 },
+                { label: 'IV', value: 4 },
+              ]"
+            />
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
   <CdxTextInput v-model="damage" input-type="number" />
-  <CdxSelect
-    v-model:selected="helmet.material"
-    :menu-items="[
-      { label: 'Empty', value: 'empty' },
-      { label: 'Turtle Shell', value: 'turtle' },
-      { label: 'Leather', value: 'leather' },
-      { label: 'Golden', value: 'golden' },
-      { label: 'Chainmail', value: 'chainmail' },
-      { label: 'Iron', value: 'iron' },
-      { label: 'Diamond', value: 'diamond' },
-      { label: 'Netherite', value: 'netherite' },
-    ]"
-  />
-  <CdxSelect
-    v-model:selected="helmet.enchantment"
-    :menu-items="[
-      { label: 'Empty', value: 'empty' },
-      { label: 'Protection', value: 'protection' },
-      { label: 'Fire Protection', value: 'fireProtection' },
-      { label: 'Blast Protection', value: 'blastProtection' },
-      { label: 'Projectile Protection', value: 'projectileProtection' },
-    ]"
-  />
-  <CdxSelect
-    v-if="helmet.enchantment !== 'empty'"
-    v-model:selected="helmet.enchantmentLevel"
-    :menu-items="[
-      { label: 'I', value: 1 },
-      { label: 'II', value: 2 },
-      { label: 'III', value: 3 },
-      { label: 'IV', value: 4 },
-    ]"
-  />
-
-  <CdxSelect
-    v-model:selected="chestplate.material"
-    :menu-items="[
-      { label: 'Empty', value: 'empty' },
-      { label: 'Leather', value: 'leather' },
-      { label: 'Golden', value: 'golden' },
-      { label: 'Chainmail', value: 'chainmail' },
-      { label: 'Iron', value: 'iron' },
-      { label: 'Diamond', value: 'diamond' },
-      { label: 'Netherite', value: 'netherite' },
-    ]"
-  />
-  <CdxSelect
-    v-model:selected="chestplate.enchantment"
-    :menu-items="[
-      { label: 'Empty', value: 'empty' },
-      { label: 'Protection', value: 'protection' },
-      { label: 'Fire Protection', value: 'fireProtection' },
-      { label: 'Blast Protection', value: 'blastProtection' },
-      { label: 'Projectile Protection', value: 'projectileProtection' },
-    ]"
-  />
-  <CdxSelect
-    v-if="chestplate.enchantment !== 'empty'"
-    v-model:selected="chestplate.enchantmentLevel"
-    :menu-items="[
-      { label: 'I', value: 1 },
-      { label: 'II', value: 2 },
-      { label: 'III', value: 3 },
-      { label: 'IV', value: 4 },
-    ]"
-  />
-
-  <CdxSelect
-    v-model:selected="leggings.material"
-    :menu-items="[
-      { label: 'Empty', value: 'empty' },
-      { label: 'Leather', value: 'leather' },
-      { label: 'Golden', value: 'golden' },
-      { label: 'Chainmail', value: 'chainmail' },
-      { label: 'Iron', value: 'iron' },
-      { label: 'Diamond', value: 'diamond' },
-      { label: 'Netherite', value: 'netherite' },
-    ]"
-  />
-  <CdxSelect
-    v-model:selected="leggings.enchantment"
-    :menu-items="[
-      { label: 'Empty', value: 'empty' },
-      { label: 'Protection', value: 'protection' },
-      { label: 'Fire Protection', value: 'fireProtection' },
-      { label: 'Blast Protection', value: 'blastProtection' },
-      { label: 'Projectile Protection', value: 'projectileProtection' },
-    ]"
-  />
-  <CdxSelect
-    v-if="leggings.enchantment !== 'empty'"
-    v-model:selected="leggings.enchantmentLevel"
-    :menu-items="[
-      { label: 'I', value: 1 },
-      { label: 'II', value: 2 },
-      { label: 'III', value: 3 },
-      { label: 'IV', value: 4 },
-    ]"
-  />
-
-  <CdxSelect
-    v-model:selected="boots.material"
-    :menu-items="[
-      { label: 'Empty', value: 'empty' },
-      { label: 'Leather', value: 'leather' },
-      { label: 'Golden', value: 'golden' },
-      { label: 'Chainmail', value: 'chainmail' },
-      { label: 'Iron', value: 'iron' },
-      { label: 'Diamond', value: 'diamond' },
-      { label: 'Netherite', value: 'netherite' },
-    ]"
-  />
-  <CdxSelect
-    v-model:selected="boots.enchantment"
-    :menu-items="[
-      { label: 'Empty', value: 'empty' },
-      { label: 'Protection', value: 'protection' },
-      { label: 'Fire Protection', value: 'fireProtection' },
-      { label: 'Blast Protection', value: 'blastProtection' },
-      { label: 'Projectile Protection', value: 'projectileProtection' },
-      { label: 'Feather Falling', value: 'featherFalling' },
-    ]"
-  />
-  <CdxSelect
-    v-if="boots.enchantment !== 'empty'"
-    v-model:selected="boots.enchantmentLevel"
-    :menu-items="[
-      { label: 'I', value: 1 },
-      { label: 'II', value: 2 },
-      { label: 'III', value: 3 },
-      { label: 'IV', value: 4 },
-    ]"
-  />
-  <CdxSelect
-    v-model:selected="boots.featherFalling"
-    :menu-items="[
-      { label: 'Empty', value: 'empty' },
-      { label: 'Feather Falling', value: 'featherFalling' },
-    ]"
-  />
-  <CdxSelect
-    v-if="boots.enchantment !== 'empty'"
-    v-model:selected="boots.featherFallingLevel"
-    :menu-items="[
-      { label: 'I', value: 1 },
-      { label: 'II', value: 2 },
-      { label: 'III', value: 3 },
-      { label: 'IV', value: 4 },
-    ]"
-  />
 
   {{ actualDamage }}
 </template>

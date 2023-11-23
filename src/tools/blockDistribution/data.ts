@@ -999,7 +999,7 @@ for (const key in raw) {
     blockMap.push({
       block: key,
       // number of X found in 100,000 blocks
-      count: count === 0 ? 0.0001 : (count / totalBlocks) * 100000,
+      count: count === 0 ? 0.00001 : (count / totalBlocks) * 100000,
       pos: index - 64,
       color: getColor(key),
     })

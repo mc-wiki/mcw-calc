@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import * as Plot from '@observablehq/plot'
+import { line, crosshair } from '@observablehq/plot'
 import PlotFigure from './PlotFigure.ts'
 import { blockMap } from './data.ts'
 const props = defineProps<{
@@ -8,7 +8,7 @@ const props = defineProps<{
 const blockMapFiltered = blockMap.filter((d) => props.blocks.includes(d.block))
 </script>
 <template>
-  <h3></h3>
+  <h4>Block distribution for {{ props.blocks.join(', ') }}</h4>
   <PlotFigure
     :options="{
       marginLeft: 70,
@@ -20,14 +20,14 @@ const blockMapFiltered = blockMap.filter((d) => props.blocks.includes(d.block))
         tickFormat: 'f',
       },
       marks: [
-        Plot.line(blockMapFiltered, {
+        line(blockMapFiltered, {
           x: 'pos',
           y: 'count',
           z: 'block',
           stroke: 'block',
           curve: 'catmull-rom',
         }),
-        Plot.crosshair(blockMapFiltered, { x: 'pos', y: 'count' }),
+        crosshair(blockMapFiltered, { x: 'pos', y: 'count' }),
       ],
     }"
   />
