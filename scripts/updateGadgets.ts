@@ -18,7 +18,7 @@ const bot = await Mwn.init({
 
   userAgent:
     env.USER_AGENT ??
-    'MCWCalcs (mwn/1; +https://github.com/Dianliang233/mcw-calc)',
+    'MCWCalc (mwn/1; +https://github.com/Dianliang233/mcw-calc)',
 
   defaultParams: {
     assert: 'user',
@@ -28,6 +28,7 @@ const bot = await Mwn.init({
 const files = [
   ...(await glob('./dist/Gadget-*.{js,css}')),
   ...(await glob('./dist/Gadgets-definition')),
+  ...(await glob('./dist/Gadgets-definition.dev')),
 ]
 
 const names = files.map((file) => file.match(/dist\/(.*)$/)![1])

@@ -9,7 +9,6 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["node"],
-    "allowImportingTsExtensions": true
+    "types": ["node"]
   }
 }

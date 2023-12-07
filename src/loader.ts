@@ -5,9 +5,11 @@ calcs.forEach((calc) => {
     console.error('No data-type attribute found on .mcw-calc', calc)
     return
   }
-  // @ts-expect-error
-  mw.loader.using(['vue', '@wikimedia/codex']).then(() => {
+  if (process.env.NODE_ENV === 'development') {
+    // @ts-expect-error
+    mw.loader.load('http://localhost:8080/Gadget-mcw-calc-' + type + '.js')
+  } else {
     // @ts-expect-error
     mw.loader.load('ext.gadget.mcw-calc-' + type)
-  })
+  }
 })

@@ -33,8 +33,8 @@ const config = (env, argv) => {
     context: dirname(fileURLToPath(import.meta.url)),
     externals: prodDev(
       {
-        vue: "mw.loader.require('vue')",
-        '@wikimedia/codex': "mw.loader.require('@wikimedia/codex')",
+        vue: "require('vue')",
+        '@wikimedia/codex': "require('@wikimedia/codex')",
       },
       {}
     ),
@@ -44,8 +44,20 @@ const config = (env, argv) => {
       },
     },
     entry: {
-      ...prodDev({ core: './src/loader.ts' }, {}),
+      core: './src/loader.ts',
       ...entries,
+    },
+    devServer: {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
+      hot: false,
+      webSocketServer: false,
+      onListening: () => {
+        console.log(
+          `<i> [mcw-calc] On-Wiki Preview: https://minecraft.wiki/w/User:Dianliang233/calc-sandbox`
+        )
+      },
     },
     optimization: {
       minimize: false,
@@ -58,9 +70,6 @@ const config = (env, argv) => {
     },
     watchOptions: {
       aggregateTimeout: 200,
-    },
-    devServer: {
-      hot: false,
     },
     plugins: [
       new VueLoaderPlugin(),
@@ -108,7 +117,6 @@ const config = (env, argv) => {
         },
         {
           test: /\.(?:js|mjs|cjs|vue|ts)$/,
-          exclude: /node_modules/,
           use: {
             loader: 'babel-loader',
             options: {
