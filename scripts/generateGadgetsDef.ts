@@ -3,14 +3,17 @@ import { glob } from 'glob'
 import parseJSDoc from './parseJSDoc.js'
 
 let def = [
-  '== calc ==',
   '* mcw-calc-core[ResourceLoader|targets=desktop,mobile|type=general|default|hidden]|mcw-calc-core.js',
 ]
 
 let devDef = [
-  '== calc ==',
   '* mcw-calc-core[ResourceLoader|targets=desktop,mobile|type=general|default|hidden]|mcw-calc-core.js',
 ]
+
+let manifest = {
+  prod: [] as string[],
+  dev: [] as string[],
+}
 
 const files = await glob('./dist/Gadget-mcw-calc-*.js')
 const names = files.map(
@@ -37,6 +40,9 @@ for (const name of names) {
         cssNames.includes(name) ? `|mcw-calc-${name}.css` : ''
       }`
     )
+    manifest.prod.push(`Gadget-mcw-calc-${name}.js`)
+    if (cssNames.includes(name))
+      manifest.prod.push(`Gadget-mcw-calc-${name}.css`)
   } else if (!jsdoc.deprecated && !jsdoc.internal) {
     devDef.push(
       `* mcw-calc-${name}[ResourceLoader|targets=desktop,mobile|package|type=general${
@@ -45,20 +51,16 @@ for (const name of names) {
         cssNames.includes(name) ? `|mcw-calc-${name}.css` : ''
       }`
     )
+    manifest.dev.push(`Gadget-mcw-calc-${name}.js`)
+    if (cssNames.includes(name))
+      manifest.dev.push(`Gadget-mcw-calc-${name}.css`)
   }
 }
 
-const now = new Date()
-def.push(
-  `<!-- Automatically generated at ${now.getUTCFullYear()}-${
-    now.getUTCMonth() + 1
-  }-${now.getUTCDate()} ${now.getUTCHours()}:${now.getUTCMinutes()}:${now.getUTCSeconds()} by generateGadgetsDef.ts -->`
-)
-devDef.push(
-  `<!-- Automatically generated at ${now.getUTCFullYear()}-${
-    now.getUTCMonth() + 1
-  }-${now.getUTCDate()} ${now.getUTCHours()}:${now.getUTCMinutes()}:${now.getUTCSeconds()} by generateGadgetsDef.ts -->`
-)
-
 fs.writeFile('./dist/Gadgets-definition', def.join('\n'), 'utf-8')
 fs.writeFile('./dist/Gadgets-definition.dev', devDef.join('\n'), 'utf-8')
+fs.writeFile(
+  './dist/manifest.json',
+  JSON.stringify(manifest, undefined, 2),
+  'utf-8'
+)

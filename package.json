@@ -7,8 +7,7 @@
     "genGadgetsDef": "ts-node --project tsconfig.node.json --esm ./scripts/generateGadgetsDef.ts",
     "updateGadgets": "ts-node --project tsconfig.node.json --esm ./scripts/updateGadgets.ts",
     "deploy": "pnpm run genGadgetsDef && pnpm run updateGadgets",
-    "build-deploy": "pnpm run build && pnpm run deploy",
-    "color": "ts-node --esm ./scripts/color.ts"
+    "build-deploy": "pnpm run build && pnpm run deploy"
   },
   "dependencies": {
     "@observablehq/plot": "^0.6.11",

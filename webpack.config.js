@@ -17,7 +17,7 @@ const config = (env, argv) => {
         import: path,
         library: {
           name: ['mcwCalc', key],
-          type: 'window',
+          type: 'commonjs',
         },
       }
       return acc

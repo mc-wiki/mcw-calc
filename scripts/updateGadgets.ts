@@ -1,57 +1,90 @@
 import 'dotenv/config'
 import { Mwn } from 'mwn'
 import { promises as fs } from 'node:fs'
-import { glob } from 'glob'
 
 const env = process.env as {
   API_URL: string
+  API_DEV_URL: string
   USERNAME: string
+  USERNAME_DEV?: string
   PASSWORD: string
+  PASSWORD_DEV?: string
   USER_AGENT?: string
 }
 
-const bot = await Mwn.init({
-  apiUrl: env.API_URL,
+const manifest = await fs.readFile('./dist/manifest.json', {
+  encoding: 'utf-8',
+})
+const filesProd = JSON.parse(manifest).prod as string[]
+const filesDev = JSON.parse(manifest).dev as string[]
 
-  username: env.USERNAME,
-  password: env.PASSWORD,
-
-  userAgent:
-    env.USER_AGENT ??
-    'MCWCalc (mwn/1; +https://github.com/Dianliang233/mcw-calc)',
-
-  defaultParams: {
-    assert: 'user',
-  },
+const definitionProd = await fs.readFile('./dist/Gadgets-definition', {
+  encoding: 'utf-8',
+})
+const definitionDev = await fs.readFile('./dist/Gadgets-definition.dev', {
+  encoding: 'utf-8',
 })
 
-const files = [
-  ...(await glob('./dist/Gadget-*.{js,css}')),
-  ...(await glob('./dist/Gadgets-definition')),
-  ...(await glob('./dist/Gadgets-definition.dev')),
-]
+Promise.all([
+  // update('prod', filesProd, definitionProd),
+  update('dev', filesDev, definitionDev),
+])
 
-const names = files.map((file) => file.match(/dist\/(.*)$/)![1])
-console.log(`Updating: ${names.join(', ')}`)
+async function update(
+  target: 'prod' | 'dev',
+  names: string[],
+  definition: string
+) {
+  const bot = await Mwn.init({
+    apiUrl: {
+      prod: env.API_URL,
+      dev: env.API_DEV_URL,
+    }[target],
 
-files.forEach(async (path, index) => {
-  const file = await fs.readFile(path, { encoding: 'utf-8' })
-  if (names[index] !== 'Gadgets-definition') {
-    await bot.save(
-      `MediaWiki:${names[index]}`,
-      file,
-      `Bot: Automatically deploy changes from Git`
-    )
-  } else {
+    username: {
+      prod: env.USERNAME,
+      dev: env.USERNAME_DEV ?? env.USERNAME,
+    }[target],
+    password: {
+      prod: env.PASSWORD,
+      dev: env.PASSWORD_DEV ?? env.PASSWORD,
+    }[target],
+
+    userAgent:
+      env.USER_AGENT ??
+      'MCWCalc (mwn/1; +https://github.com/Dianliang233/mcw-calc)',
+
+    defaultParams: {
+      assert: 'user',
+    },
+  })
+  const files = names.map((file) => `./dist/${file}`)
+  console.log(`Updating for ${target}: ${names.join(', ')}`)
+
+  files.forEach(async (path, index) => {
+    const file = await fs.readFile(path, { encoding: 'utf-8' })
+    if (names[index] !== 'Gadgets-definition') {
+      await bot.save(
+        `MediaWiki:${names[index]}`,
+        file,
+        `Bot: Automatically deploy changes from Git`
+      )
+    }
+
     bot.edit('MediaWiki:Gadgets-definition', (rev) => {
-      // replace the == calc == section until the next == section
-      const text =
-        rev.content.replace(/== calc ==(?:.*)*(==)?/s, '') + file + '\n'
+      // Replace content between two <!-- Automatically generated, your edit will be overwritten -->
 
+      const section = rev.content.match(
+        /<!-- Automatically generated, your edit will be overwritten -->\n((.|\n)+)\n<!-- Automatically generated, your edit will be overwritten -->/
+      )![1]
+      const text = rev.content.replace(
+        section,
+        `<!-- Automatically generated, your edit will be overwritten -->\n${definition}\n<!-- Automatically generated, your edit will be overwritten -->`
+      )
       return {
         text: text,
         summary: `Bot: Automatically deploy changes from Git`,
       }
     })
-  }
-})
+  })
+}
