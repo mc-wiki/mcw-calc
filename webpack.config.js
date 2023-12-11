@@ -15,10 +15,6 @@ const config = (env, argv) => {
       const key = path.replace('./src/tools/', '').replace('/main.ts', '')
       acc[key] = {
         import: path,
-        library: {
-          name: ['mcwCalc', key],
-          type: 'commonjs',
-        },
       }
       return acc
     }, {})

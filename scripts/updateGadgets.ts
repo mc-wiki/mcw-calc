@@ -3,8 +3,8 @@ import { Mwn } from 'mwn'
 import { promises as fs } from 'node:fs'
 
 const env = process.env as {
-  API_URL: string
-  API_DEV_URL: string
+  API_URL?: string
+  API_DEV_URL?: string
   USERNAME: string
   USERNAME_DEV?: string
   PASSWORD: string
@@ -26,8 +26,8 @@ const definitionDev = await fs.readFile('./dist/Gadgets-definition.dev', {
 })
 
 Promise.all([
-  // update('prod', filesProd, definitionProd),
-  update('dev', filesDev, definitionDev),
+  ...(env.API_URL ? [update('prod', filesProd, definitionProd)] : []),
+  ...(env.API_DEV_URL ? [update('dev', filesDev, definitionDev)] : []),
 ])
 
 async function update(
@@ -70,21 +70,21 @@ async function update(
         `Bot: Automatically deploy changes from Git`
       )
     }
+  })
 
-    bot.edit('MediaWiki:Gadgets-definition', (rev) => {
-      // Replace content between two <!-- Automatically generated, your edit will be overwritten -->
+  bot.edit('MediaWiki:Gadgets-definition', (rev) => {
+    // Replace content between two <!-- Automatically generated, your edit will be overwritten -->
 
-      const section = rev.content.match(
-        /<!-- Automatically generated, your edit will be overwritten -->\n((.|\n)+)\n<!-- Automatically generated, your edit will be overwritten -->/
-      )![1]
-      const text = rev.content.replace(
-        section,
-        `<!-- Automatically generated, your edit will be overwritten -->\n${definition}\n<!-- Automatically generated, your edit will be overwritten -->`
-      )
-      return {
-        text: text,
-        summary: `Bot: Automatically deploy changes from Git`,
-      }
-    })
+    const section = rev.content.match(
+      /<!-- Automatically generated, your edit will be overwritten -->\n((.|\n)+)\n<!-- Automatically generated, your edit will be overwritten -->/
+    )![1]
+    const text = rev.content.replace(
+      section,
+      `<!-- Automatically generated, your edit will be overwritten -->\n${definition}\n<!-- Automatically generated, your edit will be overwritten -->`
+    )
+    return {
+      text: text,
+      summary: `Bot: Automatically deploy changes from Git`,
+    }
   })
 }
