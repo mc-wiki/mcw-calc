@@ -52,7 +52,7 @@ async function update(
 
     userAgent:
       env.USER_AGENT ??
-      'MCWCalc (mwn/1; +https://github.com/Dianliang233/mcw-calc)',
+      'MCWCalcDeploy (mwn/1; +https://github.com/Dianliang233/mcw-calc)',
 
     defaultParams: {
       assert: 'user',
@@ -69,6 +69,7 @@ async function update(
         file,
         `Bot: Automatically deploy changes from Git`
       )
+      console.log(`Deployed ${names[index]}`)
     }
   })
 
@@ -78,10 +79,7 @@ async function update(
     const section = rev.content.match(
       /<!-- Automatically generated, your edit will be overwritten -->\n((.|\n)+)\n<!-- Automatically generated, your edit will be overwritten -->/
     )![1]
-    const text = rev.content.replace(
-      section,
-      `<!-- Automatically generated, your edit will be overwritten -->\n${definition}\n<!-- Automatically generated, your edit will be overwritten -->`
-    )
+    const text = rev.content.replace(section, definition)
     return {
       text: text,
       summary: `Bot: Automatically deploy changes from Git`,

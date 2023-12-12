@@ -13,10 +13,10 @@ const createApp =
     : // @ts-expect-error
       vue.createMwApp || vue.createApp
 createApp(App, {
-  blocks: targetEl?.getAttribute('data-blocks')?.split(',') || [
+  blocks: targetEl?.getAttribute('data-blocks')?.split(',') ?? [
     'minecraft:diamond_ore',
   ],
-  blockNames: targetEl?.getAttribute('data-block-names')?.split(',') || [
+  blockNames: targetEl?.getAttribute('data-block-names')?.split(',') ?? [
     'Diamond Ore',
   ],
 }).mount(targetEl)

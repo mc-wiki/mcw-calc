@@ -43,7 +43,9 @@ for (const name of names) {
     manifest.prod.push(`Gadget-mcw-calc-${name}.js`)
     if (cssNames.includes(name))
       manifest.prod.push(`Gadget-mcw-calc-${name}.css`)
-  } else if (!jsdoc.deprecated && !jsdoc.internal) {
+  }
+
+  if (!jsdoc.deprecated && !jsdoc.internal) {
     devDef.push(
       `* mcw-calc-${name}[ResourceLoader|targets=desktop,mobile|package|type=general${
         dependencies ? `|dependencies=${dependencies.replace(/ /g, '')}` : ''

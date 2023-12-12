@@ -1,28 +1,57 @@
 <script setup lang="ts">
 import * as d3 from 'd3'
-import { blockMap, getColor } from './data.ts'
+import {
+  overworldBlockMap,
+  netherBlockMap,
+  endBlockMap,
+  getColor,
+} from './data.ts'
 import Plot from './Plot.ts'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import { CdxTab, CdxTabs } from '@wikimedia/codex'
 
 const props = defineProps<{
   blocks: string[]
   blockNames: string[]
 }>()
 
-const blockMapFiltered = blockMap.filter((d) => props.blocks.includes(d.block))
-const element = computed(() => {
+const overworldBlockMapFiltered = overworldBlockMap.filter((d) =>
+  props.blocks.includes(d.block)
+)
+const netherBlockMapFiltered = netherBlockMap.filter((d) =>
+  props.blocks.includes(d.block)
+)
+const endBlockMapFiltered = endBlockMap.filter((d) =>
+  props.blocks.includes(d.block)
+)
+
+const currentTab = ref(
+  overworldBlockMapFiltered.length !== 0
+    ? 'overworld'
+    : netherBlockMapFiltered.length !== 0
+    ? 'nether'
+    : 'end'
+)
+
+function plot(
+  blockMapFiltered: typeof overworldBlockMapFiltered,
+  domain: [number, number]
+) {
+  if (blockMapFiltered.length === 0) {
+    return null
+  }
   // Declare the chart dimensions and margins.
   const width = 640
   const height = 400
-  const marginTop = 20
-  const marginRight = 20
+  const marginTop = 40
+  const marginRight = 50
   const marginBottom = 30
-  const marginLeft = 40
+  const marginLeft = 60
 
   // Declare the x (horizontal position) scale.
   const x = d3
     .scaleLinear()
-    .domain([-64, 255])
+    .domain(domain)
     .range([marginLeft, width - marginRight])
 
   // Declare the y (vertical position) scale.
@@ -79,6 +108,23 @@ const element = computed(() => {
     d.block,
   ]) as [number, number, string][]
 
+  if (props.blocks.length > 1) {
+    // Also add a group for the total count.
+    const total = []
+    for (let i = -64; i < 256; i++) {
+      total.push([
+        x(i),
+        y(
+          blockMapFiltered
+            .filter((b) => b.pos === i)
+            .reduce((a, b) => a + (b.count <= 0.0001 ? 0 : b.count), 0.0001)
+        ),
+        'Total',
+      ] as [number, number, string])
+    }
+    points.push(...total)
+  }
+
   // Group the points by series.
   const groups = d3.rollup(
     points,
@@ -129,10 +175,6 @@ const element = computed(() => {
     const [xm, ym] = d3.pointer(event)
     const i = d3.leastIndex(points, ([x, y]) => Math.hypot(x - xm, y - ym))!
     const [x1, y1, k] = points[i]
-    path
-      .style('stroke', ({ z }) => (z === k ? 'steelblue' : getColor(z)))
-      .filter(({ z }) => z === k)
-      .raise()
     dot.attr('transform', `translate(${x1},${y1})`)
     const formatter = d3.format('d')
     dot.select('text').html(
@@ -140,24 +182,55 @@ const element = computed(() => {
         <tspan x="0" dy="1.2em">Y=${formatter(x.invert(x1))}</tspan>
         <tspan x="0" dy="1.2em">${k}</tspan>`
     )
+    svg
+      .property('value', points[i][2])
+      .dispatch('input', { bubbles: true } as any)
   }
 
   function pointerentered() {
-    path.style('mix-blend-mode', null).style('stroke', 'currentColor')
     dot.attr('display', null)
   }
 
   function pointerleft() {
-    path
-      .style('mix-blend-mode', 'multiply')
-      .style('stroke', ({ z }) => getColor(z))
     dot.attr('display', 'none')
+    svg.property('value', null)
+    svg.dispatch('input', { bubbles: true } as any)
   }
-})
+}
+
+const overworld = computed(() => plot(overworldBlockMapFiltered, [-64, 255]))
+const nether = computed(() => plot(netherBlockMapFiltered, [0, 127]))
+const end = computed(() => plot(endBlockMapFiltered, [0, 255]))
 </script>
 <template>
-  <h4>Block distribution for {{ props.blocks.join(', ') }}</h4>
+  <h4>Block distribution for {{ props.blockNames.join(', ') }}</h4>
+  <p style="font-size: 80%">
+    Note that this chart utilizes the logarithmic scale, which means a slight
+    difference in the Y-coordinate represents a large change in the relative
+    frequency of a block type. Credit to User:Meeples10 whose work on
+    MCResourceAnalyzer made this chart possible.
+  </p>
   <div style="display: flex; flex-wrap: wrap; margin-bottom: 0.5rem">
+    <div
+      v-if="props.blocks.length > 1"
+      style="
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0.75rem;
+        font-size: 90%;
+      "
+    >
+      <div
+        :style="{
+          width: '1rem',
+          height: '1rem',
+          backgroundColor: 'steelblue',
+          marginRight: '0.3rem',
+        }"
+      />
+      Total
+    </div>
     <div
       v-for="(block, index) in props.blocks"
       :key="block"
@@ -180,9 +253,15 @@ const element = computed(() => {
       {{ props.blockNames[index] }}
     </div>
   </div>
-  <Plot :element="element" />
-  <p style="font-size: 80%">
-    Credit to User:Meeples10 whose work on MCResourceAnalyzer made this graph
-    possible.
-  </p>
+  <cdx-tabs v-model:active="currentTab">
+    <cdx-tab name="overworld" label="Overworld" v-if="overworld">
+      <Plot :element="overworld" />
+    </cdx-tab>
+    <cdx-tab name="nether" label="Nether" v-if="nether">
+      <Plot :element="nether" />
+    </cdx-tab>
+    <cdx-tab name="end" label="The End" v-if="end">
+      <Plot :element="end" />
+    </cdx-tab>
+  </cdx-tabs>
 </template>
