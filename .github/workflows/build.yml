@@ -27,10 +27,10 @@ jobs:
         run: pnpm install
 
       - name: Build
-        run: pnpm build
+        run: pnpm run build
 
       - name: Deploy
-        run: pnpm deploy
+        run: pnpm run deploy
         env:
           API_DEV_URL: 'https://mc-dev.weirdgloop.org/api.php'
           USERNAME_DEV: ${{ secrets.USERNAME_DEV }}
