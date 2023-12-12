@@ -4,8 +4,8 @@
   "scripts": {
     "dev": "webpack serve --mode development",
     "build": "webpack build --mode production",
-    "genGadgetsDef": "ts-node --project tsconfig.node.json --esm ./scripts/generateGadgetsDef.ts",
-    "updateGadgets": "ts-node --project tsconfig.node.json --esm ./scripts/updateGadgets.ts",
+    "genGadgetsDef": "ts-node-esm --project tsconfig.node.json ./scripts/generateGadgetsDef.ts",
+    "updateGadgets": "ts-node-esm --project tsconfig.node.json ./scripts/updateGadgets.ts",
     "deploy": "pnpm run genGadgetsDef && pnpm run updateGadgets",
     "build-deploy": "pnpm run build && pnpm run deploy"
   },
