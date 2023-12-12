@@ -1,4 +1,4 @@
-name: Release
+name: Lint
 on:
   push:
     branches:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  lint:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message , '[skip ci]')"
     steps:
@@ -28,6 +28,26 @@ jobs:
 
       - name: ESLint
         run: pnpm run lint
+
+  type-check:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message , '[skip ci]')"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Type Check
         run: pnpm run type-check
