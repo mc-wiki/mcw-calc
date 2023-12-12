@@ -1,0 +1,37 @@
+name: Release
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    if: ! contains(github.event.head_commit.message , '[skip ci]')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm build
+
+      - name: Deploy
+        run: pnpm deploy
+        env:
+          API_DEV_URL: 'https://mc-dev.weirdgloop.org/api.php'
+          USERNAME_DEV: ${{ secrets.USERNAME_DEV }}
+          PASSWORD_DEV: ${{ secrets.PASSWORD_DEV }}
