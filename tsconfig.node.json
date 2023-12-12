@@ -1,6 +1,8 @@
 {
-  "extends": "@tsconfig/node18/tsconfig.json",
+  "extends": "@tsconfig/node20/tsconfig.json",
   "include": [
+    ".eslintrc.cjs",
+    "webpack.config.js",
     "vitest.config.*",
     "cypress.config.*",
     "nightwatch.conf.*",
@@ -9,9 +11,9 @@
   ],
   "compilerOptions": {
     "composite": true,
-    "module": "NodeNext",
-    "target": "ESNext",
-    "moduleResolution": "NodeNext",
+    "noEmit": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "types": ["node"]
   }
 }

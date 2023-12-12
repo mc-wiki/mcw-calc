@@ -2,15 +2,15 @@ import { promises as fs } from 'node:fs'
 import { glob } from 'glob'
 import parseJSDoc from './parseJSDoc.js'
 
-let def = [
+const def = [
   '* mcw-calc-core[ResourceLoader|targets=desktop,mobile|type=general|default|hidden]|mcw-calc-core.js',
 ]
 
-let devDef = [
+const devDef = [
   '* mcw-calc-core[ResourceLoader|targets=desktop,mobile|type=general|default|hidden]|mcw-calc-core.js',
 ]
 
-let manifest = {
+const manifest = {
   prod: [] as string[],
   dev: [] as string[],
 }
