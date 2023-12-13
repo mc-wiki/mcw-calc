@@ -91,7 +91,7 @@ function plot(blockMapFiltered: typeof overworldBlockMapFiltered, domain: [numbe
   if (props.blocks.length > 1) {
     // Also add a group for the total count.
     const total = []
-    for (let i = -64; i < 256; i++) {
+    for (let i = domain[0]; i <= domain[1]; i++) {
       total.push([
         x(i),
         y(
