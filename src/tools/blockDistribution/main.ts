@@ -1,4 +1,5 @@
 /**
+ * @public
  * @dependencies vue, @wikimedia/codex
  */
 import * as vue from 'vue'
