@@ -238,3 +238,15 @@ const end = computed(() => plot(endBlockMapFiltered, [0, 255]))
     </cdx-tab>
   </cdx-tabs>
 </template>
+<style scoped>
+.cdx-tabs--quiet > .cdx-tabs__header {
+  background-color: transparent;
+}
+.cdx-tabs__next-scroller {
+  display: none;
+}
+
+ul.cdx-tabs__list {
+  margin: 0;
+}
+</style>
