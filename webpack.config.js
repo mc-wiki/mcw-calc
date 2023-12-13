@@ -97,7 +97,7 @@ const config = (env, argv) => {
         __VUE_OPTIONS_API__: true,
         __VUE_PROD_DEVTOOLS__: false,
       }),
-      new webpack.BannerPlugin(),
+      new webpack.BannerPlugin('Automatically generated, your edit will be overwritten'),
     ],
     module: {
       rules: [
