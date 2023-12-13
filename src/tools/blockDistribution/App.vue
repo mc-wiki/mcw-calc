@@ -177,7 +177,7 @@ const nether = computed(() => plot(netherBlockMapFiltered, [0, 127]))
 const end = computed(() => plot(endBlockMapFiltered, [0, 255]))
 </script>
 <template>
-  <h4>Block distribution for {{ props.blockNames.join(', ') }}</h4>
+  <h4>Block distribution for {{ props.blockNames.join(', ') }} in Java Edition</h4>
   <p style="font-size: 80%">
     Note that this chart utilizes the logarithmic scale, which means a slight difference in the
     Y-coordinate represents a large change in the relative frequency of a block type. Credit to
