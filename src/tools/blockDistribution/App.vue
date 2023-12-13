@@ -238,7 +238,7 @@ const end = computed(() => plot(endBlockMapFiltered, [0, 255]))
     </cdx-tab>
   </cdx-tabs>
 </template>
-<style scoped>
+<style>
 .cdx-tabs--quiet > .cdx-tabs__header {
   background-color: transparent;
 }
