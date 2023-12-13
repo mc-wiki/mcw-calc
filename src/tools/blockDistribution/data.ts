@@ -1085,24 +1085,12 @@ interface Block {
 export const overworldBlockMap = generateBlockMap(
   overworldRaw,
   -64,
-  overworldRaw['minecraft:bedrock'][0]
+  overworldRaw['minecraft:bedrock'][0],
 )
-export const netherBlockMap = generateBlockMap(
-  netherRaw,
-  0,
-  netherRaw['minecraft:bedrock'][0]
-)
-export const endBlockMap = generateBlockMap(
-  endRaw,
-  0,
-  endRaw['minecraft:air'][0]
-)
+export const netherBlockMap = generateBlockMap(netherRaw, 0, netherRaw['minecraft:bedrock'][0])
+export const endBlockMap = generateBlockMap(endRaw, 0, endRaw['minecraft:air'][0])
 
-function generateBlockMap(
-  data: Record<string, number[]>,
-  offset: number,
-  totalBlocks: number
-) {
+function generateBlockMap(data: Record<string, number[]>, offset: number, totalBlocks: number) {
   const blockMap: Block[] = []
   for (const key in data) {
     for (const [index, count] of data[key].entries()) {

@@ -11,18 +11,14 @@ const devDef = [
 ]
 
 const manifest = {
-  prod: [] as string[],
-  dev: [] as string[],
+  prod: ['Gadget-mcw-calc-core.js'] as string[],
+  dev: ['Gadget-mcw-calc-core.js'] as string[],
 }
 
 const files = await glob('./dist/Gadget-mcw-calc-*.js')
-const names = files.map(
-  (file) => file.match(/dist\/Gadget-mcw-calc-(.*).js/)![1]
-)
+const names = files.map((file) => file.match(/dist\/Gadget-mcw-calc-(.*).js/)![1])
 const cssFiles = await glob('./dist/Gadget-mcw-calc-*.css')
-const cssNames = cssFiles.map(
-  (file) => file.match(/dist\/Gadget-mcw-calc-(.*).css/)![1]
-)
+const cssNames = cssFiles.map((file) => file.match(/dist\/Gadget-mcw-calc-(.*).css/)![1])
 console.log(`These tools are found: ${names.join(', ')}`)
 
 for (const name of names) {
@@ -36,33 +32,23 @@ for (const name of names) {
     def.push(
       `* mcw-calc-${name}[ResourceLoader|targets=desktop,mobile|package|type=general${
         dependencies ? `|dependencies=${dependencies.replace(/ /g, '')}` : ''
-      }|hidden]|mcw-calc-${name}.js${
-        cssNames.includes(name) ? `|mcw-calc-${name}.css` : ''
-      }`
+      }|hidden]|mcw-calc-${name}.js${cssNames.includes(name) ? `|mcw-calc-${name}.css` : ''}`,
     )
     manifest.prod.push(`Gadget-mcw-calc-${name}.js`)
-    if (cssNames.includes(name))
-      manifest.prod.push(`Gadget-mcw-calc-${name}.css`)
+    if (cssNames.includes(name)) manifest.prod.push(`Gadget-mcw-calc-${name}.css`)
   }
 
   if (!jsdoc.deprecated && !jsdoc.internal) {
     devDef.push(
       `* mcw-calc-${name}[ResourceLoader|targets=desktop,mobile|package|type=general${
         dependencies ? `|dependencies=${dependencies.replace(/ /g, '')}` : ''
-      }|hidden]|mcw-calc-${name}.js${
-        cssNames.includes(name) ? `|mcw-calc-${name}.css` : ''
-      }`
+      }|hidden]|mcw-calc-${name}.js${cssNames.includes(name) ? `|mcw-calc-${name}.css` : ''}`,
     )
     manifest.dev.push(`Gadget-mcw-calc-${name}.js`)
-    if (cssNames.includes(name))
-      manifest.dev.push(`Gadget-mcw-calc-${name}.css`)
+    if (cssNames.includes(name)) manifest.dev.push(`Gadget-mcw-calc-${name}.css`)
   }
 }
 
 fs.writeFile('./dist/Gadgets-definition', def.join('\n'), 'utf-8')
 fs.writeFile('./dist/Gadgets-definition.dev', devDef.join('\n'), 'utf-8')
-fs.writeFile(
-  './dist/manifest.json',
-  JSON.stringify(manifest, undefined, 2),
-  'utf-8'
-)
+fs.writeFile('./dist/manifest.json', JSON.stringify(manifest, undefined, 2), 'utf-8')

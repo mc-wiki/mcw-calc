@@ -6,14 +6,14 @@ const netherX = computed<number>({
   get: () => Math.round(overworldX.value / 8),
   set: (val: number) => {
     overworldX.value = val * 8
-  }
+  },
 })
 const overworldZ = ref(0)
 const netherZ = computed<number>({
   get: () => Math.round(overworldZ.value / 8),
   set: (val: number) => {
     overworldZ.value = val * 8
-  }
+  },
 })
 </script>
 <template>

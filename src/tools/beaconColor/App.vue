@@ -32,11 +32,11 @@ function colorStringToRgb(color: string): [number, number, number] {
 }
 
 const colorRgbMap = Object.fromEntries(
-  Object.entries(colorMap).map(([k, v]) => [k, separateRgb(v)])
+  Object.entries(colorMap).map(([k, v]) => [k, separateRgb(v)]),
 ) as Record<keyof typeof colorMap, [number, number, number]>
 
 const colorLabMap = Object.fromEntries(
-  Object.entries(colorRgbMap).map(([k, v]) => [k, rgb2lab(v)])
+  Object.entries(colorRgbMap).map(([k, v]) => [k, rgb2lab(v)]),
 ) as Record<keyof typeof colorMap, [number, number, number]>
 
 type Color = (keyof typeof colorMap)[]
@@ -90,8 +90,7 @@ function deltaE(labA: number[], labB: number[]) {
   let deltaLKlsl = deltaL / 1.0
   let deltaCkcsc = deltaC / sc
   let deltaHkhsh = deltaH / sh
-  let i =
-    deltaLKlsl * deltaLKlsl + deltaCkcsc * deltaCkcsc + deltaHkhsh * deltaHkhsh
+  let i = deltaLKlsl * deltaLKlsl + deltaCkcsc * deltaCkcsc + deltaHkhsh * deltaHkhsh
   return i < 0 ? 0 : Math.sqrt(i)
 }
 
@@ -99,14 +98,14 @@ function colorToSequence(
   color: [number, number, number],
   sequence: Color = [],
   iteration = 7,
-  stepDeltaEs: number[] = []
+  stepDeltaEs: number[] = [],
 ): [Color, number[]] {
   const colorLab = rgb2lab(color)
   const colors = Object.keys(colorLabMap) as Color
 
   const colorsFiltered = colors.filter((i) => i !== sequence.at(-1))
   const deltaEs = colorsFiltered.map((c) =>
-    deltaE(colorLab, rgb2lab(sequenceToColor([...sequence, c])))
+    deltaE(colorLab, rgb2lab(sequenceToColor([...sequence, c]))),
   )
 
   const minDeltaE = Math.min(...deltaEs)
@@ -118,7 +117,7 @@ function colorToSequence(
     color,
     [...sequence, colorsFiltered[minDeltaEIndex]] as Color,
     iteration - 1,
-    [...stepDeltaEs, minDeltaE]
+    [...stepDeltaEs, minDeltaE],
   )
 }
 function formatSequence(sequence: Color, deltaE: number) {}
@@ -127,11 +126,7 @@ function best3Sequences(sequence: Color, deltaEs: number[]) {
   const best3DeltaE = deltaEs.sort().slice(0, 3)
   const best3Sequences = best3DeltaE.map((d) => {
     const i = original.indexOf(d)
-    return [
-      sequence.slice(0, i + 1),
-      d,
-      sequenceToColor(sequence.slice(0, i + 1)),
-    ]
+    return [sequence.slice(0, i + 1), d, sequenceToColor(sequence.slice(0, i + 1))]
   })
   return best3Sequences as [Color, number, [number, number, number]][]
 }
@@ -141,9 +136,7 @@ function best3Sequences(sequence: Color, deltaEs: number[]) {
   <input type="color" v-model="color" id="color-picker" />
   <p>Sequence:</p>
   <ul>
-    <li
-      v-for="seq in best3Sequences(...colorToSequence(colorStringToRgb(color)))"
-    >
+    <li v-for="seq in best3Sequences(...colorToSequence(colorStringToRgb(color)))">
       {{ seq[0].join(' -> ') }} (dE = {{ seq[1].toFixed(2) }})
       <span
         :style="{

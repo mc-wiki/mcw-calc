@@ -2,14 +2,7 @@
 import { ref, reactive, computed } from 'vue'
 import { CdxSelect, CdxTextInput } from '@wikimedia/codex'
 
-type ArmorMaterial =
-  | 'empty'
-  | 'leather'
-  | 'golden'
-  | 'chainmail'
-  | 'iron'
-  | 'diamond'
-  | 'netherite'
+type ArmorMaterial = 'empty' | 'leather' | 'golden' | 'chainmail' | 'iron' | 'diamond' | 'netherite'
 type HelmetMaterial = 'turtle' | ArmorMaterial
 
 const armorValueMap = {
@@ -116,10 +109,7 @@ type ArmorEnchantment =
   | 'projectileProtection'
 type BootsEnchantment = 'featherFalling' | ArmorEnchantment
 
-const ePFMap: Record<
-  BootsEnchantment,
-  [number, number, number, number, number]
-> = {
+const ePFMap: Record<BootsEnchantment, [number, number, number, number, number]> = {
   empty: [0, 0, 0, 0, 0],
   protection: [0, 1, 2, 3, 4],
   fireProtection: [0, 2, 4, 6, 8],
@@ -190,7 +180,7 @@ const actualDamage = computed(() => {
       ePFMap[chestplate.enchantment][chestplate.enchantmentLevel] +
       ePFMap[leggings.enchantment][leggings.enchantmentLevel] +
       ePFMap[boots.enchantment][boots.enchantmentLevel] +
-      ePFMap[boots.featherFalling][boots.featherFallingLevel]
+      ePFMap[boots.featherFalling][boots.featherFallingLevel],
   )
   const ePF = cumulativeEPF / 25 || 1
 

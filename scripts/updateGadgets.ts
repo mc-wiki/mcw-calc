@@ -30,11 +30,7 @@ Promise.all([
   ...(env.API_DEV_URL ? [update('dev', filesDev, definitionDev)] : []),
 ])
 
-async function update(
-  target: 'prod' | 'dev',
-  names: string[],
-  definition: string
-) {
+async function update(target: 'prod' | 'dev', names: string[], definition: string) {
   const bot = await Mwn.init({
     apiUrl: {
       prod: env.API_URL,
@@ -50,9 +46,7 @@ async function update(
       dev: env.PASSWORD_DEV ?? env.PASSWORD,
     }[target],
 
-    userAgent:
-      env.USER_AGENT ??
-      'MCWCalcDeploy (mwn/1; +https://github.com/Dianliang233/mcw-calc)',
+    userAgent: env.USER_AGENT ?? 'MCWCalcDeploy (mwn/1; +https://github.com/Dianliang233/mcw-calc)',
 
     defaultParams: {
       assert: 'user',
@@ -67,7 +61,7 @@ async function update(
       await bot.save(
         `MediaWiki:${names[index]}`,
         file,
-        `Bot: Automatically deploy changes from Git`
+        `Bot: Automatically deploy changes from Git`,
       )
       console.log(`Deployed ${names[index]}`)
     }
@@ -77,7 +71,7 @@ async function update(
     // Replace content between two <!-- Automatically generated, your edit will be overwritten -->
 
     const section = rev.content.match(
-      /<!-- Automatically generated, your edit will be overwritten -->\n((.|\n)+)\n<!-- Automatically generated, your edit will be overwritten -->/
+      /<!-- Automatically generated, your edit will be overwritten -->\n((.|\n)+)\n<!-- Automatically generated, your edit will be overwritten -->/,
     )![1]
     const text = rev.content.replace(section, definition)
     return {

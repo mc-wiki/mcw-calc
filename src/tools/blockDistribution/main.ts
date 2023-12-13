@@ -12,5 +12,5 @@ const createApp =
       vue.createMwApp || vue.createApp
 createApp(App, {
   blocks: targetEl?.getAttribute('data-blocks')?.split(',') ?? ['minecraft:diamond_ore'],
-  blockNames: targetEl?.getAttribute('data-block-names')?.split(',') ?? ['Diamond Ore']
+  blockNames: targetEl?.getAttribute('data-block-names')?.split(',') ?? ['Diamond Ore'],
 }).mount(targetEl)
