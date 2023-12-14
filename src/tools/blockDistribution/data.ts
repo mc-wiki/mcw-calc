@@ -547,6 +547,17 @@ export function getColor(key: string) {
     '#0077cc',
     '#7755ff',
     '#cc00dd',
+    '#9B5FC0',
+    '#BE03FD',
+    '#5170D7',
+    '#826D8C',
+    '#B16002',
+    '#6F7C00',
+    '#8F7303',
+    '#866F85',
+    '#507B9C',
+    '#C45508',
+    '#3778BF',
   ]
   return colorScheme[Math.abs(hash) % colorScheme.length]
 }
