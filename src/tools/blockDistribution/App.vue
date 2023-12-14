@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import * as d3 from 'd3'
 import { overworldBlockMap, netherBlockMap, endBlockMap, getColor } from './data.ts'
-import Plot from './Plot.ts'
-import { computed, ref } from 'vue'
+import { onMounted, ref, onUpdated } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
 import { CdxTab, CdxTabs, CdxCheckbox } from '@wikimedia/codex'
 
@@ -23,11 +22,13 @@ const currentTab = ref(
       : 'end',
 )
 const logarithmicScale = useLocalStorage('mcwBlockDistributionLogarithmicScale', true)
+const showTotal = useLocalStorage('mcwBlockDistributionShowTotal', true)
 
 function plot(
   blockMapFiltered: typeof overworldBlockMapFiltered,
   domain: [number, number],
   logarithmicScale: boolean,
+  showTotal: boolean,
 ) {
   if (blockMapFiltered.length === 0) {
     return null
@@ -93,7 +94,7 @@ function plot(
     string,
   ][]
 
-  if (props.blocks.length > 1) {
+  if (props.blocks.length > 1 && showTotal) {
     // Also add a group for the total count.
     const total = []
     for (let i = domain[0]; i <= domain[1]; i++) {
@@ -177,12 +178,27 @@ function plot(
   }
 }
 
-const overworld = computed(() => plot(overworldBlockMapFiltered, [-64, 255], true))
-const nether = computed(() => plot(netherBlockMapFiltered, [0, 127], true))
-const end = computed(() => plot(endBlockMapFiltered, [0, 255], true))
-const overworldLinear = computed(() => plot(overworldBlockMapFiltered, [-64, 255], false))
-const netherLinear = computed(() => plot(netherBlockMapFiltered, [0, 127], false))
-const endLinear = computed(() => plot(endBlockMapFiltered, [0, 255], false))
+const overworld = ref<HTMLDivElement>()
+const nether = ref<HTMLDivElement>()
+const end = ref<HTMLDivElement>()
+
+onUpdated(update)
+onMounted(update)
+
+function update() {
+  overworld.value?.replaceChildren(
+    plot(overworldBlockMapFiltered, [-64, 255], logarithmicScale.value, showTotal.value) ||
+      document.createElement('div'),
+  )
+  nether.value?.replaceChildren(
+    plot(netherBlockMapFiltered, [0, 127], logarithmicScale.value, showTotal.value) ||
+      document.createElement('div'),
+  )
+  end.value?.replaceChildren(
+    plot(endBlockMapFiltered, [0, 255], logarithmicScale.value, showTotal.value) ||
+      document.createElement('div'),
+  )
+}
 </script>
 <template>
   <h4>Block distribution for {{ props.blockNames.join(', ') }} in Java Edition</h4>
@@ -211,7 +227,7 @@ const endLinear = computed(() => plot(endBlockMapFiltered, [0, 255], false))
         :style="{
           width: '1rem',
           height: '1rem',
-          backgroundColor: 'steelblue',
+          backgroundColor: getColor('Total'),
           marginRight: '0.3rem',
         }"
       />
@@ -240,17 +256,14 @@ const endLinear = computed(() => plot(endBlockMapFiltered, [0, 255], false))
     </div>
   </div>
   <cdx-tabs v-model:active="currentTab">
-    <cdx-tab name="overworld" label="Overworld" v-if="overworld">
-      <Plot :element="overworld" v-if="logarithmicScale" />
-      <Plot :element="overworldLinear" v-else />
+    <cdx-tab name="overworld" label="Overworld" v-if="overworldBlockMapFiltered.length !== 0">
+      <div ref="overworld" />
     </cdx-tab>
-    <cdx-tab name="nether" label="Nether" v-if="nether">
-      <Plot :element="nether" v-if="logarithmicScale" />
-      <Plot :element="netherLinear" v-else />
+    <cdx-tab name="nether" label="Nether" v-if="netherBlockMapFiltered.length !== 0">
+      <div ref="nether" />
     </cdx-tab>
-    <cdx-tab name="end" label="The End" v-if="end">
-      <Plot :element="end" v-if="logarithmicScale" />
-      <Plot :element="endLinear" v-else />
+    <cdx-tab name="end" label="The End" v-if="endBlockMapFiltered.length !== 0">
+      <div ref="end" />
     </cdx-tab>
   </cdx-tabs>
   <cdx-checkbox v-model="logarithmicScale">
@@ -260,6 +273,7 @@ const endLinear = computed(() => plot(endBlockMapFiltered, [0, 255], false))
       block type, making it useful for rare blocks.
     </div>
   </cdx-checkbox>
+  <cdx-checkbox v-model="showTotal"> Show total </cdx-checkbox>
 </template>
 <style>
 .cdx-tabs--quiet > .cdx-tabs__header {
