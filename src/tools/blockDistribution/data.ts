@@ -588,7 +588,7 @@ export function getColor(key: string) {
   return colorScheme[Math.abs(hash) % colorScheme.length]
 }
 
-interface Block {
+export interface Block {
   block: string
   count: number
   pos: number

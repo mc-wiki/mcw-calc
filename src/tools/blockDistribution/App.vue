@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import * as d3 from 'd3'
-import { overworldBlockMap, netherBlockMap, endBlockMap, getColor } from './data.ts'
+import { overworldBlockMap, netherBlockMap, endBlockMap, getColor, type Block } from './data.ts'
 import { onMounted, ref, onUpdated } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
 import { CdxTab, CdxTabs, CdxCheckbox } from '@wikimedia/codex'
@@ -41,6 +41,24 @@ function plot(
   const marginBottom = 30
   const marginLeft = 60
 
+  const totalPoints: Block[] = []
+  if (props.blocks.length > 1 && showTotal) {
+    // Also add a group for the total count.
+    const total = []
+    for (let i = domain[0]; i <= domain[1]; i++) {
+      total.push({
+        pos: i,
+        count: blockMapFiltered
+          .filter((b) => b.pos === i)
+          .reduce((a, b) => a + (b.count <= 0.0001 ? 0 : b.count), 0.0001),
+
+        block: 'Total',
+        color: getColor('Total'),
+      })
+    }
+    totalPoints.push(...total)
+  }
+
   // Declare the x (horizontal position) scale.
   const x = d3
     .scaleLinear()
@@ -49,7 +67,7 @@ function plot(
 
   // Declare the y (vertical position) scale.
   const y = (logarithmicScale ? d3.scaleLog() : d3.scaleLinear())
-    .domain(d3.extent(blockMapFiltered, (d) => d.count) as [number, number])
+    .domain(d3.extent([...blockMapFiltered, ...totalPoints], (d) => d.count) as [number, number])
     .range([height - marginBottom, marginTop])
 
   // Create the SVG container.
@@ -88,28 +106,11 @@ function plot(
     )
 
   // Compute the points in pixel space as [x, y, z], where z is the name of the series.
-  const points = blockMapFiltered.map((d) => [x(d.pos), y(d.count), d.block]) as [
-    number,
-    number,
-    string,
-  ][]
-
-  if (props.blocks.length > 1 && showTotal) {
-    // Also add a group for the total count.
-    const total = []
-    for (let i = domain[0]; i <= domain[1]; i++) {
-      total.push([
-        x(i),
-        y(
-          blockMapFiltered
-            .filter((b) => b.pos === i)
-            .reduce((a, b) => a + (b.count <= 0.0001 ? 0 : b.count), 0.0001),
-        ),
-        'Total',
-      ] as [number, number, string])
-    }
-    points.push(...total)
-  }
+  const points = [...blockMapFiltered, ...totalPoints].map((d) => [
+    x(d.pos),
+    y(d.count),
+    d.block,
+  ]) as [number, number, string][]
 
   // Group the points by series.
   const groups = d3.rollup(
