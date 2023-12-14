@@ -13,6 +13,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@vueuse/core": "^10.7.0",
     "@wikimedia/codex": "0.1.1",
     "d3": "^7.8.5",
     "tsx": "^4.6.2",

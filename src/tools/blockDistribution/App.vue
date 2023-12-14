@@ -3,7 +3,8 @@ import * as d3 from 'd3'
 import { overworldBlockMap, netherBlockMap, endBlockMap, getColor } from './data.ts'
 import Plot from './Plot.ts'
 import { computed, ref } from 'vue'
-import { CdxTab, CdxTabs } from '@wikimedia/codex'
+import { useLocalStorage } from '@vueuse/core'
+import { CdxTab, CdxTabs, CdxCheckbox } from '@wikimedia/codex'
 
 const props = defineProps<{
   blocks: string[]
@@ -21,8 +22,13 @@ const currentTab = ref(
       ? 'nether'
       : 'end',
 )
+const logarithmicScale = useLocalStorage('mcwBlockDistributionLogarithmicScale', true)
 
-function plot(blockMapFiltered: typeof overworldBlockMapFiltered, domain: [number, number]) {
+function plot(
+  blockMapFiltered: typeof overworldBlockMapFiltered,
+  domain: [number, number],
+  logarithmicScale: boolean,
+) {
   if (blockMapFiltered.length === 0) {
     return null
   }
@@ -41,8 +47,7 @@ function plot(blockMapFiltered: typeof overworldBlockMapFiltered, domain: [numbe
     .range([marginLeft, width - marginRight])
 
   // Declare the y (vertical position) scale.
-  const y = d3
-    .scaleLog()
+  const y = (logarithmicScale ? d3.scaleLog() : d3.scaleLinear())
     .domain(d3.extent(blockMapFiltered, (d) => d.count) as [number, number])
     .range([height - marginBottom, marginTop])
 
@@ -172,16 +177,24 @@ function plot(blockMapFiltered: typeof overworldBlockMapFiltered, domain: [numbe
   }
 }
 
-const overworld = computed(() => plot(overworldBlockMapFiltered, [-64, 255]))
-const nether = computed(() => plot(netherBlockMapFiltered, [0, 127]))
-const end = computed(() => plot(endBlockMapFiltered, [0, 255]))
+const overworld = computed(() => plot(overworldBlockMapFiltered, [-64, 255], true))
+const nether = computed(() => plot(netherBlockMapFiltered, [0, 127], true))
+const end = computed(() => plot(endBlockMapFiltered, [0, 255], true))
+const overworldLinear = computed(() => plot(overworldBlockMapFiltered, [-64, 255], false))
+const netherLinear = computed(() => plot(netherBlockMapFiltered, [0, 127], false))
+const endLinear = computed(() => plot(endBlockMapFiltered, [0, 255], false))
 </script>
 <template>
   <h4>Block distribution for {{ props.blockNames.join(', ') }} in Java Edition</h4>
   <p style="font-size: 80%">
-    Note that this chart utilizes the logarithmic scale, which means a slight difference in the
-    Y-coordinate represents a large change in the relative frequency of a block type. Credit to
-    User:Meeples10 whose work on MCResourceAnalyzer made this chart possible.
+    Data from
+    <a
+      href="https://github.com/Meeples10/MCResourceAnalyzer"
+      target="_blank"
+      class="external text"
+      rel="noreferrer noopener"
+      >MCResourceAnalyzer</a
+    >
   </p>
   <div style="display: flex; flex-wrap: wrap; margin-bottom: 0.5rem">
     <div
@@ -228,15 +241,25 @@ const end = computed(() => plot(endBlockMapFiltered, [0, 255]))
   </div>
   <cdx-tabs v-model:active="currentTab">
     <cdx-tab name="overworld" label="Overworld" v-if="overworld">
-      <Plot :element="overworld" />
+      <Plot :element="overworld" v-if="logarithmicScale" />
+      <Plot :element="overworldLinear" v-else />
     </cdx-tab>
     <cdx-tab name="nether" label="Nether" v-if="nether">
-      <Plot :element="nether" />
+      <Plot :element="nether" v-if="logarithmicScale" />
+      <Plot :element="netherLinear" v-else />
     </cdx-tab>
     <cdx-tab name="end" label="The End" v-if="end">
-      <Plot :element="end" />
+      <Plot :element="end" v-if="logarithmicScale" />
+      <Plot :element="endLinear" v-else />
     </cdx-tab>
   </cdx-tabs>
+  <cdx-checkbox v-model="logarithmicScale">
+    Logarithmic scale
+    <div class="oo-ui-labelWidget oo-ui-inline-help">
+      Slight difference in the Y-coordinate represents a large change in the relative frequency of a
+      block type, making it useful for rare blocks.
+    </div>
+  </cdx-checkbox>
 </template>
 <style>
 .cdx-tabs--quiet > .cdx-tabs__header {

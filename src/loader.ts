@@ -5,7 +5,7 @@ calcs.forEach((calc) => {
     console.error('No data-type attribute found on .mcw-calc', calc)
     return
   }
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development' || localStorage.getItem('mcwCalcLocal') === 'true') {
     // @ts-expect-error
     mw.loader.load('http://localhost:8080/Gadget-mcw-calc-' + type + '.js')
   } else {
