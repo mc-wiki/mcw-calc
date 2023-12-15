@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import * as d3 from 'd3'
 import { overworldBlockMap, netherBlockMap, endBlockMap, getColor, type Block } from './data.ts'
-import { onMounted, ref, onUpdated } from 'vue'
+import { onMounted, ref, computed, onUpdated } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
 import { CdxTab, CdxTabs, CdxCheckbox } from '@wikimedia/codex'
 
@@ -10,14 +10,22 @@ const props = defineProps<{
   blockNames: string[]
 }>()
 
-const overworldBlockMapFiltered = overworldBlockMap.filter((d) => props.blocks.includes(d.block))
-const netherBlockMapFiltered = netherBlockMap.filter((d) => props.blocks.includes(d.block))
-const endBlockMapFiltered = endBlockMap.filter((d) => props.blocks.includes(d.block))
+const enabledBlocks = ref(props.blocks.slice())
+
+const overworldBlockMapFiltered = computed(() =>
+  overworldBlockMap.filter((d) => enabledBlocks.value.includes(d.block)),
+)
+const netherBlockMapFiltered = computed(() =>
+  netherBlockMap.filter((d) => enabledBlocks.value.includes(d.block)),
+)
+const endBlockMapFiltered = computed(() =>
+  endBlockMap.filter((d) => enabledBlocks.value.includes(d.block)),
+)
 
 const currentTab = ref(
-  overworldBlockMapFiltered.length !== 0
+  overworldBlockMapFiltered.value.length !== 0
     ? 'overworld'
-    : netherBlockMapFiltered.length !== 0
+    : netherBlockMapFiltered.value.length !== 0
       ? 'nether'
       : 'end',
 )
@@ -25,7 +33,7 @@ const logarithmicScale = useLocalStorage('mcwBlockDistributionLogarithmicScale',
 const showTotal = useLocalStorage('mcwBlockDistributionShowTotal', true)
 
 function plot(
-  blockMapFiltered: typeof overworldBlockMapFiltered,
+  blockMapFiltered: Block[],
   domain: [number, number],
   logarithmicScale: boolean,
   showTotal: boolean,
@@ -42,7 +50,7 @@ function plot(
   const marginLeft = 60
 
   const totalPoints: Block[] = []
-  if (props.blocks.length > 1 && showTotal) {
+  if (blockMapFiltered.length > 1 && showTotal) {
     // Also add a group for the total count.
     const total = []
     for (let i = domain[0]; i <= domain[1]; i++) {
@@ -188,15 +196,15 @@ onMounted(update)
 
 function update() {
   overworld.value?.replaceChildren(
-    plot(overworldBlockMapFiltered, [-64, 255], logarithmicScale.value, showTotal.value) ||
+    plot(overworldBlockMapFiltered.value, [-64, 255], logarithmicScale.value, showTotal.value) ||
       document.createElement('div'),
   )
   nether.value?.replaceChildren(
-    plot(netherBlockMapFiltered, [0, 127], logarithmicScale.value, showTotal.value) ||
+    plot(netherBlockMapFiltered.value, [0, 127], logarithmicScale.value, showTotal.value) ||
       document.createElement('div'),
   )
   end.value?.replaceChildren(
-    plot(endBlockMapFiltered, [0, 255], logarithmicScale.value, showTotal.value) ||
+    plot(endBlockMapFiltered.value, [0, 255], logarithmicScale.value, showTotal.value) ||
       document.createElement('div'),
   )
 }
@@ -211,11 +219,11 @@ function update() {
       class="external text"
       rel="noreferrer noopener"
       >MCResourceAnalyzer</a
-    >
+    >.
   </p>
   <div style="display: flex; flex-wrap: wrap; margin-bottom: 0.5rem">
     <div
-      v-if="props.blocks.length > 1"
+      v-if="enabledBlocks.length > 1"
       style="
         display: flex;
         align-items: center;
@@ -224,18 +232,23 @@ function update() {
         font-size: 90%;
       "
     >
-      <div
+      <input
+        v-if="props.blocks.length > 1"
+        type="checkbox"
+        :disabled="enabledBlocks.length === 1"
+        v-model="showTotal"
+        id="total"
         :style="{
           width: '1rem',
           height: '1rem',
-          backgroundColor: getColor('Total'),
           marginRight: '0.3rem',
+          accentColor: getColor('Total'),
         }"
       />
-      Total
+      <label for="total">Total</label>
     </div>
     <div
-      v-for="(block, index) in props.blocks"
+      v-for="block in props.blocks"
       :key="block"
       style="
         display: flex;
@@ -245,15 +258,28 @@ function update() {
         font-size: 90%;
       "
     >
-      <div
+      <input
+        type="checkbox"
+        :checked="enabledBlocks.includes(block)"
+        :disabled="enabledBlocks.length === 1 && enabledBlocks.includes(block)"
+        :id="block"
+        @change="
+          () => {
+            if (enabledBlocks.includes(block)) {
+              enabledBlocks.splice(enabledBlocks.indexOf(block), 1)
+            } else {
+              enabledBlocks.push(block)
+            }
+          }
+        "
         :style="{
           width: '1rem',
           height: '1rem',
-          backgroundColor: getColor(block),
           marginRight: '0.3rem',
+          accentColor: getColor(block),
         }"
       />
-      {{ props.blockNames[index] }}
+      <label :for="block">{{ props.blockNames[props.blocks.indexOf(block)] }}</label>
     </div>
   </div>
   <cdx-tabs v-model:active="currentTab">
@@ -271,10 +297,9 @@ function update() {
     Logarithmic scale
     <div class="oo-ui-labelWidget oo-ui-inline-help">
       Slight difference in the Y-coordinate represents a large change in the relative frequency of a
-      block type, making it useful for rare blocks.
+      block type, making it useful to see small changes on the graph when there is a large spike.
     </div>
   </cdx-checkbox>
-  <cdx-checkbox v-model="showTotal"> Show total </cdx-checkbox>
 </template>
 <style>
 .cdx-tabs--quiet > .cdx-tabs__header {
