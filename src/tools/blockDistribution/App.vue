@@ -259,6 +259,7 @@ function update() {
       "
     >
       <input
+        v-if="props.blocks.length > 1"
         type="checkbox"
         :checked="enabledBlocks.includes(block)"
         :disabled="enabledBlocks.length === 1 && enabledBlocks.includes(block)"
@@ -279,18 +280,27 @@ function update() {
           accentColor: getColor(block),
         }"
       />
+      <div
+        v-else
+        :style="{
+          width: '1rem',
+          height: '1rem',
+          marginRight: '0.3rem',
+          backgroundColor: getColor(block),
+        }"
+      />
       <label :for="block">{{ props.blockNames[props.blocks.indexOf(block)] }}</label>
     </div>
   </div>
   <cdx-tabs v-model:active="currentTab">
     <cdx-tab name="overworld" label="Overworld" v-if="overworldBlockMapFiltered.length !== 0">
-      <div ref="overworld" />
+      <div style="width: 100%; overflow: auto" ref="overworld" />
     </cdx-tab>
     <cdx-tab name="nether" label="Nether" v-if="netherBlockMapFiltered.length !== 0">
-      <div ref="nether" />
+      <div style="width: 100%; overflow: auto" ref="nether" />
     </cdx-tab>
     <cdx-tab name="end" label="The End" v-if="endBlockMapFiltered.length !== 0">
-      <div ref="end" />
+      <div style="width: 100%; overflow: auto" ref="end" />
     </cdx-tab>
   </cdx-tabs>
   <cdx-checkbox v-model="logarithmicScale">
