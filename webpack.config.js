@@ -100,7 +100,7 @@ const config = (env, argv) => {
       new webpack.BannerPlugin('Automatically generated, your edit will be overwritten'),
     ],
     performance: {
-      hint: false,
+      hints: false,
     },
     module: {
       rules: [
