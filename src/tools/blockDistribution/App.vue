@@ -84,6 +84,7 @@ function plot(
   // Add the x-axis.
   svg
     .append('g')
+    .attr('class', 'isolate')
     .attr('transform', `translate(0,${height - marginBottom})`)
     .call(d3.axisBottom(x).ticks(20))
     .call((g) => g.select('.domain').remove())
@@ -101,6 +102,7 @@ function plot(
   // Add the y-axis.
   svg
     .append('g')
+    .attr('class', 'isolate')
     .attr('transform', `translate(${marginLeft},0)`)
     .call(d3.axisLeft(y).ticks(10, 'f'))
     .call((g) =>
@@ -131,6 +133,7 @@ function plot(
   const line = d3.line()
   const path = svg
     .append('g')
+    .attr('class', 'isolate')
     .attr('fill', 'none')
     .attr('stroke', 'steelblue')
     .attr('stroke-width', 1.5)
@@ -144,7 +147,7 @@ function plot(
     .attr('d', line as any)
 
   // Add an invisible layer for the interactive tip.
-  const dot = svg.append('g').attr('display', 'none')
+  const dot = svg.append('g').attr('class', 'isolate').attr('display', 'none')
 
   dot.append('circle').attr('r', 2.5).attr('fill', 'currentColor')
 
@@ -322,5 +325,9 @@ function update() {
 
 ul.cdx-tabs__list {
   margin: 0;
+}
+
+g.isolate {
+  isolation: isolate;
 }
 </style>
