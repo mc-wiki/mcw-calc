@@ -329,5 +329,6 @@ ul.cdx-tabs__list {
 
 g.isolate {
   isolation: isolate;
+  pointer-events: none;
 }
 </style>
