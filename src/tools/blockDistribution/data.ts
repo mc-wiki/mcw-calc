@@ -705,22 +705,25 @@ export interface Block {
   color: string
 }
 
-export const overworldBlockMap = generateBlockMap(
-  overworldRaw,
-  -64,
-  overworldRaw['minecraft:bedrock'][0],
-)
-export const netherBlockMap = generateBlockMap(netherRaw, 0, netherRaw['minecraft:bedrock'][0])
-export const endBlockMap = generateBlockMap(endRaw, 0, endRaw['minecraft:air'][0])
+export const overworldBlockMap = generateBlockMap(overworldRaw, -64)
+export const netherBlockMap = generateBlockMap(netherRaw, 0)
+export const endBlockMap = generateBlockMap(endRaw, 0)
 
-function generateBlockMap(data: Record<string, number[]>, offset: number, totalBlocks: number) {
+function generateBlockMap(data: Record<string, number[]>, offset: number) {
   const blockMap: Block[] = []
+  const totalBlocks: number[] = new Array(320).fill(0)
+  for (const key in data) {
+    for (const [index, count] of data[key].entries()) {
+      totalBlocks[index] += count
+    }
+  }
+  console.log(totalBlocks)
   for (const key in data) {
     for (const [index, count] of data[key].entries()) {
       blockMap.push({
         block: key,
         // number of X found in 100,000 blocks
-        count: count === 0 ? 0.0001 : (count / totalBlocks) * 100000,
+        count: count,
         pos: index + offset,
         color: getColor(key),
       })

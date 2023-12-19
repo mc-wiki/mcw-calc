@@ -9,5 +9,6 @@ If you are interested in this project, feel free to join the thread in #project-
 1. Clone the repo
 2. Run `pnpm install` (if you don't have pnpm installed then install it first using `corepack prepare pnpm@latest --activate`)
 3. Run `pnpm run dev`
-4. Add this to your common.js: `mw.loader.load('http://localhost:8080/Gadget-mcw-calc-core.js')`
+4. Run this in your browser console with MCW open: `localStorage.setItem('mcwCalcLocal', 'true')`
 5. Go to User:Dianliang233/calc for a list of all tools; to invoke a specific tool use this `<div class="mcw-calc" data-type="(TOOL NAME GOES HERE)"></div>`
+6. If you want to quit development mode, don't forget to run `localStorage.setItem('mcwCalcLocal', 'false')`
