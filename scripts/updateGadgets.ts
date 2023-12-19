@@ -60,7 +60,7 @@ async function update(target: 'prod' | 'dev', names: string[], definition: strin
     if (names[index] !== 'Gadgets-definition') {
       await bot.save(
         `MediaWiki:${names[index]}`,
-        "/* Automatically deployed from GitHub: https://github.com/Dianliang233/mcw-calc */\n" + file,
+        file,
         `Bot: Automatically deploy changes from Git`,
       )
       console.log(`Deployed ${names[index]}`)
