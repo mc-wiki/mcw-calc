@@ -6,6 +6,8 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import webpack from 'webpack'
+import TerserPlugin from 'terser-webpack-plugin'
+import * as prettier from 'prettier'
 
 /** @returns {import('webpack').Configuration} */
 const config = (env, argv) => {
@@ -56,7 +58,36 @@ const config = (env, argv) => {
       },
     },
     optimization: {
-      minimize: false,
+      minimize: true,
+      minimizer: [
+        new TerserPlugin({
+          minify: async (file, sourceMap, minimizerOptions, extractComments) => {
+            const terserStep = await TerserPlugin.terserMinify(
+              file,
+              sourceMap,
+              minimizerOptions,
+              extractComments,
+            )
+            return {
+              code: await prettier.format(terserStep.code, {
+                filepath: Object.keys(file)[0],
+              }),
+              map: terserStep.map,
+              warnings: terserStep.warnings,
+              errors: terserStep.errors,
+              extractedComments: terserStep.extractedComments,
+            }
+          },
+          extractComments: false,
+          terserOptions: {
+            compress: { pure_funcs: ['generateBlockMap'], passes: 2 },
+            mangle: false,
+            format: {
+              comments: true,
+            },
+          },
+        }),
+      ],
     },
     target: ['web', 'es5'],
     output: {
@@ -69,7 +100,7 @@ const config = (env, argv) => {
     },
     plugins: [
       new VueLoaderPlugin(),
-      prodDev(new BundleAnalyzerPlugin({ analyzerMode: 'static' }), ''),
+      new BundleAnalyzerPlugin({ analyzerMode: 'static', openAnalyzer: false }),
       new MiniCssExtractPlugin({
         runtime: false,
         filename: 'Gadget-mcw-calc-[name].css',
