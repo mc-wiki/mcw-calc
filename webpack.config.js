@@ -61,6 +61,7 @@ const config = (env, argv) => {
       minimize: true,
       minimizer: [
         new TerserPlugin({
+          parallel: false,
           minify: async (file, sourceMap, minimizerOptions, extractComments) => {
             const terserStep = await TerserPlugin.terserMinify(
               file,
