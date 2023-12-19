@@ -213,7 +213,7 @@ function update() {
 }
 </script>
 <template>
-  <h4>Block distribution for {{ props.blockNames.join(', ') }} in Java Edition</h4>
+  <h4>Block distribution for {{ props.blockNames.join(', ') }} <i>in Java Edition</i></h4>
   <p style="font-size: 80%">
     Data from
     <a
