@@ -131,7 +131,9 @@ const config = (env, argv) => {
         __VUE_OPTIONS_API__: true,
         __VUE_PROD_DEVTOOLS__: false,
       }),
-      new webpack.BannerPlugin('Automatically generated, your edit will be overwritten'),
+      new webpack.BannerPlugin(
+        'Automatically deployed from GitHub: <https://github.com/Dianliang233/mcw-calc>, your edit will be overwritten',
+      ),
     ],
     performance: {
       hints: false,
