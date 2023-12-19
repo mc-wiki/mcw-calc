@@ -319,6 +319,10 @@ function update() {
   background-color: transparent;
 }
 
+.cdx-tabs--quiet > .cdx-tabs__header .cdx-tabs__list__item--enabled [role="tab"] {
+  color: var(--content-text-color);
+}
+
 .cdx-tabs__next-scroller {
   display: none;
 }
