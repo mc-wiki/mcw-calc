@@ -72,6 +72,7 @@ const config = (env, argv) => {
             return {
               code: await prettier.format(terserStep.code, {
                 filepath: Object.keys(file)[0],
+                trailingComma: 'es5',
               }),
               map: terserStep.map,
               warnings: terserStep.warnings,
@@ -81,6 +82,7 @@ const config = (env, argv) => {
           },
           extractComments: false,
           terserOptions: {
+            ecma: 5,
             compress: { pure_funcs: ['generateBlockMap'], passes: 2 },
             mangle: false,
             format: {
