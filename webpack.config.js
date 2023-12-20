@@ -11,10 +11,12 @@ import * as prettier from 'prettier'
 
 /** @returns {import('webpack').Configuration} */
 const config = (env, argv) => {
-  const entries = globSync('./src/tools/**/main.ts')
+  const entries = globSync('./src/tools/**/main.ts', {
+    posix: true,
+  })
     .map((path) => `./${path}`)
     .reduce((acc, path) => {
-      const key = path.replace('./src/tools/', '').replace('/main.ts', '')
+      const key = path.match(/src\/tools\/(.+)\/main\.ts/)[1]
       acc[key] = {
         import: path,
       }

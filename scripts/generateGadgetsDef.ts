@@ -15,9 +15,9 @@ const manifest = {
   dev: ['Gadget-mcw-calc-core.js'] as string[],
 }
 
-const files = await glob('./dist/Gadget-mcw-calc-*.js')
+const files = await glob('./dist/Gadget-mcw-calc-*.js', { posix: true })
 const names = files.map((file) => file.match(/dist\/Gadget-mcw-calc-(.*).js/)![1])
-const cssFiles = await glob('./dist/Gadget-mcw-calc-*.css')
+const cssFiles = await glob('./dist/Gadget-mcw-calc-*.css', { posix: true })
 const cssNames = cssFiles.map((file) => file.match(/dist\/Gadget-mcw-calc-(.*).css/)![1])
 console.log(`These tools are found: ${names.join(', ')}`)
 
