@@ -63,7 +63,7 @@ async function update(target: 'prod' | 'dev', names: string[], definition: strin
         file,
         `Bot: Automatically deploy changes from Git`,
       )
-      console.log(`Deployed ${names[index]}`)
+      console.log(`Deployed ${names[index]} to ${target}`)
     }
   })
 

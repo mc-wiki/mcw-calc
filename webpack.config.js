@@ -103,7 +103,7 @@ const config = (env, argv) => {
     },
     plugins: [
       new VueLoaderPlugin(),
-      new BundleAnalyzerPlugin({ analyzerMode: 'static', openAnalyzer: false }),
+      prodDev(new BundleAnalyzerPlugin({ analyzerMode: 'static', openAnalyzer: false }), ''),
       new MiniCssExtractPlugin({
         runtime: false,
         filename: 'Gadget-mcw-calc-[name].css',
