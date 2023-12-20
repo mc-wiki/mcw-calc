@@ -133,7 +133,7 @@ const config = (env, argv) => {
         __VUE_PROD_DEVTOOLS__: false,
       }),
       new webpack.BannerPlugin(
-        'Automatically deployed from GitHub: <https://github.com/Dianliang233/mcw-calc>, your edit will be overwritten',
+        'Automatically deployed from GitHub: <https://github.com/mc-wiki/mcw-calc>, your edit will be overwritten',
       ),
       new LicensePlugin(),
     ],

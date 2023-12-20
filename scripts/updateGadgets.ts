@@ -46,7 +46,7 @@ async function update(target: 'prod' | 'dev', names: string[], definition: strin
       dev: env.PASSWORD_DEV ?? env.PASSWORD,
     }[target],
 
-    userAgent: env.USER_AGENT ?? 'MCWCalcDeploy (mwn/1; +https://github.com/Dianliang233/mcw-calc)',
+    userAgent: env.USER_AGENT ?? 'MCWCalcDeploy (mwn/1; +https://github.com/mc-wiki/mcw-calc)',
 
     defaultParams: {
       assert: 'user',
