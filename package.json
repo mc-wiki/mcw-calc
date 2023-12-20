@@ -16,7 +16,6 @@
     "@vueuse/core": "^10.7.0",
     "@wikimedia/codex": "0.1.1",
     "d3": "^7.8.5",
-    "tsx": "^4.6.2",
     "vue": "3.2.37"
   },
   "devDependencies": {
@@ -24,12 +23,12 @@
     "@babel/preset-env": "^7.23.6",
     "@babel/preset-typescript": "^7.23.3",
     "@prettier/sync": "^0.3.0",
-    "@rushstack/eslint-patch": "^1.6.0",
+    "@rushstack/eslint-patch": "^1.6.1",
     "@tsconfig/node20": "^20.1.2",
     "@types/d3": "^7.4.3",
-    "@types/node": "^20.10.4",
-    "@typescript-eslint/eslint-plugin": "^6.14.0",
-    "@typescript-eslint/parser": "^6.14.0",
+    "@types/node": "^20.10.5",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
     "@vue/eslint-config-prettier": "^8.0.0",
     "@vue/eslint-config-typescript": "^12.0.0",
     "@vue/tsconfig": "^0.4.0",
@@ -37,13 +36,14 @@
     "babel-preset-typescript-vue3": "^2.0.17",
     "css-loader": "^6.8.1",
     "dotenv": "^16.3.1",
-    "eslint": "^8.55.0",
+    "eslint": "^8.56.0",
     "glob": "^10.3.10",
-    "html-webpack-plugin": "^5.5.4",
+    "html-webpack-plugin": "^5.6.0",
     "mini-css-extract-plugin": "^2.7.6",
-    "mwn": "^2.0.1",
+    "mwn": "^2.0.2",
     "prettier": "3.1.1",
     "terser-webpack-plugin": "^5.3.9",
+    "tsx": "^4.7.0",
     "typescript": "^5.3.3",
     "vue-loader": "^17.2.2",
     "vue-style-loader": "^4.1.3",
@@ -51,6 +51,7 @@
     "webpack": "^5.89.0",
     "webpack-bundle-analyzer": "^4.10.1",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^4.15.1"
+    "webpack-dev-server": "^4.15.1",
+    "webpack-license-plugin": "^4.4.2"
   }
 }
