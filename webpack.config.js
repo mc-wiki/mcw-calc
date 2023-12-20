@@ -8,7 +8,6 @@ import HtmlWebpackPlugin from 'html-webpack-plugin'
 import webpack from 'webpack'
 import TerserPlugin from 'terser-webpack-plugin'
 import * as prettier from 'prettier'
-import LicensePlugin from 'webpack-license-plugin'
 
 /** @returns {import('webpack').Configuration} */
 const config = (env, argv) => {
@@ -135,7 +134,6 @@ const config = (env, argv) => {
       new webpack.BannerPlugin(
         'Automatically deployed from GitHub: <https://github.com/mc-wiki/mcw-calc>, your edit will be overwritten',
       ),
-      new LicensePlugin(),
     ],
     performance: {
       hints: false,
