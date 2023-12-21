@@ -4,13 +4,18 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@wikimedia/codex@0.1.1':
+    hash: ylhkz7egmcr2pv7eauhmnwy6km
+    path: patches/@wikimedia__codex@0.1.1.patch
+
 dependencies:
   '@vueuse/core':
     specifier: ^10.7.0
     version: 10.7.0(vue@3.2.37)
   '@wikimedia/codex':
     specifier: 0.1.1
-    version: 0.1.1(vue@3.2.37)
+    version: 0.1.1(patch_hash=ylhkz7egmcr2pv7eauhmnwy6km)(vue@3.2.37)
   d3:
     specifier: ^7.8.5
     version: 7.8.5
@@ -2651,7 +2656,7 @@ packages:
       webpack-dev-server: 4.15.1(webpack-cli@5.1.4)(webpack@5.89.0)
     dev: true
 
-  /@wikimedia/codex@0.1.1(vue@3.2.37):
+  /@wikimedia/codex@0.1.1(patch_hash=ylhkz7egmcr2pv7eauhmnwy6km)(vue@3.2.37):
     resolution: {integrity: sha512-Ep/JNUm2mE5zzanTP8IBGP9sUHkNlY7gnJise9Bldbg7CSJEijRj343QHS6x4ZxDO6MGzknpDmjI3SnS7eDjnQ==}
     engines: {node: '>=14', npm: '>=7.21.0'}
     peerDependencies:
@@ -2659,6 +2664,7 @@ packages:
     dependencies:
       vue: 3.2.37
     dev: false
+    patched: true
 
   /@xtuc/ieee754@1.2.0:
     resolution: {integrity: sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==}

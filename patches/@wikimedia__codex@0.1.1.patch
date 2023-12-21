@@ -1,0 +1,13 @@
+diff --git a/dist/types/components/text-input/TextInput.vue.d.ts b/dist/types/components/text-input/TextInput.vue.d.ts
+index 9077c7170cf811c4033a49eea8bd607d478f10e0..53617e9ec45aa534460a47f366e274ad50c4b69b 100644
+--- a/dist/types/components/text-input/TextInput.vue.d.ts
++++ b/dist/types/components/text-input/TextInput.vue.d.ts
+@@ -16,7 +16,7 @@ declare const _default: import("vue").DefineComponent<{
+      * @values 'text', 'search'
+      */
+     inputType: {
+-        type: PropType<"search" | "text">;
++        type: PropType<"search" | "text" | "number">;
+         default: string;
+         validator: import("../../types").StringTypeValidator<"search" | "text">;
+     };
