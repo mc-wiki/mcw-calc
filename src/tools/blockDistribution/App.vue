@@ -12,15 +12,37 @@ const props = defineProps<{
 
 const enabledBlocks = ref(props.blocks.slice())
 
-const overworldBlockMapFiltered = computed(() =>
-  overworldBlockMap.filter((d) => enabledBlocks.value.includes(d.block)),
-)
-const netherBlockMapFiltered = computed(() =>
-  netherBlockMap.filter((d) => enabledBlocks.value.includes(d.block)),
-)
-const endBlockMapFiltered = computed(() =>
-  endBlockMap.filter((d) => enabledBlocks.value.includes(d.block)),
-)
+const logarithmicScale = useLocalStorage('mcwBlockDistributionLogarithmicScale', true)
+const showTotal = useLocalStorage('mcwBlockDistributionShowTotal', true)
+const onlyShowTotal = computed(() => enabledBlocks.value.length === 0 && showTotal.value)
+
+const overworldBlockMapFiltered = computed(() => {
+  if (onlyShowTotal.value) {
+    return overworldBlockMap.filter((d) => props.blocks.includes(d.block))
+  }
+  if (enabledBlocks.value.length === 0) {
+    return []
+  }
+  return overworldBlockMap.filter((d) => enabledBlocks.value.includes(d.block))
+})
+const netherBlockMapFiltered = computed(() => {
+  if (enabledBlocks.value.length === 0) {
+    return []
+  }
+  if (onlyShowTotal.value) {
+    return netherBlockMap.filter((d) => props.blocks.includes(d.block))
+  }
+  return netherBlockMap.filter((d) => enabledBlocks.value.includes(d.block))
+})
+const endBlockMapFiltered = computed(() => {
+  if (enabledBlocks.value.length === 0) {
+    return []
+  }
+  if (onlyShowTotal.value) {
+    return endBlockMap.filter((d) => props.blocks.includes(d.block))
+  }
+  return endBlockMap.filter((d) => enabledBlocks.value.includes(d.block))
+})
 
 const currentTab = ref(
   overworldBlockMapFiltered.value.length !== 0
@@ -29,14 +51,13 @@ const currentTab = ref(
       ? 'nether'
       : 'end',
 )
-const logarithmicScale = useLocalStorage('mcwBlockDistributionLogarithmicScale', true)
-const showTotal = useLocalStorage('mcwBlockDistributionShowTotal', true)
 
 function plot(
   blockMapFiltered: Block[],
   domain: [number, number],
   logarithmicScale: boolean,
   showTotal: boolean,
+  onlyShowTotal: boolean,
 ) {
   if (blockMapFiltered.length === 0) {
     return null
@@ -116,7 +137,7 @@ function plot(
     )
 
   // Compute the points in pixel space as [x, y, z], where z is the name of the series.
-  const points = [...blockMapFiltered, ...totalPoints].map((d) => [
+  const points = [...(onlyShowTotal ? [] : blockMapFiltered), ...totalPoints].map((d) => [
     x(d.pos),
     y(d.count),
     d.block,
@@ -190,6 +211,17 @@ function plot(
   }
 }
 
+function onCheckboxChange(block: string) {
+  console.log(enabledBlocks.value)
+  if (enabledBlocks.value.includes(block)) {
+    enabledBlocks.value.splice(enabledBlocks.value.indexOf(block), 1)
+  } else {
+    enabledBlocks.value.push(block)
+  }
+
+  console.log(enabledBlocks.value)
+}
+
 const overworld = ref<HTMLDivElement>()
 const nether = ref<HTMLDivElement>()
 const end = ref<HTMLDivElement>()
@@ -199,16 +231,31 @@ onMounted(update)
 
 function update() {
   overworld.value?.replaceChildren(
-    plot(overworldBlockMapFiltered.value, [-64, 255], logarithmicScale.value, showTotal.value) ||
-      document.createElement('div'),
+    plot(
+      overworldBlockMapFiltered.value,
+      [-64, 255],
+      logarithmicScale.value,
+      showTotal.value,
+      onlyShowTotal.value,
+    )!,
   )
   nether.value?.replaceChildren(
-    plot(netherBlockMapFiltered.value, [0, 127], logarithmicScale.value, showTotal.value) ||
-      document.createElement('div'),
+    plot(
+      netherBlockMapFiltered.value,
+      [0, 127],
+      logarithmicScale.value,
+      showTotal.value,
+      onlyShowTotal.value,
+    )!,
   )
   end.value?.replaceChildren(
-    plot(endBlockMapFiltered.value, [0, 255], logarithmicScale.value, showTotal.value) ||
-      document.createElement('div'),
+    plot(
+      endBlockMapFiltered.value,
+      [0, 255],
+      logarithmicScale.value,
+      showTotal.value,
+      onlyShowTotal.value,
+    )!,
   )
 }
 </script>
@@ -226,7 +273,7 @@ function update() {
   </p>
   <div style="display: flex; flex-wrap: wrap; margin-bottom: 0.5rem">
     <div
-      v-if="enabledBlocks.length > 1"
+      v-if="props.blocks.length > 1"
       style="
         display: flex;
         align-items: center;
@@ -236,9 +283,8 @@ function update() {
       "
     >
       <input
-        v-if="props.blocks.length > 1"
         type="checkbox"
-        :disabled="enabledBlocks.length === 1"
+        :disabled="enabledBlocks.length <= 1"
         v-model="showTotal"
         id="total"
         :style="{
@@ -265,17 +311,8 @@ function update() {
         v-if="props.blocks.length > 1"
         type="checkbox"
         :checked="enabledBlocks.includes(block)"
-        :disabled="enabledBlocks.length === 1 && enabledBlocks.includes(block)"
-        :id="block"
-        @change="
-          () => {
-            if (enabledBlocks.includes(block)) {
-              enabledBlocks.splice(enabledBlocks.indexOf(block), 1)
-            } else {
-              enabledBlocks.push(block)
-            }
-          }
-        "
+        :id="`blockLabel_${block}`"
+        @change="() => onCheckboxChange(block)"
         :style="{
           width: '1rem',
           height: '1rem',
@@ -292,7 +329,9 @@ function update() {
           backgroundColor: getColor(block),
         }"
       />
-      <label :for="block">{{ props.blockNames[props.blocks.indexOf(block)] }}</label>
+      <label :for="`blockLabel_${block}`">{{
+        props.blockNames[props.blocks.indexOf(block)]
+      }}</label>
     </div>
   </div>
   <cdx-tabs v-model:active="currentTab">
@@ -319,7 +358,7 @@ function update() {
   background-color: transparent;
 }
 
-.cdx-tabs--quiet > .cdx-tabs__header .cdx-tabs__list__item--enabled [role="tab"] {
+.cdx-tabs--quiet > .cdx-tabs__header .cdx-tabs__list__item--enabled [role='tab'] {
   color: var(--content-text-color);
 }
 
