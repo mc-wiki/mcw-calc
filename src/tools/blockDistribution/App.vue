@@ -212,14 +212,11 @@ function plot(
 }
 
 function onCheckboxChange(block: string) {
-  console.log(enabledBlocks.value)
   if (enabledBlocks.value.includes(block)) {
     enabledBlocks.value.splice(enabledBlocks.value.indexOf(block), 1)
   } else {
     enabledBlocks.value.push(block)
   }
-
-  console.log(enabledBlocks.value)
 }
 
 const overworld = ref<HTMLDivElement>()
