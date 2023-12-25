@@ -44,6 +44,7 @@
     "prettier": "3.1.1",
     "terser-webpack-plugin": "^5.3.9",
     "tsx": "^4.7.0",
+    "types-mediawiki": "^1.4.0",
     "typescript": "^5.3.3",
     "vue-loader": "^17.2.2",
     "vue-style-loader": "^4.1.3",

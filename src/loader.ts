@@ -6,10 +6,8 @@ calcs.forEach((calc) => {
     return
   }
   if (process.env.NODE_ENV === 'development' || localStorage.getItem('mcwCalcLocal') === 'true') {
-    // @ts-expect-error
     mw.loader.load('http://localhost:8080/Gadget-mcw-calc-' + type + '.js')
   } else {
-    // @ts-expect-error
     mw.loader.load('ext.gadget.mcw-calc-' + type)
   }
 })

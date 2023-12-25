@@ -99,6 +99,9 @@ devDependencies:
   tsx:
     specifier: ^4.7.0
     version: 4.7.0
+  types-mediawiki:
+    specifier: ^1.4.0
+    version: 1.4.0
   typescript:
     specifier: ^5.3.3
     version: 5.3.3

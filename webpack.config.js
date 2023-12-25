@@ -146,6 +146,12 @@ const config = (env, argv) => {
           test: /\.vue$/,
           loader: 'vue-loader',
           options: {
+            compilerOptions: {
+              whitespace: 'condense',
+              compatConfig: {
+                MODE: 3,
+              },
+            },
             experimentalInlineMatchResource: true,
           },
         },
