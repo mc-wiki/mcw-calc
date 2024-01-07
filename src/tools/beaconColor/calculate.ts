@@ -35,12 +35,19 @@ export const colorLabMap = Object.fromEntries(
 
 export type Color = keyof typeof colorMap
 
+function floatRgbToInteger(rgb: [number, number, number]) {
+  return rgb.map((v) => Math.floor(v * 255)) as [number, number, number]
+}
+
 export function sequenceToColor(c: Color[]) {
-  let color = colorMap[c[0]]
-  for (let i = 0; i < c.length; i++) {
-    color = (color + colorMap[c[i]]) / 2
+  const color = separateRgb(colorMap[c[0]]).map((v) => v / 255) as [number, number, number]
+  for (let i = 1; i < c.length; i++) {
+    const [r, g, b] = colorRgbMap[c[i]]
+    color[0] = (color[0] + r / 255) / 2
+    color[1] = (color[1] + g / 255) / 2
+    color[2] = (color[2] + b / 255) / 2
   }
-  return separateRgb(color)
+  return floatRgbToInteger(color)
 }
 
 export function separateRgb(rgb: number): [number, number, number] {
