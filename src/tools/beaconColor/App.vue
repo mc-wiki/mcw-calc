@@ -5,7 +5,7 @@ import { CdxButton } from '@wikimedia/codex'
 import { type Color, colorToSequence, colorStringToRgb } from './calculate.ts'
 
 const color = ref('#f9fffe')
-const sequence = ref<[Color[], number, [number, number, number]]>([['White'], 0, [255, 255, 255]])
+const sequence = ref<[Color[], number, [number, number, number]]>([['White'], 0, [249, 255, 254]])
 
 async function updateSequence(targetColor: [number, number, number]) {
   await nextTick()
