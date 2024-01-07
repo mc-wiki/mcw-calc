@@ -5,7 +5,7 @@ import { type Color, colorToSequence, colorStringToRgb } from './calculate.ts'
 import { nextTick } from 'vue'
 
 const color = ref('#f9fffe')
-const sequence = ref<[Color[], number, [number, number, number]]>([[], 0, [0, 0, 0]])
+const sequence = ref<[Color[], number, [number, number, number]]>([['White'], 0, [255, 255, 255]])
 
 async function updateSequence(targetColor: [number, number, number]) {
   await nextTick()
@@ -13,24 +13,46 @@ async function updateSequence(targetColor: [number, number, number]) {
 }
 </script>
 <template>
-  <label for="color-picker">Color</label>
-  <input type="color" v-model="color" id="color-picker" />
-  <p>Sequence:</p>
-  <ul>
-    <li>
-      {{ sequence[0].join(' -> ') }} (dE = {{ sequence[1].toFixed(2) }})
-      <span
-        :style="{
-          borderRadius: '50%',
-          width: '1em',
-          height: '1em',
-          display: 'inline-block',
-          backgroundColor: `rgb(${sequence[2][0]}, ${sequence[2][1]}, ${sequence[2][2]})`,
-          border: '1px solid black',
-        }"
-      ></span>
-    </li>
-  </ul>
-  <cdx-button @click="updateSequence(colorStringToRgb(color))">Update Color</cdx-button>
+  <h4>Calculate tinted glass sequence for a color</h4>
+  <div
+    :style="{
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: '.5rem',
+    }"
+  >
+    <label for="color-picker">Color:</label>
+    <input type="color" v-model="color" id="color-picker" />
+    <cdx-button @click="updateSequence(colorStringToRgb(color))">Calculate</cdx-button>
+  </div>
+  <div
+    :style="{
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: '.5rem',
+    }"
+  >
+    Sequence: {{ sequence[0].join(' -> ') }}
+    <span
+      :style="{
+        borderRadius: '50%',
+        width: '1em',
+        height: '1em',
+        display: 'inline-block',
+        backgroundColor: `rgb(${sequence[2][0]}, ${sequence[2][1]}, ${sequence[2][2]})`,
+        border: '1px solid black',
+      }"
+    ></span>
+  </div>
+  <div>
+    <span
+      class="explain"
+      title="Delta E is a measure of color proximity. Lower is better. Values ≤1.0 means the difference is not perceptible by human eyes."
+    >
+      dE
+    </span>
+    = {{ sequence[1].toFixed(2) }}
+  </div>
 </template>
-./calculate.js
