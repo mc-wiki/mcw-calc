@@ -13,7 +13,7 @@ async function updateSequence(targetColor: [number, number, number]) {
 }
 </script>
 <template>
-  <h4>Calculate tinted glass sequence for a color</h4>
+  <h4>Calculate glass sequence for a beacon beam color</h4>
   <div
     :style="{
       display: 'flex',
