@@ -12,11 +12,12 @@
   border-radius: 4px;
   border: 1px solid #ccc;
   padding: 1em;
+  margin: 1em 0;
 }
 
 .mcw-calc-field-header {
   font-weight: bold;
-  font-size: 110%;
+  font-size: 16px;
   margin: 0 0 1em 0;
 }
 </style>
