@@ -12,7 +12,7 @@ const props = defineProps<{
 
 const enabledBlocks = ref(props.blocks.slice())
 
-const logarithmicScale = useLocalStorage('mcwBlockDistributionLogarithmicScale', true)
+const logarithmicScale = useLocalStorage('mcwBlockDistributionLogarithmicScale', false)
 const showTotal = useLocalStorage('mcwBlockDistributionShowTotal', true)
 const onlyShowTotal = computed(() => enabledBlocks.value.length === 0 && showTotal.value)
 
