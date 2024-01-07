@@ -18,7 +18,9 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
   if (!canvas) return
   const color = sequence[2]
   const colorFloat = color.map((c) => c / 255)
-  const ctx = canvas.getContext('2d')
+  const ctx = canvas.getContext('2d', {
+    willReadFrequently: true,
+  })
   if (!ctx) return
   const img = new Image()
   img.addEventListener(
