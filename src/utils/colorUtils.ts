@@ -17,6 +17,14 @@ export const colorMap = {
   Pink: 0xf38baa,
 } as const
 
+export const combs = [
+  ...combsWithRep(5, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]),
+  ...combsWithRep(4, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]),
+  ...combsWithRep(3, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]),
+  ...combsWithRep(2, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]),
+  ...combsWithRep(1, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]),
+]
+
 export function colorStringToRgb(color: string): [number, number, number] {
   const hex = color.slice(1)
   const r = parseInt(hex.slice(0, 2), 16)
@@ -35,19 +43,8 @@ export const colorLabMap = Object.fromEntries(
 
 export type Color = keyof typeof colorMap
 
-function floatRgbToInteger(rgb: [number, number, number]) {
+export function floatRgbToInteger(rgb: [number, number, number]) {
   return rgb.map((v) => Math.floor(v * 255)) as [number, number, number]
-}
-
-export function sequenceToColor(c: Color[]) {
-  const color = separateRgb(colorMap[c[0]]).map((v) => v / 255) as [number, number, number]
-  for (let i = 1; i < c.length; i++) {
-    const [r, g, b] = colorRgbMap[c[i]]
-    color[0] = (color[0] + r / 255) / 2
-    color[1] = (color[1] + g / 255) / 2
-    color[2] = (color[2] + b / 255) / 2
-  }
-  return floatRgbToInteger(color)
 }
 
 export function separateRgb(rgb: number): [number, number, number] {
@@ -95,7 +92,28 @@ export function deltaE(labA: number[], labB: number[]) {
   return i < 0 ? 0 : Math.sqrt(i)
 }
 
+function combsWithRep<T>(r: number, xs: T[] = []): T[][] {
+  const comb = (n: number, ys: T[][]): T[][] => {
+    if (n === 0) return ys
+    if (!ys.length)
+      return comb(
+        n - 1,
+        xs.map((x) => [x]),
+      )
+
+    return comb(
+      n - 1,
+      ys.flatMap((zs) => {
+        const h = zs[0]
+        return xs.slice(xs.indexOf(h)).map((x) => [x, ...zs])
+      }),
+    )
+  }
+  return comb(r, [])
+}
+
 export function colorToSequence(
+  sequenceToColor: (sequence: Color[]) => [number, number, number],
   targetRgb: [number, number, number],
 ): [Color[], number, [number, number, number]] {
   const targetLab = rgb2lab(targetRgb)
@@ -103,30 +121,18 @@ export function colorToSequence(
   let minDeltaE = Infinity
   let minSequence: Color[] = []
 
-  // try up to 5 colors
-  for (let depth = 1; depth <= 5; depth++) {
-    const stack = new Array(depth).fill(0) as number[]
-    const colors = Object.keys(colorMap) as Color[]
+  for (const comb of combs) {
+    const sequence: Color[] = []
+    for (let k = 0; k < comb.length; k++) {
+      sequence.push(Object.keys(colorMap)[comb[k]] as Color)
+    }
 
-    for (let j = 0; j < colors.length ** depth; j++) {
-      const sequence: Color[] = []
-      for (let k = 0; k < depth; k++) {
-        sequence.push(colors[stack[k]])
-      }
-      const color = sequenceToColor(sequence)
-      const lab = rgb2lab(color)
-      const delta = deltaE(lab, targetLab)
-      if (delta < minDeltaE) {
-        minDeltaE = delta
-        minSequence = sequence
-      }
-      for (let k = depth - 1; k >= 0; k--) {
-        stack[k]++
-        if (stack[k] < colors.length) {
-          break
-        }
-        stack[k] = 0
-      }
+    const color = sequenceToColor(sequence)
+    const lab = rgb2lab(color)
+    const delta = deltaE(lab, targetLab)
+    if (delta < minDeltaE) {
+      minDeltaE = delta
+      minSequence = sequence
     }
   }
 

@@ -2,29 +2,38 @@
 import Field from '@/components/Field.vue'
 import { ref, nextTick, watch } from 'vue'
 import { CdxButton } from '@wikimedia/codex'
-import {
-  type Color,
-  colorToSequence,
-  colorStringToRgb,
-  colorRgbMap,
-  separateRgb,
-  colorMap,
-  floatRgbToInteger,
-} from '@/utils/colorUtils.ts'
+import { type Color, colorToSequence, colorStringToRgb, colorRgbMap } from '@/utils/colorUtils.ts'
 
 const color = ref('#f9fffe')
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const sequence = ref<[Color[], number, [number, number, number]]>([['White'], 0, [249, 255, 254]])
 
-function sequenceToColor(c: Color[]) {
-  const color = separateRgb(colorMap[c[0]]).map((v) => v / 255) as [number, number, number]
-  for (let i = 1; i < c.length; i++) {
-    const [r, g, b] = colorRgbMap[c[i]]
-    color[0] = (color[0] + r / 255) / 2
-    color[1] = (color[1] + g / 255) / 2
-    color[2] = (color[2] + b / 255) / 2
+function sequenceToColor(c: Color[]): [number, number, number] {
+  let numberOfColors = 0
+  let totalRed = 0
+  let totalGreen = 0
+  let totalBlue = 0
+  let totalMaximum = 0
+  for (const color of c) {
+    totalRed = totalRed + colorRgbMap[color][0]
+    totalGreen = totalGreen + colorRgbMap[color][1]
+    totalBlue = totalBlue + colorRgbMap[color][2]
+    totalMaximum = totalMaximum + Math.max(...colorRgbMap[color])
+    numberOfColors++
   }
-  return floatRgbToInteger(color)
+  const averageRed = totalRed / numberOfColors
+  const averageGreen = totalGreen / numberOfColors
+  const averageBlue = totalBlue / numberOfColors
+  const averageMaximum = totalMaximum / numberOfColors
+  const maximumOfAverage = Math.max(averageRed, averageGreen, averageBlue)
+
+  const gainFactor = averageMaximum / maximumOfAverage
+
+  const resultRed = averageRed * gainFactor
+  const resultGreen = averageGreen * gainFactor
+  const resultBlue = averageBlue * gainFactor
+
+  return [resultRed, resultGreen, resultBlue]
 }
 
 async function updateSequence(targetColor: [number, number, number]) {
@@ -57,13 +66,13 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
     },
     false,
   )
-  // [[File:Beacon Beam (texture).png]]
-  img.src = '/images/Beacon_Beam_(texture).png?format=original'
+  // [[File:Leather Tunic (texture) JE4 BE3.png]]
+  img.src = '/images/Leather Tunic (texture) JE4 BE3.png?format=original'
 })
 </script>
 <template>
   <Field>
-    <template #heading>Calculate glass sequence for a beacon beam color</template>
+    <template #heading>Calculate dye sequence for a leather (horse) armor color</template>
     <div
       :style="{
         display: 'flex',

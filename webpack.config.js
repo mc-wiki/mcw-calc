@@ -98,6 +98,7 @@ const config = (env, argv) => {
     output: {
       clean: true,
       filename: 'Gadget-mcw-calc-[name].js',
+      chunkFormat: 'commonjs',
       chunkLoading: 'import',
     },
     watchOptions: {
@@ -171,6 +172,10 @@ const config = (env, argv) => {
         {
           test: /\.css$/,
           use: [prodDev(MiniCssExtractPlugin.loader, 'vue-style-loader'), 'css-loader'],
+        },
+        {
+          resourceQuery: /inline/,
+          type: 'asset/inline',
         },
       ],
     },
