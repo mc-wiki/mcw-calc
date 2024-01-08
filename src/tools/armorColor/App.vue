@@ -67,7 +67,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
     false,
   )
   // [[File:Leather Tunic (texture) JE4 BE3.png]]
-  img.src = '/images/Leather Tunic (texture) JE4 BE3.png?format=original'
+  img.src = '/images/Leather_Tunic_(texture)_JE4_BE3.png?format=original'
 })
 </script>
 <template>
