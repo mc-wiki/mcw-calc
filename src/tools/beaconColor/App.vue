@@ -6,7 +6,7 @@ import {
   type Color,
   colorToSequence,
   colorStringToRgb,
-  sequenceToColorFloatAverageRounded,
+  sequenceToColorFloatAverage,
 } from '@/utils/color/index.ts'
 import { colorRgbMap as javaColorRgbMap } from '@/utils/color/java.ts'
 import { colorRgbMap as bedrockColorRgbMap } from '@/utils/color/bedrock.ts'
@@ -20,7 +20,7 @@ async function updateSequence(targetColor: [number, number, number]) {
   await nextTick()
   sequence.value = colorToSequence(
     edition.value === 'java' ? javaColorRgbMap : bedrockColorRgbMap,
-    sequenceToColorFloatAverageRounded,
+    sequenceToColorFloatAverage,
     targetColor,
   )
 }
