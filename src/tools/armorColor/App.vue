@@ -36,6 +36,33 @@ function sequenceToColor(c: Color[]): [number, number, number] {
   return [resultRed, resultGreen, resultBlue]
 }
 
+function generateDye(color) {
+  const dyeimages = {
+    "White": "White_Dye_JE1_BE1",
+    "Light gray": "Light_Gray_Dye_JE2_BE2",
+    "Gray": "Gray_Dye_JE2_BE2",
+    "Black": "Black_Dye_JE1_BE1",
+    "Brown": "Brown_Dye_JE1_BE1",
+    "Red": "Red_Dye_JE3_BE3",
+    "Orange": "Orange_Dye_JE2_BE2",
+    "Yellow": "Yellow_Dye_JE2_BE2",
+    "Lime": "Lime_Dye_JE2_BE2",
+    "Green": "Green_Dye_JE3_BE3",
+    "Cyan": "Cyan_Dye_JE2_BE2",
+    "Light blue": "Light_Blue_Dye_JE2_BE2",
+    "Blue": "Blue_Dye_JE1_BE1",
+    "Purple": "Purple_Dye_JE2_BE2",
+    "Magenta": "Magenta_Dye_JE2_BE2",
+    "Pink": "Pink_Dye_JE2_BE2"
+  }
+  return `/images/${dyeimages[color]}.png?format=original`
+}
+
+function generateDyeName (color) {
+  const colorCaps = color.replace(/^(.)|\s+(.)/g, c => c.toUpperCase())
+  return colorCaps+" Dye"
+}
+
 async function updateSequence(targetColor: [number, number, number]) {
   await nextTick()
   sequence.value = colorToSequence(sequenceToColor, targetColor)
@@ -104,7 +131,9 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
             gap: '.5rem',
           }"
         >
-          Sequence: {{ sequence[0].join(' -> ') }}
+          Sequence: <div v-for="item in sequence[0]">
+            <img :src=generateDye(item) :alt=item :title=generateDyeName(item) :data-minetip-title=generateDyeName(item) style="height:2em;width:2em" class="explain minetip">
+          </div>
           <span
             :style="{
               borderRadius: '50%',
