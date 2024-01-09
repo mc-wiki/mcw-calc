@@ -25,6 +25,14 @@ async function updateSequence(targetColor: [number, number, number]) {
   )
 }
 
+function generatePane(color) {
+  return `/images/Invicon_${color.replace(/^(.)|\s+(.)/g, c => c.toUpperCase()).replace(/ /g, "_")}_Stained_Glass_Pane.png?format=original`
+}
+
+function generatePaneName(color) {
+  return color.replace(/^(.)|\s+(.)/g, c => c.toUpperCase()) + " Dye"
+}
+
 watch([sequence, canvasRef], ([sequence, canvasRef]) => {
   const canvas = canvasRef
   if (!canvas) return
@@ -93,7 +101,10 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
             gap: '.5rem',
           }"
         >
-          Sequence: {{ sequence[0].join(' -> ') }}
+          Sequence: <div v-for="item in sequence[0]">
+            <img :src=generatePane(item) :alt=item :title=generatePaneName(item) :data-minetip-title=generatePaneName(item)
+              style="height:2em;width:2em" class="explain minetip">
+          </div>
           <span
             :style="{
               borderRadius: '50%',
