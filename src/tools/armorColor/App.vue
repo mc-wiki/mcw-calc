@@ -48,30 +48,11 @@ function sequenceToColorJavaArmor(
 }
 
 function generateDye(color) {
-  const dyeimages = {
-    "White": "White_Dye_JE1_BE1",
-    "Light gray": "Light_Gray_Dye_JE2_BE2",
-    "Gray": "Gray_Dye_JE2_BE2",
-    "Black": "Black_Dye_JE1_BE1",
-    "Brown": "Brown_Dye_JE1_BE1",
-    "Red": "Red_Dye_JE3_BE3",
-    "Orange": "Orange_Dye_JE2_BE2",
-    "Yellow": "Yellow_Dye_JE2_BE2",
-    "Lime": "Lime_Dye_JE2_BE2",
-    "Green": "Green_Dye_JE3_BE3",
-    "Cyan": "Cyan_Dye_JE2_BE2",
-    "Light blue": "Light_Blue_Dye_JE2_BE2",
-    "Blue": "Blue_Dye_JE1_BE1",
-    "Purple": "Purple_Dye_JE2_BE2",
-    "Magenta": "Magenta_Dye_JE2_BE2",
-    "Pink": "Pink_Dye_JE2_BE2"
-  }
-  return `/images/${dyeimages[color]}.png?format=original`
+  return `/images/Invicon_${color.replace(/^(.)|\s+(.)/g, c => c.toUpperCase()).replace(/ /g, "_")}_Dye.png?format=original`
 }
 
-function generateDyeName (color) {
-  const colorCaps = color.replace(/^(.)|\s+(.)/g, c => c.toUpperCase())
-  return colorCaps+" Dye"
+function generateDyeName(color) {
+  return color.replace(/^(.)|\s+(.)/g, c => c.toUpperCase()) + " Dye"
 }
 
 async function updateSequence(targetColor: [number, number, number]) {
@@ -120,79 +101,65 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
       <cdx-tab name="java" label="Java Edition" />
       <cdx-tab name="bedrock" label="Bedrock Edition" />
     </cdx-tabs>
-    <div
-      :style="{
-        display: 'flex',
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: '1rem',
-      }"
-    >
+    <div :style="{
+      display: 'flex',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      gap: '1rem',
+    }">
       <div>
-        <div
-          :style="{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: '.5rem',
-          }"
-        >
+        <div :style="{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: '.5rem',
+        }">
           <label for="color-picker">Color:</label>
           <input type="color" v-model="color" id="color-picker" />
           <cdx-button @click="updateSequence(colorStringToRgb(color))">Calculate</cdx-button>
         </div>
-        <div
-          :style="{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: '.5rem',
-          }"
-        >
+        <div :style="{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: '.5rem',
+        }">
           Sequence: <div v-for="item in sequence[0]">
-            <img :src=generateDye(item) :alt=item :title=generateDyeName(item) :data-minetip-title=generateDyeName(item) style="height:2em;width:2em" class="explain minetip">
+            <img :src=generateDye(item) :alt=item :title=generateDyeName(item) :data-minetip-title=generateDyeName(item)
+              style="height:2em;width:2em" class="explain minetip">
           </div>
-          <span
-            :style="{
-              borderRadius: '50%',
-              width: '1em',
-              height: '1em',
-              display: 'inline-block',
-              backgroundColor: `rgb(${sequence[2][0]}, ${sequence[2][1]}, ${sequence[2][2]})`,
-              border: '1px solid black',
-            }"
-          ></span>
+          <span :style="{
+            borderRadius: '50%',
+            width: '1em',
+            height: '1em',
+            display: 'inline-block',
+            backgroundColor: `rgb(${sequence[2][0]}, ${sequence[2][1]}, ${sequence[2][2]})`,
+            border: '1px solid black',
+          }"></span>
         </div>
         <div>
-          <span
-            class="explain"
-            title="Delta E is a measure of color proximity. Lower is better. Values ≤1.0 means the difference is not perceptible by human eyes."
-          >
+          <span class="explain"
+            title="Delta E is a measure of color proximity. Lower is better. Values ≤1.0 means the difference is not perceptible by human eyes.">
             dE
           </span>
           = {{ sequence[1].toFixed(2) }}
         </div>
       </div>
-      <canvas
-        width="160"
-        height="160"
-        ref="canvasRef"
-        :style="{
-          width: '80px',
-          height: '80px',
-        }"
-      ></canvas>
+      <canvas width="160" height="160" ref="canvasRef" :style="{
+        width: '80px',
+        height: '80px',
+      }"></canvas>
     </div>
   </Field>
 </template>
 <style>
-.cdx-tabs--quiet > .cdx-tabs__header {
+.cdx-tabs--quiet>.cdx-tabs__header {
   background-color: transparent;
 }
 
-.cdx-tabs--quiet > .cdx-tabs__header .cdx-tabs__list__item--enabled [role='tab'] {
+.cdx-tabs--quiet>.cdx-tabs__header .cdx-tabs__list__item--enabled [role='tab'] {
   color: var(--content-text-color);
 }
 
