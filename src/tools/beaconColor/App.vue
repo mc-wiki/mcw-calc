@@ -1,35 +1,28 @@
 <script setup lang="ts">
 import Field from '@/components/Field.vue'
 import { ref, nextTick, watch } from 'vue'
-import { CdxButton } from '@wikimedia/codex'
+import { CdxButton, CdxTabs, CdxTab } from '@wikimedia/codex'
 import {
   type Color,
   colorToSequence,
   colorStringToRgb,
-  colorRgbMap,
-  separateRgb,
-  colorMap,
-  floatRgbToInteger,
-} from '@/utils/colorUtils.ts'
+  sequenceToColorFloatAverageRounded,
+} from '@/utils/color/index.ts'
+import { colorRgbMap as javaColorRgbMap } from '@/utils/color/java.ts'
+import { colorRgbMap as bedrockColorRgbMap } from '@/utils/color/bedrock.ts'
 
 const color = ref('#f9fffe')
+const edition = ref<'java' | 'bedrock'>('java')
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const sequence = ref<[Color[], number, [number, number, number]]>([['White'], 0, [249, 255, 254]])
 
-function sequenceToColor(c: Color[]) {
-  const color = separateRgb(colorMap[c[0]]).map((v) => v / 255) as [number, number, number]
-  for (let i = 1; i < c.length; i++) {
-    const [r, g, b] = colorRgbMap[c[i]]
-    color[0] = (color[0] + r / 255) / 2
-    color[1] = (color[1] + g / 255) / 2
-    color[2] = (color[2] + b / 255) / 2
-  }
-  return floatRgbToInteger(color)
-}
-
 async function updateSequence(targetColor: [number, number, number]) {
   await nextTick()
-  sequence.value = colorToSequence(sequenceToColor, targetColor)
+  sequence.value = colorToSequence(
+    edition.value === 'java' ? javaColorRgbMap : bedrockColorRgbMap,
+    sequenceToColorFloatAverageRounded,
+    targetColor,
+  )
 }
 
 watch([sequence, canvasRef], ([sequence, canvasRef]) => {
@@ -64,6 +57,11 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
 <template>
   <Field>
     <template #heading>Calculate glass sequence for a beacon beam color</template>
+
+    <cdx-tabs v-model:active="edition">
+      <cdx-tab name="java" label="Java Edition" />
+      <cdx-tab name="bedrock" label="Bedrock Edition" />
+    </cdx-tabs>
     <div
       :style="{
         display: 'flex',
@@ -129,3 +127,20 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
     </div>
   </Field>
 </template>
+<style>
+.cdx-tabs--quiet > .cdx-tabs__header {
+  background-color: transparent;
+}
+
+.cdx-tabs--quiet > .cdx-tabs__header .cdx-tabs__list__item--enabled [role='tab'] {
+  color: var(--content-text-color);
+}
+
+.cdx-tabs__next-scroller {
+  display: none;
+}
+
+ul.cdx-tabs__list {
+  margin: 0;
+}
+</style>

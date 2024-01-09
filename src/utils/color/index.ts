@@ -1,22 +1,3 @@
-export const colorMap = {
-  White: 0xf9fffe,
-  'Light gray': 0x9d9d97,
-  Gray: 0x474f52,
-  Black: 0x1d1d21,
-  Brown: 0x835432,
-  Red: 0xb02e26,
-  Orange: 0xf9801d,
-  Yellow: 0xfed83d,
-  Lime: 0x80c71f,
-  Green: 0x5e7c16,
-  Cyan: 0x169c9c,
-  'Light blue': 0x3ab3da,
-  Blue: 0x3c44aa,
-  Purple: 0x8932b8,
-  Magenta: 0xc74ebd,
-  Pink: 0xf38baa,
-} as const
-
 export const combs = [
   ...combsWithRep(5, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]),
   ...combsWithRep(4, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]),
@@ -33,15 +14,23 @@ export function colorStringToRgb(color: string): [number, number, number] {
   return [r, g, b]
 }
 
-export const colorRgbMap = Object.fromEntries(
-  Object.entries(colorMap).map(([k, v]) => [k, separateRgb(v)]),
-) as Record<keyof typeof colorMap, [number, number, number]>
-
-export const colorLabMap = Object.fromEntries(
-  Object.entries(colorRgbMap).map(([k, v]) => [k, rgb2lab(v)]),
-) as Record<keyof typeof colorMap, [number, number, number]>
-
-export type Color = keyof typeof colorMap
+export type Color =
+  | 'White'
+  | 'Light gray'
+  | 'Gray'
+  | 'Black'
+  | 'Brown'
+  | 'Red'
+  | 'Orange'
+  | 'Yellow'
+  | 'Lime'
+  | 'Green'
+  | 'Cyan'
+  | 'Light blue'
+  | 'Blue'
+  | 'Purple'
+  | 'Magenta'
+  | 'Pink'
 
 export function floatRgbToInteger(rgb: [number, number, number]) {
   return rgb.map((v) => Math.floor(v * 255)) as [number, number, number]
@@ -113,7 +102,11 @@ function combsWithRep<T>(r: number, xs: T[] = []): T[][] {
 }
 
 export function colorToSequence(
-  sequenceToColor: (sequence: Color[]) => [number, number, number],
+  colorRgbMap: Record<Color, [number, number, number]>,
+  sequenceToColor: (
+    sequence: Color[],
+    colorRgbMap: Record<Color, [number, number, number]>,
+  ) => [number, number, number],
   targetRgb: [number, number, number],
 ): [Color[], number, [number, number, number]] {
   const targetLab = rgb2lab(targetRgb)
@@ -124,10 +117,10 @@ export function colorToSequence(
   for (const comb of combs) {
     const sequence: Color[] = []
     for (let k = 0; k < comb.length; k++) {
-      sequence.push(Object.keys(colorMap)[comb[k]] as Color)
+      sequence.push(Object.keys(colorRgbMap)[comb[k]] as Color)
     }
 
-    const color = sequenceToColor(sequence)
+    const color = sequenceToColor(sequence, colorRgbMap)
     const lab = rgb2lab(color)
     const delta = deltaE(lab, targetLab)
     if (delta < minDeltaE) {
@@ -136,5 +129,32 @@ export function colorToSequence(
     }
   }
 
-  return [minSequence, minDeltaE, sequenceToColor(minSequence)]
+  return [minSequence, minDeltaE, sequenceToColor(minSequence, colorRgbMap)]
+}
+
+export function sequenceToColorFloatAverage(
+  c: Color[],
+  colorRgbMap: Record<Color, [number, number, number]>,
+  round = false,
+) {
+  const color = colorRgbMap[c[0]].map((v) => v / 255) as [number, number, number]
+  for (let i = 1; i < c.length; i++) {
+    const [r, g, b] = colorRgbMap[c[i]]
+    color[0] = (color[0] + r / 255) / 2
+    color[1] = (color[1] + g / 255) / 2
+    color[2] = (color[2] + b / 255) / 2
+    if (round) {
+      color[0] = Math.round(color[0])
+      color[1] = Math.round(color[1])
+      color[2] = Math.round(color[2])
+    }
+  }
+  return floatRgbToInteger(color)
+}
+
+export function sequenceToColorFloatAverageRounded(
+  c: Color[],
+  colorRgbMap: Record<Color, [number, number, number]>,
+) {
+  return sequenceToColorFloatAverage(c, colorRgbMap, true)
 }
