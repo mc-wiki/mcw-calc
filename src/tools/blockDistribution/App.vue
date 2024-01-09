@@ -152,7 +152,7 @@ function plot(
 
   // Draw the lines.
   const line = d3.line()
-  const path = svg
+  svg
     .append('g')
     .attr('class', 'isolate')
     .attr('fill', 'none')

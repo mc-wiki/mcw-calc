@@ -1,14 +1,25 @@
 <script setup lang="ts">
 import Field from '@/components/Field.vue'
 import { ref, nextTick, watch } from 'vue'
-import { CdxButton } from '@wikimedia/codex'
-import { type Color, colorToSequence, colorStringToRgb, colorRgbMap } from '@/utils/colorUtils.ts'
+import { CdxButton, CdxTabs, CdxTab } from '@wikimedia/codex'
+import {
+  type Color,
+  colorToSequence,
+  colorStringToRgb,
+  sequenceToColorFloatAverage,
+} from '@/utils/color/index.ts'
+import { colorRgbMap as javaColorRgbMap } from '@/utils/color/java.ts'
+import { colorRgbMap as bedrockColorRgbMap } from '@/utils/color/bedrock.ts'
 
 const color = ref('#f9fffe')
+const edition = ref<'java' | 'bedrock'>('java')
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const sequence = ref<[Color[], number, [number, number, number]]>([['White'], 0, [249, 255, 254]])
 
-function sequenceToColor(c: Color[]): [number, number, number] {
+function sequenceToColorJavaArmor(
+  c: Color[],
+  colorRgbMap: typeof javaColorRgbMap,
+): [number, number, number] {
   let numberOfColors = 0
   let totalRed = 0
   let totalGreen = 0
@@ -65,7 +76,11 @@ function generateDyeName (color) {
 
 async function updateSequence(targetColor: [number, number, number]) {
   await nextTick()
-  sequence.value = colorToSequence(sequenceToColor, targetColor)
+  sequence.value = colorToSequence(
+    edition.value === 'java' ? javaColorRgbMap : bedrockColorRgbMap,
+    edition.value === 'java' ? sequenceToColorJavaArmor : sequenceToColorFloatAverage,
+    targetColor,
+  )
 }
 
 watch([sequence, canvasRef], ([sequence, canvasRef]) => {
@@ -100,6 +115,11 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
 <template>
   <Field>
     <template #heading>Calculate dye sequence for a leather (horse) armor color</template>
+
+    <cdx-tabs v-model:active="edition">
+      <cdx-tab name="java" label="Java Edition" />
+      <cdx-tab name="bedrock" label="Bedrock Edition" />
+    </cdx-tabs>
     <div
       :style="{
         display: 'flex',
@@ -167,3 +187,20 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
     </div>
   </Field>
 </template>
+<style>
+.cdx-tabs--quiet > .cdx-tabs__header {
+  background-color: transparent;
+}
+
+.cdx-tabs--quiet > .cdx-tabs__header .cdx-tabs__list__item--enabled [role='tab'] {
+  color: var(--content-text-color);
+}
+
+.cdx-tabs__next-scroller {
+  display: none;
+}
+
+ul.cdx-tabs__list {
+  margin: 0;
+}
+</style>
