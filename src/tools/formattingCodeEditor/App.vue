@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import Field from '@/components/Field.vue'
 import { CdxToggleButtonGroup, CdxTab, CdxTabs } from '@wikimedia/codex'
-import { useEditor, EditorContent, JSONContent } from '@tiptap/vue-3'
+import { useEditor, EditorContent, type JSONContent } from '@tiptap/vue-3'
 import { Color } from '@tiptap/extension-color'
 import Document from '@tiptap/extension-document'
 import Text from '@tiptap/extension-text'
@@ -246,10 +247,6 @@ const colorButtons = computed(() => [
 
 const formatButtons = computed(() => [
   {
-    label: 'None',
-    value: 'none',
-  },
-  {
     label: 'Bold',
     value: 'l',
   },
@@ -311,7 +308,9 @@ const updateFormat = (value: string[]) => {
 }
 
 const editor = useEditor({
-  content: 'Ho ho ho',
+  content: `<p>Edit <u>me</u>!</p>
+            <p>Try to <b>format</b> <i>this</i> <mark>text</mark>!</p>
+            <p>Set me a color!</p>`,
   extensions: [
     Document,
     Text,
@@ -395,17 +394,37 @@ const activeFormatCodes = computed(() => {
 })
 </script>
 <template>
-  <CdxToggleButtonGroup
-    :model-value="hexColorToCode(editor?.getAttributes('textStyle').color)"
-    :buttons="colorButtons"
-    @update:modelValue="updateColor"
-  />
-  <CdxToggleButtonGroup
-    :model-value="activeFormatCodes"
-    :buttons="formatButtons"
-    @update:modelValue="updateFormat"
-  />
-  <button @click="editor?.chain().focus().unsetColor().run()">Unset Color</button>
-  <EditorContent :editor="editor" />
-  <textarea :value="formatCode" disabled />
+  <Field>
+    <template #header>Formatting Code Text Editor</template>
+    <cdx-tabs v-model:active="edition">
+      <cdx-tab name="java" label="Java Edition" />
+      <cdx-tab name="bedrock" label="Bedrock Edition" />
+    </cdx-tabs>
+    <CdxToggleButtonGroup
+      :model-value="hexColorToCode(editor?.getAttributes('textStyle').color)"
+      :buttons="colorButtons"
+      @update:modelValue="updateColor"
+      style="margin-bottom: 0.5rem"
+    />
+    <CdxToggleButtonGroup
+      :model-value="activeFormatCodes"
+      :buttons="formatButtons"
+      @update:modelValue="updateFormat"
+      style="margin-bottom: 0.5rem"
+    />
+    <EditorContent class="fc-editor" style="margin-bottom: 0.5rem" :editor="editor" />
+    <label for="fc-output">Output</label>
+    <textarea name="fc-output" :value="formatCode" disabled />
+  </Field>
 </template>
+<style>
+.fc-editor {
+  font-family: 'Minecraft', monospace, sans-serif;
+  border: 1px solid #a2a9b1;
+  border-radius: 4px;
+}
+
+.fc-editor p {
+  margin: 0;
+}
+</style>
