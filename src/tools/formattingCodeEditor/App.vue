@@ -245,28 +245,45 @@ const colorButtons = computed(() => [
   },
 ])
 
-const formatButtons = computed(() => [
-  {
-    label: 'Bold',
-    value: 'l',
-  },
-  {
-    label: 'Italic',
-    value: 'o',
-  },
-  {
-    label: 'Underline',
-    value: 'n',
-  },
-  {
-    label: 'Strikethrough',
-    value: 'm',
-  },
-  {
-    label: 'Obfuscated',
-    value: 'k',
-  },
-])
+const formatButtons = computed(() =>
+  edition.value === 'java'
+    ? [
+        {
+          label: 'Bold',
+          value: 'l',
+        },
+        {
+          label: 'Italic',
+          value: 'o',
+        },
+        {
+          label: 'Underline',
+          value: 'n',
+        },
+        {
+          label: 'Strikethrough',
+          value: 'm',
+        },
+        {
+          label: 'Obfuscated',
+          value: 'k',
+        },
+      ]
+    : [
+        {
+          label: 'Bold',
+          value: 'l',
+        },
+        {
+          label: 'Italic',
+          value: 'o',
+        },
+        {
+          label: 'Obfuscated',
+          value: 'k',
+        },
+      ],
+)
 
 const formatCode = computed(() => JSONToFormatCode(editor.value?.getJSON()))
 const activeFormatCodes = computed(() => {
