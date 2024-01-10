@@ -268,6 +268,28 @@ const formatButtons = computed(() => [
   },
 ])
 
+const formatCode = computed(() => JSONToFormatCode(editor.value?.getJSON()))
+const activeFormatCodes = computed(() => {
+  const formatCodes: string[] = []
+  if (editor.value?.isActive('bold')) {
+    formatCodes.push('l')
+  }
+  if (editor.value?.isActive('italic')) {
+    formatCodes.push('o')
+  }
+  if (editor.value?.isActive('underline')) {
+    formatCodes.push('n')
+  }
+  if (editor.value?.isActive('strike')) {
+    formatCodes.push('m')
+  }
+  if (editor.value?.isActive('highlight')) {
+    formatCodes.push('k')
+  }
+
+  return formatCodes
+})
+
 const updateColor = (value: string) => {
   if (value === 'none') {
     editor.value?.chain().focus().unsetColor().run()
@@ -310,7 +332,7 @@ const updateFormat = (value: string[]) => {
 const editor = useEditor({
   content: `<p>Edit <u>me</u>!</p>
             <p>Try to <b>format</b> <i>this</i> <mark>text</mark>!</p>
-            <p>Set me a color!</p>`,
+            <p>Set me a <span style="color: #AA0000;">color</span>!</p>`,
   extensions: [
     Document,
     Text,
@@ -327,7 +349,13 @@ const editor = useEditor({
   ],
 })
 
+const textarea = ref<HTMLTextAreaElement | null>(null)
+
 function JSONToFormatCode(json: JSONContent | undefined) {
+  if (textarea.value) {
+    const scrollHeight = textarea.value.scrollHeight - 4
+    textarea.value.style.height = (scrollHeight > 300 ? 300 : scrollHeight) + 'px'
+  }
   let code: string[] = []
 
   for (const para of json?.content ?? []) {
@@ -370,33 +398,11 @@ function JSONToFormatCode(json: JSONContent | undefined) {
 
   return code.join('')
 }
-
-const formatCode = computed(() => JSONToFormatCode(editor.value?.getJSON()))
-const activeFormatCodes = computed(() => {
-  const formatCodes: string[] = []
-  if (editor.value?.isActive('bold')) {
-    formatCodes.push('l')
-  }
-  if (editor.value?.isActive('italic')) {
-    formatCodes.push('o')
-  }
-  if (editor.value?.isActive('underline')) {
-    formatCodes.push('n')
-  }
-  if (editor.value?.isActive('strike')) {
-    formatCodes.push('m')
-  }
-  if (editor.value?.isActive('highlight')) {
-    formatCodes.push('k')
-  }
-
-  return formatCodes
-})
 </script>
 <template>
   <Field>
-    <template #header>Formatting Code Text Editor</template>
-    <cdx-tabs v-model:active="edition">
+    <template #heading>Formatting Code Text Editor</template>
+    <cdx-tabs v-model:active="edition" style="margin-bottom: 0.5rem">
       <cdx-tab name="java" label="Java Edition" />
       <cdx-tab name="bedrock" label="Bedrock Edition" />
     </cdx-tabs>
@@ -414,7 +420,7 @@ const activeFormatCodes = computed(() => {
     />
     <EditorContent class="fc-editor" style="margin-bottom: 0.5rem" :editor="editor" />
     <label for="fc-output">Output</label>
-    <textarea name="fc-output" :value="formatCode" disabled />
+    <textarea ref="textarea" name="fc-output" :value="formatCode" disabled />
   </Field>
 </template>
 <style>
@@ -425,6 +431,22 @@ const activeFormatCodes = computed(() => {
 }
 
 .fc-editor p {
+  margin: 0;
+}
+
+.cdx-tabs--quiet > .cdx-tabs__header {
+  background-color: transparent;
+}
+
+.cdx-tabs--quiet > .cdx-tabs__header .cdx-tabs__list__item--enabled [role='tab'] {
+  color: var(--content-text-color);
+}
+
+.cdx-tabs__next-scroller {
+  display: none;
+}
+
+ul.cdx-tabs__list {
   margin: 0;
 }
 </style>
