@@ -26,11 +26,11 @@ async function updateSequence(targetColor: [number, number, number]) {
 }
 
 function generateGlass(color) {
-  return `/images/Invicon_${color.replace(/^(.)|\s+(.)/g, c => c.toUpperCase()).replace(/ /g, "_")}_Stained_Glass.png?format=original`
+  return `/images/Invicon_${color.replace(/^(.)|\s+(.)/g, c => c.toUpperCase()).replace(/ /g, "_")}_Stained_Glass_Pane.png?format=original`
 }
 
 function generateGlassName(color) {
-  return color.replace(/^(.)|\s+(.)/g, c => c.toUpperCase()) + " Stained Glass"
+  return color.replace(/^(.)|\s+(.)/g, c => c.toUpperCase()) + " Stained Glass Pane"
 }
 
 watch([sequence, canvasRef], ([sequence, canvasRef]) => {
@@ -98,7 +98,8 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
-            gap: '.5rem',
+            gap: '.1rem',
+            padding: '.3em 0px 0px 0px',
           }"
         >
           Sequence: <div v-for="item in sequence[0]">
