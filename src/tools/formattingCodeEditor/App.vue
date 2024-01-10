@@ -349,7 +349,7 @@ const updateFormat = (value: string[]) => {
 const editor = useEditor({
   content: `<p>Edit <u>me</u>!</p>
             <p>Try to <b>format</b> <i>this</i> <mark>text</mark>!</p>
-            <p>Set me a <span style="color: #AA0000;">color</span>!</p>`,
+            <p>Set me a <span style="color: #FF5555;">color</span>!</p>`,
   extensions: [
     Document,
     Text,
