@@ -47,6 +47,16 @@ function sequenceToColorJavaArmor(
   return [resultRed, resultGreen, resultBlue]
 }
 
+function generateDye(color: Color) {
+  return `/images/Invicon_${color
+    .replace(/^(.)|\s+(.)/g, (c) => c.toUpperCase())
+    .replace(/ /g, '_')}_Dye.png?format=original`
+}
+
+function generateDyeName(color: Color) {
+  return color.replace(/^(.)|\s+(.)/g, (c) => c.toUpperCase()) + ' Dye'
+}
+
 async function updateSequence(targetColor: [number, number, number]) {
   await nextTick()
   sequence.value = colorToSequence(
@@ -123,8 +133,20 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
             alignItems: 'center',
             gap: '.5rem',
           }"
+          class="explain"
+          title="You should dye the armor using all dyes at once."
         >
-          Sequence: {{ sequence[0].join(' -> ') }}
+          Sequence:
+          <div v-for="(item, index) in sequence[0]" :key="index">
+            <img
+              :src="generateDye(item)"
+              :alt="item"
+              :title="generateDyeName(item)"
+              :data-minetip-title="generateDyeName(item)"
+              style="height: 2em; width: 2em"
+              class="explain minetip"
+            />
+          </div>
           <span
             :style="{
               borderRadius: '50%',

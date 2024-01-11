@@ -25,6 +25,14 @@ async function updateSequence(targetColor: [number, number, number]) {
   )
 }
 
+function generateGlass(color) {
+  return `/images/Invicon_${color.replace(/^(.)|\s+(.)/g, c => c.toUpperCase()).replace(/ /g, "_")}_Stained_Glass_Pane.png?format=original`
+}
+
+function generateGlassName(color) {
+  return color.replace(/^(.)|\s+(.)/g, c => c.toUpperCase()) + " Stained Glass Pane"
+}
+
 watch([sequence, canvasRef], ([sequence, canvasRef]) => {
   const canvas = canvasRef
   if (!canvas) return
@@ -90,10 +98,14 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
-            gap: '.5rem',
+            gap: '.1rem',
+            padding: '.3em 0px 0px 0px',
           }"
         >
-          Sequence: {{ sequence[0].join(' -> ') }}
+          Sequence: <div v-for="item in sequence[0]">
+            <img :src=generateGlass(item) :alt=item :title=generateGlassName(item) :data-minetip-title=generateGlassName(item)
+              style="height:2em;width:2em" class="explain minetip">
+          </div>
           <span
             :style="{
               borderRadius: '50%',
