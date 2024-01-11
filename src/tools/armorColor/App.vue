@@ -133,6 +133,8 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
             alignItems: 'center',
             gap: '.5rem',
           }"
+          class="explain"
+          title="You should dye the armor using all dyes at once."
         >
           Sequence:
           <div v-for="(item, index) in sequence[0]" :key="index">
