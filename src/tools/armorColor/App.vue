@@ -47,12 +47,14 @@ function sequenceToColorJavaArmor(
   return [resultRed, resultGreen, resultBlue]
 }
 
-function generateDye(color) {
-  return `/images/Invicon_${color.replace(/^(.)|\s+(.)/g, c => c.toUpperCase()).replace(/ /g, "_")}_Dye.png?format=original`
+function generateDye(color: Color) {
+  return `/images/Invicon_${color
+    .replace(/^(.)|\s+(.)/g, (c) => c.toUpperCase())
+    .replace(/ /g, '_')}_Dye.png?format=original`
 }
 
-function generateDyeName(color) {
-  return color.replace(/^(.)|\s+(.)/g, c => c.toUpperCase()) + " Dye"
+function generateDyeName(color: Color) {
+  return color.replace(/^(.)|\s+(.)/g, (c) => c.toUpperCase()) + ' Dye'
 }
 
 async function updateSequence(targetColor: [number, number, number]) {
@@ -101,65 +103,87 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
       <cdx-tab name="java" label="Java Edition" />
       <cdx-tab name="bedrock" label="Bedrock Edition" />
     </cdx-tabs>
-    <div :style="{
-      display: 'flex',
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      gap: '1rem',
-    }">
+    <div
+      :style="{
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: '1rem',
+      }"
+    >
       <div>
-        <div :style="{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: '.5rem',
-        }">
+        <div
+          :style="{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: '.5rem',
+          }"
+        >
           <label for="color-picker">Color:</label>
           <input type="color" v-model="color" id="color-picker" />
           <cdx-button @click="updateSequence(colorStringToRgb(color))">Calculate</cdx-button>
         </div>
-        <div :style="{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: '.5rem',
-        }">
-          Sequence: <div v-for="item in sequence[0]">
-            <img :src=generateDye(item) :alt=item :title=generateDyeName(item) :data-minetip-title=generateDyeName(item)
-              style="height:2em;width:2em" class="explain minetip">
+        <div
+          :style="{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: '.5rem',
+          }"
+        >
+          Sequence:
+          <div v-for="(item, index) in sequence[0]" :key="index">
+            <img
+              :src="generateDye(item)"
+              :alt="item"
+              :title="generateDyeName(item)"
+              :data-minetip-title="generateDyeName(item)"
+              style="height: 2em; width: 2em"
+              class="explain minetip"
+            />
           </div>
-          <span :style="{
-            borderRadius: '50%',
-            width: '1em',
-            height: '1em',
-            display: 'inline-block',
-            backgroundColor: `rgb(${sequence[2][0]}, ${sequence[2][1]}, ${sequence[2][2]})`,
-            border: '1px solid black',
-          }"></span>
+          <span
+            :style="{
+              borderRadius: '50%',
+              width: '1em',
+              height: '1em',
+              display: 'inline-block',
+              backgroundColor: `rgb(${sequence[2][0]}, ${sequence[2][1]}, ${sequence[2][2]})`,
+              border: '1px solid black',
+            }"
+          ></span>
         </div>
         <div>
-          <span class="explain"
-            title="Delta E is a measure of color proximity. Lower is better. Values ≤1.0 means the difference is not perceptible by human eyes.">
+          <span
+            class="explain"
+            title="Delta E is a measure of color proximity. Lower is better. Values ≤1.0 means the difference is not perceptible by human eyes."
+          >
             dE
           </span>
           = {{ sequence[1].toFixed(2) }}
         </div>
       </div>
-      <canvas width="160" height="160" ref="canvasRef" :style="{
-        width: '80px',
-        height: '80px',
-      }"></canvas>
+      <canvas
+        width="160"
+        height="160"
+        ref="canvasRef"
+        :style="{
+          width: '80px',
+          height: '80px',
+        }"
+      ></canvas>
     </div>
   </Field>
 </template>
 <style>
-.cdx-tabs--quiet>.cdx-tabs__header {
+.cdx-tabs--quiet > .cdx-tabs__header {
   background-color: transparent;
 }
 
-.cdx-tabs--quiet>.cdx-tabs__header .cdx-tabs__list__item--enabled [role='tab'] {
+.cdx-tabs--quiet > .cdx-tabs__header .cdx-tabs__list__item--enabled [role='tab'] {
   color: var(--content-text-color);
 }
 
