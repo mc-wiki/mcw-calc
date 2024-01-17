@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { CdxTextInput } from '@wikimedia/codex'
 import Field from '@/components/Field.vue'
-const seed = ref('')
+const seed = ref('Minecraft Wiki')
 // Java String.hashCode() implementation
 function hashCode(s: string) {
   let h = 0
@@ -16,6 +16,10 @@ function hashCode(s: string) {
   <Field>
     <template #heading>Convert a string to actual seed</template>
     <CdxTextInput v-model="seed" />
-    Actual seed: <code>{{ hashCode(seed) }}</code>
+    Actual seed: <code v-if="seed === ''">{{ hashCode(seed) }}</code
+    ><template v-else
+      >This should be 0, but it is an empty string, so Minecraft actually generates a random
+      number.</template
+    >
   </Field>
 </template>
