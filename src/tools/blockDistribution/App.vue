@@ -71,7 +71,8 @@ function plot(
   const marginLeft = 60
 
   const totalPoints: Block[] = []
-  if (blockMapFiltered.length > 1 && showTotal) {
+
+  if (enabledBlocks.value.length > 1 && showTotal) {
     // Also add a group for the total count.
     const total = []
     for (let i = domain[0]; i <= domain[1]; i++) {
