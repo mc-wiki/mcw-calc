@@ -144,7 +144,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
               :title="generateDyeName(item)"
               :data-minetip-title="generateDyeName(item)"
               style="height: 2em; width: 2em"
-              class="explain minetip"
+              class="explain minetip pixel-image"
             />
           </div>
           <span
