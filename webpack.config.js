@@ -44,7 +44,7 @@ const config = (env, argv) => {
       },
     },
     entry: {
-      core: ['./src/loader.ts', './src/common.css'],
+      core: ['./src/loader.ts', './src/common.less'],
       ...entries,
     },
     devServer: {
@@ -168,6 +168,16 @@ const config = (env, argv) => {
               ],
             },
           },
+        },
+
+        {
+          test: /\.less$/,
+          use: [
+            'css-loader',
+            prodDev(MiniCssExtractPlugin.loader, 'vue-style-loader'),
+            'css-loader',
+            'less-loader',
+          ],
         },
         {
           test: /\.css$/,
