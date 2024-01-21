@@ -16,7 +16,7 @@ function hashCode(s: string) {
   <Field>
     <template #heading>Convert a string to actual seed</template>
     <CdxTextInput v-model="seed" />
-    Actual seed: <code v-if="seed === ''">{{ hashCode(seed) }}</code
+    Actual seed: <code v-if="seed !== ''">{{ hashCode(seed) }}</code
     ><template v-else
       >This should be 0, but it is an empty string, so Minecraft actually generates a random
       number.</template
