@@ -173,7 +173,6 @@ const config = (env, argv) => {
         {
           test: /\.less$/,
           use: [
-            'css-loader',
             prodDev(MiniCssExtractPlugin.loader, 'vue-style-loader'),
             'css-loader',
             'less-loader',
