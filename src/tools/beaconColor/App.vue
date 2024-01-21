@@ -148,20 +148,3 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
     </div>
   </Field>
 </template>
-<style>
-.cdx-tabs--quiet > .cdx-tabs__header {
-  background-color: transparent;
-}
-
-.cdx-tabs--quiet > .cdx-tabs__header .cdx-tabs__list__item--enabled [role='tab'] {
-  color: var(--content-text-color);
-}
-
-.cdx-tabs__next-scroller {
-  display: none;
-}
-
-ul.cdx-tabs__list {
-  margin: 0;
-}
-</style>

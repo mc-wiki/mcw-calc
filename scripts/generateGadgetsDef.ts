@@ -3,16 +3,16 @@ import { glob } from 'glob'
 import parseJSDoc from './parseJSDoc.js'
 
 const def = [
-  '* mcw-calc-core[ResourceLoader|targets=desktop,mobile|type=general|default|hidden]|mcw-calc-core.js',
+  '* mcw-calc-core[ResourceLoader|targets=desktop,mobile|type=general|default|hidden]|mcw-calc-core.js|mcw-calc-core.css',
 ]
 
 const devDef = [
-  '* mcw-calc-core[ResourceLoader|targets=desktop,mobile|type=general|default|hidden]|mcw-calc-core.js',
+  '* mcw-calc-core[ResourceLoader|targets=desktop,mobile|type=general|default|hidden]|mcw-calc-core.js|mcw-calc-core.css',
 ]
 
 const manifest = {
-  prod: ['Gadget-mcw-calc-core.js'] as string[],
-  dev: ['Gadget-mcw-calc-core.js'] as string[],
+  prod: ['Gadget-mcw-calc-core.js', 'Gadget-mcw-calc-core.css'] as string[],
+  dev: ['Gadget-mcw-calc-core.js', 'Gadget-mcw-calc-core.css'] as string[],
 }
 
 const files = await glob('./dist/Gadget-mcw-calc-*.js', { posix: true })

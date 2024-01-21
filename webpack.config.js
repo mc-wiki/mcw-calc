@@ -44,7 +44,7 @@ const config = (env, argv) => {
       },
     },
     entry: {
-      core: './src/loader.ts',
+      core: ['./src/loader.ts', './src/common.css'],
       ...entries,
     },
     devServer: {

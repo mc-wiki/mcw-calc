@@ -450,20 +450,4 @@ function JSONToFormatCode(json: JSONContent | undefined) {
 .fc-editor p {
   margin: 0;
 }
-
-.cdx-tabs--quiet > .cdx-tabs__header {
-  background-color: transparent;
-}
-
-.cdx-tabs--quiet > .cdx-tabs__header .cdx-tabs__list__item--enabled [role='tab'] {
-  color: var(--content-text-color);
-}
-
-.cdx-tabs__next-scroller {
-  display: none;
-}
-
-ul.cdx-tabs__list {
-  margin: 0;
-}
 </style>
