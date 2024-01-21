@@ -5,7 +5,9 @@
 import * as vue from 'vue'
 import App from './App.vue'
 
-const targetEl = document.querySelector('.mcw-calc[data-type="decimalColor"]')!
+const targetEls = [...document.querySelectorAll('.mcw-calc[data-type="decimalColor"]')!]
 const createApp =
   process.env.NODE_ENV === 'development' ? vue.createApp : vue.createMwApp || vue.createApp
-createApp(App).mount(targetEl)
+for (const targetEl of targetEls) {
+  createApp(App).mount(targetEl)
+}
