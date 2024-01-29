@@ -14,7 +14,7 @@ const enabledBlocks = ref(props.blocks.slice())
 
 const logarithmicScale = useLocalStorage('mcwBlockDistributionLogarithmicScale', false)
 const showTotal = useLocalStorage('mcwBlockDistributionShowTotal', true)
-const onlyShowTotal = computed(() => enabledBlocks.value.length === 0 && showTotal.value)
+const onlyShowTotal = computed(() => enabledBlocks.value.length === 0)
 
 const overworldBlockMapFiltered = computed(() => {
   if (onlyShowTotal.value) {
@@ -72,7 +72,7 @@ function plot(
 
   const totalPoints: Block[] = []
 
-  if (enabledBlocks.value.length > 1 && showTotal) {
+  if ((enabledBlocks.value.length > 1 && showTotal) || onlyShowTotal) {
     // Also add a group for the total count.
     const total = []
     for (let i = domain[0]; i <= domain[1]; i++) {
