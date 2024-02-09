@@ -74,7 +74,7 @@ const config = (env, argv) => {
             return {
               code: await prettier.format(terserStep.code, {
                 filepath: Object.keys(file)[0],
-                trailingComma: 'es5',
+                trailingComma: 'all',
               }),
               map: terserStep.map,
               warnings: terserStep.warnings,
@@ -94,7 +94,7 @@ const config = (env, argv) => {
         }),
       ],
     },
-    target: ['web', 'es5'],
+    target: ['web', 'es2016'],
     output: {
       clean: true,
       filename: 'Gadget-mcw-calc-[name].js',
@@ -162,7 +162,7 @@ const config = (env, argv) => {
             loader: 'babel-loader',
             options: {
               presets: [
-                ['@babel/preset-env', { useBuiltIns: false }],
+                ['@babel/preset-env', { targets: ['supports es6', 'supports array-includes'] }],
                 '@babel/preset-typescript',
                 'babel-preset-typescript-vue3',
               ],
