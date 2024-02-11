@@ -1,16 +1,9 @@
 import 'dotenv/config'
 import { Mwn } from 'mwn'
 import { promises as fs } from 'node:fs'
+import { DeployTarget, targets } from './deployConfig'
 
-const env = process.env as {
-  API_URL?: string
-  API_DEV_URL?: string
-  USERNAME: string
-  USERNAME_DEV?: string
-  PASSWORD: string
-  PASSWORD_DEV?: string
-  USER_AGENT?: string
-}
+const env = process.env
 
 const manifest = await fs.readFile('./dist/manifest.json', {
   encoding: 'utf-8',
@@ -25,26 +18,20 @@ const definitionDev = await fs.readFile('./dist/Gadgets-definition.dev', {
   encoding: 'utf-8',
 })
 
-Promise.all([
-  ...(env.API_URL ? [update('prod', filesProd, definitionProd)] : []),
-  ...(env.API_DEV_URL ? [update('dev', filesDev, definitionDev)] : []),
-])
+Promise.all(
+  targets.map((target) =>
+    target.type === 'production'
+      ? update(target, filesProd, definitionProd)
+      : update(target, filesDev, definitionDev),
+  ),
+)
 
-async function update(target: 'prod' | 'dev', names: string[], definition: string) {
+async function update(target: DeployTarget, names: string[], definition: string) {
   const bot = await Mwn.init({
-    apiUrl: {
-      prod: env.API_URL,
-      dev: env.API_DEV_URL,
-    }[target],
+    apiUrl: target.apiUrl,
 
-    username: {
-      prod: env.USERNAME,
-      dev: env.USERNAME_DEV ?? env.USERNAME,
-    }[target],
-    password: {
-      prod: env.PASSWORD,
-      dev: env.PASSWORD_DEV ?? env.PASSWORD,
-    }[target],
+    username: env[`USERNAME_${target.credentials}`],
+    password: env[`PASSWORD_${target.credentials}`],
 
     userAgent: env.USER_AGENT ?? 'MCWCalcDeploy (mwn/1; +https://github.com/mc-wiki/mcw-calc)',
 
@@ -53,7 +40,7 @@ async function update(target: 'prod' | 'dev', names: string[], definition: strin
     },
   })
   const files = names.map((file) => `./dist/${file}`)
-  console.log(`Updating for ${target}: ${names.join(', ')}`)
+  console.log(`Updating for ${target.name}: ${names.join(', ')}`)
 
   files.forEach(async (path, index) => {
     const file = await fs.readFile(path, { encoding: 'utf-8' })
@@ -63,7 +50,7 @@ async function update(target: 'prod' | 'dev', names: string[], definition: strin
         file,
         `Bot: Automatically deploy changes from Git`,
       )
-      console.log(`Deployed ${names[index]} to ${target}`)
+      console.log(`Deployed ${names[index]} to ${target.name}`)
     }
   })
 

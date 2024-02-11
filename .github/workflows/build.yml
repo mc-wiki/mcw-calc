@@ -33,9 +33,7 @@ jobs:
       - name: Deploy
         run: pnpm run deploy
         env:
-          API_URL: 'https://minecraft.wiki/api.php'
-          API_DEV_URL: 'https://mc-dev.weirdgloop.org/api.php'
-          USERNAME: ${{ secrets.USERNAME }}
-          PASSWORD: ${{ secrets.PASSWORD }}
+          USERNAME_PROD: ${{ secrets.USERNAME }}
+          PASSWORD_PROD: ${{ secrets.PASSWORD }}
           USERNAME_DEV: ${{ secrets.USERNAME_DEV }}
           PASSWORD_DEV: ${{ secrets.PASSWORD_DEV }}
