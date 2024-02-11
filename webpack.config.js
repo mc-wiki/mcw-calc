@@ -74,7 +74,7 @@ const config = (env, argv) => {
             return {
               code: await prettier.format(terserStep.code, {
                 filepath: Object.keys(file)[0],
-                trailingComma: 'all',
+                trailingComma: 'es5',
               }),
               map: terserStep.map,
               warnings: terserStep.warnings,
