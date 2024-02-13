@@ -1,7 +1,11 @@
 import 'dotenv/config'
 import { Mwn } from 'mwn'
 import { promises as fs } from 'node:fs'
+import { exec } from 'node:child_process'
+import { promisify } from 'node:util'
 import { DeployTarget, targets } from './deployConfig'
+
+const { stdout: commitHash } = await promisify(exec)('git rev-parse HEAD')
 
 const env = process.env
 
@@ -48,7 +52,7 @@ async function update(target: DeployTarget, names: string[], definition: string)
       await bot.save(
         `MediaWiki:${names[index]}`,
         file,
-        `Bot: Automatically deploy changes from Git`,
+        `Bot: Automatically deploy changes from Git (${commitHash})`,
       )
       console.log(`Deployed ${names[index]} to ${target.name}`)
     }
@@ -63,7 +67,7 @@ async function update(target: DeployTarget, names: string[], definition: string)
     const text = rev.content.replace(section, definition)
     return {
       text: text,
-      summary: `Bot: Automatically deploy changes from Git`,
+      summary: `Bot: Automatically deploy changes from Git (${commitHash})`,
     }
   })
 }
