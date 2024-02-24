@@ -35,7 +35,6 @@ function resolveFallback(
   localMessages: Record<string, Record<string, string>>,
 ): Record<string, string> {
   const messages = findMessages(resolvedLanguage, localMessages) as Record<string, string>
-  console.log(localMessages)
   const fallbackChain = isKeyOfObject(resolvedLanguage, FALLBACK_CHAIN)
     ? FALLBACK_CHAIN[resolvedLanguage]
     : FALLBACK_CHAIN.default
@@ -59,7 +58,9 @@ function findMessages(language: string, localMessages: Record<string, Record<str
   } else {
     const json =
       process.env.NODE_ENV == 'production'
-        ? __non_webpack_require__<Record<string, Record<string, string>>>(`./locale.json`)
+        ? __non_webpack_require__<Record<string, Record<string, string>>>(
+            `./mcw-calc-${__webpack_runtime_id__}-locales.json`,
+          )
         : {}
 
     return isKeyOfObject(language, json) ? json[language] : {}

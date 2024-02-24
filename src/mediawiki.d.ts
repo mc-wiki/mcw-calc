@@ -9,4 +9,5 @@ declare module 'vue' {
 
 declare global {
   const __non_webpack_require__: <T = any>(id: string) => T
+  const __webpack_runtime_id__: string
 }
