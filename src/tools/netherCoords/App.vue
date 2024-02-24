@@ -4,7 +4,7 @@ import { CdxTextInput } from '@wikimedia/codex'
 import { useI18n } from '@/utils/i18n.ts'
 import locales from './locales.ts'
 
-const { t } = useI18n(locales)
+const { t } = useI18n(__TOOL_NAME__, locales)
 
 const overworldX = ref(0)
 const netherX = computed<number>({

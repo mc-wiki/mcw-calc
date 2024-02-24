@@ -1,4 +1,4 @@
-import { dirname } from 'path'
+import path, { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { VueLoaderPlugin } from 'vue-loader'
 import { globSync } from 'glob'
@@ -133,6 +133,14 @@ const config = (env, argv) => {
       new webpack.DefinePlugin({
         __VUE_OPTIONS_API__: true,
         __VUE_PROD_DEVTOOLS__: false,
+        __TOOL_NAME__: webpack.DefinePlugin.runtimeValue((args) => {
+          try {
+            const { relativePath } = args.module.resourceResolveData
+            return JSON.stringify(path.parse(relativePath).dir.replace('\\', '/').split('/').at(-1))
+          } catch {
+            return JSON.stringify(undefined)
+          }
+        }),
       }),
       new webpack.BannerPlugin(
         'Automatically deployed from GitHub: <https://github.com/mc-wiki/mcw-calc>, your edit will be overwritten',

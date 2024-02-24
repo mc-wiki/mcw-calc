@@ -16,8 +16,8 @@ const resolvedLanguage = MESSAGES_PAGE.includes(contentLanguage)
   ? pageContentLanguage
   : contentLanguage
 
-export function useI18n(localMessages: Record<string, Record<string, string>>) {
-  const messages = resolveFallback(localMessages)
+export function useI18n(toolName: string, localMessages: Record<string, Record<string, string>>) {
+  const messages = resolveFallback(toolName, localMessages)
 
   for (const [key, value] of Object.entries(messages)) {
     mw.messages.set(key, value)
@@ -32,14 +32,17 @@ export function useI18n(localMessages: Record<string, Record<string, string>>) {
 }
 
 function resolveFallback(
+  toolName: string,
   localMessages: Record<string, Record<string, string>>,
 ): Record<string, string> {
-  const messages = findMessages(resolvedLanguage, localMessages) as Record<string, string>
+  const messages = findMessages(resolvedLanguage, toolName, localMessages) as Record<string, string>
   const fallbackChain = isKeyOfObject(resolvedLanguage, FALLBACK_CHAIN)
     ? FALLBACK_CHAIN[resolvedLanguage]
     : FALLBACK_CHAIN.default
 
-  const fallbackMessages = fallbackChain.map((fallback) => findMessages(fallback, localMessages))
+  const fallbackMessages = fallbackChain.map((fallback) =>
+    findMessages(fallback, toolName, localMessages),
+  )
 
   for (const dictionary of fallbackMessages) {
     for (const [key, value] of Object.entries(dictionary)) {
@@ -52,7 +55,11 @@ function resolveFallback(
   return messages
 }
 
-function findMessages(language: string, localMessages: Record<string, Record<string, string>>) {
+function findMessages(
+  language: string,
+  toolName: string,
+  localMessages: Record<string, Record<string, string>>,
+) {
   if (MESSAGES_LOCAL.includes(resolvedLanguage)) {
     return localMessages[language]
   } else {
