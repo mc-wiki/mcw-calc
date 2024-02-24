@@ -189,8 +189,6 @@ export const endBlockMap = generateBlockMap(
   Infinity,
 )
 
-console.log(overworldBlockMap, netherBlockMap, endBlockMap)
-
 function generateBlockMap(
   data: Record<string, number[]>,
   totalBlocks: number,
