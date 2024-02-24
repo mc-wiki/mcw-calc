@@ -66,7 +66,7 @@ function findMessages(
     const json =
       process.env.NODE_ENV == 'production'
         ? __non_webpack_require__<Record<string, Record<string, string>>>(
-            `./mcw-calc-${__webpack_runtime_id__}-locales.json`,
+            `./mcw-calc-${toolName}-locales.json`,
           )
         : {}
 
