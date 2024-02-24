@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { CdxTextInput } from '@wikimedia/codex'
+import { useI18n } from '@/utils/i18n.ts'
+import locales from './locales.ts'
+
+const { t } = useI18n(locales)
+
 const overworldX = ref(0)
 const netherX = computed<number>({
   get: () => Math.round(overworldX.value / 8),
@@ -19,21 +24,23 @@ const netherZ = computed<number>({
 <template>
   <table class="wikitable" style="margin: auto">
     <caption>
-      Nether coordinate converter
+      {{
+        t('netherCoords.title')
+      }}
     </caption>
     <tbody>
       <tr>
-        <th scope="col">Dimension</th>
+        <th scope="col">{{ t('netherCoords.dimension') }}</th>
         <th scope="col">X</th>
         <th scope="col">Z</th>
       </tr>
       <tr>
-        <th scope="row">Overworld</th>
+        <th scope="row">{{ t('netherCoords.overworld') }}</th>
         <td><CdxTextInput v-model="overworldX" inputType="number" /></td>
         <td><CdxTextInput v-model="overworldZ" inputType="number" /></td>
       </tr>
       <tr>
-        <th scope="row">Nether</th>
+        <th scope="row">{{ t('netherCoords.nether') }}</th>
         <td>
           <CdxTextInput id="netherX" v-model="netherX" inputType="number" />
         </td>

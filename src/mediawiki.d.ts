@@ -6,3 +6,7 @@ declare module 'vue' {
     $i18n: typeof mw.message
   }
 }
+
+declare global {
+  const __non_webpack_require__: <T = any>(id: string) => T
+}

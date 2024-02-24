@@ -1,0 +1,72 @@
+const FALLBACK_CHAIN = {
+  zh: ['zh-cn', 'zh-tw', 'zh-hk', 'en'],
+  'zh-hans': ['zh-cn', 'zh-tw', 'zh-hk', 'en'],
+  'zh-cn': ['zh-tw', 'zh-hk', 'en'],
+  'zh-hant': ['zh-tw', 'zh-hk', 'zh-cn', 'en'],
+  'zh-tw': ['zh-hk', 'zh-cn', 'en'],
+  'zh-hk': ['zh-tw', 'zh-cn', 'en'],
+  default: ['en'],
+}
+const MESSAGES_LOCAL = ['en']
+const MESSAGES_PAGE = ['zh']
+
+const contentLanguage = mw.config.get('wgContentLanguage')
+const pageContentLanguage = mw.config.get('wgPageContentLanguage')
+const resolvedLanguage = MESSAGES_PAGE.includes(contentLanguage)
+  ? pageContentLanguage
+  : contentLanguage
+
+export function useI18n(localMessages: Record<string, Record<string, string>>) {
+  const messages = resolveFallback(localMessages)
+
+  for (const [key, value] of Object.entries(messages)) {
+    mw.messages.set(key, value)
+  }
+
+  return {
+    t: mw.message,
+    message: (key: string, parameters?: any[] | undefined) =>
+      new mw.Message(mw.messages, key, parameters),
+    messagesMap: messages,
+  }
+}
+
+function resolveFallback(
+  localMessages: Record<string, Record<string, string>>,
+): Record<string, string> {
+  const messages = findMessages(resolvedLanguage, localMessages) as Record<string, string>
+  console.log(localMessages)
+  const fallbackChain = isKeyOfObject(resolvedLanguage, FALLBACK_CHAIN)
+    ? FALLBACK_CHAIN[resolvedLanguage]
+    : FALLBACK_CHAIN.default
+
+  const fallbackMessages = fallbackChain.map((fallback) => findMessages(fallback, localMessages))
+
+  for (const dictionary of fallbackMessages) {
+    for (const [key, value] of Object.entries(dictionary)) {
+      if (!isKeyOfObject(key, messages)) {
+        messages[key] = value
+      }
+    }
+  }
+
+  return messages
+}
+
+function findMessages(language: string, localMessages: Record<string, Record<string, string>>) {
+  if (MESSAGES_LOCAL.includes(resolvedLanguage)) {
+    return localMessages[language]
+  } else {
+    const json =
+      process.env.NODE_ENV == 'production'
+        ? __non_webpack_require__<Record<string, Record<string, string>>>(`./locale.json`)
+        : {}
+
+    return isKeyOfObject(language, json) ? json[language] : {}
+  }
+}
+
+function isKeyOfObject<T extends object>(key: string | number | symbol, obj: T): key is keyof T {
+  // Type guard
+  return key in obj
+}
