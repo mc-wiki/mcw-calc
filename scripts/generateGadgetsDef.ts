@@ -43,7 +43,7 @@ for (const name of names) {
         dependencies ? `|dependencies=${dependencies.replace(/ /g, '')}` : ''
       }|hidden]|mcw-calc-${name}.js${
         cssNames.includes(name) ? `|mcw-calc-${name}.css` : ''
-      }|mcw-calc-${name}.json`,
+      }|mcw-calc-${name}-locales.json`,
     )
     manifest.prod.push(`Gadget-mcw-calc-${name}.js`)
     if (cssNames.includes(name)) manifest.prod.push(`Gadget-mcw-calc-${name}.css`)

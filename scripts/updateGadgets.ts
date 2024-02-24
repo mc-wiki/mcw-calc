@@ -72,7 +72,7 @@ async function update(target: DeployTarget, names: string[], definition: string)
     const text = rev.content.replace(section, definition)
     return {
       text: text,
-      summary: `Bot: Automatically deploy changes from Git (${commitHash})`,
+      summary: `Bot: Automatically deploy changes from Git (${commitHash.trim().substring(0, 6)})`,
     }
   })
 }
