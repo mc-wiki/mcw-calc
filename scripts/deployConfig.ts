@@ -14,13 +14,13 @@ export const targets: DeployTarget[] = [
     credentials: 'PROD',
     useLocalMessages: false,
   },
-  // {
-  //   type: 'production',
-  //   name: 'zh',
-  //   apiUrl: 'https://zh.minecraft.wiki/api.php',
-  //   credentials: 'PROD',
-  //  useLocalMessages: true
-  // },
+  {
+    type: 'production',
+    name: 'zh',
+    apiUrl: 'https://zh.minecraft.wiki/api.php',
+    credentials: 'PROD',
+    useLocalMessages: true,
+  },
   {
     type: 'development',
     name: 'en_dev',
