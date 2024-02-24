@@ -167,7 +167,7 @@ export interface Block {
 }
 
 function getBlockCount(posProvider: string) {
-  return parseInt(posProvider.match(/count=(.*?),/)![1]) * 16
+  return parseInt(posProvider.match(/count=(.*?),/)![1]) * 16 * 16
 }
 
 export const overworldBlockMap = generateBlockMap(
