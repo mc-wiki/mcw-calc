@@ -122,7 +122,6 @@ const config = (env, argv) => {
                 <link rel="stylesheet" href="@wikimedia/codex/dist/codex.style.css">
               </head>
               <body>
-                <div class="mcw-calc" data-type="blockDistribution" data-blocks="minecraft:stone"></div>
                 ${names.map((name) => `<div class="mcw-calc" data-type="${name}"></div>`).join('')}
                 ${htmlWebpackPlugin.tags.bodyTags}
               </body>

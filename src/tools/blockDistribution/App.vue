@@ -4,11 +4,15 @@ import { overworldBlockMap, netherBlockMap, endBlockMap, getColor, type Block } 
 import { onMounted, ref, computed, onUpdated } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
 import { CdxTab, CdxTabs, CdxCheckbox } from '@wikimedia/codex'
+import { useI18n } from '@/utils/i18n.ts'
+import locales from './locales.ts'
 
 const props = defineProps<{
   blocks: string[]
   blockNames: string[]
 }>()
+
+const { t, language, message } = useI18n(__TOOL_NAME__, locales)
 
 const enabledBlocks = ref(props.blocks.slice())
 
@@ -118,7 +122,7 @@ function plot(
         .attr('y', -4)
         .attr('fill', 'currentColor')
         .attr('text-anchor', 'end')
-        .text('Y level →'),
+        .text(t('blockDistribution.xAxis')),
     )
 
   // Add the y-axis.
@@ -134,7 +138,7 @@ function plot(
         .attr('y', 10)
         .attr('fill', 'currentColor')
         .attr('text-anchor', 'start')
-        .text('↑ Number of X found among 100,000 blocks'),
+        .text(t('blockDistribution.yAxis')),
     )
 
   // Compute the points in pixel space as [x, y, z], where z is the name of the series.
@@ -194,7 +198,10 @@ function plot(
     dot.attr('transform', `translate(${x1},${y1})`)
     const formatter = d3.format('d')
     dot.select('text').html(
-      `<tspan x="0" dy="1.2em">${formatter(y.invert(y1))} in 100,000</tspan>
+      `<tspan x="0" dy="1.2em">${t(
+        'blockDistribution.xInTenThousand',
+        formatter(y.invert(y1)),
+      )}</tspan>
         <tspan x="0" dy="1.2em">Y=${formatter(x.invert(x1))}</tspan>
         <tspan x="0" dy="1.2em">${k}</tspan>`,
     )
@@ -258,17 +265,9 @@ function update() {
 }
 </script>
 <template>
-  <h4>Block distribution for {{ props.blockNames.join(', ') }} in <i>Java Edition</i></h4>
-  <p style="font-size: 80%">
-    Data from
-    <a
-      href="https://github.com/Meeples10/MCResourceAnalyzer"
-      target="_blank"
-      class="external text"
-      rel="noreferrer noopener"
-      >MCResourceAnalyzer</a
-    >.
-  </p>
+  <h4
+    v-html="message('blockDistribution.title', [language.listToText(props.blockNames)]).parse()"
+  ></h4>
   <div style="display: flex; flex-wrap: wrap; margin-bottom: 0.5rem">
     <div
       v-if="props.blocks.length > 1"
@@ -292,7 +291,7 @@ function update() {
           accentColor: getColor('Total'),
         }"
       />
-      <label for="total">Total</label>
+      <label for="total">{{ t('blockDistribution.total') }}</label>
     </div>
     <div
       v-for="block in props.blocks"
@@ -333,21 +332,32 @@ function update() {
     </div>
   </div>
   <cdx-tabs v-model:active="currentTab">
-    <cdx-tab name="overworld" label="Overworld" v-if="overworldBlockMapFiltered.length !== 0">
+    <cdx-tab
+      name="overworld"
+      :label="t('blockDistribution.overworld')"
+      v-if="overworldBlockMapFiltered.length !== 0"
+    >
       <div style="width: 100%; overflow: auto" ref="overworld" />
     </cdx-tab>
-    <cdx-tab name="nether" label="Nether" v-if="netherBlockMapFiltered.length !== 0">
+    <cdx-tab
+      name="nether"
+      :label="t('blockDistribution.theNether')"
+      v-if="netherBlockMapFiltered.length !== 0"
+    >
       <div style="width: 100%; overflow: auto" ref="nether" />
     </cdx-tab>
-    <cdx-tab name="end" label="The End" v-if="endBlockMapFiltered.length !== 0">
+    <cdx-tab
+      name="end"
+      :label="t('blockDistribution.theEnd')"
+      v-if="endBlockMapFiltered.length !== 0"
+    >
       <div style="width: 100%; overflow: auto" ref="end" />
     </cdx-tab>
   </cdx-tabs>
   <cdx-checkbox v-model="logarithmicScale">
-    Logarithmic scale
+    {{ t('blockDistribution.logarithmicScale') }}
     <div class="oo-ui-labelWidget oo-ui-inline-help">
-      Slight difference in the Y-coordinate represents a large change in the relative frequency of a
-      block type, making it useful to see small changes on the graph when there is a large spike.
+      {{ t('blockDistribution.logarithmicScaleHelp') }}
     </div>
   </cdx-checkbox>
 </template>

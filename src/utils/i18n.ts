@@ -24,10 +24,11 @@ export function useI18n(toolName: string, localMessages: Record<string, Record<s
   }
 
   return {
-    t: mw.message,
+    t: mw.msg,
     message: (key: string, parameters?: any[] | undefined) =>
       new mw.Message(mw.messages, key, parameters),
     messagesMap: messages,
+    language: mw.language,
   }
 }
 
