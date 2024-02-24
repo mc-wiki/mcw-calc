@@ -6,6 +6,10 @@ const def = [
   '* mcw-calc-core[ResourceLoader|targets=desktop,mobile|type=general|default|hidden]|mcw-calc-core.js|mcw-calc-core.css',
 ]
 
+const localMessagesDef = [
+  '* mcw-calc-core[ResourceLoader|targets=desktop,mobile|type=general|default|hidden]|mcw-calc-core.js|mcw-calc-core.css',
+]
+
 const devDef = [
   '* mcw-calc-core[ResourceLoader|targets=desktop,mobile|type=general|default|hidden]|mcw-calc-core.js|mcw-calc-core.css',
 ]
@@ -34,6 +38,13 @@ for (const name of names) {
         dependencies ? `|dependencies=${dependencies.replace(/ /g, '')}` : ''
       }|hidden]|mcw-calc-${name}.js${cssNames.includes(name) ? `|mcw-calc-${name}.css` : ''}`,
     )
+    localMessagesDef.push(
+      `* mcw-calc-${name}[ResourceLoader|targets=desktop,mobile|package|type=general${
+        dependencies ? `|dependencies=${dependencies.replace(/ /g, '')}` : ''
+      }|hidden]|mcw-calc-${name}.js${
+        cssNames.includes(name) ? `|mcw-calc-${name}.css` : ''
+      }|mcw-calc-${name}.json`,
+    )
     manifest.prod.push(`Gadget-mcw-calc-${name}.js`)
     if (cssNames.includes(name)) manifest.prod.push(`Gadget-mcw-calc-${name}.css`)
   }
@@ -51,4 +62,5 @@ for (const name of names) {
 
 fs.writeFile('./dist/Gadgets-definition', def.join('\n'), 'utf-8')
 fs.writeFile('./dist/Gadgets-definition.dev', devDef.join('\n'), 'utf-8')
+fs.writeFile('./dist/Gadgets-definition.localMessages', localMessagesDef.join('\n'), 'utf-8')
 fs.writeFile('./dist/manifest.json', JSON.stringify(manifest, undefined, 2), 'utf-8')

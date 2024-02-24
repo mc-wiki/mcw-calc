@@ -21,11 +21,16 @@ const definitionProd = await fs.readFile('./dist/Gadgets-definition', {
 const definitionDev = await fs.readFile('./dist/Gadgets-definition.dev', {
   encoding: 'utf-8',
 })
+const definitionLocalMessages = await fs.readFile('./dist/Gadgets-definition.localMessages', {
+  encoding: 'utf-8',
+})
 
 Promise.all(
   targets.map((target) =>
     target.type === 'production'
-      ? update(target, filesProd, definitionProd)
+      ? target.useLocalMessages
+        ? update(target, filesProd, definitionLocalMessages)
+        : update(target, filesProd, definitionProd)
       : update(target, filesDev, definitionDev),
   ),
 )
@@ -52,7 +57,7 @@ async function update(target: DeployTarget, names: string[], definition: string)
       await bot.save(
         `MediaWiki:${names[index]}`,
         file,
-        `Bot: Automatically deploy changes from Git (${commitHash})`,
+        `Bot: Automatically deploy changes from Git (${commitHash.trim().substring(0, 6)})`,
       )
       console.log(`Deployed ${names[index]} to ${target.name}`)
     }
