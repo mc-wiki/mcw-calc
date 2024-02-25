@@ -66,6 +66,7 @@ function plot(
   if (blockMapFiltered.length === 0) {
     return null
   }
+
   // Declare the chart dimensions and margins.
   const width = 640
   const height = 400
@@ -82,15 +83,31 @@ function plot(
     for (let i = domain[0]; i <= domain[1]; i++) {
       total.push({
         pos: i,
-        count: blockMapFiltered
-          .filter((b) => b.pos === i)
-          .reduce((a, b) => a + (b.count <= 0.0001 ? 0 : b.count), 0.0001),
+        count: blockMapFiltered.filter((b) => b.pos === i).reduce((a, b) => a + b.count, 0),
 
         block: 'Total',
         color: getColor('Total'),
       })
     }
     totalPoints.push(...total)
+  }
+
+  const countMerged = [...(onlyShowTotal ? [] : blockMapFiltered), ...totalPoints]
+  const yMax = d3.max(countMerged, (d) => d.count) as number
+  let yMin = d3.min(countMerged, (d) => d.count) as number
+  const yContainsZero = yMin <= 0
+  if (logarithmicScale && yContainsZero) {
+    const logYMax = Math.log10(yMax)
+    const logYNonZeroMin = Math.log10(
+      d3.min(
+        countMerged.filter((d) => d.count > 0),
+        (d) => d.count,
+      ) as number,
+    )
+    yMin = Math.pow(
+      10,
+      logYMax - logYNonZeroMin > 9 ? Math.floor(logYMax - 9) : Math.floor(logYNonZeroMin),
+    )
   }
 
   // Declare the x (horizontal position) scale.
@@ -101,7 +118,7 @@ function plot(
 
   // Declare the y (vertical position) scale.
   const y = (logarithmicScale ? d3.scaleLog() : d3.scaleLinear())
-    .domain(d3.extent([...blockMapFiltered, ...totalPoints], (d) => d.count) as [number, number])
+    .domain([yMin, yMax])
     .range([height - marginBottom, marginTop])
 
   // Create the SVG container.
@@ -126,11 +143,16 @@ function plot(
     )
 
   // Add the y-axis.
+  const yAxis = d3.axisLeft(y).ticks(10, 'f')
+  if (logarithmicScale && yContainsZero) {
+    const formatter = y.tickFormat.apply(y, [10, 'f'])
+    yAxis.tickFormat((d) => (d === yMin ? '0' : formatter(d)))
+  }
   svg
     .append('g')
     .attr('class', 'isolate')
     .attr('transform', `translate(${marginLeft},0)`)
-    .call(d3.axisLeft(y).ticks(10, 'f'))
+    .call(yAxis)
     .call((g) =>
       g
         .append('text')
@@ -142,9 +164,9 @@ function plot(
     )
 
   // Compute the points in pixel space as [x, y, z], where z is the name of the series.
-  const points = [...(onlyShowTotal ? [] : blockMapFiltered), ...totalPoints].map((d) => [
+  const points = countMerged.map((d) => [
     x(d.pos),
-    y(d.count),
+    y(d.count <= yMin ? yMin : d.count),
     d.block,
   ]) as [number, number, string][]
 

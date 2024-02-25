@@ -203,7 +203,7 @@ function generateBlockMap(
       blockMap.push({
         block: `minecraft:${key}`,
         // number of X found in 100,000 blocks
-        count: count === 0 ? 0.0001 : (count / totalBlocks) * 100000,
+        count: count / totalBlocks * 100000,
         pos,
         color: getColor(key),
       })
