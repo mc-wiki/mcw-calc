@@ -83,9 +83,7 @@ function plot(
     for (let i = domain[0]; i <= domain[1]; i++) {
       total.push({
         pos: i,
-        count: blockMapFiltered
-          .filter((b) => b.pos === i)
-          .reduce((a, b) => a + b.count, 0),
+        count: blockMapFiltered.filter((b) => b.pos === i).reduce((a, b) => a + b.count, 0),
 
         block: 'Total',
         color: getColor('Total'),
@@ -100,8 +98,16 @@ function plot(
   const yContainsZero = yMin <= 0
   if (logarithmicScale && yContainsZero) {
     const logYMax = Math.log10(yMax)
-    const logYNonZeroMin = Math.log10(d3.min(countMerged.filter((d) => d.count > 0), (d) => d.count) as number)
-    yMin = Math.pow(10, logYMax - logYNonZeroMin > 9 ? Math.floor(logYMax - 9) : Math.floor(logYNonZeroMin))
+    const logYNonZeroMin = Math.log10(
+      d3.min(
+        countMerged.filter((d) => d.count > 0),
+        (d) => d.count,
+      ) as number,
+    )
+    yMin = Math.pow(
+      10,
+      logYMax - logYNonZeroMin > 9 ? Math.floor(logYMax - 9) : Math.floor(logYNonZeroMin),
+    )
   }
 
   // Declare the x (horizontal position) scale.
@@ -140,7 +146,7 @@ function plot(
   const yAxis = d3.axisLeft(y).ticks(10, 'f')
   if (logarithmicScale && yContainsZero) {
     const formatter = y.tickFormat.apply(y, [10, 'f'])
-    yAxis.tickFormat((d) => d === yMin ? '0' : formatter(d))
+    yAxis.tickFormat((d) => (d === yMin ? '0' : formatter(d)))
   }
   svg
     .append('g')
@@ -343,8 +349,8 @@ function update() {
         }"
       />
       <label :for="`blockLabel_${block}`">{{
-          props.blockNames[props.blocks.indexOf(block)]
-        }}</label>
+        props.blockNames[props.blocks.indexOf(block)]
+      }}</label>
     </div>
   </div>
   <cdx-tabs v-model:active="currentTab">
