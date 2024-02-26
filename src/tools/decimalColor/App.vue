@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Field from '@/components/Field.vue'
 import { ref, computed } from 'vue'
-import { colorStringToRgb } from '@/utils/color/index.ts'
+import { colorStringToRgb } from '@/utils/color'
 
 const color = ref('#f9fffe')
 const result = computed({

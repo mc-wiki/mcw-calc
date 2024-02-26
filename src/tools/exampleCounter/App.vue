@@ -2,8 +2,8 @@
 import { ref } from 'vue'
 import { CdxButton } from '@wikimedia/codex'
 import Field from '@/components/Field.vue'
-import { useI18n } from '@/utils/i18n.ts'
-import locales from './locales.ts'
+import { useI18n } from '@/utils/i18n'
+import locales from './locales'
 
 const { t } = useI18n(__TOOL_NAME__, locales)
 const count = ref(0)

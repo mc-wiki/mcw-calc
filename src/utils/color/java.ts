@@ -1,4 +1,4 @@
-import { rgb2lab, separateRgb } from './index.ts'
+import { rgb2lab, separateRgb } from '.'
 
 export const colorMap = {
   White: 0xf9fffe,

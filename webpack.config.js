@@ -42,6 +42,7 @@ const config = (env, argv) => {
       alias: {
         '@': dirname(fileURLToPath(import.meta.url)) + '/src',
       },
+      extensions: ['.vue', '.ts', '...'],
     },
     entry: {
       core: ['./src/loader.ts', './src/common.less'],
@@ -51,8 +52,10 @@ const config = (env, argv) => {
       headers: {
         'Access-Control-Allow-Origin': '*',
       },
-      hot: false,
-      webSocketServer: false,
+      client: {
+        webSocketURL: 'ws://localhost:8080/ws',
+      },
+      allowedHosts: ['minecraft.wiki', 'localhost'],
       onListening: () => {
         console.log(
           `<i> [mcw-calc] On-Wiki Preview: https://minecraft.wiki/w/User:Dianliang233/calc-sandbox`,

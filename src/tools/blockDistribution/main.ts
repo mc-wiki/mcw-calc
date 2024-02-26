@@ -4,7 +4,7 @@
  */
 import * as vue from 'vue'
 import App from './App.vue'
-import getParams from '@/utils/getParams.ts'
+import getParams from '@/utils/getParams'
 
 const targetEl = document.querySelector('.mcw-calc[data-type="blockDistribution"]')!
 const createApp =

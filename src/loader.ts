@@ -6,6 +6,7 @@ calcs.forEach((calc) => {
     return
   }
   if (process.env.NODE_ENV === 'development' || localStorage.getItem('mcwCalcLocal') === 'true') {
+    mw.loader.load('@wikimedia/codex')
     mw.loader.load('http://localhost:8080/Gadget-mcw-calc-' + type + '.js')
   } else {
     mw.loader.load('ext.gadget.mcw-calc-' + type)

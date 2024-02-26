@@ -7,9 +7,9 @@ import {
   colorToSequence,
   colorStringToRgb,
   sequenceToColorFloatAverage,
-} from '@/utils/color/index.ts'
-import { colorRgbMap as javaColorRgbMap } from '@/utils/color/java.ts'
-import { colorRgbMap as bedrockColorRgbMap } from '@/utils/color/bedrock.ts'
+} from '@/utils/color'
+import { colorRgbMap as javaColorRgbMap } from '@/utils/color/java'
+import { colorRgbMap as bedrockColorRgbMap } from '@/utils/color/bedrock'
 
 const color = ref('#f9fffe')
 const edition = ref<'java' | 'bedrock'>('java')
