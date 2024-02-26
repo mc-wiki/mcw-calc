@@ -269,7 +269,7 @@ function update() {
   nether.value?.replaceChildren(
     plot(
       netherBlockMapFiltered.value,
-      [0, 127],
+      [0, 130],
       logarithmicScale.value,
       showTotal.value,
       onlyShowTotal.value,
