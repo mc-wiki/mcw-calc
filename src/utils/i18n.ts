@@ -9,11 +9,11 @@ const FALLBACK_CHAIN = {
   default: ['en'],
 }
 const MESSAGES_LOCAL = ['en']
-const MESSAGES_PAGE = ['fr', 'zh']
+const USE_PAGE_CONTENT_LANGUAGE = ['zh']
 
 const contentLanguage = mw.config.get('wgContentLanguage')
 const pageContentLanguage = mw.config.get('wgPageContentLanguage')
-const resolvedLanguage = MESSAGES_PAGE.includes(contentLanguage)
+const resolvedLanguage = USE_PAGE_CONTENT_LANGUAGE.includes(contentLanguage)
   ? pageContentLanguage
   : contentLanguage
 
