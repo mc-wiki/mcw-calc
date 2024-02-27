@@ -96,6 +96,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
   )
   // [[File:Leather Tunic (texture) JE4 BE3.png]]
   img.src = 'https://minecraft.wiki/images/Leather_Tunic_(texture)_JE4_BE3.png?format=original'
+  img.crossOrigin = 'anonymous'
 })
 </script>
 <template>
