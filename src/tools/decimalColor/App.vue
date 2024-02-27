@@ -2,6 +2,10 @@
 import Field from '@/components/Field.vue'
 import { ref, computed } from 'vue'
 import { colorStringToRgb } from '@/utils/color'
+import { useI18n } from '@/utils/i18n'
+import locales from './locales'
+
+const { t } = useI18n(__TOOL_NAME__, locales)
 
 const color = ref('#f9fffe')
 const result = computed({
@@ -21,7 +25,7 @@ const result = computed({
 </script>
 <template>
   <Field>
-    <template #heading>Calculate decimal representation of color</template>
+    <template #heading>{{ t('decimalColor.title') }}</template>
 
     <div
       :style="{
@@ -42,7 +46,7 @@ const result = computed({
             gap: '.5rem',
           }"
         >
-          <label for="decimalColor-color-picker">Color:</label>
+          <label for="decimalColor-color-picker">{{ t('decimalColor.color') }}</label>
           <input type="color" v-model="color" id="decimalColor-color-picker" />
         </div>
         <div
@@ -53,7 +57,7 @@ const result = computed({
             gap: '.5rem',
           }"
         >
-          <label for="decimalColor-color-picker-output">Decimal:</label>
+          <label for="decimalColor-color-picker-output">{{ t('decimalColor.decimal') }}</label>
           <input type="text" v-model="result" id="decimalColor-color-picker-output" />
         </div>
       </div>

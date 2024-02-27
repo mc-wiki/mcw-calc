@@ -10,6 +10,10 @@ import {
 } from '@/utils/color'
 import { colorRgbMap as javaColorRgbMap } from '@/utils/color/java'
 import { colorRgbMap as bedrockColorRgbMap } from '@/utils/color/bedrock'
+import { useI18n } from '@/utils/i18n'
+import locales from './locales'
+
+const { t } = useI18n(__TOOL_NAME__, locales)
 
 const color = ref('#f9fffe')
 const edition = ref<'java' | 'bedrock'>('java')
@@ -97,11 +101,11 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
 </script>
 <template>
   <Field>
-    <template #heading>Calculate dye sequence for a leather (horse) armor color</template>
+    <template #heading>{{ t('armorColor.title') }}</template>
 
     <cdx-tabs v-model:active="edition">
-      <cdx-tab name="java" label="Java Edition" />
-      <cdx-tab name="bedrock" label="Bedrock Edition" />
+      <cdx-tab name="java" :label="t('armorColor.java')" />
+      <cdx-tab name="bedrock" :label="t('armorColor.bedrock')" />
     </cdx-tabs>
     <div
       :style="{
@@ -122,9 +126,11 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
             gap: '.5rem',
           }"
         >
-          <label for="color-picker">Color:</label>
+          <label for="color-picker">{{ t('armorColor.color') }}</label>
           <input type="color" v-model="color" id="color-picker" />
-          <cdx-button @click="updateSequence(colorStringToRgb(color))">Calculate</cdx-button>
+          <cdx-button @click="updateSequence(colorStringToRgb(color))">{{
+            t('armorColor.calculate')
+          }}</cdx-button>
         </div>
         <div
           :style="{
@@ -134,9 +140,9 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
             gap: '.5rem',
           }"
           class="explain"
-          title="You should dye the armor using all dyes at once."
+          :title="t('armorColor.sequence.help')"
         >
-          Sequence:
+          {{ t('armorColor.sequence') }}
           <div v-for="(item, index) in sequence[0]" :key="index">
             <img
               :src="generateDye(item)"
@@ -159,11 +165,8 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
           ></span>
         </div>
         <div>
-          <span
-            class="explain"
-            title="Delta E is a measure of color proximity. Lower is better. Values ≤1.0 means the difference is not perceptible by human eyes."
-          >
-            dE
+          <span class="explain" :title="t('armorColor.dE.help')">
+            {{ t('armorColor.dE') }}
           </span>
           = {{ sequence[1].toFixed(2) }}
         </div>

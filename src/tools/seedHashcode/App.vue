@@ -2,7 +2,13 @@
 import { ref } from 'vue'
 import { CdxTextInput } from '@wikimedia/codex'
 import Field from '@/components/Field.vue'
+import { useI18n } from '@/utils/i18n'
+import locales from './locales'
+
+const { t } = useI18n(__TOOL_NAME__, locales)
+
 const seed = ref('Minecraft Wiki')
+
 // Java String.hashCode() implementation
 function hashCode(s: string) {
   let h = 0
@@ -14,12 +20,9 @@ function hashCode(s: string) {
 </script>
 <template>
   <Field>
-    <template #heading>Convert a string to actual seed</template>
+    <template #heading>{{ t('seedHashcode.title') }}</template>
     <CdxTextInput v-model="seed" />
-    Actual seed: <code v-if="seed !== ''">{{ hashCode(seed) }}</code
-    ><template v-else
-      >This should be 0, but it is an empty string, so Minecraft actually generates a random
-      number.</template
-    >
+    {{ t('seedHashcode.actual') }} <code v-if="seed !== ''">{{ hashCode(seed) }}</code
+    ><template v-else>{{ t('seedHashcode.emptyString') }}</template>
   </Field>
 </template>
