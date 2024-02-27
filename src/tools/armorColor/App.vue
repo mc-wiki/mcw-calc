@@ -128,7 +128,9 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
         >
           <label for="color-picker">{{ t('armorColor.color') }}</label>
           <input type="color" v-model="color" id="color-picker" />
-          <cdx-button @click="updateSequence(colorStringToRgb(color))">{{ t('armorColor.calculate') }}</cdx-button>
+          <cdx-button @click="updateSequence(colorStringToRgb(color))">{{
+            t('armorColor.calculate')
+          }}</cdx-button>
         </div>
         <div
           :style="{
@@ -163,10 +165,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
           ></span>
         </div>
         <div>
-          <span
-            class="explain"
-            :title="t('armorColor.dE.help')"
-          >
+          <span class="explain" :title="t('armorColor.dE.help')">
             {{ t('armorColor.dE') }}
           </span>
           = {{ sequence[1].toFixed(2) }}

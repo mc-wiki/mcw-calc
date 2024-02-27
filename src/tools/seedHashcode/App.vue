@@ -23,8 +23,6 @@ function hashCode(s: string) {
     <template #heading>{{ t('seedHashcode.title') }}</template>
     <CdxTextInput v-model="seed" />
     {{ t('seedHashcode.actual') }} <code v-if="seed !== ''">{{ hashCode(seed) }}</code
-    ><template v-else
-      >{{ t('seedHashcode.emptyString') }}</template
-    >
+    ><template v-else>{{ t('seedHashcode.emptyString') }}</template>
   </Field>
 </template>
