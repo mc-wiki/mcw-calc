@@ -17,7 +17,10 @@ const resolvedLanguage = USE_PAGE_CONTENT_LANGUAGE.includes(contentLanguage)
   ? pageContentLanguage
   : contentLanguage
 
-export function useI18n(toolName: string, localMessages: Record<string, Record<string, string>>) {
+export function useI18n<K extends string>(
+  toolName: string,
+  localMessages: Record<string, Record<K, string>>,
+) {
   const messages = resolveFallback(toolName, localMessages)
 
   for (const [key, value] of Object.entries(messages)) {
@@ -25,7 +28,7 @@ export function useI18n(toolName: string, localMessages: Record<string, Record<s
   }
 
   return {
-    t: mw.msg,
+    t: (key: K, ...parameters: any[]) => mw.msg(key, ...parameters),
     message: (key: string, parameters?: any[] | undefined) =>
       new mw.Message(mw.messages, key, parameters),
     messagesMap: messages,
