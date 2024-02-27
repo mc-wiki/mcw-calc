@@ -31,7 +31,7 @@ async function updateSequence(targetColor: [number, number, number]) {
 }
 
 function generateGlass(color: Color) {
-  return `/images/Invicon_${imgNames[color]}_Stained_Glass_Pane.png?format=original`
+  return `https://minecraft.wiki/images/Invicon_${imgNames[color]}_Stained_Glass_Pane.png?format=original`
 }
 
 function generateGlassName(color: Color) {
@@ -65,6 +65,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
   )
   // [[File:Beacon Beam (texture).png]]
   img.src = 'https://minecraft.wiki/images/Beacon_Beam_(texture).png?format=original'
+  img.crossOrigin = 'anonymous'
 })
 </script>
 <template>
