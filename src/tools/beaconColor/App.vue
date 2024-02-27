@@ -7,6 +7,7 @@ import {
   colorToSequence,
   colorStringToRgb,
   sequenceToColorFloatAverage,
+  imgNames,
 } from '@/utils/color'
 import { colorRgbMap as javaColorRgbMap } from '@/utils/color/java'
 import { colorRgbMap as bedrockColorRgbMap } from '@/utils/color/bedrock'
@@ -18,7 +19,7 @@ const { t } = useI18n(__TOOL_NAME__, locales)
 const color = ref('#f9fffe')
 const edition = ref<'java' | 'bedrock'>('java')
 const canvasRef = ref<HTMLCanvasElement | null>(null)
-const sequence = ref<[Color[], number, [number, number, number]]>([['White'], 0, [249, 255, 254]])
+const sequence = ref<[Color[], number, [number, number, number]]>([['white'], 0, [249, 255, 254]])
 
 async function updateSequence(targetColor: [number, number, number]) {
   await nextTick()
@@ -30,13 +31,11 @@ async function updateSequence(targetColor: [number, number, number]) {
 }
 
 function generateGlass(color: Color) {
-  return `/images/Invicon_${color
-    .replace(/^(.)|\s+(.)/g, (c) => c.toUpperCase())
-    .replace(/ /g, '_')}_Stained_Glass_Pane.png?format=original`
+  return `/images/Invicon_${imgNames[color]}_Stained_Glass_Pane.png?format=original`
 }
 
 function generateGlassName(color: Color) {
-  return color.replace(/^(.)|\s+(.)/g, (c) => c.toUpperCase()) + ' Stained Glass Pane'
+  return t(`beaconColor.glass.${color}`)
 }
 
 watch([sequence, canvasRef], ([sequence, canvasRef]) => {
@@ -65,7 +64,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
     false,
   )
   // [[File:Beacon Beam (texture).png]]
-  img.src = '/images/Beacon_Beam_(texture).png?format=original'
+  img.src = 'https://minecraft.wiki/images/Beacon_Beam_(texture).png?format=original'
 })
 </script>
 <template>

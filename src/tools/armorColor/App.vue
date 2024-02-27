@@ -7,6 +7,7 @@ import {
   colorToSequence,
   colorStringToRgb,
   sequenceToColorFloatAverage,
+  imgNames,
 } from '@/utils/color'
 import { colorRgbMap as javaColorRgbMap } from '@/utils/color/java'
 import { colorRgbMap as bedrockColorRgbMap } from '@/utils/color/bedrock'
@@ -18,7 +19,7 @@ const { t } = useI18n(__TOOL_NAME__, locales)
 const color = ref('#f9fffe')
 const edition = ref<'java' | 'bedrock'>('java')
 const canvasRef = ref<HTMLCanvasElement | null>(null)
-const sequence = ref<[Color[], number, [number, number, number]]>([['White'], 0, [249, 255, 254]])
+const sequence = ref<[Color[], number, [number, number, number]]>([['white'], 0, [249, 255, 254]])
 
 function sequenceToColorJavaArmor(
   c: Color[],
@@ -52,13 +53,11 @@ function sequenceToColorJavaArmor(
 }
 
 function generateDye(color: Color) {
-  return `/images/Invicon_${color
-    .replace(/^(.)|\s+(.)/g, (c) => c.toUpperCase())
-    .replace(/ /g, '_')}_Dye.png?format=original`
+  return `https://minecraft.wiki/images/Invicon_${imgNames[color]}_Dye.png?format=original`
 }
 
 function generateDyeName(color: Color) {
-  return color.replace(/^(.)|\s+(.)/g, (c) => c.toUpperCase()) + ' Dye'
+  return t(`armorColor.dye.${color}`)
 }
 
 async function updateSequence(targetColor: [number, number, number]) {
@@ -96,7 +95,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
     false,
   )
   // [[File:Leather Tunic (texture) JE4 BE3.png]]
-  img.src = '/images/Leather_Tunic_(texture)_JE4_BE3.png?format=original'
+  img.src = 'https://minecraft.wiki/images/Leather_Tunic_(texture)_JE4_BE3.png?format=original'
 })
 </script>
 <template>

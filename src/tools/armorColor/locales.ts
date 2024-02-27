@@ -10,5 +10,22 @@ export default {
     'armorColor.dE': 'dE',
     'armorColor.dE.help':
       'Delta E is a measure of color proximity. Lower is better. Values ≤1.0 means the difference is not perceptible by human eyes.',
+
+    'armorColor.dye.white': 'White Dye',
+    'armorColor.dye.lightGray': 'Light Gray Dye',
+    'armorColor.dye.gray': 'Gray Dye',
+    'armorColor.dye.black': 'Black Dye',
+    'armorColor.dye.brown': 'Brown Dye',
+    'armorColor.dye.red': 'Red Dye',
+    'armorColor.dye.orange': 'Orange Dye',
+    'armorColor.dye.yellow': 'Yellow Dye',
+    'armorColor.dye.lime': 'Lime Dye',
+    'armorColor.dye.green': 'Green Dye',
+    'armorColor.dye.cyan': 'Cyan Dye',
+    'armorColor.dye.lightBlue': 'Light Blue Dye',
+    'armorColor.dye.blue': 'Blue Dye',
+    'armorColor.dye.purple': 'Purple Dye',
+    'armorColor.dye.magenta': 'Magenta Dye',
+    'armorColor.dye.pink': 'Pink Dye',
   },
 }

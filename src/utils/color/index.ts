@@ -1,3 +1,22 @@
+export const imgNames = {
+  white: 'White',
+  lightGray: 'Light_Gray',
+  gray: 'Gray',
+  black: 'Black',
+  brown: 'Brown',
+  red: 'Red',
+  orange: 'Orange',
+  yellow: 'Yellow',
+  lime: 'Lime',
+  green: 'Green',
+  cyan: 'Cyan',
+  lightBlue: 'Light_Blue',
+  blue: 'Blue',
+  purple: 'Purple',
+  magenta: 'Magenta',
+  pink: 'Pink',
+} as Record<Color, string>
+
 export const combs = [
   ...combsWithRep(6, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]),
   ...combsWithRep(5, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]),
@@ -16,22 +35,22 @@ export function colorStringToRgb(color: string): [number, number, number] {
 }
 
 export type Color =
-  | 'White'
-  | 'Light gray'
-  | 'Gray'
-  | 'Black'
-  | 'Brown'
-  | 'Red'
-  | 'Orange'
-  | 'Yellow'
-  | 'Lime'
-  | 'Green'
-  | 'Cyan'
-  | 'Light blue'
-  | 'Blue'
-  | 'Purple'
-  | 'Magenta'
-  | 'Pink'
+  | 'white'
+  | 'lightGray'
+  | 'gray'
+  | 'black'
+  | 'brown'
+  | 'red'
+  | 'orange'
+  | 'yellow'
+  | 'lime'
+  | 'green'
+  | 'cyan'
+  | 'lightBlue'
+  | 'blue'
+  | 'purple'
+  | 'magenta'
+  | 'pink'
 
 export function floatRgbToInteger(rgb: [number, number, number]) {
   return rgb.map((v) => Math.floor(v * 255)) as [number, number, number]

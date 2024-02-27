@@ -9,5 +9,22 @@ export default {
     'beaconColor.dE': 'dE',
     'beaconColor.dE.help':
       'Delta E is a measure of color proximity. Lower is better. Values ≤1.0 means the difference is not perceptible by human eyes.',
+
+    'beaconColor.glass.white': 'White Dye',
+    'beaconColor.glass.lightGray': 'Light Gray Dye',
+    'beaconColor.glass.gray': 'Gray Dye',
+    'beaconColor.glass.black': 'Black Dye',
+    'beaconColor.glass.brown': 'Brown Dye',
+    'beaconColor.glass.red': 'Red Dye',
+    'beaconColor.glass.orange': 'Orange Dye',
+    'beaconColor.glass.yellow': 'Yellow Dye',
+    'beaconColor.glass.lime': 'Lime Dye',
+    'beaconColor.glass.green': 'Green Dye',
+    'beaconColor.glass.cyan': 'Cyan Dye',
+    'beaconColor.glass.lightBlue': 'Light Blue Dye',
+    'beaconColor.glass.blue': 'Blue Dye',
+    'beaconColor.glass.purple': 'Purple Dye',
+    'beaconColor.glass.magenta': 'Magenta Dye',
+    'beaconColor.glass.pink': 'Pink Dye',
   },
 }
