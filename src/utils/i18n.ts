@@ -68,12 +68,19 @@ function findMessages(
   if (MESSAGES_LOCAL.includes(resolvedLanguage)) {
     return localMessages[language]
   } else {
-    const json =
-      process.env.NODE_ENV == 'production'
-        ? __non_webpack_require__<Record<string, Record<string, string>>>(
-            `./mcw-calc-${toolName}-locales.json`,
-          )
-        : {}
+    if (process.env.NODE_ENV == 'development') {
+      return {}
+    }
+
+    let json
+    try {
+      json = __non_webpack_require__<Record<string, Record<string, string>>>(
+        `./mcw-calc-${toolName}-locales.json`,
+      )
+    } catch {
+      json = {}
+      console.warn(`${toolName} is missing messages for ${language}.`)
+    }
 
     return isKeyOfObject(language, json) ? json[language] : {}
   }

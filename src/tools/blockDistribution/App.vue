@@ -13,12 +13,25 @@ const props = defineProps<{
 }>()
 
 const { t, language, message } = useI18n(__TOOL_NAME__, locales)
+const pageName = mw.Title.newFromText(mw.config.get('wgPageName'))!.getMainText()
 
 const enabledBlocks = ref(props.blocks.slice())
 
 const logarithmicScale = useLocalStorage('mcwBlockDistributionLogarithmicScale', false)
 const showTotal = useLocalStorage('mcwBlockDistributionShowTotal', true)
 const onlyShowTotal = computed(() => enabledBlocks.value.length === 0)
+const selectAll = computed({
+  get() {
+    return enabledBlocks.value.every((block) => !!props.blocks.includes(block))
+  },
+  set(value) {
+    if (value) {
+      enabledBlocks.value = props.blocks.slice()
+    } else {
+      enabledBlocks.value = []
+    }
+  },
+})
 
 const overworldBlockMapFiltered = computed(() => {
   if (onlyShowTotal.value) {
@@ -288,9 +301,36 @@ function update() {
 </script>
 <template>
   <h4
-    v-html="message('blockDistribution.title', [language.listToText(props.blockNames)]).parse()"
+    v-html="
+      message('blockDistribution.title', [
+        props.blockNames.length <= 5 ? language.listToText(props.blockNames) : pageName,
+        '1.20.4',
+      ]).parse()
+    "
   ></h4>
   <div style="display: flex; flex-wrap: wrap; margin-bottom: 0.5rem">
+    <div
+      v-if="props.blocks.length > 1"
+      style="
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0.75rem;
+        font-size: 90%;
+      "
+    >
+      <input
+        type="checkbox"
+        v-model="selectAll"
+        id="selectAll"
+        :style="{
+          width: '1rem',
+          height: '1rem',
+          marginRight: '0.3rem',
+        }"
+      />
+      <label for="selectAll">{{ t('blockDistribution.selectAll') }}</label>
+    </div>
     <div
       v-if="props.blocks.length > 1"
       style="
