@@ -14,7 +14,7 @@ import { colorRgbMap as bedrockColorRgbMap } from '@/utils/color/bedrock'
 import { useI18n } from '@/utils/i18n'
 import locales from './locales'
 
-const props = defineProps<{ type: 'armor' | 'horse' | 'wolf' }>()
+const props = defineProps<{ type: 'normal' | 'horse' | 'wolf' }>()
 
 const { t } = useI18n(__TOOL_NAME__, locales)
 

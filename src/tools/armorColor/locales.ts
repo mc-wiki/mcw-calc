@@ -11,7 +11,7 @@ export default {
     'armorColor.dE.help':
       'Delta E is a measure of color proximity. Lower is better. Values ≤1.0 means the difference is not perceptible by human eyes.',
 
-    'armorColor.type.armor': 'leather armor',
+    'armorColor.type.normal': 'leather armor',
     'armorColor.type.horse': 'leather horse armor',
     'armorColor.type.wolf': 'wolf armor',
 
