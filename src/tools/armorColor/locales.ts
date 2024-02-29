@@ -1,6 +1,6 @@
 export default {
   en: {
-    'armorColor.title': 'Calculate dye sequence for a leather (horse) armor color',
+    'armorColor.title': 'Calculate dye sequence for $1 color',
     'armorColor.java': 'Java Edition',
     'armorColor.bedrock': 'Bedrock Edition',
     'armorColor.color': 'Color:',
@@ -10,6 +10,10 @@ export default {
     'armorColor.dE': 'dE',
     'armorColor.dE.help':
       'Delta E is a measure of color proximity. Lower is better. Values ≤1.0 means the difference is not perceptible by human eyes.',
+
+    'armorColor.type.armor': 'leather armor',
+    'armorColor.type.horse': 'leather horse armor',
+    'armorColor.type.wolf': 'wolf armor',
 
     'armorColor.dye.white': 'White Dye',
     'armorColor.dye.lightGray': 'Light Gray Dye',

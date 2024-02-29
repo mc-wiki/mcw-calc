@@ -14,6 +14,8 @@ import { colorRgbMap as bedrockColorRgbMap } from '@/utils/color/bedrock'
 import { useI18n } from '@/utils/i18n'
 import locales from './locales'
 
+const props = defineProps<{ type: 'armor' | 'horse' | 'wolf' }>()
+
 const { t } = useI18n(__TOOL_NAME__, locales)
 
 const color = ref('#f9fffe')
@@ -82,6 +84,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
   img.addEventListener(
     'load',
     () => {
+      if (props.type === 'wolf') return
       ctx.drawImage(img, 0, 0)
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
       const data = imageData.data
@@ -94,14 +97,53 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
     },
     false,
   )
-  // [[File:Leather Tunic (texture) JE4 BE3.png]]
-  img.src = 'https://minecraft.wiki/images/Leather_Tunic_(texture)_JE4_BE3.png?format=original'
+  if (props.type === 'horse') {
+    // [[File:Leather Horse Armor (texture) JE2.png]]
+    img.src = 'https://minecraft.wiki/images/Leather_Horse_Armor_(texture)_JE2.png?format=original'
+  } else if (props.type === 'wolf') {
+    // [[File:Wolf Armor (overlay texture) JE2 BE2.png]]
+    img.src =
+      'https://minecraft.wiki/images/Wolf_Armor_(overlay_texture)_JE2_BE2.png?format=original'
+
+    img.addEventListener('load', () => {
+      // [[File:Wolf Armor JE2 BE2.png]]
+      const dyeCanvas = document.createElement('canvas')
+      dyeCanvas.setAttribute('width', '160')
+      dyeCanvas.setAttribute('height', '160')
+      const dyeCtx = dyeCanvas.getContext('2d')!
+      dyeCtx.drawImage(img, 0, 0)
+      const dyeImageData = dyeCtx.getImageData(0, 0, dyeCanvas.width, dyeCanvas.height)
+      const { data } = dyeImageData
+      for (let i = 0; i < data.length; i += 4) {
+        data[i] = (data[i] / 255) * colorFloat[0] * 255
+        data[i + 1] = (data[i + 1] / 255) * colorFloat[1] * 255
+        data[i + 2] = (data[i + 2] / 255) * colorFloat[2] * 255
+      }
+      dyeCtx.putImageData(dyeImageData, 0, 0)
+
+      const background = new Image()
+      background.addEventListener(
+        'load',
+        () => {
+          ctx.drawImage(background, 0, 0)
+
+          ctx.drawImage(dyeCanvas, 0, 0)
+        },
+        false,
+      )
+
+      background.src = 'https://minecraft.wiki/images/Wolf_Armor_JE2_BE2.png?format=original'
+    })
+  } else {
+    // [[File:Leather Tunic (texture) JE4 BE3.png]]
+    img.src = 'https://minecraft.wiki/images/Leather_Tunic_(texture)_JE4_BE3.png?format=original'
+  }
   img.crossOrigin = 'anonymous'
 })
 </script>
 <template>
   <Field>
-    <template #heading>{{ t('armorColor.title') }}</template>
+    <template #heading>{{ t('armorColor.title', t(`armorColor.type.${props.type}`)) }}</template>
 
     <cdx-tabs v-model:active="edition">
       <cdx-tab name="java" :label="t('armorColor.java')" />
