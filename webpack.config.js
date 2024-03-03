@@ -179,7 +179,6 @@ const config = (env, argv) => {
             },
           },
         },
-
         {
           test: /\.less$/,
           use: [
