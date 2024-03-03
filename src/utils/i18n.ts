@@ -1,11 +1,12 @@
 const FALLBACK_CHAIN = {
+  fr: ['fr-fr', 'en'],
   zh: ['zh-cn', 'zh-tw', 'zh-hk', 'en'],
   'zh-hans': ['zh-cn', 'zh-tw', 'zh-hk', 'en'],
   'zh-cn': ['zh-tw', 'zh-hk', 'en'],
   'zh-hant': ['zh-tw', 'zh-hk', 'zh-cn', 'en'],
   'zh-tw': ['zh-hk', 'zh-cn', 'en'],
   'zh-hk': ['zh-tw', 'zh-cn', 'en'],
-  default: mw.language.getFallbackLanguages(),
+  default: ['en'],
 }
 const MESSAGES_LOCAL = ['en']
 const USE_PAGE_CONTENT_LANGUAGE = ['zh']
