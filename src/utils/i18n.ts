@@ -8,13 +8,8 @@ const FALLBACK_CHAIN = {
   default: mw.language.getFallbackLanguages(),
 }
 const MESSAGES_LOCAL = ['en']
-const USE_PAGE_CONTENT_LANGUAGE = ['zh']
 
-const contentLanguage = mw.config.get('wgContentLanguage')
-const pageContentLanguage = mw.config.get('wgPageContentLanguage')
-const resolvedLanguage = USE_PAGE_CONTENT_LANGUAGE.includes(contentLanguage)
-  ? pageContentLanguage
-  : contentLanguage
+const resolvedLanguage = mw.config.get('wgPageContentLanguage')
 
 export function useI18n<K extends string>(
   toolName: string,
