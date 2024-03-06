@@ -10,6 +10,7 @@ mw.hook('wikipage.content').add(() => {
       console.log('You are in development environment and tools are loaded from localhost.')
       mw.loader.load('@wikimedia/codex')
       mw.loader.load('http://localhost:8080/Gadget-mcw-calc-' + type + '.js')
+      importStylesheetURI('http://localhost:8080/Gadget-mcw-calc-' + type + '.css', 'text/css')
     } else {
       mw.loader.load('ext.gadget.mcw-calc-' + type)
     }

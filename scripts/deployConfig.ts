@@ -21,6 +21,13 @@ export const targets: DeployTarget[] = [
     credentials: 'PROD',
     useLocalMessages: true,
   },
+  // {
+  //   type: 'production',
+  //   name: 'ru',
+  //   apiUrl: 'https://ru.minecraft.wiki/api.php',
+  //   credentials: 'PROD',
+  //   useLocalMessages: true,
+  // },
   {
     type: 'production',
     name: 'zh',
@@ -28,6 +35,8 @@ export const targets: DeployTarget[] = [
     credentials: 'PROD',
     useLocalMessages: true,
   },
+
+  // Dev wikis
   {
     type: 'development',
     name: 'en_dev',

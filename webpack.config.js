@@ -103,6 +103,7 @@ const config = (env, argv) => {
       filename: 'Gadget-mcw-calc-[name].js',
       chunkFormat: 'commonjs',
       chunkLoading: 'import',
+      scriptType: 'text/javascript',
     },
     watchOptions: {
       aggregateTimeout: 200,
@@ -181,15 +182,11 @@ const config = (env, argv) => {
         },
         {
           test: /\.less$/,
-          use: [
-            prodDev(MiniCssExtractPlugin.loader, 'vue-style-loader'),
-            'css-loader',
-            'less-loader',
-          ],
+          use: [MiniCssExtractPlugin.loader, 'css-loader', 'less-loader'],
         },
         {
           test: /\.css$/,
-          use: [prodDev(MiniCssExtractPlugin.loader, 'vue-style-loader'), 'css-loader'],
+          use: [MiniCssExtractPlugin.loader, 'css-loader'],
         },
         {
           resourceQuery: /inline/,
