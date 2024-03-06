@@ -1,6 +1,6 @@
 /**
  * @public
- * @dependencies mw.jqueryMsg
+ * @dependencies mediawiki.jqueryMsg
  */
 
 import L from 'leaflet'
