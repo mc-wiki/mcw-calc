@@ -89,10 +89,12 @@ getUuid(playerName.value)
           <p v-html="message('playerUuid.uuid').parse()"></p>
           <code v-if="playerUuid !== ''">{{ playerUuid }}</code>
           <template v-else>{{ errorText }}</template>
-          <cdx-button v-if="playerUuid !== ''" @click="copyUuid(playerUuid)">{{ copyText }}</cdx-button>
+          <cdx-button v-if="playerUuid !== ''" @click="copyUuid(playerUuid)">{{
+            copyText
+          }}</cdx-button>
         </div>
       </div>
-      <img v-if="playerUuid !== ''" width="64" height="64" :src="playerAvatar"/>
+      <img v-if="playerUuid !== ''" width="64" height="64" :src="playerAvatar" />
     </div>
   </Field>
 </template>
