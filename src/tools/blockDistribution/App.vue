@@ -15,18 +15,26 @@ const props = defineProps<{
 const { t, language, message } = useI18n(__TOOL_NAME__, locales)
 const pageName = mw.Title.newFromText(mw.config.get('wgPageName'))!.getMainText()
 
-const enabledBlocks = ref(props.blocks.slice())
+const validBlocks = props.blocks
+  .slice()
+  .filter(
+    (block) =>
+      overworldBlockMap.some((b) => b.block === block) ||
+      netherBlockMap.some((b) => b.block === block) ||
+      endBlockMap.some((b) => b.block === block),
+  )
+const enabledBlocks = ref(validBlocks.slice())
 
 const logarithmicScale = useLocalStorage('mcwBlockDistributionLogarithmicScale', false)
 const showTotal = useLocalStorage('mcwBlockDistributionShowTotal', true)
 const onlyShowTotal = computed(() => enabledBlocks.value.length === 0)
 const selectAll = computed({
   get() {
-    return enabledBlocks.value.every((block) => !!props.blocks.includes(block))
+    return enabledBlocks.value.every((block) => !!validBlocks.includes(block))
   },
   set(value) {
     if (value) {
-      enabledBlocks.value = props.blocks.slice()
+      enabledBlocks.value = validBlocks.slice()
     } else {
       enabledBlocks.value = []
     }
@@ -35,7 +43,7 @@ const selectAll = computed({
 
 const overworldBlockMapFiltered = computed(() => {
   if (onlyShowTotal.value) {
-    return overworldBlockMap.filter((d) => props.blocks.includes(d.block))
+    return overworldBlockMap.filter((d) => validBlocks.includes(d.block))
   }
   if (enabledBlocks.value.length === 0) {
     return []
@@ -47,7 +55,7 @@ const netherBlockMapFiltered = computed(() => {
     return []
   }
   if (onlyShowTotal.value) {
-    return netherBlockMap.filter((d) => props.blocks.includes(d.block))
+    return netherBlockMap.filter((d) => validBlocks.includes(d.block))
   }
   return netherBlockMap.filter((d) => enabledBlocks.value.includes(d.block))
 })
@@ -56,7 +64,7 @@ const endBlockMapFiltered = computed(() => {
     return []
   }
   if (onlyShowTotal.value) {
-    return endBlockMap.filter((d) => props.blocks.includes(d.block))
+    return endBlockMap.filter((d) => validBlocks.includes(d.block))
   }
   return endBlockMap.filter((d) => enabledBlocks.value.includes(d.block))
 })
@@ -310,7 +318,7 @@ function update() {
   ></h4>
   <div style="display: flex; flex-wrap: wrap; margin-bottom: 0.5rem">
     <div
-      v-if="props.blocks.length > 1"
+      v-if="validBlocks.length > 1"
       style="
         display: flex;
         align-items: center;
@@ -332,7 +340,7 @@ function update() {
       <label for="selectAll">{{ t('blockDistribution.selectAll') }}</label>
     </div>
     <div
-      v-if="props.blocks.length > 1"
+      v-if="validBlocks.length > 1"
       style="
         display: flex;
         align-items: center;
@@ -356,7 +364,7 @@ function update() {
       <label for="total">{{ t('blockDistribution.total') }}</label>
     </div>
     <div
-      v-for="block in props.blocks"
+      v-for="block in validBlocks"
       :key="block"
       style="
         display: flex;
@@ -367,7 +375,7 @@ function update() {
       "
     >
       <input
-        v-if="props.blocks.length > 1"
+        v-if="validBlocks.length > 1"
         type="checkbox"
         :checked="enabledBlocks.includes(block)"
         :id="`blockLabel_${block}`"
@@ -388,9 +396,7 @@ function update() {
           backgroundColor: getColor(block),
         }"
       />
-      <label :for="`blockLabel_${block}`">{{
-        props.blockNames[props.blocks.indexOf(block)]
-      }}</label>
+      <label :for="`blockLabel_${block}`">{{ props.blockNames[validBlocks.indexOf(block)] }}</label>
     </div>
   </div>
   <cdx-tabs v-model:active="currentTab">
