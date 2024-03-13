@@ -56,7 +56,7 @@ export default L.Handler.extend({
     L.DomEvent.stopPropagation(e)
   },
 
-  _onWheelEnd: function (e) {
+  _onWheelEnd: function () {
     this._isWheeling = false
     cancelAnimationFrame(this._zoomAnimationId)
     this._map._moveEnd(true)

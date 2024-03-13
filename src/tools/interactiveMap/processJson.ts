@@ -57,7 +57,7 @@ export default function processJson({
         description: parseWikitext(marker.popup.description),
         link: {
           ...marker.popup.link,
-          url: getImageLink(marker.popup.link.url),
+          url: 'https://minecraft.wiki/images/' + marker.popup.link.url,
         },
         image: marker.popup.image ? getImageLink(marker.popup.image) : undefined,
       },
