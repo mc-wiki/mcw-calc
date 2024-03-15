@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { CdxButton } from '@wikimedia/codex'
-import Field from '@/components/Field.vue'
+import CalcField from '@/components/CalcField.vue'
 import { useI18n } from '@/utils/i18n'
 import locales from './locales'
 
@@ -52,7 +52,7 @@ async function copyUuid(uuid: string) {
 getUuid(playerName.value)
 </script>
 <template>
-  <Field>
+  <CalcField>
     <template #heading>{{ t('playerUuid.title') }}</template>
 
     <div
@@ -96,5 +96,5 @@ getUuid(playerName.value)
       </div>
       <img v-if="playerUuid !== ''" width="64" height="64" :src="playerAvatar" />
     </div>
-  </Field>
+  </CalcField>
 </template>

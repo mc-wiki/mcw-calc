@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import CalcField from '@/components/CalcField.vue'
 import { ref, computed } from 'vue'
 const edition = ref<'java' | 'bedrock'>('java')
 const targetUseCount = ref(0)
@@ -10,9 +11,13 @@ const cost = computed<number>(() => {
   const renameCost = rename.value ? 1 : 0
   const repairCost = repair.value ? 2 : 0
   if (edition.value === 'java') {
+    // TODO
   } else if (edition.value === 'bedrock') {
+    // TODO
   }
   return priorUsePenalty + renameCost + repairCost
 })
 </script>
-<template></template>
+<template>
+  <CalcField></CalcField>
+</template>

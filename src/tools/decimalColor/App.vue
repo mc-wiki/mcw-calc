@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Field from '@/components/Field.vue'
+import CalcField from '@/components/CalcField.vue'
 import { ref, computed } from 'vue'
 import { colorStringToRgb } from '@/utils/color'
 import { useI18n } from '@/utils/i18n'
@@ -24,7 +24,7 @@ const result = computed({
 })
 </script>
 <template>
-  <Field>
+  <CalcField>
     <template #heading>{{ t('decimalColor.title') }}</template>
 
     <div
@@ -62,5 +62,5 @@ const result = computed({
         </div>
       </div>
     </div>
-  </Field>
+  </CalcField>
 </template>

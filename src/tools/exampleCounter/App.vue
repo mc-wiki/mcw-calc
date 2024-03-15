@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { CdxButton } from '@wikimedia/codex'
-import Field from '@/components/Field.vue'
+import CalcField from '@/components/CalcField.vue'
 import { useI18n } from '@/utils/i18n'
 import locales from './locales'
 
@@ -10,8 +10,8 @@ const count = ref(0)
 const increment = () => count.value++
 </script>
 <template>
-  <Field>
+  <CalcField>
     {{ t('exampleCounter.count') }}{{ count }}
     <CdxButton @click="increment">{{ t('exampleCounter.increment') }}</CdxButton>
-  </Field>
+  </CalcField>
 </template>

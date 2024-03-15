@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { CdxTextInput } from '@wikimedia/codex'
-import Field from '@/components/Field.vue'
+import CalcField from '@/components/CalcField.vue'
 import { useI18n } from '@/utils/i18n'
 import locales from './locales'
 
@@ -19,10 +19,10 @@ function hashCode(s: string) {
 }
 </script>
 <template>
-  <Field>
+  <CalcField>
     <template #heading>{{ t('seedHashcode.title') }}</template>
     <CdxTextInput v-model="seed" />
     {{ t('seedHashcode.actual') }} <code v-if="seed !== ''">{{ hashCode(seed) }}</code
     ><template v-else>{{ t('seedHashcode.emptyString') }}</template>
-  </Field>
+  </CalcField>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Field from '@/components/Field.vue'
+import CalcField from '@/components/CalcField.vue'
 import { CdxToggleButtonGroup, CdxTab, CdxTabs } from '@wikimedia/codex'
 import { useEditor, EditorContent, type JSONContent } from '@tiptap/vue-3'
 import { Color } from '@tiptap/extension-color'
@@ -417,7 +417,7 @@ function JSONToFormatCode(json: JSONContent | undefined) {
 }
 </script>
 <template>
-  <Field>
+  <CalcField>
     <template #heading>Formatting Code Text Editor</template>
     <cdx-tabs v-model:active="edition" style="margin-bottom: 0.5rem">
       <cdx-tab name="java" label="Java Edition" />
@@ -438,7 +438,7 @@ function JSONToFormatCode(json: JSONContent | undefined) {
     <EditorContent class="fc-editor" style="margin-bottom: 0.5rem" :editor="editor" />
     <label for="fc-output">Output</label>
     <textarea ref="textarea" name="fc-output" :value="formatCode" disabled />
-  </Field>
+  </CalcField>
 </template>
 <style>
 .fc-editor {

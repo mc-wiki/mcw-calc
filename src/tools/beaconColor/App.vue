@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Field from '@/components/Field.vue'
+import CalcField from '@/components/CalcField.vue'
 import { ref, nextTick, watch } from 'vue'
 import { CdxButton, CdxTabs, CdxTab } from '@wikimedia/codex'
 import {
@@ -69,7 +69,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
 })
 </script>
 <template>
-  <Field>
+  <CalcField>
     <template #heading>{{ t('beaconColor.title') }}</template>
 
     <cdx-tabs v-model:active="edition">
@@ -149,5 +149,5 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
         }"
       ></canvas>
     </div>
-  </Field>
+  </CalcField>
 </template>
