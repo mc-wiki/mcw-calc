@@ -7,12 +7,11 @@ import WebGL from 'three/addons/capabilities/WebGL.js'
 import { CdxCheckbox } from '@wikimedia/codex'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import {
-  type ModelReferenceProvider,
-  type BlockState,
+  bakeBlockModelRenderLayer,
   type BlockModel,
+  type BlockState,
   chooseModel,
-  getOrBakeModel,
-  Rotation
+  type ModelReferenceProvider,
 } from '@/tools/blockStructureRenderer/model.ts'
 
 const props = defineProps<{
@@ -21,6 +20,7 @@ const props = defineProps<{
   blockStates: string[]
   models: string[]
   textureAtlas: string[]
+  renderTypes: string[]
 }>()
 const { t } = useI18n(__TOOL_NAME__, locales)
 const renderTarget = ref()
@@ -61,20 +61,34 @@ if (webGLAvailable) {
 }
 
 function setupTextureAtlas() {
-  const textureAtlas = new THREE.TextureLoader().load(
+  const refNoMipped = ref()
+  const textureAtlasMipped = new THREE.TextureLoader().load(
     '/images/Block_structure_rendering_atlas.png?format=original',
-    () => (loading.value = false),
+    () => {
+      loading.value = false
+      refNoMipped.value.needsUpdate = true
+    },
   )
-  textureAtlas.magFilter = THREE.NearestFilter
-  textureAtlas.minFilter = THREE.NearestMipmapLinearFilter
-  textureAtlas.wrapS = THREE.RepeatWrapping
-  textureAtlas.wrapT = THREE.RepeatWrapping
-  textureAtlas.colorSpace = THREE.SRGBColorSpace
-  return textureAtlas
+  textureAtlasMipped.magFilter = THREE.NearestFilter
+  textureAtlasMipped.minFilter = THREE.NearestMipmapLinearFilter
+  textureAtlasMipped.wrapS = THREE.RepeatWrapping
+  textureAtlasMipped.wrapT = THREE.RepeatWrapping
+  textureAtlasMipped.colorSpace = THREE.SRGBColorSpace
+  const textureAtlas = textureAtlasMipped.clone()
+  refNoMipped.value = textureAtlas
+  textureAtlas.generateMipmaps = false
+  textureAtlas.minFilter = THREE.NearestFilter
+  return [textureAtlasMipped, textureAtlas]
 }
 
-function setupBlockStructure() {
-  // Mappings loading
+function setupMappings(): [
+  Record<string, string>,
+  Record<string, string>,
+  Record<string, ModelReferenceProvider[]>,
+  Record<number, BlockModel>,
+  Record<number, number[]>,
+  Record<string, string>,
+] {
   const blockStatesMapping = {} as Record<string, BlockState>
   props.blockStates.forEach((blockStatePair) => {
     const splitPoint = blockStatePair.indexOf('=')
@@ -83,11 +97,15 @@ function setupBlockStructure() {
     blockStatesMapping[blockStateName] = JSON.parse(blockStateData) as BlockState
   })
 
+  const nameStateMapping = {} as Record<string, string>
+  const nameBlockMapping = {} as Record<string, string>
   const modelsMapping = {} as Record<string, ModelReferenceProvider[]>
   props.blocks.forEach((blockPair) => {
     const splitPoint = blockPair.indexOf('=')
     const blockName = blockPair.substring(0, splitPoint)
     const blockStateKey = blockPair.substring(splitPoint + 1)
+    nameStateMapping[blockName] = blockStateKey
+    nameBlockMapping[blockName] = blockStateKey.includes('[') ? blockStateKey.substring(0, blockStateKey.indexOf('[')) : blockStateKey
     modelsMapping[blockName] = chooseModel(blockStateKey, blockStatesMapping)
   })
 
@@ -97,68 +115,37 @@ function setupBlockStructure() {
     blockModelMapping[parseInt(modelId, 10)] = JSON.parse(modelData) as BlockModel
   })
 
-  const altasMapping = {} as Record<number, number[]>
+  const atlasMapping = {} as Record<number, number[]>
   props.textureAtlas.forEach((atlasPair) => {
     const [spriteName, atlasData] = atlasPair.split('=', 2)
-    altasMapping[parseInt(spriteName, 10)] = JSON.parse(atlasData) as number[]
+    atlasMapping[parseInt(spriteName, 10)] = JSON.parse(atlasData) as number[]
   })
 
-  // Material
+  const renderTypesMapping = {} as Record<string, string>
+  props.renderTypes.forEach((renderTypePair) => {
+    const splitPoint = renderTypePair.indexOf('=')
+    const renderTypeName = renderTypePair.substring(0, splitPoint)
+    renderTypesMapping[renderTypeName] = renderTypePair.substring(splitPoint + 1)
+  })
+
+  return [nameStateMapping, nameBlockMapping, modelsMapping, blockModelMapping, atlasMapping, renderTypesMapping]
+}
+
+function setupBlockStructure() {
+  // Mappings loading
+  const [, nameBlockMapping, modelsMapping, blockModelMapping, atlasMapping, renderTypesMapping] = setupMappings()
+
   const textureAtlas = setupTextureAtlas()
-  const solidRenderingMaterial = new THREE.MeshBasicMaterial({
-    map: textureAtlas,
-    fog: false,
-  })
-  const alphaRenderingMaterial = new THREE.MeshBasicMaterial({
-    map: textureAtlas,
-    fog: false,
-    alphaTest: 0.1,
-  })
-  const transparentRenderingMaterial = new THREE.MeshBasicMaterial({
-    map: textureAtlas,
-    fog: false,
-    transparent: true,
-    alphaTest: 0.1,
-  })
-
-  const splitHeightLines = props.structure.split(';')
-  let maxX = 0,
-    maxZ = 0
-  const maxY = splitHeightLines.length
-  for (let y = 0; y < splitHeightLines.length; y++) {
-    const splitLines = splitHeightLines[y].split(',')
-    if (splitLines.length > maxZ) maxZ = splitLines.length
-    for (let z = 0; z < splitLines.length; z++) {
-      const line = splitLines[z]
-      if (line.length > maxX) maxX = line.length
-      for (let x = 0; x < line.length; x++) {
-        const blockKey = line[x]
-        if (blockKey === '-') continue
-        modelsMapping[blockKey].forEach((provider) => {
-          const [modelReference, uvlock, rotX, rotY] = provider.getModel(x, y, z)
-          const baked = getOrBakeModel(
-            blockModelMapping,
-            altasMapping,
-            modelReference,
-            new Rotation(rotX ?? 0, rotY ?? 0),
-            uvlock ?? false,
-          )
-          Object.entries(baked.cullfaces).forEach(([, value]) => {
-            value.forEach((face) => {
-              const geometry = face.planeGeometry.clone().translate(x, y, z)
-              const mesh = new THREE.Mesh(geometry, alphaRenderingMaterial)
-              scene.add(mesh)
-            })
-          })
-          baked.unculledFaces.forEach((face) => {
-            const geometry = face.planeGeometry.clone().translate(x, y, z)
-            const mesh = new THREE.Mesh(geometry, alphaRenderingMaterial)
-            scene.add(mesh)
-          })
-        })
-      }
-    }
-  }
+  const [maxX, maxY, maxZ] = bakeBlockModelRenderLayer(
+    scene,
+    props.structure,
+    nameBlockMapping,
+    modelsMapping,
+    blockModelMapping,
+    renderTypesMapping,
+    atlasMapping,
+    textureAtlas,
+  )
 
   orthographicCameraControls.target.set(maxX / 2, maxY / 2, maxZ / 2)
   perspectiveCameraControls.target.set(maxX / 2, maxY / 2, maxZ / 2)

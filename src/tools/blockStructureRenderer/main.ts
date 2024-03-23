@@ -10,13 +10,18 @@ const targetEl = document.querySelector('.mcw-calc[data-type="blockStructureRend
 const createApp =
   process.env.NODE_ENV === 'development' ? vue.createApp : vue.createMwApp || vue.createApp
 
-const params = getParams(targetEl, ['blocks', 'structure', 'block-states', 'models', 'texture-atlas'], {
-  blocks: 'A=air',
-  structure: '-',
-  'block-states': 'air={}',
-  models: '',
-  'texture-atlas': '',
-})
+const params = getParams(
+  targetEl,
+  ['blocks', 'structure', 'block-states', 'models', 'texture-atlas', 'render-types'],
+  {
+    blocks: 'A=air',
+    structure: '-',
+    'block-states': 'air={}',
+    models: '',
+    'texture-atlas': '',
+    'render-types': '',
+  },
+)
 
 createApp(App, {
   blocks: params.get('blocks')?.split(';'),
@@ -24,4 +29,5 @@ createApp(App, {
   blockStates: params.get('block-states')?.split(';'),
   models: params.get('models')?.split(';'),
   textureAtlas: params.get('texture-atlas')?.split(';'),
+  renderTypes: params.get('render-types')?.split(';'),
 }).mount(targetEl)

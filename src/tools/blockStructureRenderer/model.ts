@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { Scene, Texture } from 'three'
 
 export interface BlockModel {
   elements?: ModelElement[]
@@ -607,4 +608,94 @@ export function getOrBakeModel(
   }
 
   return (bakedModelCache[cacheKey] = bakedModel)
+}
+
+export function bakeBlockModelRenderLayer(
+  scene: Scene,
+  structure: string,
+  nameStateMapping: Record<string, string>,
+  modelsMapping: Record<string, ModelReferenceProvider[]>,
+  blockModelMapping: Record<number, BlockModel>,
+  renderTypesMapping: Record<string, string>,
+  atlasMapping: Record<number, number[]>,
+  atlasTexture: Texture[],
+) {
+  const solidRenderingMaterial = new THREE.MeshBasicMaterial({
+    map: atlasTexture[0],
+    fog: false,
+  })
+  const tripwireMaterial = new THREE.MeshBasicMaterial({
+    map: atlasTexture[0],
+    fog: false,
+    transparent: true,
+    alphaTest: 0.1,
+  })
+  const cutoutMaterial = new THREE.MeshBasicMaterial({
+    map: atlasTexture[1],
+    fog: false,
+    alphaTest: 0.5,
+  })
+  const cutoutMippedMaterial = new THREE.MeshBasicMaterial({
+    map: atlasTexture[0],
+    fog: false,
+    alphaTest: 0.1,
+  })
+  const translucentRenderingMaterial = new THREE.MeshBasicMaterial({
+    map: atlasTexture[0],
+    fog: false,
+    transparent: true,
+  })
+
+  const materialMapping = {
+    solid: solidRenderingMaterial,
+    cutout: cutoutMaterial,
+    cutout_mipped: cutoutMippedMaterial,
+    translucent: translucentRenderingMaterial,
+    tripwire: tripwireMaterial,
+  } as Record<string, THREE.Material>
+
+  const splitHeightLines = structure.split(';')
+  let maxX = 0,
+    maxZ = 0
+  const maxY = splitHeightLines.length
+
+  for (let y = 0; y < splitHeightLines.length; y++) {
+    const splitLines = splitHeightLines[y].split(',')
+    if (splitLines.length > maxZ) maxZ = splitLines.length
+    for (let z = 0; z < splitLines.length; z++) {
+      const line = splitLines[z]
+      if (line.length > maxX) maxX = line.length
+      for (let x = 0; x < line.length; x++) {
+        const blockKey = line[x]
+        if (blockKey === '-') continue
+
+        modelsMapping[blockKey].forEach((provider) => {
+          const [modelReference, uvlock, rotX, rotY] = provider.getModel(x, y, z)
+          const baked = getOrBakeModel(
+            blockModelMapping,
+            atlasMapping,
+            modelReference,
+            new Rotation(rotX ?? 0, rotY ?? 0),
+            uvlock ?? false,
+          )
+
+          const materialChoose = materialMapping[renderTypesMapping[nameStateMapping[blockKey]] ?? 'solid']
+          console.log(materialChoose)
+          Object.entries(baked.cullfaces).forEach(([, value]) => {
+            value.forEach((face) => {
+              const geometry = face.planeGeometry.clone().translate(x, y, z)
+              const mesh = new THREE.Mesh(geometry, materialChoose)
+              scene.add(mesh)
+            })
+          })
+          baked.unculledFaces.forEach((face) => {
+            const geometry = face.planeGeometry.clone().translate(x, y, z)
+            const mesh = new THREE.Mesh(geometry, materialChoose)
+            scene.add(mesh)
+          })
+        })
+      }
+    }
+  }
+  return [maxX, maxY, maxZ]
 }
