@@ -253,8 +253,8 @@ export class Rotation {
 
   asMatrix(): THREE.Matrix4 {
     const matrix = new THREE.Matrix4()
-    matrix.makeRotationY(-this.y / 180 * Math.PI)
-    matrix.multiply(new THREE.Matrix4().makeRotationX(-this.x / 180 * Math.PI))
+    matrix.multiply(new THREE.Matrix4().makeRotationY((-this.y / 180) * Math.PI))
+    matrix.multiply(new THREE.Matrix4().makeRotationX((-this.x / 180) * Math.PI))
     return matrix
   }
 
@@ -291,6 +291,20 @@ class BlockFaceUV {
   constructor(uv: number[], rotation: number) {
     this.uvs = Array.from(uv)
     this.rotation = rotation
+  }
+
+  getVertexes() {
+    switch (this.rotation) {
+      case 90:
+        return [0, 3, 0, 1, 2, 3, 2, 1]
+      case 180:
+        return [2, 3, 0, 3, 2, 1, 0, 1]
+      case 270:
+        return [2, 1, 2, 3, 0, 1, 0, 3]
+      case 0:
+      default:
+        return [0, 1, 2, 1, 0, 3, 2, 3]
+    }
   }
 }
 
@@ -334,16 +348,16 @@ function recomputeUVs(
 
   const u1 = blockUV.uvs[0] / 16
   const v1 = blockUV.uvs[1] / 16
-  const vector1 = new THREE.Vector3(u1, v1, 0)
+  const vector1 = new THREE.Vector4(u1, v1, 0, 1)
   vector1.applyMatrix4(makeTransform)
   const u2 = blockUV.uvs[2] / 16
   const v2 = blockUV.uvs[3] / 16
-  const vector2 = new THREE.Vector3(u2, v2, 0)
+  const vector2 = new THREE.Vector4(u2, v2, 0, 1)
   vector2.applyMatrix4(makeTransform)
 
   const transformedU1 = vector1.x * 16
-  const transformedV1 = vector1.y * 16
   const transformedU2 = vector2.x * 16
+  const transformedV1 = vector1.y * 16
   const transformedV2 = vector2.y * 16
 
   let correctU1, correctV1, correctU2, correctV2
@@ -363,15 +377,14 @@ function recomputeUVs(
   }
 
   const sourceRotation = (blockUV.rotation * Math.PI) / 180
-  const matrix3f = new THREE.Matrix3().setFromMatrix4(makeTransform)
   const rotationVector = new THREE.Vector3(
     Math.cos(sourceRotation),
     Math.sin(sourceRotation),
     0,
-  ).applyMatrix3(matrix3f)
+  ).applyMatrix3(new THREE.Matrix3().setFromMatrix4(makeTransform))
   const rotationAngle =
-    (-Math.round((Math.atan2(rotationVector.y, rotationVector.x) * 2) / Math.PI) * 90) % 360
-  return new BlockFaceUV([correctU1, correctV1, correctU2, correctV2], rotationAngle)
+    (-Math.round((Math.atan2(rotationVector.y, rotationVector.x) / Math.PI) * 2) * 90) % 360
+  return new BlockFaceUV([correctU1, correctV1, correctU2, correctV2], (rotationAngle + 360) % 360)
 }
 
 function computeElementRotation(
@@ -570,19 +583,11 @@ export function getOrBakeModel(
           new THREE.Vector3(1, 1, 1),
         )
       }
+
       planeGeometry.setAttribute(
         'uv',
         new THREE.Float32BufferAttribute(
-          [
-            blockFaceUV.uvs[0],
-            blockFaceUV.uvs[1],
-            blockFaceUV.uvs[2],
-            blockFaceUV.uvs[1],
-            blockFaceUV.uvs[0],
-            blockFaceUV.uvs[3],
-            blockFaceUV.uvs[2],
-            blockFaceUV.uvs[3],
-          ],
+          blockFaceUV.getVertexes().map((i) => blockFaceUV.uvs[i]),
           2,
         ),
       )

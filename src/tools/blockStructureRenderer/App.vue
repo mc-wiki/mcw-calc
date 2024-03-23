@@ -12,7 +12,7 @@ import {
   type BlockModel,
   chooseModel,
   getOrBakeModel,
-  Rotation,
+  Rotation
 } from '@/tools/blockStructureRenderer/model.ts'
 
 const props = defineProps<{
@@ -122,7 +122,8 @@ function setupBlockStructure() {
   })
 
   const splitHeightLines = props.structure.split(';')
-  let maxX = 0, maxZ = 0
+  let maxX = 0,
+    maxZ = 0
   const maxY = splitHeightLines.length
   for (let y = 0; y < splitHeightLines.length; y++) {
     const splitLines = splitHeightLines[y].split(',')
