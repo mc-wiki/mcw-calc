@@ -7,6 +7,8 @@ import WebGL from 'three/addons/capabilities/WebGL.js'
 import { CdxCheckbox } from '@wikimedia/codex'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import {
+  type AnimatedTexture,
+  AnimatedTextureManager,
   bakeBlockModelRenderLayer,
   type BlockModel,
   type BlockState,
@@ -60,13 +62,15 @@ if (webGLAvailable) {
   setupBlockStructure()
 }
 
-function setupTextureAtlas() {
+function setupTextureAtlas(atlasMapping: Record<number, number[] | AnimatedTexture>): [THREE.Texture[], AnimatedTextureManager] {
   const refNoMipped = ref()
+  const animatedTextureManager = new AnimatedTextureManager(atlasMapping)
   const textureAtlasMipped = new THREE.TextureLoader().load(
     '/images/Block_structure_rendering_atlas.png?format=original',
     () => {
       loading.value = false
       refNoMipped.value.needsUpdate = true
+      animatedTextureManager.updateAtlas(textureAtlasMipped)
     },
   )
   textureAtlasMipped.magFilter = THREE.NearestFilter
@@ -78,7 +82,7 @@ function setupTextureAtlas() {
   refNoMipped.value = textureAtlas
   textureAtlas.generateMipmaps = false
   textureAtlas.minFilter = THREE.NearestFilter
-  return [textureAtlasMipped, textureAtlas]
+  return [[textureAtlasMipped, textureAtlas], animatedTextureManager]
 }
 
 function setupMappings(): [
@@ -86,7 +90,7 @@ function setupMappings(): [
   Record<string, string>,
   Record<string, ModelReferenceProvider[]>,
   Record<number, BlockModel>,
-  Record<number, number[]>,
+  Record<number, number[] | AnimatedTexture>,
   Record<string, string>,
 ] {
   const blockStatesMapping = {} as Record<string, BlockState>
@@ -105,7 +109,9 @@ function setupMappings(): [
     const blockName = blockPair.substring(0, splitPoint)
     const blockStateKey = blockPair.substring(splitPoint + 1)
     nameStateMapping[blockName] = blockStateKey
-    nameBlockMapping[blockName] = blockStateKey.includes('[') ? blockStateKey.substring(0, blockStateKey.indexOf('[')) : blockStateKey
+    nameBlockMapping[blockName] = blockStateKey.includes('[')
+      ? blockStateKey.substring(0, blockStateKey.indexOf('['))
+      : blockStateKey
     modelsMapping[blockName] = chooseModel(blockStateKey, blockStatesMapping)
   })
 
@@ -128,16 +134,25 @@ function setupMappings(): [
     renderTypesMapping[renderTypeName] = renderTypePair.substring(splitPoint + 1)
   })
 
-  return [nameStateMapping, nameBlockMapping, modelsMapping, blockModelMapping, atlasMapping, renderTypesMapping]
+  return [
+    nameStateMapping,
+    nameBlockMapping,
+    modelsMapping,
+    blockModelMapping,
+    atlasMapping,
+    renderTypesMapping,
+  ]
 }
 
 function setupBlockStructure() {
   // Mappings loading
-  const [, nameBlockMapping, modelsMapping, blockModelMapping, atlasMapping, renderTypesMapping] = setupMappings()
+  const [, nameBlockMapping, modelsMapping, blockModelMapping, atlasMapping, renderTypesMapping] =
+    setupMappings()
 
-  const textureAtlas = setupTextureAtlas()
+  const [textureAtlas, animatedTextureManager] = setupTextureAtlas(atlasMapping)
   const [maxX, maxY, maxZ] = bakeBlockModelRenderLayer(
     scene,
+    animatedTextureManager,
     props.structure,
     nameBlockMapping,
     modelsMapping,

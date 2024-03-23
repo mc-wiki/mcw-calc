@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-import { Scene, Texture } from 'three'
 
 export interface BlockModel {
   elements?: ModelElement[]
@@ -65,6 +64,12 @@ export interface AndCondition {
 
 export interface OrCondition {
   OR: (Record<string, any> | AndCondition | OrCondition)[]
+}
+
+export interface AnimatedTexture {
+  frames: number[]
+  time: number[]
+  interpolate?: boolean
 }
 
 export interface ModelReferenceProvider {
@@ -330,6 +335,7 @@ interface BakedModel {
 
 interface BakedFace {
   planeGeometry: THREE.PlaneGeometry
+  animated: boolean
   tintindex?: number
 }
 
@@ -518,9 +524,190 @@ function applyPlaneTransformations(
   planeGeometry.translate(origin.x, origin.y, origin.z)
 }
 
+interface AnimatedTextureTickerData {
+  texture: AnimatedTexture
+  lastFrameNowTime: number
+  lastFrameTime: number
+  lastFrameIndex: number
+  x: number
+  y: number
+}
+
+interface UpdateImageInfo {
+  targetX: number
+  targetY: number
+  width: number
+  height: number
+
+  sourceX: number
+  sourceY: number
+  interpolateX?: number
+  interpolateY?: number
+  interpolateMix?: number
+}
+
+export class AnimatedTextureManager {
+  private readonly atlasMapping: Record<number, number[] | AnimatedTexture>
+  readonly atlas: THREE.Texture
+  readonly canvas: HTMLCanvasElement
+  readonly atlasMipped: THREE.Texture
+  private atlasSource?: THREE.Texture
+  private madeIndex: number
+
+  private readonly animatedTextureArray: AnimatedTextureTickerData[]
+
+  constructor(atlasMapping: Record<number, number[] | AnimatedTexture>) {
+    this.atlasMapping = atlasMapping
+    this.madeIndex = 0
+    this.animatedTextureArray = []
+
+    this.canvas = document.createElement('canvas')
+    this.canvas.width = ANIMATED_TEXTURE_ATLAS_SIZE
+    this.canvas.height = ANIMATED_TEXTURE_ATLAS_SIZE
+    this.canvas.getContext('2d')!.clearRect(0, 0, ANIMATED_TEXTURE_ATLAS_SIZE, ANIMATED_TEXTURE_ATLAS_SIZE)
+
+    this.atlas = new THREE.CanvasTexture(this.canvas)
+    this.atlas.magFilter = THREE.NearestFilter
+    this.atlas.minFilter = THREE.NearestFilter
+    this.atlas.wrapS = THREE.RepeatWrapping
+    this.atlas.wrapT = THREE.RepeatWrapping
+    this.atlas.colorSpace = THREE.SRGBColorSpace
+    this.atlas.generateMipmaps = false
+    this.atlasMipped = new THREE.CanvasTexture(this.canvas)
+    this.atlasMipped.magFilter = THREE.NearestFilter
+    this.atlasMipped.minFilter = THREE.NearestMipmapLinearFilter
+    this.atlasMipped.wrapS = THREE.RepeatWrapping
+    this.atlasMipped.wrapT = THREE.RepeatWrapping
+    this.atlasMipped.colorSpace = THREE.SRGBColorSpace
+  }
+
+  updateAtlas(atlas: THREE.Texture) {
+    this.atlasSource = atlas
+    this.animatedTextureTick()
+  }
+
+  private animatedTextureTick() {
+    const updateData = []
+    for (const animatedTextureData of this.animatedTextureArray) {
+      animatedTextureData.lastFrameNowTime++
+      if (animatedTextureData.lastFrameNowTime >= animatedTextureData.lastFrameTime) {
+        const lastTextureIndex =
+          animatedTextureData.texture.frames[animatedTextureData.lastFrameIndex]
+        animatedTextureData.lastFrameIndex =
+          (animatedTextureData.lastFrameIndex + 1) % animatedTextureData.texture.frames.length
+        const nowTextureIndex =
+          animatedTextureData.texture.frames[animatedTextureData.lastFrameIndex]
+        animatedTextureData.lastFrameNowTime = 0
+        animatedTextureData.lastFrameTime =
+          animatedTextureData.texture.time[animatedTextureData.lastFrameIndex]
+        const textureFromAtlas = this.atlasMapping[nowTextureIndex] as number[]
+        if (lastTextureIndex !== nowTextureIndex) {
+          updateData.push({
+            targetX: animatedTextureData.x,
+            targetY: animatedTextureData.y,
+            width: 16,
+            height: 16,
+            sourceX: textureFromAtlas[0],
+            sourceY: textureFromAtlas[1],
+          })
+        }
+      } else if (animatedTextureData.texture.interpolate) {
+        const delta = 1 - animatedTextureData.lastFrameNowTime / animatedTextureData.lastFrameTime
+        const lastTextureIndex =
+          animatedTextureData.texture.frames[animatedTextureData.lastFrameIndex]
+        const lastTextureFromAtlas = this.atlasMapping[lastTextureIndex] as number[]
+        const nextFrameIndex =
+          (animatedTextureData.lastFrameIndex + 1) % animatedTextureData.texture.frames.length
+        const nextTextureIndex = animatedTextureData.texture.frames[nextFrameIndex]
+        const nextTextureFromAtlas = this.atlasMapping[nextTextureIndex] as number[]
+        updateData.push({
+          targetX: animatedTextureData.x,
+          targetY: animatedTextureData.y,
+          width: 16,
+          height: 16,
+          sourceX: lastTextureFromAtlas[0],
+          sourceY: lastTextureFromAtlas[1],
+          interpolateX: nextTextureFromAtlas[0],
+          interpolateY: nextTextureFromAtlas[1],
+          interpolateMix: delta,
+        })
+      }
+    }
+    if (updateData.length > 0) {
+      const context = this.canvas.getContext('2d')!
+      for (const update of updateData) {
+        context.clearRect(update.targetX, update.targetY, update.width, update.height)
+        if (update.interpolateMix) {
+          const mix = update.interpolateMix
+          context.globalAlpha = mix
+          context.drawImage(
+            this.atlasSource!.image,
+            update.sourceX,
+            update.sourceY,
+            update.width,
+            update.height,
+            update.targetX,
+            update.targetY,
+            update.width,
+            update.height,
+          )
+          context.globalAlpha = 1 - mix
+          context.drawImage(
+            this.atlasSource!.image,
+            update.interpolateX!,
+            update.interpolateY!,
+            update.width,
+            update.height,
+            update.targetX,
+            update.targetY,
+            update.width,
+            update.height,
+          )
+          context.globalAlpha = 1
+        } else {
+          context.drawImage(
+            this.atlasSource!.image,
+            update.sourceX,
+            update.sourceY,
+            update.width,
+            update.height,
+            update.targetX,
+            update.targetY,
+            update.width,
+            update.height,
+          )
+        }
+      }
+      this.atlas.needsUpdate = true
+      this.atlasMipped.needsUpdate = true
+    }
+    setTimeout(() => this.animatedTextureTick(), 1000 / 20)
+  }
+
+  putNewTexture(texture: AnimatedTexture): number[] {
+    const x = this.madeIndex % 16
+    const y = Math.floor(this.madeIndex / 16)
+    this.madeIndex++
+    this.animatedTextureArray.push({
+      texture,
+      lastFrameNowTime: 0,
+      lastFrameTime: texture.time[0],
+      lastFrameIndex: 0,
+      x: x * 16,
+      y: y * 16,
+    })
+    return [x * 16, y * 16]
+  }
+}
+
+const ATLAS_WIDTH = 1024
+const ATLAS_HEIGHT = 512
+const ANIMATED_TEXTURE_ATLAS_SIZE = 256
+
 export function getOrBakeModel(
+  animatedTextureManager: AnimatedTextureManager,
   models: Record<number, BlockModel>,
-  atlasMapping: Record<number, number[]>,
+  atlasMapping: Record<number, number[] | AnimatedTexture>,
   modelReferenceInt: number,
   rotation: Rotation,
   uvlock: boolean,
@@ -563,10 +750,20 @@ export function getOrBakeModel(
       }
 
       const spriteData = atlasMapping[face.texture]
-      blockFaceUV.uvs[0] = (spriteData[0] + blockFaceUV.uvs[0]) / 512
-      blockFaceUV.uvs[2] = (spriteData[0] + blockFaceUV.uvs[2]) / 512
-      blockFaceUV.uvs[1] = 1 - (spriteData[1] + blockFaceUV.uvs[1]) / 512
-      blockFaceUV.uvs[3] = 1 - (spriteData[1] + blockFaceUV.uvs[3]) / 512
+      let animated = false
+      if (spriteData instanceof Array) {
+        blockFaceUV.uvs[0] = (spriteData[0] + blockFaceUV.uvs[0]) / ATLAS_WIDTH
+        blockFaceUV.uvs[2] = (spriteData[0] + blockFaceUV.uvs[2]) / ATLAS_WIDTH
+        blockFaceUV.uvs[1] = 1 - (spriteData[1] + blockFaceUV.uvs[1]) / ATLAS_HEIGHT
+        blockFaceUV.uvs[3] = 1 - (spriteData[1] + blockFaceUV.uvs[3]) / ATLAS_HEIGHT
+      } else {
+        const [x, y] = animatedTextureManager.putNewTexture(spriteData)
+        blockFaceUV.uvs[0] = (x + blockFaceUV.uvs[0]) / ANIMATED_TEXTURE_ATLAS_SIZE
+        blockFaceUV.uvs[2] = (x + blockFaceUV.uvs[2]) / ANIMATED_TEXTURE_ATLAS_SIZE
+        blockFaceUV.uvs[1] = 1 - (y + blockFaceUV.uvs[1]) / ANIMATED_TEXTURE_ATLAS_SIZE
+        blockFaceUV.uvs[3] = 1 - (y + blockFaceUV.uvs[3]) / ANIMATED_TEXTURE_ATLAS_SIZE
+        animated = true
+      }
 
       const initialShape = [from.y / 16, to.y / 16, from.z / 16, to.z / 16, from.x / 16, to.x / 16]
       const [planeHeight, planeWidth] = computePlaneHeightAndWidth(initialShape, faceDirection)
@@ -596,11 +793,13 @@ export function getOrBakeModel(
       if (cullface) {
         bakedModel.cullfaces[faceDirection]?.push({
           planeGeometry,
+          animated,
           tintindex: face.tintindex,
         })
       } else {
         bakedModel.unculledFaces.push({
           planeGeometry,
+          animated,
           tintindex: face.tintindex,
         })
       }
@@ -610,16 +809,7 @@ export function getOrBakeModel(
   return (bakedModelCache[cacheKey] = bakedModel)
 }
 
-export function bakeBlockModelRenderLayer(
-  scene: Scene,
-  structure: string,
-  nameStateMapping: Record<string, string>,
-  modelsMapping: Record<string, ModelReferenceProvider[]>,
-  blockModelMapping: Record<number, BlockModel>,
-  renderTypesMapping: Record<string, string>,
-  atlasMapping: Record<number, number[]>,
-  atlasTexture: Texture[],
-) {
+function makeTextureAtlasMaterials(atlasTexture: THREE.Texture[]): Record<string, THREE.Material> {
   const solidRenderingMaterial = new THREE.MeshBasicMaterial({
     map: atlasTexture[0],
     fog: false,
@@ -646,13 +836,31 @@ export function bakeBlockModelRenderLayer(
     transparent: true,
   })
 
-  const materialMapping = {
+  return {
     solid: solidRenderingMaterial,
     cutout: cutoutMaterial,
     cutout_mipped: cutoutMippedMaterial,
     translucent: translucentRenderingMaterial,
     tripwire: tripwireMaterial,
-  } as Record<string, THREE.Material>
+  }
+}
+
+export function bakeBlockModelRenderLayer(
+  scene: THREE.Scene,
+  animatedTextureManager: AnimatedTextureManager,
+  structure: string,
+  nameStateMapping: Record<string, string>,
+  modelsMapping: Record<string, ModelReferenceProvider[]>,
+  blockModelMapping: Record<number, BlockModel>,
+  renderTypesMapping: Record<string, string>,
+  atlasMapping: Record<number, number[] | AnimatedTexture>,
+  atlasTexture: THREE.Texture[],
+) {
+  const materialMapping = makeTextureAtlasMaterials(atlasTexture)
+  const animatedMaterialMapping = makeTextureAtlasMaterials([
+    animatedTextureManager.atlasMipped,
+    animatedTextureManager.atlas,
+  ])
 
   const splitHeightLines = structure.split(';')
   let maxX = 0,
@@ -672,6 +880,7 @@ export function bakeBlockModelRenderLayer(
         modelsMapping[blockKey].forEach((provider) => {
           const [modelReference, uvlock, rotX, rotY] = provider.getModel(x, y, z)
           const baked = getOrBakeModel(
+            animatedTextureManager,
             blockModelMapping,
             atlasMapping,
             modelReference,
@@ -679,16 +888,20 @@ export function bakeBlockModelRenderLayer(
             uvlock ?? false,
           )
 
-          const materialChoose = materialMapping[renderTypesMapping[nameStateMapping[blockKey]] ?? 'solid']
-          console.log(materialChoose)
           Object.entries(baked.cullfaces).forEach(([, value]) => {
             value.forEach((face) => {
+              const materialChoose = (face.animated ? animatedMaterialMapping : materialMapping)[
+                renderTypesMapping[nameStateMapping[blockKey]] ?? 'solid'
+              ]
               const geometry = face.planeGeometry.clone().translate(x, y, z)
               const mesh = new THREE.Mesh(geometry, materialChoose)
               scene.add(mesh)
             })
           })
           baked.unculledFaces.forEach((face) => {
+            const materialChoose = (face.animated ? animatedMaterialMapping : materialMapping)[
+              renderTypesMapping[nameStateMapping[blockKey]] ?? 'solid'
+            ]
             const geometry = face.planeGeometry.clone().translate(x, y, z)
             const mesh = new THREE.Mesh(geometry, materialChoose)
             scene.add(mesh)
