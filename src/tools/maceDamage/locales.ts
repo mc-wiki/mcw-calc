@@ -3,6 +3,8 @@ export default {
     'maceDamage.title': 'Calculate mace damage',
     'maceDamage.fallHeight': 'Fall height in blocks:',
     'maceDamage.critical': 'Critical attack',
+    'maceDamage.critical.help':
+      'Hitting an entity with the mace will produce critical attacks most of the time, unless the attack cooldown is not reset.',
     'maceDamage.damage': 'Damage done:',
   },
 }

@@ -9,7 +9,7 @@ const { t } = useI18n(__TOOL_NAME__, locales)
 
 const maceImage = 'https://minecraft.wiki/images/Mace_JE1_BE1.png?format=original'
 const fallHeight = ref(1.5)
-const critical = ref(false)
+const critical = ref(true)
 const damage = computed<number>({
   get: () => fallHeight.value >= 1.5 ? getBaseDamage() + (0.5 * fallHeight.value) : 0,
   set: (val: number) => {
@@ -47,9 +47,19 @@ function getBaseDamage(): number {
         >
           <label for="fall-height-input">{{ t('maceDamage.fallHeight') }}</label>
           <CdxTextInput inputType="number" min="1.5" step="0.5" v-model="fallHeight" id="fall-height-input" />
-
-          <label for="critical-checkbox">{{ t('maceDamage.critical') }}</label>
-          <CdxCheckbox v-model="critical" id="critical-checkbox" />
+          <div
+            :style="{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: '.5rem',
+            }"
+            class="explain"
+            :title="t('maceDamage.critical.help')"
+          >
+            <label for="critical-checkbox">{{ t('maceDamage.critical') }}</label>
+            <CdxCheckbox v-model="critical" id="critical-checkbox" />
+          </div>
         </div>
         <div
           :style="{
