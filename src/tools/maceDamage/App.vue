@@ -12,7 +12,7 @@ const edition = ref<'java' | 'bedrock'>('java')
 const fallHeight = ref(1.5)
 const critical = ref(true)
 const damage = computed<number>({
-  get: () => fallHeight.value >= 1.5 ? getBaseDamage() + (0.5 * fallHeight.value) : 0,
+  get: () => (fallHeight.value >= 1.5 ? getBaseDamage() + 0.5 * fallHeight.value : 0),
   set: (val: number) => {
     let height = (val - getBaseDamage()) * 2
     fallHeight.value = height >= 1.5 ? height : 0
@@ -55,7 +55,13 @@ function getBaseDamage(): number {
           }"
         >
           <label for="fall-height-input">{{ t('maceDamage.fallHeight') }}</label>
-          <CdxTextInput inputType="number" min="1.5" step="0.5" v-model="fallHeight" id="fall-height-input" />
+          <CdxTextInput
+            inputType="number"
+            min="1.5"
+            step="0.5"
+            v-model="fallHeight"
+            id="fall-height-input"
+          />
           <div
             :style="{
               display: 'flex',
