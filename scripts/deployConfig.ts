@@ -37,11 +37,11 @@ export const targets: DeployTarget[] = [
   },
 
   // Dev wikis
-  {
-    type: 'development',
-    name: 'en_dev',
-    apiUrl: 'https://mc-dev.weirdgloop.org/api.php',
-    credentials: 'DEV',
-    useLocalMessages: false,
-  },
+  // {
+  //   type: 'development',
+  //   name: 'en_dev',
+  //   apiUrl: 'https://mc-dev.weirdgloop.org/api.php',
+  //   credentials: 'DEV',
+  //   useLocalMessages: false,
+  // },
 ]
