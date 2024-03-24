@@ -6,15 +6,13 @@ import * as THREE from 'three'
 import WebGL from 'three/addons/capabilities/WebGL.js'
 import { CdxCheckbox } from '@wikimedia/codex'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
 import {
-  type AnimatedTexture,
-  AnimatedTextureManager,
   bakeBlockModelRenderLayer,
-  type BlockModel,
-  type BlockState,
-  chooseModel,
-  type ModelReferenceProvider, type OcclusionFaceData,
-} from '@/tools/blockStructureRenderer/model.ts'
+  BlockStructure,
+  NameMapping,
+} from '@/tools/blockStructureRenderer/renderer.ts'
+import { makeMaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
 
 const props = defineProps<{
   blocks: string[]
@@ -60,119 +58,20 @@ const controls = computed(() =>
 )
 
 if (webGLAvailable) {
-  setupBlockStructure()
-}
-
-function setupTextureAtlas(atlasMapping: Record<number, number[] | AnimatedTexture>): [THREE.Texture[], AnimatedTextureManager] {
-  const refNoMipped = ref()
-  const animatedTextureManager = new AnimatedTextureManager(atlasMapping)
-  const textureAtlasMipped = new THREE.TextureLoader().load(
-    '/images/Block_structure_rendering_atlas.png?format=original',
-    () => {
-      loading.value = false
-      refNoMipped.value.needsUpdate = true
-      animatedTextureManager.updateAtlas(textureAtlasMipped)
-    },
+  const blockStructure = new BlockStructure(props.structure)
+  const nameMapping = new NameMapping(props.blocks)
+  const modelManager = new BlockStateModelManager(
+    props.blockStates,
+    props.models,
+    props.occlusionShapes,
+    nameMapping,
   )
-  textureAtlasMipped.magFilter = THREE.NearestFilter
-  textureAtlasMipped.minFilter = THREE.NearestMipmapLinearFilter
-  textureAtlasMipped.wrapS = THREE.RepeatWrapping
-  textureAtlasMipped.wrapT = THREE.RepeatWrapping
-  textureAtlasMipped.colorSpace = THREE.SRGBColorSpace
-  const textureAtlas = textureAtlasMipped.clone()
-  refNoMipped.value = textureAtlas
-  textureAtlas.generateMipmaps = false
-  textureAtlas.minFilter = THREE.NearestFilter
-  return [[textureAtlasMipped, textureAtlas], animatedTextureManager]
-}
-
-function setupMappings(): [
-  Record<string, string>,
-  Record<string, string>,
-  Record<string, ModelReferenceProvider[]>,
-  Record<number, BlockModel>,
-  Record<number, number[] | AnimatedTexture>,
-  Record<string, string>,
-  Record<string, OcclusionFaceData>
-] {
-  const blockStatesMapping = {} as Record<string, BlockState>
-  props.blockStates.forEach((blockStatePair) => {
-    const splitPoint = blockStatePair.indexOf('=')
-    const blockStateName = blockStatePair.substring(0, splitPoint)
-    const blockStateData = blockStatePair.substring(splitPoint + 1)
-    blockStatesMapping[blockStateName] = JSON.parse(blockStateData) as BlockState
+  const materialPicker = makeMaterialPicker(props.textureAtlas, props.renderTypes, () => {
+    loading.value = false
+    bakeBlockModelRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
   })
 
-  const nameStateMapping = {} as Record<string, string>
-  const nameBlockMapping = {} as Record<string, string>
-  const modelsMapping = {} as Record<string, ModelReferenceProvider[]>
-  props.blocks.forEach((blockPair) => {
-    const splitPoint = blockPair.indexOf('=')
-    const blockName = blockPair.substring(0, splitPoint)
-    const blockStateKey = blockPair.substring(splitPoint + 1)
-    nameStateMapping[blockName] = blockStateKey
-    nameBlockMapping[blockName] = blockStateKey.includes('[')
-      ? blockStateKey.substring(0, blockStateKey.indexOf('['))
-      : blockStateKey
-    modelsMapping[blockName] = chooseModel(blockStateKey, blockStatesMapping)
-  })
-
-  const blockModelMapping = {} as Record<number, BlockModel>
-  props.models.forEach((modelPair) => {
-    const [modelId, modelData] = modelPair.split('=', 2)
-    blockModelMapping[parseInt(modelId, 10)] = JSON.parse(modelData) as BlockModel
-  })
-
-  const atlasMapping = {} as Record<number, number[]>
-  props.textureAtlas.forEach((atlasPair) => {
-    const [spriteName, atlasData] = atlasPair.split('=', 2)
-    atlasMapping[parseInt(spriteName, 10)] = JSON.parse(atlasData) as number[]
-  })
-
-  const renderTypesMapping = {} as Record<string, string>
-  props.renderTypes.forEach((renderTypePair) => {
-    const splitPoint = renderTypePair.indexOf('=')
-    const renderTypeName = renderTypePair.substring(0, splitPoint)
-    renderTypesMapping[renderTypeName] = renderTypePair.substring(splitPoint + 1)
-  })
-
-  const occlusionShapesMapping = {} as Record<string, OcclusionFaceData>
-  props.occlusionShapes.forEach((occlusionShapePair) => {
-    const splitPoint = occlusionShapePair.indexOf('=')
-    const occlusionShapeName = occlusionShapePair.substring(0, splitPoint)
-    occlusionShapesMapping[occlusionShapeName] = JSON.parse(occlusionShapePair.substring(splitPoint + 1))
-  })
-
-  return [
-    nameStateMapping,
-    nameBlockMapping,
-    modelsMapping,
-    blockModelMapping,
-    atlasMapping,
-    renderTypesMapping,
-    occlusionShapesMapping
-  ]
-}
-
-function setupBlockStructure() {
-  // Mappings loading
-  const [, nameBlockMapping, modelsMapping, blockModelMapping, atlasMapping, renderTypesMapping, occlusionShapesMapping] =
-    setupMappings()
-
-  const [textureAtlas, animatedTextureManager] = setupTextureAtlas(atlasMapping)
-  const [maxX, maxY, maxZ] = bakeBlockModelRenderLayer(
-    scene,
-    animatedTextureManager,
-    props.structure,
-    nameBlockMapping,
-    modelsMapping,
-    blockModelMapping,
-    renderTypesMapping,
-    atlasMapping,
-    textureAtlas,
-    occlusionShapesMapping
-  )
-
+  const [maxX, maxY, maxZ] = [blockStructure.x, blockStructure.y, blockStructure.z]
   orthographicCameraControls.target.set(maxX / 2, maxY / 2, maxZ / 2)
   perspectiveCameraControls.target.set(maxX / 2, maxY / 2, maxZ / 2)
   orthographicCamera.position.set(maxX / 2, maxY * 1.5, maxZ * 1.5)
