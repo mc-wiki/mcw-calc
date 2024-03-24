@@ -13,7 +13,7 @@ import {
   type BlockModel,
   type BlockState,
   chooseModel,
-  type ModelReferenceProvider,
+  type ModelReferenceProvider, type OcclusionFaceData,
 } from '@/tools/blockStructureRenderer/model.ts'
 
 const props = defineProps<{
@@ -23,6 +23,7 @@ const props = defineProps<{
   models: string[]
   textureAtlas: string[]
   renderTypes: string[]
+  occlusionShapes: string[]
 }>()
 const { t } = useI18n(__TOOL_NAME__, locales)
 const renderTarget = ref()
@@ -92,6 +93,7 @@ function setupMappings(): [
   Record<number, BlockModel>,
   Record<number, number[] | AnimatedTexture>,
   Record<string, string>,
+  Record<string, OcclusionFaceData>
 ] {
   const blockStatesMapping = {} as Record<string, BlockState>
   props.blockStates.forEach((blockStatePair) => {
@@ -134,6 +136,13 @@ function setupMappings(): [
     renderTypesMapping[renderTypeName] = renderTypePair.substring(splitPoint + 1)
   })
 
+  const occlusionShapesMapping = {} as Record<string, OcclusionFaceData>
+  props.occlusionShapes.forEach((occlusionShapePair) => {
+    const splitPoint = occlusionShapePair.indexOf('=')
+    const occlusionShapeName = occlusionShapePair.substring(0, splitPoint)
+    occlusionShapesMapping[occlusionShapeName] = JSON.parse(occlusionShapePair.substring(splitPoint + 1))
+  })
+
   return [
     nameStateMapping,
     nameBlockMapping,
@@ -141,12 +150,13 @@ function setupMappings(): [
     blockModelMapping,
     atlasMapping,
     renderTypesMapping,
+    occlusionShapesMapping
   ]
 }
 
 function setupBlockStructure() {
   // Mappings loading
-  const [, nameBlockMapping, modelsMapping, blockModelMapping, atlasMapping, renderTypesMapping] =
+  const [, nameBlockMapping, modelsMapping, blockModelMapping, atlasMapping, renderTypesMapping, occlusionShapesMapping] =
     setupMappings()
 
   const [textureAtlas, animatedTextureManager] = setupTextureAtlas(atlasMapping)
@@ -160,6 +170,7 @@ function setupBlockStructure() {
     renderTypesMapping,
     atlasMapping,
     textureAtlas,
+    occlusionShapesMapping
   )
 
   orthographicCameraControls.target.set(maxX / 2, maxY / 2, maxZ / 2)

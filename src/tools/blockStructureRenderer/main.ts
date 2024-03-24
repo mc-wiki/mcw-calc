@@ -12,7 +12,7 @@ const createApp =
 
 const params = getParams(
   targetEl,
-  ['blocks', 'structure', 'block-states', 'models', 'texture-atlas', 'render-types'],
+  ['blocks', 'structure', 'block-states', 'models', 'texture-atlas', 'render-types', 'occlusion-shapes'],
   {
     blocks: 'A=air',
     structure: '-',
@@ -20,6 +20,7 @@ const params = getParams(
     models: '',
     'texture-atlas': '',
     'render-types': '',
+    'occlusion-shapes': '',
   },
 )
 
@@ -30,4 +31,5 @@ createApp(App, {
   models: params.get('models')?.split(';'),
   textureAtlas: params.get('texture-atlas')?.split(';'),
   renderTypes: params.get('render-types')?.split(';'),
+  occlusionShapes: params.get('occlusion-shapes')?.split(';'),
 }).mount(targetEl)

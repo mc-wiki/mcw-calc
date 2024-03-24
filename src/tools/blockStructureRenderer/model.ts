@@ -202,6 +202,45 @@ enum Direction {
   EAST = 'east',
 }
 
+function oppositeDirection(direction: Direction): Direction {
+  switch (direction) {
+    case Direction.DOWN:
+      return Direction.UP
+    case Direction.UP:
+      return Direction.DOWN
+    case Direction.NORTH:
+      return Direction.SOUTH
+    case Direction.SOUTH:
+      return Direction.NORTH
+    case Direction.WEST:
+      return Direction.EAST
+    case Direction.EAST:
+      return Direction.WEST
+  }
+}
+
+function moveTowardsDirection(
+  x: number,
+  y: number,
+  z: number,
+  direction: Direction,
+): [number, number, number] {
+  switch (direction) {
+    case Direction.DOWN:
+      return [x, y - 1, z]
+    case Direction.UP:
+      return [x, y + 1, z]
+    case Direction.NORTH:
+      return [x, y, z - 1]
+    case Direction.SOUTH:
+      return [x, y, z + 1]
+    case Direction.WEST:
+      return [x - 1, y, z]
+    case Direction.EAST:
+      return [x + 1, y, z]
+  }
+}
+
 function getVectorFromDirection(direction: Direction): THREE.Vector3 {
   switch (direction) {
     case Direction.DOWN:
@@ -533,19 +572,6 @@ interface AnimatedTextureTickerData {
   y: number
 }
 
-interface UpdateImageInfo {
-  targetX: number
-  targetY: number
-  width: number
-  height: number
-
-  sourceX: number
-  sourceY: number
-  interpolateX?: number
-  interpolateY?: number
-  interpolateMix?: number
-}
-
 export class AnimatedTextureManager {
   private readonly atlasMapping: Record<number, number[] | AnimatedTexture>
   readonly atlas: THREE.Texture
@@ -554,17 +580,19 @@ export class AnimatedTextureManager {
   private atlasSource?: THREE.Texture
   private madeIndex: number
 
-  private readonly animatedTextureArray: AnimatedTextureTickerData[]
+  private readonly animatedTextureData: Record<number, AnimatedTextureTickerData>
 
   constructor(atlasMapping: Record<number, number[] | AnimatedTexture>) {
     this.atlasMapping = atlasMapping
     this.madeIndex = 0
-    this.animatedTextureArray = []
+    this.animatedTextureData = []
 
     this.canvas = document.createElement('canvas')
     this.canvas.width = ANIMATED_TEXTURE_ATLAS_SIZE
     this.canvas.height = ANIMATED_TEXTURE_ATLAS_SIZE
-    this.canvas.getContext('2d')!.clearRect(0, 0, ANIMATED_TEXTURE_ATLAS_SIZE, ANIMATED_TEXTURE_ATLAS_SIZE)
+    this.canvas
+      .getContext('2d')!
+      .clearRect(0, 0, ANIMATED_TEXTURE_ATLAS_SIZE, ANIMATED_TEXTURE_ATLAS_SIZE)
 
     this.atlas = new THREE.CanvasTexture(this.canvas)
     this.atlas.magFilter = THREE.NearestFilter
@@ -588,7 +616,8 @@ export class AnimatedTextureManager {
 
   private animatedTextureTick() {
     const updateData = []
-    for (const animatedTextureData of this.animatedTextureArray) {
+    for (const key in this.animatedTextureData) {
+      const animatedTextureData = this.animatedTextureData[key]
       animatedTextureData.lastFrameNowTime++
       if (animatedTextureData.lastFrameNowTime >= animatedTextureData.lastFrameTime) {
         const lastTextureIndex =
@@ -684,18 +713,21 @@ export class AnimatedTextureManager {
     setTimeout(() => this.animatedTextureTick(), 1000 / 20)
   }
 
-  putNewTexture(texture: AnimatedTexture): number[] {
+  putNewTexture(textureId: number, texture: AnimatedTexture): number[] {
+    if (textureId in this.animatedTextureData) {
+      return [this.animatedTextureData[textureId].x, this.animatedTextureData[textureId].y]
+    }
     const x = this.madeIndex % 16
     const y = Math.floor(this.madeIndex / 16)
     this.madeIndex++
-    this.animatedTextureArray.push({
+    this.animatedTextureData[textureId] = {
       texture,
       lastFrameNowTime: 0,
       lastFrameTime: texture.time[0],
       lastFrameIndex: 0,
       x: x * 16,
       y: y * 16,
-    })
+    }
     return [x * 16, y * 16]
   }
 }
@@ -757,7 +789,7 @@ export function getOrBakeModel(
         blockFaceUV.uvs[1] = 1 - (spriteData[1] + blockFaceUV.uvs[1]) / ATLAS_HEIGHT
         blockFaceUV.uvs[3] = 1 - (spriteData[1] + blockFaceUV.uvs[3]) / ATLAS_HEIGHT
       } else {
-        const [x, y] = animatedTextureManager.putNewTexture(spriteData)
+        const [x, y] = animatedTextureManager.putNewTexture(face.texture, spriteData)
         blockFaceUV.uvs[0] = (x + blockFaceUV.uvs[0]) / ANIMATED_TEXTURE_ATLAS_SIZE
         blockFaceUV.uvs[2] = (x + blockFaceUV.uvs[2]) / ANIMATED_TEXTURE_ATLAS_SIZE
         blockFaceUV.uvs[1] = 1 - (y + blockFaceUV.uvs[1]) / ANIMATED_TEXTURE_ATLAS_SIZE
@@ -845,6 +877,192 @@ function makeTextureAtlasMaterials(atlasTexture: THREE.Texture[]): Record<string
   }
 }
 
+export interface OcclusionFaceData {
+  down?: number[][]
+  up?: number[][]
+  north?: number[][]
+  south?: number[][]
+  west?: number[][]
+  east?: number[][]
+}
+
+function pointInsideAABB(point: number[], aabb: number[]) {
+  return point[0] > aabb[0] && point[0] < aabb[2] && point[1] > aabb[1] && point[1] < aabb[3]
+}
+
+function isOcclusion(thisFace: number[][], otherFace: number[][]): boolean {
+  if (otherFace.length == 0) return false
+  if (thisFace.length == 0) return true
+  if (
+    thisFace.length == otherFace.length &&
+    thisFace.every((val, i) => val.every((v, j) => v == otherFace[i][j]))
+  )
+    return true
+  for (const thisFaceElement of thisFace) {
+    let nonOccludedPart = [thisFaceElement]
+    for (const otherFaceElement of otherFace) {
+      const computedNonOccludedPart = [] as number[][]
+      for (const part of nonOccludedPart) {
+        if (
+          otherFaceElement[0] <= part[0] &&
+          otherFaceElement[1] <= part[1] &&
+          otherFaceElement[2] >= part[2] &&
+          otherFaceElement[3] >= part[3]
+        )
+          continue
+        if (
+          part[0] < otherFaceElement[2] &&
+          part[2] > otherFaceElement[0] &&
+          part[1] < otherFaceElement[3] &&
+          part[3] > otherFaceElement[1]
+        ) {
+          const minMinInside = pointInsideAABB([otherFaceElement[0], otherFaceElement[1]], part)
+          const minMaxInside = pointInsideAABB([otherFaceElement[0], otherFaceElement[3]], part)
+          const maxMinInside = pointInsideAABB([otherFaceElement[2], otherFaceElement[1]], part)
+          const maxMaxInside = pointInsideAABB([otherFaceElement[2], otherFaceElement[3]], part)
+          if (minMinInside && minMaxInside && maxMinInside && maxMaxInside) {
+            computedNonOccludedPart.push(
+              [part[0], part[1], otherFaceElement[0], part[3]],
+              [otherFaceElement[2], part[1], part[2], part[3]],
+              [otherFaceElement[0], part[1], otherFaceElement[2], otherFaceElement[1]],
+              [otherFaceElement[0], otherFaceElement[3], otherFaceElement[2], part[3]],
+            )
+          } else if (minMinInside && minMaxInside) {
+            computedNonOccludedPart.push(
+              [part[0], part[1], part[2], otherFaceElement[1]],
+              [part[0], otherFaceElement[1], otherFaceElement[0], otherFaceElement[3]],
+              [part[0], otherFaceElement[3], part[2], part[3]],
+            )
+          } else if (minMaxInside && maxMaxInside) {
+            computedNonOccludedPart.push(
+              [part[0], part[1], otherFaceElement[0], part[3]],
+              [otherFaceElement[0], otherFaceElement[3], otherFaceElement[2], part[3]],
+              [otherFaceElement[2], part[1], part[2], part[3]],
+            )
+          } else if (maxMinInside && maxMaxInside) {
+            computedNonOccludedPart.push(
+              [part[0], part[1], part[2], otherFaceElement[1]],
+              [otherFaceElement[2], otherFaceElement[1], part[2], otherFaceElement[3]],
+              [part[0], otherFaceElement[3], part[2], part[3]],
+            )
+          } else if (maxMinInside && minMinInside) {
+            computedNonOccludedPart.push(
+              [part[0], part[1], otherFaceElement[0], part[3]],
+              [otherFaceElement[0], part[1], otherFaceElement[2], otherFaceElement[1]],
+              [otherFaceElement[2], part[1], part[2], part[3]],
+            )
+          } else if (minMinInside) {
+            computedNonOccludedPart.push(
+              [part[0], part[1], otherFaceElement[0], part[3]],
+              [otherFaceElement[0], part[1], part[2], otherFaceElement[1]],
+            )
+          } else if (minMaxInside) {
+            computedNonOccludedPart.push(
+              [part[0], part[1], otherFaceElement[0], part[3]],
+              [otherFaceElement[0], otherFaceElement[3], part[2], part[3]],
+            )
+          } else if (maxMinInside) {
+            computedNonOccludedPart.push(
+              [part[0], part[1], otherFaceElement[2], otherFaceElement[1]],
+              [otherFaceElement[2], part[1], part[2], part[3]],
+            )
+          } else if (maxMaxInside) {
+            computedNonOccludedPart.push(
+              [part[0], otherFaceElement[3], otherFaceElement[2], part[3]],
+              [otherFaceElement[2], part[1], part[2], part[3]],
+            )
+          } else {
+            const minHorizontalInside =
+              otherFaceElement[0] > part[0] && otherFaceElement[0] < part[2]
+            const maxHorizontalInside =
+              otherFaceElement[2] > part[0] && otherFaceElement[2] < part[2]
+            const minVerticalInside = otherFaceElement[1] > part[1] && otherFaceElement[1] < part[3]
+            const maxVerticalInside = otherFaceElement[3] > part[1] && otherFaceElement[3] < part[3]
+            if (minHorizontalInside) {
+              computedNonOccludedPart.push([part[0], part[1], otherFaceElement[0], part[3]])
+            }
+            if (maxHorizontalInside) {
+              computedNonOccludedPart.push([otherFaceElement[2], part[1], part[2], part[3]])
+            }
+            if (minVerticalInside) {
+              computedNonOccludedPart.push([part[0], part[1], part[2], otherFaceElement[1]])
+            }
+            if (maxVerticalInside) {
+              computedNonOccludedPart.push([part[0], otherFaceElement[3], part[2], part[3]])
+            }
+          }
+        } else {
+          computedNonOccludedPart.push(part)
+        }
+      }
+      nonOccludedPart = computedNonOccludedPart
+    }
+    if (nonOccludedPart.length > 0) return false
+  }
+  return true
+}
+
+class BlockStructure {
+  readonly strctures: string[][][] // yzx
+  readonly bakedModelReference: [number, boolean?, number?, number?][][][][]
+  readonly x: number
+  readonly y: number
+  readonly z: number
+
+  constructor(structureStr: string) {
+    const splitHeightLines = structureStr.split(';')
+    let maxX = 0,
+      maxZ = 0
+    const maxY = splitHeightLines.length
+    for (let y = 0; y < splitHeightLines.length; y++) {
+      const splitLines = splitHeightLines[y].split(',')
+      if (splitLines.length > maxZ) maxZ = splitLines.length
+      for (let z = 0; z < splitLines.length; z++) {
+        const line = splitLines[z]
+        if (line.length > maxX) maxX = line.length
+      }
+    }
+
+    this.x = maxX
+    this.y = maxY
+    this.z = maxZ
+    this.strctures = new Array(maxY)
+      .fill(0)
+      .map(() => new Array(maxZ).fill(0).map(() => new Array(maxX).fill('-')))
+    this.bakedModelReference = new Array(maxY)
+      .fill(0)
+      .map(() =>
+        new Array(maxZ).fill(0).map(() => new Array(maxX).fill([-1, false, undefined, undefined])),
+      )
+
+    for (let y = 0; y < splitHeightLines.length; y++) {
+      const splitLines = splitHeightLines[y].split(',')
+      for (let z = 0; z < splitLines.length; z++) {
+        const line = splitLines[z]
+        for (let x = 0; x < line.length; x++) {
+          this.strctures[y][z][x] = line[x]
+        }
+      }
+    }
+  }
+
+  forEach(callback: (x: number, y: number, z: number, blockKey: string) => void) {
+    for (let y = 0; y < this.y; y++) {
+      for (let z = 0; z < this.z; z++) {
+        for (let x = 0; x < this.x; x++) {
+          if (this.strctures[y][z][x] === '-') continue
+          callback(x, y, z, this.strctures[y][z][x])
+        }
+      }
+    }
+  }
+
+  getBlock(x: number, y: number, z: number): string {
+    if (x < 0 || y < 0 || z < 0 || x >= this.x || y >= this.y || z >= this.z) return '-'
+    return this.strctures[y][z][x]
+  }
+}
+
 export function bakeBlockModelRenderLayer(
   scene: THREE.Scene,
   animatedTextureManager: AnimatedTextureManager,
@@ -855,60 +1073,56 @@ export function bakeBlockModelRenderLayer(
   renderTypesMapping: Record<string, string>,
   atlasMapping: Record<number, number[] | AnimatedTexture>,
   atlasTexture: THREE.Texture[],
+  occlusionShapesMapping: Record<string, OcclusionFaceData>,
 ) {
   const materialMapping = makeTextureAtlasMaterials(atlasTexture)
   const animatedMaterialMapping = makeTextureAtlasMaterials([
     animatedTextureManager.atlasMipped,
     animatedTextureManager.atlas,
   ])
+  const blockStructure = new BlockStructure(structure)
 
-  const splitHeightLines = structure.split(';')
-  let maxX = 0,
-    maxZ = 0
-  const maxY = splitHeightLines.length
+  blockStructure.forEach((x, y, z, blockKey) => {
+    modelsMapping[blockKey].forEach((provider) => {
+      const [modelReference, uvlock, rotX, rotY] = provider.getModel(x, y, z)
+      const rotation = new Rotation(rotX ?? 0, rotY ?? 0)
+      const baked = getOrBakeModel(
+        animatedTextureManager,
+        blockModelMapping,
+        atlasMapping,
+        modelReference,
+        rotation,
+        uvlock ?? false,
+      )
 
-  for (let y = 0; y < splitHeightLines.length; y++) {
-    const splitLines = splitHeightLines[y].split(',')
-    if (splitLines.length > maxZ) maxZ = splitLines.length
-    for (let z = 0; z < splitLines.length; z++) {
-      const line = splitLines[z]
-      if (line.length > maxX) maxX = line.length
-      for (let x = 0; x < line.length; x++) {
-        const blockKey = line[x]
-        if (blockKey === '-') continue
+      baked.unculledFaces.forEach((face) => {
+        const materialChoose = (face.animated ? animatedMaterialMapping : materialMapping)[
+          renderTypesMapping[nameStateMapping[blockKey]] ?? 'solid'
+        ]
+        const geometry = face.planeGeometry.clone().translate(x, y, z)
+        const mesh = new THREE.Mesh(geometry, materialChoose)
+        scene.add(mesh)
+      })
 
-        modelsMapping[blockKey].forEach((provider) => {
-          const [modelReference, uvlock, rotX, rotY] = provider.getModel(x, y, z)
-          const baked = getOrBakeModel(
-            animatedTextureManager,
-            blockModelMapping,
-            atlasMapping,
-            modelReference,
-            new Rotation(rotX ?? 0, rotY ?? 0),
-            uvlock ?? false,
-          )
+      occlusionShapesMapping['-'] = {}
+      Object.entries(baked.cullfaces).forEach(([direction, value]) => {
+        const directionFace = rotation.transformDirection(getDirectionFromName(direction))
+        const oppositeFace = oppositeDirection(directionFace)
+        const occlusionThis = (occlusionShapesMapping[blockKey] ?? {})[directionFace] ?? []
+        const otherBlock = blockStructure.getBlock(...moveTowardsDirection(x, y, z, directionFace))
+        const occlusionOther = (occlusionShapesMapping[otherBlock] ?? {})[oppositeFace] ?? []
+        if (isOcclusion(occlusionThis, occlusionOther)) return
 
-          Object.entries(baked.cullfaces).forEach(([, value]) => {
-            value.forEach((face) => {
-              const materialChoose = (face.animated ? animatedMaterialMapping : materialMapping)[
-                renderTypesMapping[nameStateMapping[blockKey]] ?? 'solid'
-              ]
-              const geometry = face.planeGeometry.clone().translate(x, y, z)
-              const mesh = new THREE.Mesh(geometry, materialChoose)
-              scene.add(mesh)
-            })
-          })
-          baked.unculledFaces.forEach((face) => {
-            const materialChoose = (face.animated ? animatedMaterialMapping : materialMapping)[
-              renderTypesMapping[nameStateMapping[blockKey]] ?? 'solid'
-            ]
-            const geometry = face.planeGeometry.clone().translate(x, y, z)
-            const mesh = new THREE.Mesh(geometry, materialChoose)
-            scene.add(mesh)
-          })
+        value.forEach((face) => {
+          const materialChoose = (face.animated ? animatedMaterialMapping : materialMapping)[
+            renderTypesMapping[nameStateMapping[blockKey]] ?? 'solid'
+          ]
+          const geometry = face.planeGeometry.clone().translate(x, y, z)
+          const mesh = new THREE.Mesh(geometry, materialChoose)
+          scene.add(mesh)
         })
-      }
-    }
-  }
-  return [maxX, maxY, maxZ]
+      })
+    })
+  })
+  return [blockStructure.x, blockStructure.y, blockStructure.z]
 }
