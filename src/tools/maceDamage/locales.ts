@@ -1,6 +1,8 @@
 export default {
   en: {
     'maceDamage.title': 'Calculate mace damage',
+    'maceDamage.java': 'Java Edition',
+    'maceDamage.bedrock': 'Bedrock Edition',
     'maceDamage.fallHeight': 'Fall height in blocks:',
     'maceDamage.critical': 'Critical attack',
     'maceDamage.critical.help':

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { CdxTextInput, CdxCheckbox } from '@wikimedia/codex'
+import { CdxTextInput, CdxCheckbox, CdxTab, CdxTabs } from '@wikimedia/codex'
 import CalcField from '@/components/CalcField.vue'
 import { useI18n } from '@/utils/i18n'
 import locales from './locales'
@@ -8,6 +8,7 @@ import locales from './locales'
 const { t } = useI18n(__TOOL_NAME__, locales)
 
 const maceImage = 'https://minecraft.wiki/images/Mace_JE1_BE1.png?format=original'
+const edition = ref<'java' | 'bedrock'>('java')
 const fallHeight = ref(1.5)
 const critical = ref(true)
 const damage = computed<number>({
@@ -19,12 +20,20 @@ const damage = computed<number>({
 })
 
 function getBaseDamage(): number {
-  return critical.value ? 10.5 : 7
+  if (edition.value === 'java') {
+    return critical.value ? 10.5 : 7
+  }
+  return critical.value ? 12 : 8
 }
 </script>
 <template>
   <CalcField>
     <template #heading>{{ t('maceDamage.title') }}</template>
+
+    <cdx-tabs v-model:active="edition">
+      <cdx-tab name="java" :label="t('maceDamage.java')" />
+      <cdx-tab name="bedrock" :label="t('maceDamage.bedrock')" />
+    </cdx-tabs>
 
     <div
       :style="{
