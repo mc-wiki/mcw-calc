@@ -30,8 +30,8 @@ const orthographic = ref(false)
 const loading = ref(true)
 
 // Three.js setup
-const webGLAvailable = WebGL.isWebGLAvailable()
-const renderer = new THREE.WebGLRenderer({ antialias: true })
+const rendererAvailable = WebGL.isWebGLAvailable()
+const renderer = new THREE.WebGLRenderer()
 renderer.setPixelRatio(window.devicePixelRatio)
 
 const scene = new THREE.Scene()
@@ -57,7 +57,7 @@ const controls = computed(() =>
   orthographic.value ? orthographicCameraControls : perspectiveCameraControls,
 )
 
-if (webGLAvailable) {
+if (rendererAvailable) {
   const blockStructure = new BlockStructure(props.structure)
   const nameMapping = new NameMapping(props.blocks)
   const modelManager = new BlockStateModelManager(
@@ -103,7 +103,7 @@ function updateDisplay() {
 }
 
 onMounted(() => {
-  if (webGLAvailable) {
+  if (rendererAvailable) {
     updateDisplay()
     renderTarget.value.appendChild(renderer.domElement)
     new ResizeObserver(updateDisplay).observe(renderTarget.value)
@@ -114,7 +114,7 @@ onMounted(() => {
 })
 
 onUpdated(() => {
-  if (webGLAvailable) {
+  if (rendererAvailable) {
     updateDisplay()
   }
 })

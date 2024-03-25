@@ -10,6 +10,8 @@ import type {
   AndCondition,
   BlockModel,
   BlockState,
+  ModelElement,
+  ModelFace,
   ModelReference,
   ModelReferenceWithWeight,
   ModelRotation,
@@ -175,6 +177,23 @@ class BlockFaceUV {
   }
 }
 
+function completeMissingUV(element: ModelElement, direction: Direction): number[] {
+  switch (direction) {
+    case Direction.DOWN:
+      return [element.from[0], 16 - element.to[2], element.to[0], 16 - element.from[2]]
+    case Direction.UP:
+      return [element.from[0], element.from[2], element.to[0], element.to[2]]
+    case Direction.NORTH:
+      return [16 - element.to[0], 16 - element.to[1], 16 - element.from[0], 16 - element.from[1]]
+    case Direction.SOUTH:
+      return [element.from[0], 16 - element.to[1], element.to[0], 16 - element.from[1]]
+    case Direction.WEST:
+      return [element.from[2], 16 - element.to[1], element.to[2], 16 - element.from[1]]
+    case Direction.EAST:
+      return [16 - element.to[2], 16 - element.to[1], 16 - element.from[2], 16 - element.from[1]]
+  }
+}
+
 function recomputeUVs(
   blockUV: BlockFaceUV,
   rotation: Rotation,
@@ -228,7 +247,7 @@ function recomputeUVs(
   return new BlockFaceUV([correctU1, correctV1, correctU2, correctV2], (rotationAngle + 360) % 360)
 }
 
-// Bake Face Functions ------------------------------------------------------------------------------
+// Bake Face Functions -----------------------------------------------------------------------------
 
 const FACE_MIN_Y = 0
 const FACE_MAX_Y = 1
@@ -423,7 +442,7 @@ export class BlockStateModelManager {
         occlusionShapePair.substring(splitPoint + 1),
       )
     })
-    this.occlusionShapesMapping['-'] = {}
+    this.occlusionShapesMapping['-'] = { can_occlude: false }
   }
 
   getOrBakeModel(
@@ -478,7 +497,10 @@ function bakeModel(
       const cullface = face.cullface
       const faceDirection = getDirectionFromName(faceName)
 
-      let blockFaceUV = new BlockFaceUV(face.uv ?? [0, 0, 16, 16], face.rotation ?? 0)
+      let blockFaceUV = new BlockFaceUV(
+        face.uv ?? completeMissingUV(element, faceDirection),
+        face.rotation ?? 0,
+      )
       if (uvlock) {
         blockFaceUV = recomputeUVs(blockFaceUV, rotation, faceDirection)
       }

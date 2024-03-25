@@ -11,9 +11,16 @@ import { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
 
 // Block Structure ---------------------------------------------------------------------------------
 
+interface LiquidState {
+  liquid: 'water' | 'lava' | 'air'
+  level: number
+  flowing: boolean
+}
+
 export class BlockStructure {
   readonly structures: string[][][] // yzx
   readonly bakedModelReference: [number, boolean?, number?, number?][][][][]
+
   readonly x: number
   readonly y: number
   readonly z: number
@@ -75,6 +82,7 @@ export class BlockStructure {
 // Name - Block - Block State Mapping --------------------------------------------------------------
 export class NameMapping {
   readonly nameStateMapping: Record<string, string> = {}
+  readonly nameTintMapping: Record<string, string[]> = {}
   readonly nameBlockMapping: Record<string, string> = {}
   readonly stateKeyMapping: Record<string, string> = {}
 
@@ -82,12 +90,20 @@ export class NameMapping {
     blocks.forEach((blockPair) => {
       const splitPoint = blockPair.indexOf('=')
       const blockName = blockPair.substring(0, splitPoint)
-      const blockStateKey = blockPair.substring(splitPoint + 1)
-      this.nameStateMapping[blockName] = blockStateKey
-      this.nameBlockMapping[blockName] = blockStateKey.includes('[')
-        ? blockStateKey.substring(0, blockStateKey.indexOf('['))
-        : blockStateKey
-      this.stateKeyMapping[blockStateKey] = blockName
+      let blockData = blockPair.substring(splitPoint + 1)
+
+      if (blockData.includes('!')) {
+        const tintSplitPoint = blockData.indexOf('!')
+        const tintData = blockData.substring(tintSplitPoint + 1)
+        blockData = blockData.substring(0, tintSplitPoint)
+        this.nameTintMapping[blockName] = tintData.split(',')
+      }
+
+      this.nameStateMapping[blockName] = blockData
+      this.nameBlockMapping[blockName] = blockData.includes('[')
+        ? blockData.substring(0, blockData.indexOf('['))
+        : blockData
+      this.stateKeyMapping[blockData] = blockName
     })
   }
 
@@ -98,13 +114,17 @@ export class NameMapping {
   toBlock(blockKey: string): string {
     return this.nameBlockMapping[blockKey]
   }
+
+  getTint(blockKey: string): string[] {
+    return this.nameTintMapping[blockKey] ?? []
+  }
 }
 
 export function bakeBlockModelRenderLayer(
   scene: THREE.Scene,
   materialPicker: MaterialPicker,
   blockStructure: BlockStructure,
-  nameStateMapping: NameMapping,
+  nameMapping: NameMapping,
   modelManager: BlockStateModelManager,
 ) {
   blockStructure.forEach((x, y, z, blockKey) => {
@@ -119,31 +139,36 @@ export function bakeBlockModelRenderLayer(
       )
 
       baked.unculledFaces.forEach((face) => {
-        scene.add(
-          new THREE.Mesh(
-            face.planeGeometry.clone().translate(x, y, z),
-            materialPicker.pickMaterial(face.animated, nameStateMapping.toBlock(blockKey)),
-          ),
-        )
+        let material = materialPicker.pickMaterial(face.animated, nameMapping.toBlock(blockKey))
+        if (face.tintindex !== undefined) {
+          material = material.clone()
+          material.color.set(new THREE.Color(parseInt(nameMapping.getTint(blockKey)[face.tintindex], 16)))
+        }
+        scene.add(new THREE.Mesh(face.planeGeometry.clone().translate(x, y, z), material))
       })
 
       Object.entries(baked.cullfaces).forEach(([direction, value]) => {
         const directionFace = rotation.transformDirection(getDirectionFromName(direction))
         const oppositeFace = oppositeDirection(directionFace)
-        const occlusionThis =
-          (modelManager.occlusionShapesMapping[blockKey] ?? {})[directionFace] ?? []
         const otherBlock = blockStructure.getBlock(...moveTowardsDirection(x, y, z, directionFace))
-        const occlusionOther =
-          (modelManager.occlusionShapesMapping[otherBlock] ?? {})[oppositeFace] ?? []
-        if (isOcclusion(occlusionThis, occlusionOther)) return
+        const otherOcclusion = modelManager.occlusionShapesMapping[otherBlock] ?? {
+          can_occlude: false,
+        }
+
+        if (otherOcclusion.can_occlude) {
+          const occlusionThis =
+            (modelManager.occlusionShapesMapping[blockKey] ?? {})[directionFace] ?? []
+          const occlusionOther = otherOcclusion[oppositeFace] ?? []
+          if (isOcclusion(occlusionThis, occlusionOther)) return
+        }
 
         value.forEach((face) => {
-          scene.add(
-            new THREE.Mesh(
-              face.planeGeometry.clone().translate(x, y, z),
-              materialPicker.pickMaterial(face.animated, nameStateMapping.toBlock(blockKey)),
-            ),
-          )
+          let material = materialPicker.pickMaterial(face.animated, nameMapping.toBlock(blockKey))
+          if (face.tintindex !== undefined) {
+            material = material.clone()
+            material.color.set(new THREE.Color(parseInt(nameMapping.getTint(blockKey)[face.tintindex], 16)))
+          }
+          scene.add(new THREE.Mesh(face.planeGeometry.clone().translate(x, y, z), material))
         })
       })
     })

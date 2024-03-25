@@ -46,8 +46,6 @@ export class AnimatedTextureManager {
 
     const context = this.canvas.getContext('2d')!
     context.clearRect(0, 0, ANIMATED_TEXTURE_ATLAS_SIZE, ANIMATED_TEXTURE_ATLAS_SIZE)
-    this.atlas.image.complete = true
-    this.atlasMipped.image.complete = true
   }
 
   updateAtlas(atlas: THREE.Texture) {
@@ -179,7 +177,7 @@ export const ANIMATED_TEXTURE_ATLAS_SIZE = 256
 
 export function makeTextureAtlasMaterials(
   atlasTexture: THREE.Texture[],
-): Record<string, THREE.Material> {
+): Record<string, THREE.MeshBasicMaterial> {
   const solidRenderingMaterial = new THREE.MeshBasicMaterial({
     map: atlasTexture[0],
     fog: false,
@@ -237,8 +235,8 @@ export function makeMaterialPicker(
 }
 
 export class MaterialPicker {
-  readonly staticTexture: Record<string, THREE.Material>
-  readonly animatedTexture: Record<string, THREE.Material>
+  readonly staticTexture: Record<string, THREE.MeshBasicMaterial>
+  readonly animatedTexture: Record<string, THREE.MeshBasicMaterial>
   readonly animatedTextureManager: AnimatedTextureManager
 
   readonly atlasMapping: Record<number, number[] | AnimatedTexture>

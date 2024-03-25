@@ -85,4 +85,5 @@ export interface OcclusionFaceData {
   south?: number[][]
   west?: number[][]
   east?: number[][]
+  can_occlude: boolean
 }
