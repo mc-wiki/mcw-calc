@@ -8,23 +8,31 @@ import locales from './locales'
 const { t } = useI18n(__TOOL_NAME__, locales)
 
 const maceImage = 'https://minecraft.wiki/images/Mace_JE1_BE1.png?format=original'
+
 const edition = ref<'java' | 'bedrock'>('java')
 const fallHeight = ref(1.5)
 const critical = ref(true)
+
+const baseDamage = computed(() => (edition.value === 'java' ? 7 : 8))
+
 const damage = computed<number>({
-  get: () => (fallHeight.value >= 1.5 ? getBaseDamage() + 0.5 * fallHeight.value : 0),
+  get: () => {
+    if (fallHeight.value < 1.5) return baseDamage.value
+    const criticalModifier = critical.value ? 1.5 : 1
+
+    return baseDamage.value * (1 + 0.5 * fallHeight.value) * criticalModifier
+  },
   set: (val: number) => {
-    let height = (val - getBaseDamage()) * 2
-    fallHeight.value = height >= 1.5 ? height : 0
+    const criticalModifier = critical.value ? 1.5 : 1
+    const height = (val / criticalModifier / baseDamage.value - 1) * 2
+
+    if (height < 1.5) {
+      fallHeight.value = 0
+    } else {
+      fallHeight.value = height
+    }
   },
 })
-
-function getBaseDamage(): number {
-  if (edition.value === 'java') {
-    return critical.value ? 10.5 : 7
-  }
-  return critical.value ? 12 : 8
-}
 </script>
 <template>
   <CalcField>
