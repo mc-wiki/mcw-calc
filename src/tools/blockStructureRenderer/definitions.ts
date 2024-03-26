@@ -35,7 +35,7 @@ export interface ModelRotation {
   rescale?: boolean
 }
 
-export interface BlockState {
+export interface BlockStateModelCollection {
   variants?: Record<string, ModelReference | ModelReferenceWithWeight[]>
   multipart?: ConditionalPart[]
 }

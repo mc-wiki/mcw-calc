@@ -11,6 +11,19 @@ export enum Direction {
   EAST = 'east',
 }
 
+export function isHorizontalDirection(direction: Direction): boolean {
+  return (
+    direction == Direction.NORTH ||
+    direction == Direction.SOUTH ||
+    direction == Direction.WEST ||
+    direction == Direction.EAST
+  )
+}
+
+export function isVerticalDirection(direction: Direction): boolean {
+  return direction == Direction.UP || direction == Direction.DOWN
+}
+
 export function oppositeDirection(direction: Direction): Direction {
   switch (direction) {
     case Direction.DOWN:

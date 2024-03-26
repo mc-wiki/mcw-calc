@@ -9,9 +9,8 @@ import {
 import type {
   AndCondition,
   BlockModel,
-  BlockState,
+  BlockStateModelCollection,
   ModelElement,
-  ModelFace,
   ModelReference,
   ModelReferenceWithWeight,
   ModelRotation,
@@ -104,12 +103,14 @@ function conditionMatch(
   }
 }
 
-export function chooseModel(
+function chooseModel(
   blockState: string,
-  blockStatesMapping: Record<string, BlockState>,
+  blockStatesMapping: Record<string, BlockStateModelCollection>,
 ): ModelReferenceProvider[] {
   const blockName = blockState.split('[')[0]
-  const blockStateData = blockStatesMapping[blockName]
+  const blockStateData = blockStatesMapping[blockName] ?? {}
+  if (!blockStateData.variants && !blockStateData.multipart)
+    console.warn(`Block ${blockName} has no variants or multipart data`)
   if (blockState.includes('[')) {
     const blockProperties = blockState.split('[')[1].split(']')[0].split(',')
     const blockPropertiesMap: Record<string, string> = {}
@@ -418,16 +419,16 @@ export class BlockStateModelManager {
     occlusionShapes: string[],
     nameMapping: NameMapping,
   ) {
-    const blockStatesMapping = {} as Record<string, BlockState>
+    const blockStatesMapping = {} as Record<string, BlockStateModelCollection>
     blockStates.forEach((blockStatePair) => {
       const splitPoint = blockStatePair.indexOf('=')
       const blockStateName = blockStatePair.substring(0, splitPoint)
       const blockStateData = blockStatePair.substring(splitPoint + 1)
-      blockStatesMapping[blockStateName] = JSON.parse(blockStateData) as BlockState
+      blockStatesMapping[blockStateName] = JSON.parse(blockStateData) as BlockStateModelCollection
     })
 
     Object.entries(nameMapping.nameStateMapping).forEach(([blockName, blockState]) => {
-      this.modelsMapping[blockName] = chooseModel(blockState, blockStatesMapping)
+      this.modelsMapping[blockName] = chooseModel(blockState.sourceDefinition, blockStatesMapping)
     })
 
     models.forEach((modelPair) => {

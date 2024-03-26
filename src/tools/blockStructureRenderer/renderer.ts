@@ -8,6 +8,7 @@ import {
   Rotation,
 } from '@/tools/blockStructureRenderer/math.ts'
 import { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
+import { hardCodedSkipRendering } from '@/tools/blockStructureRenderer/hardcodes.ts'
 
 // Block Structure ---------------------------------------------------------------------------------
 
@@ -16,6 +17,40 @@ interface LiquidState {
   level: number
   flowing: boolean
 }
+
+export class BlockState {
+  readonly blockName: string
+  readonly blockProperties: Record<string, string>
+  readonly tintData: string[]
+  readonly sourceDefinition: string
+
+  constructor(state: string) {
+    if (state.includes('!')) {
+      const tintSplitPoint = state.indexOf('!')
+      this.tintData = state.substring(tintSplitPoint + 1).split(',')
+      state = state.substring(0, tintSplitPoint)
+    } else {
+      this.tintData = []
+    }
+
+    this.sourceDefinition = state
+    const splitPoint = state.indexOf('[')
+    if (splitPoint === -1) {
+      this.blockName = state
+      this.blockProperties = {}
+    } else {
+      this.blockName = state.substring(0, splitPoint)
+      const properties = state.substring(splitPoint + 1, state.length - 1).split(',')
+      this.blockProperties = {}
+      properties.forEach((property) => {
+        const [key, value] = property.split('=')
+        this.blockProperties[key] = value
+      })
+    }
+  }
+}
+
+const AIR_STATE = new BlockState('air')
 
 export class BlockStructure {
   readonly structures: string[][][] // yzx
@@ -81,42 +116,27 @@ export class BlockStructure {
 
 // Name - Block - Block State Mapping --------------------------------------------------------------
 export class NameMapping {
-  readonly nameStateMapping: Record<string, string> = {}
-  readonly nameTintMapping: Record<string, string[]> = {}
-  readonly nameBlockMapping: Record<string, string> = {}
-  readonly stateKeyMapping: Record<string, string> = {}
+  readonly nameStateMapping: Record<string, BlockState> = {}
 
   constructor(blocks: string[]) {
     blocks.forEach((blockPair) => {
       const splitPoint = blockPair.indexOf('=')
       const blockName = blockPair.substring(0, splitPoint)
-      let blockData = blockPair.substring(splitPoint + 1)
-
-      if (blockData.includes('!')) {
-        const tintSplitPoint = blockData.indexOf('!')
-        const tintData = blockData.substring(tintSplitPoint + 1)
-        blockData = blockData.substring(0, tintSplitPoint)
-        this.nameTintMapping[blockName] = tintData.split(',')
-      }
-
-      this.nameStateMapping[blockName] = blockData
-      this.nameBlockMapping[blockName] = blockData.includes('[')
-        ? blockData.substring(0, blockData.indexOf('['))
-        : blockData
-      this.stateKeyMapping[blockData] = blockName
+      const blockData = blockPair.substring(splitPoint + 1)
+      this.nameStateMapping[blockName] = new BlockState(blockData)
     })
   }
 
-  toState(blockKey: string): string {
-    return this.nameStateMapping[blockKey]
+  toBlockState(blockKey: string): BlockState {
+    return this.nameStateMapping[blockKey] ?? AIR_STATE
   }
 
   toBlock(blockKey: string): string {
-    return this.nameBlockMapping[blockKey]
+    return this.nameStateMapping[blockKey].blockName
   }
 
   getTint(blockKey: string): string[] {
-    return this.nameTintMapping[blockKey] ?? []
+    return this.nameStateMapping[blockKey].tintData
   }
 }
 
@@ -128,6 +148,8 @@ export function bakeBlockModelRenderLayer(
   modelManager: BlockStateModelManager,
 ) {
   blockStructure.forEach((x, y, z, blockKey) => {
+    const thisBlock = nameMapping.toBlockState(blockKey)
+
     modelManager.modelsMapping[blockKey].forEach((provider) => {
       const [modelReference, uvlock, rotX, rotY] = provider.getModel(x, y, z)
       const rotation = new Rotation(rotX ?? 0, rotY ?? 0)
@@ -139,10 +161,10 @@ export function bakeBlockModelRenderLayer(
       )
 
       baked.unculledFaces.forEach((face) => {
-        let material = materialPicker.pickMaterial(face.animated, nameMapping.toBlock(blockKey))
+        let material = materialPicker.pickMaterial(face.animated, thisBlock.blockName)
         if (face.tintindex !== undefined) {
           material = material.clone()
-          material.color.set(new THREE.Color(parseInt(nameMapping.getTint(blockKey)[face.tintindex], 16)))
+          material.color.set(new THREE.Color(parseInt(thisBlock.tintData[face.tintindex], 16)))
         }
         scene.add(new THREE.Mesh(face.planeGeometry.clone().translate(x, y, z), material))
       })
@@ -151,10 +173,12 @@ export function bakeBlockModelRenderLayer(
         const directionFace = rotation.transformDirection(getDirectionFromName(direction))
         const oppositeFace = oppositeDirection(directionFace)
         const otherBlock = blockStructure.getBlock(...moveTowardsDirection(x, y, z, directionFace))
+        const otherBlockState = nameMapping.toBlockState(otherBlock)
+
+        if (hardCodedSkipRendering(thisBlock, otherBlockState, directionFace)) return
         const otherOcclusion = modelManager.occlusionShapesMapping[otherBlock] ?? {
           can_occlude: false,
         }
-
         if (otherOcclusion.can_occlude) {
           const occlusionThis =
             (modelManager.occlusionShapesMapping[blockKey] ?? {})[directionFace] ?? []
@@ -163,10 +187,10 @@ export function bakeBlockModelRenderLayer(
         }
 
         value.forEach((face) => {
-          let material = materialPicker.pickMaterial(face.animated, nameMapping.toBlock(blockKey))
+          let material = materialPicker.pickMaterial(face.animated, thisBlock.blockName)
           if (face.tintindex !== undefined) {
             material = material.clone()
-            material.color.set(new THREE.Color(parseInt(nameMapping.getTint(blockKey)[face.tintindex], 16)))
+            material.color.set(new THREE.Color(parseInt(thisBlock.tintData[face.tintindex], 16)))
           }
           scene.add(new THREE.Mesh(face.planeGeometry.clone().translate(x, y, z), material))
         })
