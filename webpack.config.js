@@ -55,7 +55,7 @@ const config = (env, argv) => {
       client: {
         webSocketURL: 'ws://localhost:8080/ws',
       },
-      allowedHosts: ['minecraft.wiki', 'localhost'],
+      allowedHosts: ['.minecraft.wiki', 'localhost'],
       onListening: () => {
         console.log(
           `<i> [mcw-calc] On-Wiki Preview: https://minecraft.wiki/w/User:Dianliang233/calc-sandbox`,

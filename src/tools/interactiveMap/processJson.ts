@@ -75,9 +75,9 @@ export function convertCoordinate(
 export function getImageLink(image: string) {
   const imageNameNormalized = image.replace(/File:/g, '').replace(/ /g, '_')
   if (process.env.NODE_ENV === 'development') {
-    return `https://minecraft.wiki/images/${imageNameNormalized}`
+    return `https://minecraft.wiki/images/${encodeURIComponent(imageNameNormalized)}`
   } else {
-    return `/images/${imageNameNormalized}`
+    return `/images/${encodeURIComponent(imageNameNormalized)}`
   }
 }
 
