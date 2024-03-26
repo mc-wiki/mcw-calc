@@ -21,6 +21,13 @@ export const targets: DeployTarget[] = [
     credentials: 'PROD',
     useLocalMessages: true,
   },
+  {
+    type: 'production',
+    name: 'pt',
+    apiUrl: 'https://pt.minecraft.wiki/api.php',
+    credentials: 'PROD',
+    useLocalMessages: true,
+  },
   // {
   //   type: 'production',
   //   name: 'ru',
