@@ -11,27 +11,26 @@ const maceImage = 'https://minecraft.wiki/images/Mace_JE1_BE1.png?format=origina
 
 const edition = ref<'java' | 'bedrock'>('java')
 const fallHeight = ref(1.5)
+const densityLevel = ref(0)
 const critical = ref(true)
 
 const baseDamage = computed(() => (edition.value === 'java' ? 7 : 8))
+const criticalModifier = computed(() => (critical.value ? 1.5 : 1))
 
-const damage = computed<number>({
-  get: () => {
+const damage = computed(() => {
     if (fallHeight.value < 1.5) return baseDamage.value
-    const criticalModifier = critical.value ? 1.5 : 1
+    return edition.value === 'java' ? javaDamage : bedrockDamage
+})
 
-    return baseDamage.value * (1 + 0.5 * fallHeight.value) * criticalModifier
-  },
-  set: (val: number) => {
-    const criticalModifier = critical.value ? 1.5 : 1
-    const height = (val / criticalModifier / baseDamage.value - 1) * 2
-
-    if (height < 1.5) {
-      fallHeight.value = 0
-    } else {
-      fallHeight.value = height
-    }
-  },
+// Java formula as of 24w13a:
+// Full: (baseDamage + (3 * fallHeight) + (densityLevel * fallHeight)) * criticalModifier + damageFromEnchantments
+// Cooldown not reset: ((baseDamage * 0.2) + (3 * fallHeight) + (densityLevel * fallHeight)) * criticalModifier
+// The latter formula is currently not taken into account, nor damageFromEnchantments
+const javaDamage = computed(() => {
+  return (baseDamage.value + (3 * fallHeight.value) + (densityLevel.value * fallHeight.value)) * criticalModifier.value
+})
+const bedrockDamage = computed(() => {
+  return baseDamage.value * (1 + 0.5 * fallHeight.value) * criticalModifier.value
 })
 </script>
 <template>
@@ -91,9 +90,26 @@ const damage = computed<number>({
             alignItems: 'center',
             gap: '.5rem',
           }"
+          v-if="edition === 'java'"
         >
-          <label for="damage-input">{{ t('maceDamage.damage') }}</label>
-          <CdxTextInput inputType="number" min="0" v-model="damage" id="damage-input" />
+          <label for="density-level-input">{{ t('maceDamage.densityLevel') }}</label>
+          <CdxTextInput
+            inputType="number"
+            min="0" max="5"
+            v-model="densityLevel"
+            id="density-level-input"
+          />
+        </div>
+        <div
+          :style="{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: '.5rem',
+          }"
+        >
+          <p>{{ t('maceDamage.damage') }}</p>
+          <span style="font-weight: bold;">{{ damage }}</span>
         </div>
       </div>
       <img width="64" height="64" :src="maceImage" />
