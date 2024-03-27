@@ -20,7 +20,7 @@ const damage = computed<number>({
     if (fallHeight.value < 1.5) return baseDamage.value
     const criticalModifier = critical.value ? 1.5 : 1
 
-    return baseDamage.value * (1 + 0.5 * fallHeight.value) * criticalModifier
+    return baseDamage.value * (1 + (3/7) * fallHeight.value) * criticalModifier
   },
   set: (val: number) => {
     const criticalModifier = critical.value ? 1.5 : 1
