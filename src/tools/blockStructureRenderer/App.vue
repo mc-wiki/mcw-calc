@@ -9,6 +9,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
 import {
   bakeBlockModelRenderLayer,
+  bakeFluidRenderLayer,
   BlockStructure,
   NameMapping,
 } from '@/tools/blockStructureRenderer/renderer.ts'
@@ -22,6 +23,8 @@ const props = defineProps<{
   textureAtlas: string[]
   renderTypes: string[]
   occlusionShapes: string[]
+  specialBlocksData: string[]
+  liquidComputationData: string[]
 }>()
 const { t } = useI18n(__TOOL_NAME__, locales)
 const renderTarget = ref()
@@ -31,7 +34,7 @@ const loading = ref(true)
 
 // Three.js setup
 const rendererAvailable = WebGL.isWebGLAvailable()
-const renderer = new THREE.WebGLRenderer()
+const renderer = new THREE.WebGLRenderer() // Do not enable antialiasing: make block edges black
 renderer.setPixelRatio(window.devicePixelRatio)
 
 const scene = new THREE.Scene()
@@ -64,10 +67,13 @@ if (rendererAvailable) {
     props.blockStates,
     props.models,
     props.occlusionShapes,
+    props.liquidComputationData,
+    props.specialBlocksData,
     nameMapping,
   )
   const materialPicker = makeMaterialPicker(props.textureAtlas, props.renderTypes, () => {
     loading.value = false
+    bakeFluidRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
     bakeBlockModelRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
   })
 

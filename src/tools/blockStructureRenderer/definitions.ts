@@ -1,3 +1,5 @@
+import type { Direction } from '@/tools/blockStructureRenderer/math.ts'
+
 // Block Model Structure ---------------------------------------------------------------------------
 
 export interface BlockModel {
@@ -86,4 +88,11 @@ export interface OcclusionFaceData {
   west?: number[][]
   east?: number[][]
   can_occlude: boolean
+}
+
+// Liquid Computation Data -------------------------------------------------------------------------
+
+export interface LiquidComputationData {
+  blocks_motion: boolean
+  face_sturdy: Direction[]
 }

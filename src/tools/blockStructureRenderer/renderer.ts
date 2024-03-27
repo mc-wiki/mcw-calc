@@ -9,13 +9,26 @@ import {
 } from '@/tools/blockStructureRenderer/math.ts'
 import { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
 import { hardCodedSkipRendering } from '@/tools/blockStructureRenderer/hardcodes.ts'
+import { renderFluid } from '@/tools/blockStructureRenderer/fluid.ts'
 
 // Block Structure ---------------------------------------------------------------------------------
 
-interface LiquidState {
-  liquid: 'water' | 'lava' | 'air'
-  level: number
-  flowing: boolean
+export class FluidState {
+  readonly fluid: 'water' | 'lava' | 'air'
+  readonly level: number
+  readonly falling: boolean
+
+  constructor(fluid: 'water' | 'lava' | 'air', level: number, flowing: boolean) {
+    this.fluid = fluid
+    this.level = level
+    this.falling = flowing
+  }
+
+  getHeight() {
+    if (this.fluid === 'air') return 0
+    if (this.level === 0) return 8 / 9
+    return this.level / 9
+  }
 }
 
 export class BlockState {
@@ -23,6 +36,7 @@ export class BlockState {
   readonly blockProperties: Record<string, string>
   readonly tintData: string[]
   readonly sourceDefinition: string
+  readonly fluidState: FluidState
 
   constructor(state: string) {
     if (state.includes('!')) {
@@ -46,6 +60,19 @@ export class BlockState {
         const [key, value] = property.split('=')
         this.blockProperties[key] = value
       })
+    }
+
+    if (this.blockName === 'water' || this.blockName === 'lava') {
+      const level = parseInt(this.blockProperties.level)
+      if (level == 0) this.fluidState = new FluidState(this.blockName, 0, false)
+      else if (level >= 8) this.fluidState = new FluidState(this.blockName, 8, true)
+      else this.fluidState = new FluidState(this.blockName, 8 - level, false)
+    } else if (this.blockName === 'seagrass' || this.blockName === 'kelp') {
+      this.fluidState = new FluidState('water', 0, false)
+    } else if (this.blockProperties['waterlogged'] === 'true') {
+      this.fluidState = new FluidState('water', 0, false)
+    } else {
+      this.fluidState = new FluidState('air', 0, false)
     }
   }
 }
@@ -138,6 +165,29 @@ export class NameMapping {
   getTint(blockKey: string): string[] {
     return this.nameStateMapping[blockKey].tintData
   }
+
+  toKey(blockState: BlockState): string {
+    for (const [key, value] of Object.entries(this.nameStateMapping)) {
+      if (value.sourceDefinition === blockState.sourceDefinition) return key
+    }
+    return '-'
+  }
+}
+
+export function bakeFluidRenderLayer(
+  scene: THREE.Scene,
+  materialPicker: MaterialPicker,
+  blockStructure: BlockStructure,
+  nameMapping: NameMapping,
+  modelManager: BlockStateModelManager,
+) {
+  blockStructure.forEach((x, y, z, blockKey) => {
+    const thisFluid = nameMapping.toBlockState(blockKey).fluidState
+    if (thisFluid.fluid === 'air') return
+    renderFluid(scene, materialPicker, modelManager, x, y, z, (x, y, z) =>
+      nameMapping.toBlockState(blockStructure.getBlock(x, y, z)),
+    )
+  })
 }
 
 export function bakeBlockModelRenderLayer(
@@ -176,12 +226,9 @@ export function bakeBlockModelRenderLayer(
         const otherBlockState = nameMapping.toBlockState(otherBlock)
 
         if (hardCodedSkipRendering(thisBlock, otherBlockState, directionFace)) return
-        const otherOcclusion = modelManager.occlusionShapesMapping[otherBlock] ?? {
-          can_occlude: false,
-        }
+        const otherOcclusion = modelManager.getOcclusionFaceData(otherBlockState)
         if (otherOcclusion.can_occlude) {
-          const occlusionThis =
-            (modelManager.occlusionShapesMapping[blockKey] ?? {})[directionFace] ?? []
+          const occlusionThis = modelManager.getOcclusionFaceData(thisBlock)[directionFace] ?? []
           const occlusionOther = otherOcclusion[oppositeFace] ?? []
           if (isOcclusion(occlusionThis, occlusionOther)) return
         }

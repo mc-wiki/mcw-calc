@@ -7,7 +7,7 @@ import {
 } from '@/tools/blockStructureRenderer/math.ts'
 
 // Subclasses of net.minecraft.world.level.block.HalfTransparentBlock
-const halfTransparentBlocks = [
+export const halfTransparentBlocks = [
   'frosted_ice',
   'ice',
   'honey_block',
@@ -17,6 +17,9 @@ const halfTransparentBlocks = [
   '.*stained_glass',
   'tinted_glass',
 ]
+
+// Subclasses of net.minecraft.world.level.block.LeavesBlock
+export const leavesBlocks = /.*_leaves/
 
 // net.minecraft.world.level.block.state.BlockBehaviour
 // protected boolean skipRendering(BlockState blockState, BlockState blockState2, Direction direction)

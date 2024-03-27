@@ -41,6 +41,28 @@ export function oppositeDirection(direction: Direction): Direction {
   }
 }
 
+export function getStepX(direction: Direction): number {
+  switch (direction) {
+    case Direction.WEST:
+      return -1
+    case Direction.EAST:
+      return 1
+    default:
+      return 0
+  }
+}
+
+export function getStepZ(direction: Direction): number {
+  switch (direction) {
+    case Direction.NORTH:
+      return -1
+    case Direction.SOUTH:
+      return 1
+    default:
+      return 0
+  }
+}
+
 export function moveTowardsDirection(
   x: number,
   y: number,

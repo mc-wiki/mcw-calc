@@ -10,6 +10,7 @@ import type {
   AndCondition,
   BlockModel,
   BlockStateModelCollection,
+  LiquidComputationData,
   ModelElement,
   ModelReference,
   ModelReferenceWithWeight,
@@ -24,6 +25,7 @@ import {
   MaterialPicker,
 } from '@/tools/blockStructureRenderer/texture.ts'
 import type { NameMapping } from '@/tools/blockStructureRenderer/renderer.ts'
+import { BlockState } from '@/tools/blockStructureRenderer/renderer.ts'
 
 // Model Reference Provider ------------------------------------------------------------------------
 
@@ -412,13 +414,20 @@ export class BlockStateModelManager {
   readonly modelsMapping: Record<string, ModelReferenceProvider[]> = {}
   readonly blockModelMapping: Record<number, BlockModel> = {}
   readonly occlusionShapesMapping: Record<string, OcclusionFaceData> = {}
+  readonly specialBlocksData: Record<string, number[]> = {}
+  readonly liquidComputationData: Record<string, LiquidComputationData> = {}
+  readonly nameMapping: NameMapping
 
   constructor(
     blockStates: string[],
     models: string[],
     occlusionShapes: string[],
+    liquidComputation: string[],
+    specialBlocksData: string[],
     nameMapping: NameMapping,
   ) {
+    this.nameMapping = nameMapping
+
     const blockStatesMapping = {} as Record<string, BlockStateModelCollection>
     blockStates.forEach((blockStatePair) => {
       const splitPoint = blockStatePair.indexOf('=')
@@ -439,11 +448,41 @@ export class BlockStateModelManager {
     occlusionShapes.forEach((occlusionShapePair) => {
       const splitPoint = occlusionShapePair.indexOf('=')
       const occlusionShapeName = occlusionShapePair.substring(0, splitPoint)
-      this.occlusionShapesMapping[occlusionShapeName] = JSON.parse(
-        occlusionShapePair.substring(splitPoint + 1),
+      this.occlusionShapesMapping[nameMapping.toBlockState(occlusionShapeName).sourceDefinition] =
+        JSON.parse(occlusionShapePair.substring(splitPoint + 1))
+    })
+
+    specialBlocksData.forEach((specialBlockDataPair) => {
+      const splitPoint = specialBlockDataPair.indexOf('=')
+      const specialBlockName = specialBlockDataPair.substring(0, splitPoint)
+      this.specialBlocksData[specialBlockName] = JSON.parse(
+        specialBlockDataPair.substring(splitPoint + 1),
       )
     })
-    this.occlusionShapesMapping['-'] = { can_occlude: false }
+
+    liquidComputation.forEach((liquidComputationPair) => {
+      const splitPoint = liquidComputationPair.indexOf('=')
+      const liquidComputationName = liquidComputationPair.substring(0, splitPoint)
+      this.liquidComputationData[nameMapping.toBlockState(liquidComputationName).sourceDefinition] =
+        JSON.parse(liquidComputationPair.substring(splitPoint + 1))
+    })
+  }
+
+  getSpecialBlocksData(blockName: string) {
+    return this.specialBlocksData[blockName] ?? []
+  }
+
+  getFluidComputationData(blockState: BlockState) {
+    return (
+      this.liquidComputationData[blockState.sourceDefinition] ?? {
+        blocksMotion: false,
+        face_sturdy: [],
+      }
+    )
+  }
+
+  getOcclusionFaceData(blockState: BlockState) {
+    return this.occlusionShapesMapping[blockState.sourceDefinition] ?? { can_occlude: false }
   }
 
   getOrBakeModel(
@@ -483,6 +522,11 @@ function bakeModel(
     },
     unculledFaces: [],
   } as BakedModel
+  if (!model) {
+    console.warn(`Model ${modelReferenceInt} not found`)
+    return bakedModel
+  }
+
   for (const element of model.elements ?? []) {
     const from = new THREE.Vector3(...element.from)
     const to = new THREE.Vector3(...element.to)
@@ -514,7 +558,12 @@ function bakeModel(
         blockFaceUV.uvs[1] = 1 - (spriteData[1] + blockFaceUV.uvs[1]) / ATLAS_HEIGHT
         blockFaceUV.uvs[3] = 1 - (spriteData[1] + blockFaceUV.uvs[3]) / ATLAS_HEIGHT
       } else {
-        const [x, y] = materialPicker.animatedTextureManager.putNewTexture(face.texture, spriteData)
+        const firstFrame = materialPicker.atlasMapping[spriteData.frames[0]] as number[]
+        const [x, y] = materialPicker.animatedTextureManager.putNewTexture(
+          face.texture,
+          spriteData,
+          [firstFrame[2], firstFrame[3]],
+        )
         blockFaceUV.uvs[0] = (x + blockFaceUV.uvs[0]) / ANIMATED_TEXTURE_ATLAS_SIZE
         blockFaceUV.uvs[2] = (x + blockFaceUV.uvs[2]) / ANIMATED_TEXTURE_ATLAS_SIZE
         blockFaceUV.uvs[1] = 1 - (y + blockFaceUV.uvs[1]) / ANIMATED_TEXTURE_ATLAS_SIZE

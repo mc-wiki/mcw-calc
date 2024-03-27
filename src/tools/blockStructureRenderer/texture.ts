@@ -9,6 +9,51 @@ interface AnimatedTextureTickerData {
   lastFrameIndex: number
   x: number
   y: number
+  width: number
+  height: number
+}
+
+class TextureAtlasNode {
+  private left?: TextureAtlasNode
+  private right?: TextureAtlasNode
+  private occupied: boolean = false
+
+  readonly x: number
+  readonly y: number
+  readonly width: number
+  readonly height: number
+
+  constructor(x: number, y: number, width: number, height: number) {
+    this.x = x
+    this.y = y
+    this.width = width
+    this.height = height
+  }
+
+  // prettier-ignore
+  insert(spriteData: number[]): TextureAtlasNode | null {
+    if (this.left && this.right) {
+      return this.left.insert(spriteData) || this.right.insert(spriteData)
+    }
+    if (this.occupied) return null
+    const spriteDataWidth = spriteData[0]
+    const spriteDataHeight = spriteData[1]
+    if (this.width < spriteDataWidth || this.height < spriteDataHeight) return null
+    if (this.width === spriteDataWidth && this.height === spriteDataHeight) {
+      this.occupied = true
+      return this
+    }
+    const dw = this.width - spriteDataWidth
+    const dh = this.height - spriteDataHeight
+    if (dw > dh) {
+      this.left = new TextureAtlasNode(this.x, this.y, spriteDataWidth, this.height)
+      this.right = new TextureAtlasNode(this.x + spriteDataWidth + 1, this.y, dw - 1, this.height)
+    } else {
+      this.left = new TextureAtlasNode(this.x, this.y, this.width, spriteDataHeight)
+      this.right = new TextureAtlasNode(this.x, this.y + spriteDataHeight + 1, this.width, dh - 1)
+    }
+    return this.left.insert(spriteData)
+  }
 }
 
 export class AnimatedTextureManager {
@@ -17,14 +62,19 @@ export class AnimatedTextureManager {
   readonly canvas: HTMLCanvasElement
   readonly atlasMipped: THREE.Texture
   private atlasSource?: THREE.Texture
-  private madeIndex: number
+  private readonly rootNode: TextureAtlasNode
 
   private readonly animatedTextureData: Record<number, AnimatedTextureTickerData>
 
   constructor(atlasMapping: Record<number, number[] | AnimatedTexture>) {
     this.atlasMapping = atlasMapping
-    this.madeIndex = 0
     this.animatedTextureData = []
+    this.rootNode = new TextureAtlasNode(
+      0,
+      0,
+      ANIMATED_TEXTURE_ATLAS_SIZE,
+      ANIMATED_TEXTURE_ATLAS_SIZE,
+    )
 
     this.canvas = document.createElement('canvas')
     this.canvas.width = ANIMATED_TEXTURE_ATLAS_SIZE
@@ -50,7 +100,25 @@ export class AnimatedTextureManager {
 
   updateAtlas(atlas: THREE.Texture) {
     this.atlasSource = atlas
-    this.animatedTextureTick()
+
+    const context = this.canvas.getContext('2d')!
+    for (const key in this.animatedTextureData) {
+      const animatedTextureData = this.animatedTextureData[key]
+      const firstFrame = this.atlasMapping[animatedTextureData.texture.frames[0]] as number[]
+      context.drawImage(
+        this.atlasSource!.image,
+        firstFrame[0],
+        firstFrame[1],
+        animatedTextureData.width,
+        animatedTextureData.height,
+        animatedTextureData.x,
+        animatedTextureData.y,
+        animatedTextureData.width,
+        animatedTextureData.height,
+      )
+    }
+
+    setTimeout(() => this.animatedTextureTick(), 1000 / 20)
   }
 
   private animatedTextureTick() {
@@ -73,8 +141,8 @@ export class AnimatedTextureManager {
           updateData.push({
             targetX: animatedTextureData.x,
             targetY: animatedTextureData.y,
-            width: 16,
-            height: 16,
+            width: animatedTextureData.width,
+            height: animatedTextureData.height,
             sourceX: textureFromAtlas[0],
             sourceY: textureFromAtlas[1],
           })
@@ -91,8 +159,8 @@ export class AnimatedTextureManager {
         updateData.push({
           targetX: animatedTextureData.x,
           targetY: animatedTextureData.y,
-          width: 16,
-          height: 16,
+          width: animatedTextureData.width,
+          height: animatedTextureData.height,
           sourceX: lastTextureFromAtlas[0],
           sourceY: lastTextureFromAtlas[1],
           interpolateX: nextTextureFromAtlas[0],
@@ -152,22 +220,64 @@ export class AnimatedTextureManager {
     setTimeout(() => this.animatedTextureTick(), 1000 / 20)
   }
 
-  putNewTexture(textureId: number, texture: AnimatedTexture): number[] {
+  putNewTexture(textureId: number, texture: AnimatedTexture, textureSize: number[]): number[] {
     if (textureId in this.animatedTextureData) {
-      return [this.animatedTextureData[textureId].x, this.animatedTextureData[textureId].y]
+      return [
+        this.animatedTextureData[textureId].x,
+        this.animatedTextureData[textureId].y,
+        this.animatedTextureData[textureId].width,
+        this.animatedTextureData[textureId].height,
+      ]
     }
-    const x = this.madeIndex % 16
-    const y = Math.floor(this.madeIndex / 16)
-    this.madeIndex++
+    const insertNode = this.rootNode.insert(textureSize)
+    if (!insertNode) {
+      return [0, 0]
+    }
     this.animatedTextureData[textureId] = {
       texture,
       lastFrameNowTime: 0,
       lastFrameTime: texture.time[0],
       lastFrameIndex: 0,
-      x: x * 16,
-      y: y * 16,
+      x: insertNode.x,
+      y: insertNode.y,
+      width: textureSize[0],
+      height: textureSize[1],
     }
-    return [x * 16, y * 16]
+    return [insertNode.x, insertNode.y, ...textureSize]
+  }
+}
+
+export class SpriteData {
+  readonly x: number
+  readonly y: number
+  readonly width: number
+  readonly height: number
+
+  readonly atlasWidth: number
+  readonly atlasHeight: number
+
+  constructor(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    atlasWidth: number,
+    atlasHeight: number,
+  ) {
+    this.x = x
+    this.y = y
+    this.width = width
+    this.height = height
+    this.atlasWidth = atlasWidth
+    this.atlasHeight = atlasHeight
+  }
+
+  getU(u: number) {
+    return (u * this.width + this.x) / this.atlasWidth
+  }
+
+  getV(v: number) {
+    return 1 - (v * this.height + this.y) / this.atlasHeight
   }
 }
 
