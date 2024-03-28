@@ -5,7 +5,7 @@ import CalcField from '@/components/CalcField.vue'
 import { useI18n } from '@/utils/i18n'
 import locales from './locales'
 
-const { t } = useI18n(__TOOL_NAME__, locales)
+const { t, message } = useI18n(__TOOL_NAME__, locales)
 
 const maceImage = 'https://minecraft.wiki/images/Mace_JE1_BE1.png?format=original'
 
@@ -17,21 +17,44 @@ const critical = ref(true)
 const baseDamage = computed(() => (edition.value === 'java' ? 7 : 8))
 const criticalModifier = computed(() => (critical.value ? 1.5 : 1))
 
-const damage = computed(() => {
+const damage = computed({
+  get: () => {
     if (fallHeight.value < 1.5) return baseDamage.value
-    return edition.value === 'java' ? javaDamage : bedrockDamage
+
+    // Java formula as of 24w13a:
+    // Full: (baseDamage + (3 * fallHeight) + (densityLevel * fallHeight)) * criticalModifier + damageFromEnchantments
+    // Cooldown not reset: ((baseDamage * 0.2) + (3 * fallHeight) + (densityLevel * fallHeight)) * criticalModifier
+    // The latter formula is currently not taken into account, nor damageFromEnchantments
+    if (edition.value === 'java') {
+      return (
+        (baseDamage.value + 3 * fallHeight.value + densityLevel.value * fallHeight.value) *
+        criticalModifier.value
+      )
+    } else {
+      return baseDamage.value * (1 + 0.5 * fallHeight.value) * criticalModifier.value
+    }
+  },
+  set: (val) => {
+    if (val <= baseDamage.value) fallHeight.value = 0
+
+    if (edition.value === 'java') {
+      const height =
+        (val / criticalModifier.value - baseDamage.value - densityLevel.value * fallHeight.value) /
+        3
+      fallHeight.value = height
+    } else {
+      const height = (val / criticalModifier.value / baseDamage.value - 1) * 2
+      fallHeight.value = height
+    }
+  },
 })
 
-// Java formula as of 24w13a:
-// Full: (baseDamage + (3 * fallHeight) + (densityLevel * fallHeight)) * criticalModifier + damageFromEnchantments
-// Cooldown not reset: ((baseDamage * 0.2) + (3 * fallHeight) + (densityLevel * fallHeight)) * criticalModifier
-// The latter formula is currently not taken into account, nor damageFromEnchantments
-const javaDamage = computed(() => {
-  return (baseDamage.value + (3 * fallHeight.value) + (densityLevel.value * fallHeight.value)) * criticalModifier.value
-})
-const bedrockDamage = computed(() => {
-  return baseDamage.value * (1 + 0.5 * fallHeight.value) * criticalModifier.value
-})
+function validateDensity(value: number) {
+  // density needs to be integer between 0 and 5
+  const density = Math.floor(Math.min(5, Math.max(0, densityLevel.value)))
+  console.log(value, density)
+  if (value !== density) densityLevel.value = density
+}
 </script>
 <template>
   <CalcField>
@@ -92,11 +115,16 @@ const bedrockDamage = computed(() => {
           }"
           v-if="edition === 'java'"
         >
-          <label for="density-level-input">{{ t('maceDamage.densityLevel') }}</label>
+          <label
+            for="density-level-input"
+            v-html="message('maceDamage.densityLevel').parse()"
+          ></label>
           <CdxTextInput
             inputType="number"
-            min="0" max="5"
+            min="0"
+            max="5"
             v-model="densityLevel"
+            @input="validateDensity"
             id="density-level-input"
           />
         </div>
@@ -108,8 +136,8 @@ const bedrockDamage = computed(() => {
             gap: '.5rem',
           }"
         >
-          <p>{{ t('maceDamage.damage') }}</p>
-          <span style="font-weight: bold;">{{ damage }}</span>
+          <label for="damage-input">{{ t('maceDamage.damage') }}</label>
+          <CdxTextInput inputType="number" min="0" v-model="damage" id="damage-input" />
         </div>
       </div>
       <img width="64" height="64" :src="maceImage" />

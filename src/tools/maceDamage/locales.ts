@@ -4,7 +4,7 @@ export default {
     'maceDamage.java': 'Java Edition',
     'maceDamage.bedrock': 'Bedrock Edition',
     'maceDamage.fallHeight': 'Fall height in blocks:',
-    'maceDamage.densityLevel': 'Density enchantment level:',
+    'maceDamage.densityLevel': '[[Density]] enchantment level:',
     'maceDamage.critical': 'Critical attack',
     'maceDamage.critical.help':
       'Hitting an entity with the mace will produce critical attacks most of the time, unless the attack cooldown is not reset.',
