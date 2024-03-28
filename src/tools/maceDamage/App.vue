@@ -5,7 +5,7 @@ import CalcField from '@/components/CalcField.vue'
 import { useI18n } from '@/utils/i18n'
 import locales from './locales'
 
-const { t } = useI18n(__TOOL_NAME__, locales)
+const { t, message } = useI18n(__TOOL_NAME__, locales)
 
 const maceImage = 'https://minecraft.wiki/images/Mace_JE1_BE1.png?format=original'
 
@@ -115,7 +115,10 @@ function validateDensity(value: number) {
           }"
           v-if="edition === 'java'"
         >
-          <label for="density-level-input">{{ t('maceDamage.densityLevel') }}</label>
+          <label
+            for="density-level-input"
+            v-html="message('maceDamage.densityLevel').parse()"
+          ></label>
           <CdxTextInput
             inputType="number"
             min="0"
