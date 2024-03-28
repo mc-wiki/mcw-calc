@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { CdxTextInput, CdxCheckbox, CdxTab, CdxTabs } from '@wikimedia/codex'
 import CalcField from '@/components/CalcField.vue'
 import { useI18n } from '@/utils/i18n'
@@ -47,6 +47,11 @@ const damage = computed({
       fallHeight.value = height
     }
   },
+})
+
+watch([densityLevel], () => {
+  // density needs to be integer between 0 and 5
+  densityLevel.value = Math.floor(Math.min(5, Math.max(0, densityLevel.value)))
 })
 </script>
 <template>
