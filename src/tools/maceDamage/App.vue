@@ -19,7 +19,7 @@ const criticalModifier = computed(() => (critical.value ? 1.5 : 1))
 
 const damage = computed({
   get: () => {
-    if (fallHeight.value < 1.5) return baseDamage.value
+    if (fallHeight.value < 1.5) return baseDamage.value * criticalModifier.value
 
     // Java formula as of 24w13a:
     // Full: (baseDamage + (3 * fallHeight) + (densityLevel * fallHeight)) * criticalModifier + damageFromEnchantments
