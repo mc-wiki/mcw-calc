@@ -19,38 +19,11 @@ import {
   moveTowardsDirection,
   oppositeDirection,
 } from '@/tools/blockStructureRenderer/math.ts'
-import { halfTransparentBlocks, leavesBlocks } from '@/tools/blockStructureRenderer/hardcodes.ts'
-
-function resolveFluidTextures(
-  fluid: string,
-  materialPicker: MaterialPicker,
-  modelManager: BlockStateModelManager,
-): [THREE.MeshBasicMaterial[], number[][]] {
-  const specialTextureIDs = modelManager.getSpecialBlocksData(fluid)
-  const resolvedMaterial = specialTextureIDs
-    .map((texture) => materialPicker.atlasMapping[texture])
-    .map(
-      (sprite) =>
-        (Array.isArray(sprite) ? materialPicker.staticTexture : materialPicker.animatedTexture)[
-          'translucent'
-        ],
-    )
-  const resolvedSprites = specialTextureIDs.map((texture) => {
-    const sprite = materialPicker.atlasMapping[texture]
-    if (Array.isArray(sprite)) {
-      return [sprite[0], sprite[1], sprite[2], sprite[3], ATLAS_WIDTH, ATLAS_HEIGHT]
-    } else {
-      const firstFrame = materialPicker.atlasMapping[sprite.frames[0]] as number[]
-      const [x, y, width, height] = materialPicker.animatedTextureManager.putNewTexture(
-        texture,
-        sprite,
-        [firstFrame[2], firstFrame[3]],
-      )
-      return [x, y, width, height, ANIMATED_TEXTURE_ATLAS_SIZE, ANIMATED_TEXTURE_ATLAS_SIZE]
-    }
-  })
-  return [resolvedMaterial, resolvedSprites]
-}
+import {
+  checkNameInSet, getShade,
+  halfTransparentBlocks,
+  leavesBlocks, resolveSpecialTextures,
+} from '@/tools/blockStructureRenderer/hardcodes.ts'
 
 function isSameFluid(thisFluidState: FluidState, neighborFluidState: FluidState): boolean {
   return thisFluidState.fluid === neighborFluidState.fluid
@@ -160,7 +133,7 @@ function isSolidFace(
   if (thisFluidState.fluid === blockState.fluidState.fluid) return false
   if (direction === Direction.UP) return true
   if (blockState.blockName === 'ice' || blockState.blockName === 'frosted_ice') return false
-  return modelManager.getFluidComputationData(blockState).face_sturdy?.includes(direction)
+  return modelManager.getFluidComputationData(blockState).face_sturdy.includes(direction)
 }
 
 function getFlow(
@@ -251,11 +224,14 @@ export function renderFluid(
 ) {
   const thisBlockState = blockStateGetter(x, y, z)
   const thisFluidState = thisBlockState.fluidState
-  const fluidColor = thisFluidState.fluid === 'water' ? parseInt(thisBlockState.tintData[0], 16) : 0xffffff
-  const [resolvedMaterial, resolvedSprites] = resolveFluidTextures(
+  const fluidColor = thisFluidState.fluid === 'water' ?
+    parseInt(thisBlockState.tintData[thisBlockState.tintData.length - 1] ?? '3F76E4', 16) :
+    0xffffff
+  const [resolvedMaterial, resolvedSprites] = resolveSpecialTextures(
     thisFluidState.fluid,
     materialPicker,
     modelManager,
+    'translucent'
   )
 
   const upBlockState = blockStateGetter(x, y + 1, z)
@@ -384,20 +360,20 @@ export function renderFluid(
       northEastU = spriteData.getU(0.5 + cosAngle - sinAngle)
       northEastV = spriteData.getV(0.5 - cosAngle - sinAngle)
     }
-    material.color.set(new THREE.Color(fluidColor))
+    material.color.set(new THREE.Color(fluidColor).multiplyScalar(getShade(Direction.UP, true)))
 
     const geometry = new THREE.PlaneGeometry()
     geometry.setAttribute('position', new THREE.Float32BufferAttribute([
-      0, northWestHeight, 0,
       1, northEastHeight, 0,
-      0, southWestHeight, 1,
       1, southEastHeight, 1,
+      0, northWestHeight, 0,
+      0, southWestHeight, 1,
     ], 3))
     geometry.setAttribute('uv', new THREE.Float32BufferAttribute([
-      northWestU, northWestV,
       northEastU, northEastV,
-      southWestU, southWestV,
       southEastU, southEastV,
+      northWestU, northWestV,
+      southWestU, southWestV,
     ], 2))
     geometry.setAttribute('normal', new THREE.Float32BufferAttribute([
       0, 1, 0,
@@ -418,16 +394,16 @@ export function renderFluid(
     )) {
       const geometryBackward = new THREE.PlaneGeometry()
       geometryBackward.setAttribute('position', new THREE.Float32BufferAttribute([
-        0, northWestHeight, 0,
         0, southWestHeight, 1,
-        1, northEastHeight, 0,
         1, southEastHeight, 1,
+        0, northWestHeight, 0,
+        1, northEastHeight, 0,
       ], 3))
       geometryBackward.setAttribute('uv', new THREE.Float32BufferAttribute([
-        northWestU, northWestV,
         southWestU, southWestV,
-        northEastU, northEastV,
         southEastU, southEastV,
+        northWestU, northWestV,
+        northEastU, northEastV,
       ], 2))
       geometryBackward.setAttribute('normal', new THREE.Float32BufferAttribute([
         0, 1, 0,
@@ -471,7 +447,7 @@ export function renderFluid(
     geometry.translate(x, y, z)
 
     const material = resolvedMaterial[0].clone()
-    material.color.set(new THREE.Color(fluidColor))
+    material.color.set(new THREE.Color(fluidColor).multiplyScalar(getShade(Direction.DOWN, true)))
     const mesh = new THREE.Mesh(geometry, material)
     scene.add(mesh)
   }
@@ -501,9 +477,8 @@ export function renderFluid(
       let material = resolvedMaterial[1].clone()
       let isWaterOverlay = false
       if (thisFluidState.fluid === 'water' &&
-        (leavesBlocks.test(blockStateOnDirection.blockName) ||
-          halfTransparentBlocks.some((blockTest) => RegExp(blockTest).test(blockStateOnDirection.blockName))
-        )) {
+        (leavesBlocks.test(blockStateOnDirection.blockName) || checkNameInSet(blockStateOnDirection.blockName, halfTransparentBlocks))
+      ) {
         spriteData = new SpriteData(
           resolvedSprites[2][0], resolvedSprites[2][1],
           resolvedSprites[2][2], resolvedSprites[2][3],
@@ -512,7 +487,7 @@ export function renderFluid(
         material = resolvedMaterial[2].clone()
         isWaterOverlay = true
       }
-      material.color.set(new THREE.Color(fluidColor))
+      material.color.set(new THREE.Color(fluidColor).multiplyScalar(getShade(direction, true)))
 
       const geometry = new THREE.PlaneGeometry()
       geometry.setAttribute('position', new THREE.Float32BufferAttribute([
@@ -537,7 +512,6 @@ export function renderFluid(
 
       const mesh = new THREE.Mesh(geometry, material)
       scene.add(mesh)
-      console.log(geometry)
 
       if (!isWaterOverlay) {
         const geometryBackward = new THREE.PlaneGeometry()

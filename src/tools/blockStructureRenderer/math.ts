@@ -85,7 +85,7 @@ export function moveTowardsDirection(
   }
 }
 
-function getVectorFromDirection(direction: Direction): THREE.Vector3 {
+export function getVectorFromDirection(direction: Direction): THREE.Vector3 {
   switch (direction) {
     case Direction.DOWN:
       return new THREE.Vector3(0, -1, 0)
@@ -127,6 +127,20 @@ export function getDirectionFromName(name: string): Direction {
   return Direction[name.toUpperCase() as keyof typeof Direction]
 }
 
+export function findNearestDirection(vector: THREE.Vector3): Direction {
+  let nearestDirection = Direction.UP
+  let nearestDot = -Infinity
+  const directions = Object.values(Direction)
+  for (const direction of directions) {
+    const dot = getVectorFromDirection(direction).dot(vector)
+    if (dot > nearestDot) {
+      nearestDot = dot
+      nearestDirection = direction
+    }
+  }
+  return nearestDirection
+}
+
 // Model Rotation Class ----------------------------------------------------------------------------
 
 export class Rotation {
@@ -149,25 +163,11 @@ export class Rotation {
     return matrix
   }
 
-  findNearestDirection(vector: THREE.Vector3): Direction {
-    let nearestDirection = Direction.NORTH
-    let nearestDot = -Infinity
-    const directions = Object.values(Direction)
-    for (const direction of directions) {
-      const dot = getVectorFromDirection(direction).dot(vector)
-      if (dot > nearestDot) {
-        nearestDot = dot
-        nearestDirection = direction
-      }
-    }
-    return nearestDirection
-  }
-
   transformDirection(direction: Direction): Direction {
     const matrix = this.asMatrix()
     const vector = getVectorFromDirection(direction)
     vector.applyMatrix4(matrix)
-    return this.findNearestDirection(vector)
+    return findNearestDirection(vector)
   }
 
   isIdentity(): boolean {

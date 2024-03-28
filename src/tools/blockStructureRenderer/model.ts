@@ -4,6 +4,7 @@ import {
   getDirectionFromName,
   getUVGlobalToLocalFromDirection,
   getUVLocalToGlobalFromDirection,
+  getVectorFromDirection,
   Rotation,
 } from '@/tools/blockStructureRenderer/math.ts'
 import type {
@@ -26,6 +27,7 @@ import {
 } from '@/tools/blockStructureRenderer/texture.ts'
 import type { NameMapping } from '@/tools/blockStructureRenderer/renderer.ts'
 import { BlockState } from '@/tools/blockStructureRenderer/renderer.ts'
+import { getShade } from '@/tools/blockStructureRenderer/hardcodes.ts'
 
 // Model Reference Provider ------------------------------------------------------------------------
 
@@ -391,13 +393,15 @@ function computeElementRotation(
 
 // Baked Data Structures ---------------------------------------------------------------------------
 
-interface BakedFace {
+export interface BakedFace {
   planeGeometry: THREE.PlaneGeometry
   animated: boolean
+  direction: Direction
+  shade: boolean
   tintindex?: number
 }
 
-interface BakedModel {
+export interface BakedModel {
   cullfaces: {
     down: BakedFace[]
     up: BakedFace[]
@@ -436,9 +440,19 @@ export class BlockStateModelManager {
       blockStatesMapping[blockStateName] = JSON.parse(blockStateData) as BlockStateModelCollection
     })
 
-    Object.entries(nameMapping.nameStateMapping).forEach(([blockName, blockState]) => {
-      this.modelsMapping[blockName] = chooseModel(blockState.sourceDefinition, blockStatesMapping)
+    specialBlocksData.forEach((specialBlockDataPair) => {
+      const splitPoint = specialBlockDataPair.indexOf('=')
+      const specialBlockName = specialBlockDataPair.substring(0, splitPoint)
+      this.specialBlocksData[specialBlockName] = JSON.parse(
+        specialBlockDataPair.substring(splitPoint + 1),
+      )
     })
+
+    Object.entries(nameMapping.nameStateMapping)
+      .filter((blockData) => !this.specialBlocksData[blockData[1].blockName])
+      .forEach(([blockName, blockState]) => {
+        this.modelsMapping[blockName] = chooseModel(blockState.sourceDefinition, blockStatesMapping)
+      })
 
     models.forEach((modelPair) => {
       const [modelId, modelData] = modelPair.split('=', 2)
@@ -450,14 +464,6 @@ export class BlockStateModelManager {
       const occlusionShapeName = occlusionShapePair.substring(0, splitPoint)
       this.occlusionShapesMapping[nameMapping.toBlockState(occlusionShapeName).sourceDefinition] =
         JSON.parse(occlusionShapePair.substring(splitPoint + 1))
-    })
-
-    specialBlocksData.forEach((specialBlockDataPair) => {
-      const splitPoint = specialBlockDataPair.indexOf('=')
-      const specialBlockName = specialBlockDataPair.substring(0, splitPoint)
-      this.specialBlocksData[specialBlockName] = JSON.parse(
-        specialBlockDataPair.substring(splitPoint + 1),
-      )
     })
 
     liquidComputation.forEach((liquidComputationPair) => {
@@ -493,25 +499,24 @@ export class BlockStateModelManager {
   ) {
     const cacheKey = `${modelReferenceInt}:${rotation.toStringKey()}:${uvlock}`
     if (cacheKey in this.bakedModelCache) return this.bakedModelCache[cacheKey]
+
+    const model = this.blockModelMapping[modelReferenceInt]
+    if (!model) {
+      console.warn(`Model ${modelReferenceInt} not found`)
+      return (this.bakedModelCache[cacheKey] = createEmptyBakedModel())
+    }
+
     return (this.bakedModelCache[cacheKey] = bakeModel(
       materialPicker,
-      this.blockModelMapping,
-      modelReferenceInt,
+      this.blockModelMapping[modelReferenceInt],
       rotation,
       uvlock,
     ))
   }
 }
 
-function bakeModel(
-  materialPicker: MaterialPicker,
-  models: Record<number, BlockModel>,
-  modelReferenceInt: number,
-  rotation: Rotation,
-  uvlock: boolean,
-): BakedModel {
-  const model = models[modelReferenceInt]
-  const bakedModel = {
+function createEmptyBakedModel(): BakedModel {
+  return {
     cullfaces: {
       down: [],
       up: [],
@@ -521,11 +526,16 @@ function bakeModel(
       east: [],
     },
     unculledFaces: [],
-  } as BakedModel
-  if (!model) {
-    console.warn(`Model ${modelReferenceInt} not found`)
-    return bakedModel
   }
+}
+
+export function bakeModel(
+  materialPicker: MaterialPicker,
+  model: BlockModel,
+  rotation: Rotation,
+  uvlock: boolean,
+): BakedModel {
+  const bakedModel = createEmptyBakedModel()
 
   for (const element of model.elements ?? []) {
     const from = new THREE.Vector3(...element.from)
@@ -596,16 +606,38 @@ function bakeModel(
         ),
       )
 
+      const v1 = new THREE.Vector3(...planeGeometry.getAttribute('position').array.slice(0, 3))
+      const v2 = new THREE.Vector3(...planeGeometry.getAttribute('position').array.slice(3, 6))
+      const v3 = new THREE.Vector3(...planeGeometry.getAttribute('position').array.slice(6, 9))
+      const normal = new THREE.Vector3()
+        .crossVectors(v2.clone().sub(v1), v1.clone().sub(v3))
+        .normalize()
+      let direction = undefined
+      if (isFinite(normal.x) && isFinite(normal.y) && isFinite(normal.z)) {
+        let maxValue = 0
+        for (const [, value] of Object.entries(Direction)) {
+          const dirNormal = getVectorFromDirection(value)
+          if (dirNormal.dot(normal) > maxValue) {
+            maxValue = dirNormal.dot(normal)
+            direction = value
+          }
+        }
+      }
+
       if (cullface) {
         bakedModel.cullfaces[faceDirection]?.push({
           planeGeometry,
           animated,
+          direction: direction ?? Direction.UP,
+          shade: element.shade ?? true,
           tintindex: face.tintindex,
         })
       } else {
         bakedModel.unculledFaces.push({
           planeGeometry,
           animated,
+          direction: direction ?? Direction.UP,
+          shade: element.shade ?? true,
           tintindex: face.tintindex,
         })
       }
@@ -613,4 +645,33 @@ function bakeModel(
   }
 
   return bakedModel
+}
+
+export function renderBakedFaces(
+  faces: BakedFace[],
+  block: BlockState,
+  materialPicker: MaterialPicker,
+  scene: THREE.Scene,
+  transform: THREE.Matrix4,
+) {
+  faces.forEach((face) => {
+    const material = materialPicker.pickMaterial(face.animated, block.blockName).clone()
+    if (face.tintindex !== undefined) {
+      material.color.set(new THREE.Color(parseInt(block.tintData[face.tintindex], 16)))
+    }
+    material.color.multiplyScalar(getShade(face.direction, face.shade))
+    const geometry = face.planeGeometry.clone().applyMatrix4(transform)
+    const mesh = new THREE.Mesh(geometry, material)
+    scene.add(mesh)
+  })
+}
+
+export function renderModelNoCullFaces(
+  bakedModel: BakedModel,
+  block: BlockState,
+  materialPicker: MaterialPicker,
+  scene: THREE.Scene,
+  transform: THREE.Matrix4,
+) {
+  renderBakedFaces(bakedModel.unculledFaces, block, materialPicker, scene, transform)
 }

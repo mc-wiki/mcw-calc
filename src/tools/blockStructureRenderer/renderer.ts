@@ -7,8 +7,15 @@ import {
   oppositeDirection,
   Rotation,
 } from '@/tools/blockStructureRenderer/math.ts'
-import { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
-import { hardCodedSkipRendering } from '@/tools/blockStructureRenderer/hardcodes.ts'
+import {
+  BlockStateModelManager,
+  renderBakedFaces,
+  renderModelNoCullFaces,
+} from '@/tools/blockStructureRenderer/model.ts'
+import {
+  hardCodedRenderers,
+  hardCodedSkipRendering,
+} from '@/tools/blockStructureRenderer/hardcodes.ts'
 import { renderFluid } from '@/tools/blockStructureRenderer/fluid.ts'
 
 // Block Structure ---------------------------------------------------------------------------------
@@ -157,21 +164,6 @@ export class NameMapping {
   toBlockState(blockKey: string): BlockState {
     return this.nameStateMapping[blockKey] ?? AIR_STATE
   }
-
-  toBlock(blockKey: string): string {
-    return this.nameStateMapping[blockKey].blockName
-  }
-
-  getTint(blockKey: string): string[] {
-    return this.nameStateMapping[blockKey].tintData
-  }
-
-  toKey(blockState: BlockState): string {
-    for (const [key, value] of Object.entries(this.nameStateMapping)) {
-      if (value.sourceDefinition === blockState.sourceDefinition) return key
-    }
-    return '-'
-  }
 }
 
 export function bakeFluidRenderLayer(
@@ -199,10 +191,30 @@ export function bakeBlockModelRenderLayer(
 ) {
   blockStructure.forEach((x, y, z, blockKey) => {
     const thisBlock = nameMapping.toBlockState(blockKey)
+    const blockName = thisBlock.blockName
+
+    const matchHardcodedRenderer = Object.entries(hardCodedRenderers).filter(([key, value]) =>
+      value[0] ? new RegExp(key).test(blockName) : key === blockName,
+    )
+    if (matchHardcodedRenderer.length > 0) {
+      matchHardcodedRenderer[0][1][1](
+        scene,
+        x,
+        y,
+        z,
+        thisBlock,
+        modelManager,
+        materialPicker,
+        nameMapping,
+        blockStructure,
+      )
+      return
+    }
 
     modelManager.modelsMapping[blockKey].forEach((provider) => {
       const [modelReference, uvlock, rotX, rotY] = provider.getModel(x, y, z)
       const rotation = new Rotation(rotX ?? 0, rotY ?? 0)
+      const translate = new THREE.Matrix4().makeTranslation(x, y, z)
       const baked = modelManager.getOrBakeModel(
         materialPicker,
         modelReference,
@@ -210,14 +222,7 @@ export function bakeBlockModelRenderLayer(
         uvlock ?? false,
       )
 
-      baked.unculledFaces.forEach((face) => {
-        let material = materialPicker.pickMaterial(face.animated, thisBlock.blockName)
-        if (face.tintindex !== undefined) {
-          material = material.clone()
-          material.color.set(new THREE.Color(parseInt(thisBlock.tintData[face.tintindex], 16)))
-        }
-        scene.add(new THREE.Mesh(face.planeGeometry.clone().translate(x, y, z), material))
-      })
+      renderModelNoCullFaces(baked, thisBlock, materialPicker, scene, translate)
 
       Object.entries(baked.cullfaces).forEach(([direction, value]) => {
         const directionFace = rotation.transformDirection(getDirectionFromName(direction))
@@ -233,14 +238,7 @@ export function bakeBlockModelRenderLayer(
           if (isOcclusion(occlusionThis, occlusionOther)) return
         }
 
-        value.forEach((face) => {
-          let material = materialPicker.pickMaterial(face.animated, thisBlock.blockName)
-          if (face.tintindex !== undefined) {
-            material = material.clone()
-            material.color.set(new THREE.Color(parseInt(thisBlock.tintData[face.tintindex], 16)))
-          }
-          scene.add(new THREE.Mesh(face.planeGeometry.clone().translate(x, y, z), material))
-        })
+        renderBakedFaces(value, thisBlock, materialPicker, scene, translate)
       })
     })
   })

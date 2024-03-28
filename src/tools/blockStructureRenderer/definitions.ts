@@ -10,6 +10,7 @@ export interface ModelElement {
   from: number[]
   to: number[]
   rotation?: ModelRotation
+  shade?: boolean
   faces: {
     down?: ModelFace
     up?: ModelFace
