@@ -49,10 +49,12 @@ const damage = computed({
   },
 })
 
-watch([densityLevel], () => {
+function validateDensity(value: number) {
   // density needs to be integer between 0 and 5
-  densityLevel.value = Math.floor(Math.min(5, Math.max(0, densityLevel.value)))
-})
+  const density = Math.floor(Math.min(5, Math.max(0, densityLevel.value)))
+  console.log(value, density)
+  if (value !== density) densityLevel.value = density
+}
 </script>
 <template>
   <CalcField>
@@ -119,6 +121,7 @@ watch([densityLevel], () => {
             min="0"
             max="5"
             v-model="densityLevel"
+            @input="validateDensity"
             id="density-level-input"
           />
         </div>
