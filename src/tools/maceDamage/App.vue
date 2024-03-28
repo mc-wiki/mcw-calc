@@ -35,7 +35,7 @@ const damage = computed({
     }
   },
   set: (val) => {
-    if (val <= baseDamage.value) fallHeight.value = 0
+    if (val <= baseDamage.value * criticalModifier.value) fallHeight.value = 0
 
     if (edition.value === 'java') {
       const height =
