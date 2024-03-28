@@ -16,6 +16,7 @@ const critical = ref(true)
 
 const baseDamage = computed(() => (edition.value === 'java' ? 7 : 8))
 const criticalModifier = computed(() => (critical.value ? 1.5 : 1))
+const cooldownModifier = computed(() => (critical.value ? 1 : 0.2))
 
 const damage = computed({
   get: () => {
@@ -24,10 +25,10 @@ const damage = computed({
     // Java formula as of 24w13a:
     // Full: (baseDamage + (3 * fallHeight) + (densityLevel * fallHeight)) * criticalModifier + damageFromEnchantments
     // Cooldown not reset: ((baseDamage * 0.2) + (3 * fallHeight) + (densityLevel * fallHeight)) * criticalModifier
-    // The latter formula is currently not taken into account, nor damageFromEnchantments
+    // damageFromEnchantments is currently not taken into account
     if (edition.value === 'java') {
       return (
-        (baseDamage.value + 3 * fallHeight.value + densityLevel.value * fallHeight.value) *
+        (baseDamage.value * cooldownModifier.value + 3 * fallHeight.value + densityLevel.value * fallHeight.value) *
         criticalModifier.value
       )
     } else {
@@ -35,16 +36,15 @@ const damage = computed({
     }
   },
   set: (val) => {
-    if (val <= baseDamage.value * criticalModifier.value) fallHeight.value = 0
+    if (val <= baseDamage.value * criticalModifier.value) return fallHeight.value = 0
 
     if (edition.value === 'java') {
       const height =
-        (val / criticalModifier.value - baseDamage.value - densityLevel.value * fallHeight.value) /
-        3
-      fallHeight.value = height
+        (val - criticalModifier.value * baseDamage.value  * cooldownModifier.value) / (criticalModifier.value * (densityLevel.value + 3))
+      fallHeight.value = Math.max(1.5, height)
     } else {
       const height = (val / criticalModifier.value / baseDamage.value - 1) * 2
-      fallHeight.value = height
+      fallHeight.value = Math.max(1.5, height)
     }
   },
 })
