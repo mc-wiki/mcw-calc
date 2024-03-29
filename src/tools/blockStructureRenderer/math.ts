@@ -175,6 +175,8 @@ export class Rotation {
   }
 }
 
+export const IDENTITY_ROTATION = new Rotation(0, 0)
+
 // Voxel Shape Utility Functions -------------------------------------------------------------------
 
 function pointInsideAABB(point: number[], aabb: number[]) {

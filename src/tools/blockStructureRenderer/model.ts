@@ -397,6 +397,7 @@ export interface BakedFace {
   planeGeometry: THREE.PlaneGeometry
   animated: boolean
   direction: Direction
+  directionVec: THREE.Vector3
   shade: boolean
   tintindex?: number
 }
@@ -449,7 +450,7 @@ export class BlockStateModelManager {
     })
 
     Object.entries(nameMapping.nameStateMapping)
-      .filter((blockData) => !this.specialBlocksData[blockData[1].blockName])
+      .filter((blockData) => blockStatesMapping[blockData[1].blockName])
       .forEach(([blockName, blockState]) => {
         this.modelsMapping[blockName] = chooseModel(blockState.sourceDefinition, blockStatesMapping)
       })
@@ -629,6 +630,7 @@ export function bakeModel(
           planeGeometry,
           animated,
           direction: direction ?? Direction.UP,
+          directionVec: normal,
           shade: element.shade ?? true,
           tintindex: face.tintindex,
         })
@@ -637,6 +639,7 @@ export function bakeModel(
           planeGeometry,
           animated,
           direction: direction ?? Direction.UP,
+          directionVec: normal,
           shade: element.shade ?? true,
           tintindex: face.tintindex,
         })
@@ -647,23 +650,66 @@ export function bakeModel(
   return bakedModel
 }
 
+export function renderBakedFacesWithMaterialSupplier(
+  faces: BakedFace[],
+  block: BlockState,
+  materialSupplier: (animated: boolean, blockName: string) => THREE.MeshBasicMaterial,
+  scene: THREE.Scene,
+  transform: THREE.Matrix4,
+  recomputeFaceShade?: boolean,
+) {
+  faces.forEach((face) => {
+    const material = materialSupplier(face.animated, block.blockName).clone()
+    if (face.tintindex !== undefined) {
+      material.color.set(new THREE.Color(parseInt(block.tintData[face.tintindex], 16)))
+    }
+    if (recomputeFaceShade) {
+      const transformedNormal = face.directionVec
+        .clone()
+        .applyMatrix3(new THREE.Matrix3().setFromMatrix4(transform))
+        .normalize()
+      let direction = undefined
+      if (
+        isFinite(transformedNormal.x) &&
+        isFinite(transformedNormal.y) &&
+        isFinite(transformedNormal.z)
+      ) {
+        let maxValue = 0
+        for (const [, value] of Object.entries(Direction)) {
+          const dirNormal = getVectorFromDirection(value)
+          if (dirNormal.dot(transformedNormal) > maxValue) {
+            maxValue = dirNormal.dot(transformedNormal)
+            direction = value
+          }
+        }
+      }
+      console.log(direction)
+      material.color.multiplyScalar(getShade(direction ?? Direction.UP, face.shade))
+    } else {
+      material.color.multiplyScalar(getShade(face.direction, face.shade))
+    }
+    const geometry = face.planeGeometry.clone().applyMatrix4(transform)
+    const mesh = new THREE.Mesh(geometry, material)
+    scene.add(mesh)
+  })
+}
+
 export function renderBakedFaces(
   faces: BakedFace[],
   block: BlockState,
   materialPicker: MaterialPicker,
   scene: THREE.Scene,
   transform: THREE.Matrix4,
+  recomputeFaceShade?: boolean,
 ) {
-  faces.forEach((face) => {
-    const material = materialPicker.pickMaterial(face.animated, block.blockName).clone()
-    if (face.tintindex !== undefined) {
-      material.color.set(new THREE.Color(parseInt(block.tintData[face.tintindex], 16)))
-    }
-    material.color.multiplyScalar(getShade(face.direction, face.shade))
-    const geometry = face.planeGeometry.clone().applyMatrix4(transform)
-    const mesh = new THREE.Mesh(geometry, material)
-    scene.add(mesh)
-  })
+  renderBakedFacesWithMaterialSupplier(
+    faces,
+    block,
+    (animated, blockName) => materialPicker.pickMaterial(animated, blockName),
+    scene,
+    transform,
+    recomputeFaceShade,
+  )
 }
 
 export function renderModelNoCullFaces(
@@ -672,6 +718,32 @@ export function renderModelNoCullFaces(
   materialPicker: MaterialPicker,
   scene: THREE.Scene,
   transform: THREE.Matrix4,
+  recomputeFaceShade?: boolean,
 ) {
-  renderBakedFaces(bakedModel.unculledFaces, block, materialPicker, scene, transform)
+  renderBakedFaces(
+    bakedModel.unculledFaces,
+    block,
+    materialPicker,
+    scene,
+    transform,
+    recomputeFaceShade,
+  )
+}
+
+export function renderModelNoCullFacesWithMaterialSupplier(
+  bakedModel: BakedModel,
+  block: BlockState,
+  materialSupplier: (animated: boolean, blockName: string) => THREE.MeshBasicMaterial,
+  scene: THREE.Scene,
+  transform: THREE.Matrix4,
+  recomputeFaceShade?: boolean,
+) {
+  renderBakedFacesWithMaterialSupplier(
+    bakedModel.unculledFaces,
+    block,
+    materialSupplier,
+    scene,
+    transform,
+    recomputeFaceShade,
+  )
 }

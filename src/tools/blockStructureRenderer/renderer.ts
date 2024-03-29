@@ -193,11 +193,11 @@ export function bakeBlockModelRenderLayer(
     const thisBlock = nameMapping.toBlockState(blockKey)
     const blockName = thisBlock.blockName
 
-    const matchHardcodedRenderer = Object.entries(hardCodedRenderers).filter(([key, value]) =>
-      value[0] ? new RegExp(key).test(blockName) : key === blockName,
+    const matchHardcodedRenderer = hardCodedRenderers.filter((value) =>
+      value.block instanceof RegExp ? value.block.test(blockName) : value.block === blockName,
     )
     if (matchHardcodedRenderer.length > 0) {
-      matchHardcodedRenderer[0][1][1](
+      matchHardcodedRenderer[0].renderFunc(
         scene,
         x,
         y,
@@ -208,7 +208,7 @@ export function bakeBlockModelRenderLayer(
         nameMapping,
         blockStructure,
       )
-      return
+      if (!matchHardcodedRenderer[0].needRenderModel) return
     }
 
     modelManager.modelsMapping[blockKey].forEach((provider) => {

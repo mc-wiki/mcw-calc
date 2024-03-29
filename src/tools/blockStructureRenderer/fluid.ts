@@ -2,9 +2,6 @@ import type { BlockState } from '@/tools/blockStructureRenderer/renderer.ts'
 import { FluidState } from '@/tools/blockStructureRenderer/renderer.ts'
 import * as THREE from 'three'
 import {
-  ANIMATED_TEXTURE_ATLAS_SIZE,
-  ATLAS_HEIGHT,
-  ATLAS_WIDTH,
   MaterialPicker,
   SpriteData,
 } from '@/tools/blockStructureRenderer/texture.ts'
