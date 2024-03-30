@@ -2,6 +2,9 @@ import type { BlockState } from '@/tools/blockStructureRenderer/renderer.ts'
 import { BlockStructure, NameMapping } from '@/tools/blockStructureRenderer/renderer.ts'
 import {
   Direction,
+  getDirectionFromName,
+  getStepX,
+  getStepZ,
   IDENTITY_ROTATION,
   isHorizontalDirection,
   isVerticalDirection,
@@ -11,7 +14,7 @@ import {
 import {
   bakeModel,
   type BlockStateModelManager,
-  renderModelNoCullFacesWithMaterialSupplier,
+  renderModelNoCullsWithMS,
 } from '@/tools/blockStructureRenderer/model.ts'
 import {
   ANIMATED_TEXTURE_ATLAS_SIZE,
@@ -168,6 +171,27 @@ export const hardCodedRenderers = [
     block: 'decorated_pot',
     renderFunc: renderDecoratedPot,
   },
+  {
+    block: /.*_bed$/,
+    renderFunc: renderBed,
+  },
+  {
+    block: /.*_banner$/,
+    renderFunc: renderBanner,
+  },
+  {
+    block: 'piston_head', // Avoid wrongly matching
+    renderFunc: () => {},
+    needRenderModel: true,
+  },
+  {
+    block: /.*_skull$/,
+    renderFunc: renderSkull,
+  },
+  {
+    block: /.*_head$/,
+    renderFunc: renderSkull,
+  },
 ] as {
   block: string | RegExp
   renderFunc: (
@@ -187,48 +211,110 @@ export const hardCodedRenderers = [
 // net.minecraft.client.model.geom.builders.CubeListBuilder
 // prettier-ignore
 function boxModel(
+  texture: number,
+  materialPicker: MaterialPicker,
   [fromX, fromY, fromZ]: number[],
   [width, height, depth]: number[],
   [texOffX, texOffY]: number[],
-  [poseOffX, poseOffY, poseOffZ]: number[], // Use this if you confirm no manual rotation (using matrix) is needed
-  shade: boolean,
-  texture: number,
-  materialPicker: MaterialPicker,
-  rotation: Rotation, // Use this if you confirm no manual rotation (using matrix) is needed
-  visibleFaces: Direction[] = [Direction.DOWN, Direction.UP, Direction.WEST, Direction.NORTH, Direction.EAST, Direction.SOUTH],
+  [poseOffX, poseOffY, poseOffZ]: number[] = [0, 0, 0], // Use this if you confirm no manual rotation (using matrix) is needed
+  rotation: Rotation = IDENTITY_ROTATION, // Use this if you confirm no manual rotation (using matrix) is needed
+  visibleFaces: Direction[] = [
+    Direction.DOWN,
+    Direction.UP,
+    Direction.WEST,
+    Direction.NORTH,
+    Direction.EAST,
+    Direction.SOUTH,
+  ],
+  mirror: boolean = false,
+  shade: boolean = true,
 ) {
   const directionFaces = {} as Record<Direction, ModelFace>
-  if (visibleFaces.includes(Direction.DOWN))
-    directionFaces[Direction.DOWN] = {
-      texture,
-      uv: [texOffX + depth, texOffY, texOffX + depth + width, texOffY + depth],
-    }
-  if (visibleFaces.includes(Direction.UP))
-    directionFaces[Direction.UP] = {
-      texture,
-      uv: [texOffX + depth + width + width, texOffY, texOffX + depth + width, texOffY + depth],
-      rotation: 180,
-    }
-  if (visibleFaces.includes(Direction.WEST))
-    directionFaces[Direction.WEST] = {
-      texture,
-      uv: [texOffX + depth, texOffY + depth + height, texOffX, texOffY + depth],
-    }
-  if (visibleFaces.includes(Direction.NORTH))
-    directionFaces[Direction.NORTH] = {
-      texture,
-      uv: [texOffX + depth + width, texOffY + depth + height, texOffX + depth, texOffY + depth],
-    }
-  if (visibleFaces.includes(Direction.EAST))
-    directionFaces[Direction.EAST] = {
-      texture,
-      uv: [texOffX + depth + width + depth, texOffY + depth + height, texOffX + depth + width, texOffY + depth],
-    }
-  if (visibleFaces.includes(Direction.SOUTH))
-    directionFaces[Direction.SOUTH] = {
-      texture,
-      uv: [texOffX + depth + width + depth + width, texOffY + depth + height, texOffX + depth + width + depth, texOffY + depth],
-    }
+  if (mirror) {
+    if (visibleFaces.includes(Direction.DOWN))
+      directionFaces[Direction.DOWN] = {
+        texture,
+        uv: [texOffX + depth + width, texOffY, texOffX + depth, texOffY + depth],
+      }
+    if (visibleFaces.includes(Direction.UP))
+      directionFaces[Direction.UP] = {
+        texture,
+        uv: [texOffX + depth + width, texOffY, texOffX + depth + width + width, texOffY + depth],
+        rotation: 180,
+      }
+    if (visibleFaces.includes(Direction.WEST))
+      directionFaces[Direction.WEST] = {
+        texture,
+        uv: [texOffX + depth, texOffY + depth + height, texOffX, texOffY + depth],
+      }
+    if (visibleFaces.includes(Direction.NORTH))
+      directionFaces[Direction.NORTH] = {
+        texture,
+        uv: [texOffX + depth, texOffY + depth + height, texOffX + depth + width, texOffY + depth],
+      }
+    if (visibleFaces.includes(Direction.EAST))
+      directionFaces[Direction.EAST] = {
+        texture,
+        uv: [
+          texOffX + depth + width + depth,
+          texOffY + depth + height,
+          texOffX + depth + width,
+          texOffY + depth,
+        ],
+      }
+    if (visibleFaces.includes(Direction.SOUTH))
+      directionFaces[Direction.SOUTH] = {
+        texture,
+        uv: [
+          texOffX + depth + width + depth,
+          texOffY + depth + height,
+          texOffX + depth + width + depth + width,
+          texOffY + depth,
+        ],
+      }
+  } else {
+    if (visibleFaces.includes(Direction.DOWN))
+      directionFaces[Direction.DOWN] = {
+        texture,
+        uv: [texOffX + depth, texOffY, texOffX + depth + width, texOffY + depth],
+      }
+    if (visibleFaces.includes(Direction.UP))
+      directionFaces[Direction.UP] = {
+        texture,
+        uv: [texOffX + depth + width + width, texOffY, texOffX + depth + width, texOffY + depth],
+        rotation: 180,
+      }
+    if (visibleFaces.includes(Direction.WEST))
+      directionFaces[Direction.WEST] = {
+        texture,
+        uv: [texOffX + depth, texOffY + depth + height, texOffX, texOffY + depth],
+      }
+    if (visibleFaces.includes(Direction.NORTH))
+      directionFaces[Direction.NORTH] = {
+        texture,
+        uv: [texOffX + depth + width, texOffY + depth + height, texOffX + depth, texOffY + depth],
+      }
+    if (visibleFaces.includes(Direction.EAST))
+      directionFaces[Direction.EAST] = {
+        texture,
+        uv: [
+          texOffX + depth + width + depth,
+          texOffY + depth + height,
+          texOffX + depth + width,
+          texOffY + depth,
+        ],
+      }
+    if (visibleFaces.includes(Direction.SOUTH))
+      directionFaces[Direction.SOUTH] = {
+        texture,
+        uv: [
+          texOffX + depth + width + depth + width,
+          texOffY + depth + height,
+          texOffX + depth + width + depth,
+          texOffY + depth,
+        ],
+      }
+  }
 
   return bakeModel(
     materialPicker,
@@ -283,95 +369,86 @@ function renderChest(
   let modelLock
   if (blockState.blockProperties['type'] == 'single') {
     modelBottom = boxModel(
+      normalTexture,
+      materialPicker,
       [1, 0, 1],
       [14, 10, 14],
       [0, 19],
       [0, 0, 0],
-      true,
-      normalTexture,
-      materialPicker,
       rotation!,
     )
     modelLid = boxModel(
+      normalTexture,
+      materialPicker,
       [1, 0, 0],
       [14, 5, 14],
       [0, 0],
       [0, 9, 1],
-      true,
-      normalTexture,
-      materialPicker,
       rotation!,
     )
     modelLock = boxModel(
+      normalTexture,
+      materialPicker,
       [7, -2, 14],
       [2, 4, 1],
       [0, 0],
       [0, 9, 1],
-      true,
-      normalTexture,
-      materialPicker,
       rotation!,
     )
   } else if (blockState.blockProperties['type'] == 'left') {
     modelBottom = boxModel(
+      leftTexture,
+      materialPicker,
       [0, 0, 1],
       [15, 10, 14],
       [0, 19],
       [0, 0, 0],
-      true,
-      leftTexture,
-      materialPicker,
       rotation!,
     )
     modelLid = boxModel(
+      leftTexture,
+      materialPicker,
       [0, 0, 0],
       [15, 5, 14],
       [0, 0],
       [0, 9, 1],
-      true,
-      leftTexture,
-      materialPicker,
       rotation!,
     )
     modelLock = boxModel(
+      leftTexture,
+      materialPicker,
       [0, -2, 14],
       [1, 4, 1],
       [0, 0],
       [0, 9, 1],
-      true,
-      leftTexture,
-      materialPicker,
       rotation!,
     )
   } else if (blockState.blockProperties['type'] == 'right') {
     modelBottom = boxModel(
+      rightTexture,
+      materialPicker,
       [1, 0, 1],
       [15, 10, 14],
       [0, 19],
       [0, 0, 0],
-      true,
-      rightTexture,
-      materialPicker,
       rotation!,
     )
     modelLid = boxModel(
+      rightTexture,
+      materialPicker,
       [1, 0, 0],
       [15, 5, 14],
       [0, 0],
       [0, 9, 1],
-      true,
-      rightTexture,
-      materialPicker,
       rotation!,
     )
     modelLock = boxModel(
+      rightTexture,
+      materialPicker,
       [15, -2, 14],
       [1, 4, 1],
       [0, 0],
       [0, 9, 1],
-      true,
-      rightTexture,
-      materialPicker,
       rotation!,
     )
   } else {
@@ -382,9 +459,9 @@ function renderChest(
   const transform = new THREE.Matrix4().makeTranslation(x, y, z)
   const material = (animated: boolean) =>
     animated ? materialPicker.animatedTexture.cutout : materialPicker.staticTexture.cutout
-  renderModelNoCullFacesWithMaterialSupplier(modelBottom!, blockState, material, scene, transform)
-  renderModelNoCullFacesWithMaterialSupplier(modelLid!, blockState, material, scene, transform)
-  renderModelNoCullFacesWithMaterialSupplier(modelLock!, blockState, material, scene, transform)
+  renderModelNoCullsWithMS(modelBottom!, blockState, material, scene, transform)
+  renderModelNoCullsWithMS(modelLid!, blockState, material, scene, transform)
+  renderModelNoCullsWithMS(modelLock!, blockState, material, scene, transform)
 }
 
 // net.minecraft.client.renderer.blockentity.ShulkerBoxRenderer
@@ -424,31 +501,29 @@ function renderShulkerBox(
   }
 
   const modelLid = boxModel(
+    texture,
+    materialPicker,
     [-8, -16, -8],
     [16, 12, 16],
     [0, 0],
     [0, 24, 0],
-    true,
-    texture,
-    materialPicker,
     rotation,
   )
   const modelBase = boxModel(
+    texture,
+    materialPicker,
     [-8, -8, -8],
     [16, 8, 16],
     [0, 28],
     [0, 24, 0],
-    true,
-    texture,
-    materialPicker,
     rotation,
   )
 
   const transform = new THREE.Matrix4().makeTranslation(x + move[0], y + move[1], z + move[2])
   const material = (animated: boolean) =>
     animated ? materialPicker.animatedTexture.cutout : materialPicker.staticTexture.cutout
-  renderModelNoCullFacesWithMaterialSupplier(modelLid!, blockState, material, scene, transform)
-  renderModelNoCullFacesWithMaterialSupplier(modelBase!, blockState, material, scene, transform)
+  renderModelNoCullsWithMS(modelLid!, blockState, material, scene, transform)
+  renderModelNoCullsWithMS(modelBase!, blockState, material, scene, transform)
 }
 
 // net.minecraft.client.model.BookModel
@@ -461,66 +536,12 @@ function renderBook(
   materialPicker: MaterialPicker,
   [rotAngle, openScale, flipPage1Percent, flipPage2Percent]: number[],
 ) {
-  const modelLeftLid = boxModel(
-    [-6, -5, -0.005],
-    [6, 10, 0.005],
-    [0, 0],
-    [0, 0, 0],
-    true,
-    texture,
-    materialPicker,
-    IDENTITY_ROTATION,
-  )
-  const modelRightLid = boxModel(
-    [0, -5, -0.005],
-    [6, 10, 0.005],
-    [16, 0],
-    [0, 0, 0],
-    true,
-    texture,
-    materialPicker,
-    IDENTITY_ROTATION,
-  )
-  const modelSeam = boxModel(
-    [-1, -5, 0],
-    [2, 10, 0.005],
-    [12, 0],
-    [0, 0, 0],
-    true,
-    texture,
-    materialPicker,
-    IDENTITY_ROTATION,
-  )
-  const modelLeftPages = boxModel(
-    [0, -4, -0.99],
-    [5, 8, 1],
-    [0, 10],
-    [0, 0, 0],
-    true,
-    texture,
-    materialPicker,
-    IDENTITY_ROTATION,
-  )
-  const modelRightPages = boxModel(
-    [0, -4, -0.01],
-    [5, 8, 1],
-    [12, 10],
-    [0, 0, 0],
-    true,
-    texture,
-    materialPicker,
-    IDENTITY_ROTATION,
-  )
-  const modelFlipPage = boxModel(
-    [0, -4, 0],
-    [5, 8, 0.005],
-    [24, 10],
-    [0, 0, 0],
-    true,
-    texture,
-    materialPicker,
-    IDENTITY_ROTATION,
-  )
+  const modelLeftLid = boxModel(texture, materialPicker, [-6, -5, -0.005], [6, 10, 0.005], [0, 0])
+  const modelRightLid = boxModel(texture, materialPicker, [0, -5, -0.005], [6, 10, 0.005], [16, 0])
+  const modelSeam = boxModel(texture, materialPicker, [-1, -5, 0], [2, 10, 0.005], [12, 0])
+  const modelLeftPages = boxModel(texture, materialPicker, [0, -4, -0.99], [5, 8, 1], [0, 10])
+  const modelRightPages = boxModel(texture, materialPicker, [0, -4, -0.01], [5, 8, 1], [12, 10])
+  const modelFlipPage = boxModel(texture, materialPicker, [0, -4, 0], [5, 8, 0.005], [24, 10])
 
   const rot = (Math.sin(rotAngle * 0.02) * 0.1 + 1.25) * openScale
   const leftLidMatrix = new THREE.Matrix4()
@@ -545,13 +566,13 @@ function renderBook(
 
   const material = (animated: boolean) =>
     animated ? materialPicker.animatedTexture.solid : materialPicker.staticTexture.solid
-  renderModelNoCullFacesWithMaterialSupplier(modelLeftLid, block, material, scene, transform.clone().multiply(leftLidMatrix), true)
-  renderModelNoCullFacesWithMaterialSupplier(modelRightLid, block, material, scene, transform.clone().multiply(rightLidMatrix), true)
-  renderModelNoCullFacesWithMaterialSupplier(modelSeam, block, material, scene, transform.clone().multiply(seamMatrix), true)
-  renderModelNoCullFacesWithMaterialSupplier(modelLeftPages, block, material, scene, transform.clone().multiply(leftPagesMatrix), true)
-  renderModelNoCullFacesWithMaterialSupplier(modelRightPages, block, material, scene, transform.clone().multiply(rightPagesMatrix), true)
-  renderModelNoCullFacesWithMaterialSupplier(modelFlipPage, block, material, scene, transform.clone().multiply(flipPage1Matrix), true)
-  renderModelNoCullFacesWithMaterialSupplier(modelFlipPage, block, material, scene, transform.clone().multiply(flipPage2Matrix), true)
+  renderModelNoCullsWithMS(modelLeftLid, block, material, scene, transform.clone().multiply(leftLidMatrix), true)
+  renderModelNoCullsWithMS(modelRightLid, block, material, scene, transform.clone().multiply(rightLidMatrix), true)
+  renderModelNoCullsWithMS(modelSeam, block, material, scene, transform.clone().multiply(seamMatrix), true)
+  renderModelNoCullsWithMS(modelLeftPages, block, material, scene, transform.clone().multiply(leftPagesMatrix), true)
+  renderModelNoCullsWithMS(modelRightPages, block, material, scene, transform.clone().multiply(rightPagesMatrix), true)
+  renderModelNoCullsWithMS(modelFlipPage, block, material, scene, transform.clone().multiply(flipPage1Matrix), true)
+  renderModelNoCullsWithMS(modelFlipPage, block, material, scene, transform.clone().multiply(flipPage2Matrix), true)
 }
 
 // net.minecraft.client.renderer.blockentity.LecternRenderer
@@ -612,31 +633,29 @@ function renderBell(
   const rotation = fromFacingToRotation(blockState.blockProperties['facing'])
 
   const modelBellBody = boxModel(
+    texture,
+    materialPicker,
     [-3, -6, -3],
     [6, 7, 6],
     [0, 0],
     [8, 12, 8],
-    true,
-    texture,
-    materialPicker,
     rotation,
   )
   const modelBellBase = boxModel(
+    texture,
+    materialPicker,
     [4, 4, 4],
     [8, 2, 8],
     [0, 13],
     [0, 0, 0],
-    true,
-    texture,
-    materialPicker,
     rotation,
   )
 
   const transform = new THREE.Matrix4().makeTranslation(x, y, z)
   const material = (animated: boolean) =>
     animated ? materialPicker.animatedTexture.solid : materialPicker.staticTexture.solid
-  renderModelNoCullFacesWithMaterialSupplier(modelBellBody, blockState, material, scene, transform)
-  renderModelNoCullFacesWithMaterialSupplier(modelBellBase, blockState, material, scene, transform)
+  renderModelNoCullsWithMS(modelBellBody, blockState, material, scene, transform)
+  renderModelNoCullsWithMS(modelBellBase, blockState, material, scene, transform)
 }
 
 // net.minecraft.client.renderer.blockentity.DecoratedPotRenderer
@@ -653,44 +672,16 @@ function renderDecoratedPot(
   const [base, side] = modelManager.getSpecialBlocksData(blockState.blockName)
   const rotation = fromFacingToRotation(blockState.blockProperties['facing'])
 
-  const modelNeck1 = boxModel(
-    [4, 17, 4],
-    [8, 3, 8],
-    [0, 0],
-    [0, 0, 0],
-    true,
-    base,
-    materialPicker,
-    IDENTITY_ROTATION,
-  )
-  const modelNeck2 = boxModel(
-    [5, 20, 5],
-    [6, 1, 6],
-    [0, 5],
-    [0, 0, 0],
-    true,
-    base,
-    materialPicker,
-    IDENTITY_ROTATION,
-  )
-  const modelTopBottom = boxModel(
-    [0, 0, 0],
-    [14, 0, 14],
-    [-14, 13],
-    [0, 0, 0],
-    true,
-    base,
-    materialPicker,
-    IDENTITY_ROTATION,
-  )
+  const modelNeck1 = boxModel(base, materialPicker, [4, 17, 4], [8, 3, 8], [0, 0])
+  const modelNeck2 = boxModel(base, materialPicker, [5, 20, 5], [6, 1, 6], [0, 5])
+  const modelTopBottom = boxModel(base, materialPicker, [0, 0, 0], [14, 0, 14], [-14, 13])
   const modelSide = boxModel(
+    side,
+    materialPicker,
     [0, 0, 0],
     [14, 16, 0],
     [1, 0],
     [0, 0, 0],
-    true,
-    side,
-    materialPicker,
     IDENTITY_ROTATION,
     [Direction.NORTH],
   )
@@ -741,12 +732,331 @@ function renderDecoratedPot(
 
   const material = (animated: boolean) =>
     animated ? materialPicker.animatedTexture.solid : materialPicker.staticTexture.solid
-  renderModelNoCullFacesWithMaterialSupplier(modelNeck1, blockState, material, scene, neck1Matrix, true)
-  renderModelNoCullFacesWithMaterialSupplier(modelNeck2, blockState, material, scene, neck2Matrix, true)
-  renderModelNoCullFacesWithMaterialSupplier(modelTopBottom, blockState, material, scene, topMatrix, true)
-  renderModelNoCullFacesWithMaterialSupplier(modelTopBottom, blockState, material, scene, botMatrix, true)
-  renderModelNoCullFacesWithMaterialSupplier(modelSide, blockState, material, scene, backMatrix, true)
-  renderModelNoCullFacesWithMaterialSupplier(modelSide, blockState, material, scene, leftMatrix, true)
-  renderModelNoCullFacesWithMaterialSupplier(modelSide, blockState, material, scene, rightMatrix, true)
-  renderModelNoCullFacesWithMaterialSupplier(modelSide, blockState, material, scene, frontMatrix, true)
+  renderModelNoCullsWithMS(modelNeck1, blockState, material, scene, neck1Matrix, true)
+  renderModelNoCullsWithMS(modelNeck2, blockState, material, scene, neck2Matrix, true)
+  renderModelNoCullsWithMS(modelTopBottom, blockState, material, scene, topMatrix, true)
+  renderModelNoCullsWithMS(modelTopBottom, blockState, material, scene, botMatrix, true)
+  renderModelNoCullsWithMS(modelSide, blockState, material, scene, backMatrix, true)
+  renderModelNoCullsWithMS(modelSide, blockState, material, scene, leftMatrix, true)
+  renderModelNoCullsWithMS(modelSide, blockState, material, scene, rightMatrix, true)
+  renderModelNoCullsWithMS(modelSide, blockState, material, scene, frontMatrix, true)
+}
+
+function renderBed(
+  scene: THREE.Scene,
+  x: number,
+  y: number,
+  z: number,
+  blockState: BlockState,
+  modelManager: BlockStateModelManager,
+  materialPicker: MaterialPicker,
+) {
+  const texture = modelManager.getSpecialBlocksData(blockState.blockName)[0]
+  const rotation = fromFacingToRotation(blockState.blockProperties['facing'])
+
+  let main
+  let left
+  let right
+  let leftMatrixRaw
+  let rightMatrixRaw
+  if (blockState.blockProperties['part'] === 'head') {
+    main = boxModel(texture, materialPicker, [0, 0, 0], [16, 16, 6], [0, 0])
+    left = boxModel(texture, materialPicker, [0, 6, 0], [3, 3, 3], [50, 6])
+    right = boxModel(texture, materialPicker, [-16, 6, 0], [3, 3, 3], [50, 6])
+    leftMatrixRaw = new THREE.Matrix4()
+      .multiply(new THREE.Matrix4().makeRotationZ(Math.PI / 2))
+      .multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2))
+    rightMatrixRaw = new THREE.Matrix4()
+      .multiply(new THREE.Matrix4().makeRotationZ(Math.PI))
+      .multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2))
+  } else if (blockState.blockProperties['part'] === 'foot') {
+    main = boxModel(texture, materialPicker, [0, 0, 0], [16, 16, 6], [0, 22])
+    left = boxModel(texture, materialPicker, [0, 6, -16], [3, 3, 3], [50, 0])
+    right = boxModel(texture, materialPicker, [-16, 6, -16], [3, 3, 3], [50, 12])
+    leftMatrixRaw = new THREE.Matrix4().multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2))
+    rightMatrixRaw = new THREE.Matrix4()
+      .multiply(new THREE.Matrix4().makeRotationZ((Math.PI * 3) / 2))
+      .multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2))
+  } else {
+    console.warn('Unknown bed part', blockState.blockProperties['part'])
+    return
+  }
+
+  const matrix = new THREE.Matrix4()
+    .multiply(new THREE.Matrix4().makeTranslation(x, y, z))
+    .multiply(new THREE.Matrix4().makeTranslation(0, 0.5625, 0))
+    .multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2))
+    .multiply(new THREE.Matrix4().makeTranslation(0.5, 0.5, 0.5))
+    .multiply(new THREE.Matrix4().makeRotationZ((rotation.y / 180 + 1) * Math.PI))
+    .multiply(new THREE.Matrix4().makeTranslation(-0.5, -0.5, -0.5))
+  const leftMatrix = new THREE.Matrix4().multiply(matrix).multiply(leftMatrixRaw)
+  const rightMatrix = new THREE.Matrix4().multiply(matrix).multiply(rightMatrixRaw)
+  const material = (animated: boolean) =>
+    animated ? materialPicker.animatedTexture.solid : materialPicker.staticTexture.solid
+
+  renderModelNoCullsWithMS(main, blockState, material, scene, matrix, true)
+  renderModelNoCullsWithMS(left, blockState, material, scene, leftMatrix, true)
+  renderModelNoCullsWithMS(right, blockState, material, scene, rightMatrix, true)
+}
+
+const dyeColorMapping = {
+  white: 0xf9fffe,
+  orange: 0xf9801d,
+  magenta: 0xc74ebd,
+  light_blue: 0x3ab3da,
+  yellow: 0xfed83d,
+  lime: 0x80c71f,
+  pink: 0xf38baa,
+  gray: 0x474f52,
+  light_gray: 0x9d9d97,
+  cyan: 0x169c9c,
+  purple: 0x8932b8,
+  blue: 0x3c44aa,
+  brown: 0x835432,
+  green: 0x5e7c16,
+  red: 0xb02e26,
+  black: 0x1d1d21,
+} as Record<string, number>
+
+function renderBanner(
+  scene: THREE.Scene,
+  x: number,
+  y: number,
+  z: number,
+  blockState: BlockState,
+  modelManager: BlockStateModelManager,
+  materialPicker: MaterialPicker,
+) {
+  const texture = modelManager.getSpecialBlocksData(blockState.blockName)[0]
+
+  const modelFlag = boxModel(texture, materialPicker, [-10, 0, -2], [20, 40, 1], [0, 0])
+  const modelPole = boxModel(texture, materialPicker, [-1, -30, -1], [2, 42, 2], [44, 0])
+  const modelBar = boxModel(texture, materialPicker, [-10, -32, -1], [20, 2, 2], [0, 42])
+
+  const time = 0
+  const blockName = blockState.blockName
+  const matrixBase = new THREE.Matrix4().makeTranslation(x, y, z)
+  let poleVisible
+  if (blockName.endsWith('_wall_banner')) {
+    poleVisible = false
+    const rotation = fromFacingToRotation(blockState.blockProperties['facing'])
+    matrixBase
+      .multiply(new THREE.Matrix4().makeTranslation(0.5, -1 / 6, 0.5))
+      .multiply(new THREE.Matrix4().makeRotationY((-rotation.y / 180) * Math.PI))
+      .multiply(new THREE.Matrix4().makeTranslation(0, -0.3125, -0.4375))
+  } else {
+    poleVisible = true
+    const rotation = parseInt(blockState.blockProperties['rotation'])
+    matrixBase
+      .multiply(new THREE.Matrix4().makeTranslation(0.5, 0.5, 0.5))
+      .multiply(new THREE.Matrix4().makeRotationY((-rotation / 8) * Math.PI))
+  }
+  matrixBase.multiply(new THREE.Matrix4().makeScale(2 / 3, -2 / 3, -2 / 3))
+
+  const material = (animated: boolean) =>
+    animated ? materialPicker.animatedTexture.solid : materialPicker.staticTexture.solid
+  if (poleVisible)
+    renderModelNoCullsWithMS(modelPole, blockState, material, scene, matrixBase, true)
+  renderModelNoCullsWithMS(modelBar, blockState, material, scene, matrixBase, true)
+
+  const wind = ((x * 7 + y * 9 + z * 13 + time) % 100) / 100
+  const angle = Math.PI * (-0.0125 + 0.01 * Math.cos(Math.PI * 2 * wind))
+  const flagMatrix = new THREE.Matrix4()
+    .multiply(matrixBase)
+    .multiply(new THREE.Matrix4().makeTranslation(0, -32 / 16, 0))
+    .multiply(new THREE.Matrix4().makeRotationX(angle))
+  const dyeColor = dyeColorMapping[blockName.substring(0, blockName.indexOf('_'))]
+  const flagMaterial = (animated: boolean) => {
+    const material = animated
+      ? materialPicker.animatedTexture.solid
+      : materialPicker.staticTexture.solid
+    const materialClone = material.clone()
+    materialClone.color.set(dyeColor)
+    materialClone.side = THREE.DoubleSide
+    return materialClone
+  }
+  renderModelNoCullsWithMS(modelFlag, blockState, flagMaterial, scene, flagMatrix, true)
+}
+
+function renderPlainSkull(
+  scene: THREE.Scene,
+  blockState: BlockState,
+  texture: number,
+  materialPicker: MaterialPicker,
+  material: (animated: boolean) => THREE.MeshBasicMaterial,
+  transform: THREE.Matrix4,
+  rotation: number,
+) {
+  const modelHead = boxModel(texture, materialPicker, [-4, -8, -4], [8, 8, 8], [0, 0])
+  const matrix = new THREE.Matrix4()
+    .multiply(transform)
+    .multiply(new THREE.Matrix4().makeRotationY(rotation))
+  renderModelNoCullsWithMS(modelHead, blockState, material, scene, matrix, true)
+}
+
+function renderDragonHead(
+  scene: THREE.Scene,
+  blockState: BlockState,
+  texture: number,
+  materialPicker: MaterialPicker,
+  material: (animated: boolean) => THREE.MeshBasicMaterial,
+  transform: THREE.Matrix4,
+  rotation: number,
+) {
+  const modelUpperLip = boxModel(texture, materialPicker, [-6, -1, -24], [12, 5, 16], [176, 44])
+  const modelUpperHead = boxModel(texture, materialPicker, [-8, -8, -10], [16, 16, 16], [112, 30])
+  const modelScale = boxModel(
+    texture,
+    materialPicker,
+    [-5, -12, -4],
+    [2, 4, 6],
+    [0, 0],
+    [0, 0, 0],
+    IDENTITY_ROTATION,
+    [
+      Direction.NORTH,
+      Direction.SOUTH,
+      Direction.WEST,
+      Direction.EAST,
+      Direction.UP,
+      Direction.DOWN,
+    ],
+    true,
+  )
+  const modelNoStril = boxModel(
+    texture,
+    materialPicker,
+    [-5, -3, -22],
+    [2, 2, 4],
+    [112, 0],
+    [0, 0, 0],
+    IDENTITY_ROTATION,
+    [
+      Direction.NORTH,
+      Direction.SOUTH,
+      Direction.WEST,
+      Direction.EAST,
+      Direction.UP,
+      Direction.DOWN,
+    ],
+    true,
+  )
+  const modelScale2 = boxModel(texture, materialPicker, [3, -12, -4], [2, 4, 6], [0, 0])
+  const modelNoStril2 = boxModel(texture, materialPicker, [3, -3, -22], [2, 2, 4], [112, 0])
+  const modelJaw = boxModel(texture, materialPicker, [-6, 0, -16], [12, 4, 16], [176, 65])
+
+  const headMatrix = new THREE.Matrix4()
+    .multiply(transform)
+    .multiply(new THREE.Matrix4().makeTranslation(0, -0.374375, 0))
+    .multiply(new THREE.Matrix4().makeScale(0.75, 0.75, 0.75))
+    .multiply(new THREE.Matrix4().makeRotationY(rotation))
+  const jawMatrix = new THREE.Matrix4()
+    .multiply(headMatrix)
+    .multiply(new THREE.Matrix4().makeTranslation(0, 4 / 16, -8 / 16))
+    .multiply(new THREE.Matrix4().makeRotationX(0.2))
+
+  renderModelNoCullsWithMS(modelUpperLip, blockState, material, scene, headMatrix, true)
+  renderModelNoCullsWithMS(modelUpperHead, blockState, material, scene, headMatrix, true)
+  renderModelNoCullsWithMS(modelScale, blockState, material, scene, headMatrix, true)
+  renderModelNoCullsWithMS(modelNoStril, blockState, material, scene, headMatrix, true)
+  renderModelNoCullsWithMS(modelScale2, blockState, material, scene, headMatrix, true)
+  renderModelNoCullsWithMS(modelNoStril2, blockState, material, scene, headMatrix, true)
+  renderModelNoCullsWithMS(modelJaw, blockState, material, scene, jawMatrix, true)
+}
+
+function renderPiglinHead(
+  scene: THREE.Scene,
+  blockState: BlockState,
+  texture: number,
+  materialPicker: MaterialPicker,
+  material: (animated: boolean) => THREE.MeshBasicMaterial,
+  transform: THREE.Matrix4,
+  rotation: number,
+) {
+  const modelHead1 = boxModel(texture, materialPicker, [-5, -8, -4], [10, 8, 8], [0, 0])
+  const modelHead2 = boxModel(texture, materialPicker, [-2, -4, -5], [4, 4, 1], [31, 1])
+  const modelHead3 = boxModel(texture, materialPicker, [2, -2, -5], [1, 2, 1], [2, 4])
+  const modelHead4 = boxModel(texture, materialPicker, [-3, -2, -5], [1, 2, 1], [2, 0])
+  const modelLeftEar = boxModel(texture, materialPicker, [0, 0, -2], [1, 5, 4], [51, 6])
+  const modelRightEar = boxModel(texture, materialPicker, [-1, 0, -2], [1, 5, 4], [39, 6])
+
+  const headMatrix = new THREE.Matrix4()
+    .multiply(transform)
+    .multiply(new THREE.Matrix4().makeRotationY(rotation))
+  const leftEarMatrix = new THREE.Matrix4()
+    .multiply(headMatrix)
+    .multiply(new THREE.Matrix4().makeTranslation(4.5 / 16, -6 / 16, 0))
+    .multiply(new THREE.Matrix4().makeRotationZ(-0.5))
+  const rightEarMatrix = new THREE.Matrix4()
+    .multiply(headMatrix)
+    .multiply(new THREE.Matrix4().makeTranslation(-4.5 / 16, -6 / 16, 0))
+    .multiply(new THREE.Matrix4().makeRotationZ(0.5))
+
+  renderModelNoCullsWithMS(modelHead1, blockState, material, scene, headMatrix, true)
+  renderModelNoCullsWithMS(modelHead2, blockState, material, scene, headMatrix, true)
+  renderModelNoCullsWithMS(modelHead3, blockState, material, scene, headMatrix, true)
+  renderModelNoCullsWithMS(modelHead4, blockState, material, scene, headMatrix, true)
+  renderModelNoCullsWithMS(modelLeftEar, blockState, material, scene, leftEarMatrix, true)
+  renderModelNoCullsWithMS(modelRightEar, blockState, material, scene, rightEarMatrix, true)
+}
+
+function renderSkull(
+  scene: THREE.Scene,
+  x: number,
+  y: number,
+  z: number,
+  blockState: BlockState,
+  modelManager: BlockStateModelManager,
+  materialPicker: MaterialPicker,
+) {
+  const texture = modelManager.getSpecialBlocksData(blockState.blockName)[0]
+
+  const matrix = new THREE.Matrix4().makeTranslation(x, y, z)
+  let rot
+  if (blockState.blockName.includes('wall')) {
+    const direction = getDirectionFromName(blockState.blockProperties['facing'])
+    const rotation = fromFacingToRotation(blockState.blockProperties['facing'])
+    matrix
+      .multiply(
+        new THREE.Matrix4().makeTranslation(
+          0.5 - getStepX(direction) * 0.25,
+          0.25,
+          0.5 - getStepZ(direction) * 0.25,
+        ),
+      )
+      .multiply(new THREE.Matrix4().makeScale(-1, -1, 1))
+    rot = (1 - rotation.y / 180) * Math.PI
+  } else {
+    const rotation = parseInt(blockState.blockProperties['rotation'])
+    matrix
+      .multiply(new THREE.Matrix4().makeTranslation(0.5, 0, 0.5))
+      .multiply(new THREE.Matrix4().makeScale(-1, -1, 1))
+    rot = (rotation / 8) * Math.PI
+  }
+
+  const material = blockState.blockName.includes('player')
+    ? (animated: boolean) => {
+        const material = animated
+          ? materialPicker.animatedTexture.translucent
+          : materialPicker.staticTexture.translucent
+        const materialClone = material.clone()
+        materialClone.side = THREE.DoubleSide
+        return materialClone
+      }
+    : (animated: boolean) => {
+        const material = animated
+          ? materialPicker.animatedTexture.cutout
+          : materialPicker.staticTexture.cutout
+        const materialClone = material.clone()
+        materialClone.side = THREE.DoubleSide
+        return materialClone
+      }
+
+  if (blockState.blockName.includes('dragon')) {
+    renderDragonHead(scene, blockState, texture, materialPicker, material, matrix, rot)
+  } else if (blockState.blockName.includes('piglin')) {
+    renderPiglinHead(scene, blockState, texture, materialPicker, material, matrix, rot)
+  } else {
+    renderPlainSkull(scene, blockState, texture, materialPicker, material, matrix, rot)
+  }
 }

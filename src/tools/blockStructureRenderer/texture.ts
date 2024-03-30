@@ -282,7 +282,7 @@ export class SpriteData {
 }
 
 export const ATLAS_WIDTH = 1024
-export const ATLAS_HEIGHT = 512
+export const ATLAS_HEIGHT = 1024
 export const ANIMATED_TEXTURE_ATLAS_SIZE = 256
 
 export function makeTextureAtlasMaterials(

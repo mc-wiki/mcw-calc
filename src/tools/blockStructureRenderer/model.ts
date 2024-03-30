@@ -650,7 +650,7 @@ export function bakeModel(
   return bakedModel
 }
 
-export function renderBakedFacesWithMaterialSupplier(
+export function renderBakedFacesWithMS(
   faces: BakedFace[],
   block: BlockState,
   materialSupplier: (animated: boolean, blockName: string) => THREE.MeshBasicMaterial,
@@ -683,7 +683,6 @@ export function renderBakedFacesWithMaterialSupplier(
           }
         }
       }
-      console.log(direction)
       material.color.multiplyScalar(getShade(direction ?? Direction.UP, face.shade))
     } else {
       material.color.multiplyScalar(getShade(face.direction, face.shade))
@@ -702,7 +701,7 @@ export function renderBakedFaces(
   transform: THREE.Matrix4,
   recomputeFaceShade?: boolean,
 ) {
-  renderBakedFacesWithMaterialSupplier(
+  renderBakedFacesWithMS(
     faces,
     block,
     (animated, blockName) => materialPicker.pickMaterial(animated, blockName),
@@ -730,7 +729,7 @@ export function renderModelNoCullFaces(
   )
 }
 
-export function renderModelNoCullFacesWithMaterialSupplier(
+export function renderModelNoCullsWithMS(
   bakedModel: BakedModel,
   block: BlockState,
   materialSupplier: (animated: boolean, blockName: string) => THREE.MeshBasicMaterial,
@@ -738,7 +737,7 @@ export function renderModelNoCullFacesWithMaterialSupplier(
   transform: THREE.Matrix4,
   recomputeFaceShade?: boolean,
 ) {
-  renderBakedFacesWithMaterialSupplier(
+  renderBakedFacesWithMS(
     bakedModel.unculledFaces,
     block,
     materialSupplier,

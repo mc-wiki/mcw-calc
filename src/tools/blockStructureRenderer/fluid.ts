@@ -1,10 +1,7 @@
 import type { BlockState } from '@/tools/blockStructureRenderer/renderer.ts'
 import { FluidState } from '@/tools/blockStructureRenderer/renderer.ts'
 import * as THREE from 'three'
-import {
-  MaterialPicker,
-  SpriteData,
-} from '@/tools/blockStructureRenderer/texture.ts'
+import { MaterialPicker, SpriteData } from '@/tools/blockStructureRenderer/texture.ts'
 import { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
 import {
   Direction,
@@ -17,9 +14,11 @@ import {
   oppositeDirection,
 } from '@/tools/blockStructureRenderer/math.ts'
 import {
-  checkNameInSet, getShade,
+  checkNameInSet,
+  getShade,
   halfTransparentBlocks,
-  leavesBlocks, resolveSpecialTextures,
+  leavesBlocks,
+  resolveSpecialTextures,
 } from '@/tools/blockStructureRenderer/hardcodes.ts'
 
 function isSameFluid(thisFluidState: FluidState, neighborFluidState: FluidState): boolean {
@@ -228,7 +227,7 @@ export function renderFluid(
     thisFluidState.fluid,
     materialPicker,
     modelManager,
-    'translucent'
+    'translucent',
   )
 
   const upBlockState = blockStateGetter(x, y + 1, z)
