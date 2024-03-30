@@ -63,11 +63,16 @@ export class AnimatedTextureManager {
   readonly atlasMipped: THREE.Texture
   private atlasSource?: THREE.Texture
   private readonly rootNode: TextureAtlasNode
+  private readonly isAnimating: () => boolean
 
   private readonly animatedTextureData: Record<number, AnimatedTextureTickerData>
 
-  constructor(atlasMapping: Record<number, number[] | AnimatedTexture>) {
+  constructor(
+    atlasMapping: Record<number, number[] | AnimatedTexture>,
+    animateOption: () => boolean,
+  ) {
     this.atlasMapping = atlasMapping
+    this.isAnimating = animateOption
     this.animatedTextureData = []
     this.rootNode = new TextureAtlasNode(
       0,
@@ -122,100 +127,102 @@ export class AnimatedTextureManager {
   }
 
   private animatedTextureTick() {
-    const updateData = []
-    for (const key in this.animatedTextureData) {
-      const animatedTextureData = this.animatedTextureData[key]
-      animatedTextureData.lastFrameNowTime++
-      if (animatedTextureData.lastFrameNowTime >= animatedTextureData.lastFrameTime) {
-        const lastTextureIndex =
-          animatedTextureData.texture.frames[animatedTextureData.lastFrameIndex]
-        animatedTextureData.lastFrameIndex =
-          (animatedTextureData.lastFrameIndex + 1) % animatedTextureData.texture.frames.length
-        const nowTextureIndex =
-          animatedTextureData.texture.frames[animatedTextureData.lastFrameIndex]
-        animatedTextureData.lastFrameNowTime = 0
-        animatedTextureData.lastFrameTime =
-          animatedTextureData.texture.time[animatedTextureData.lastFrameIndex]
-        const textureFromAtlas = this.atlasMapping[nowTextureIndex] as number[]
-        if (lastTextureIndex !== nowTextureIndex) {
+    if (this.isAnimating()) {
+      const updateData = []
+      for (const key in this.animatedTextureData) {
+        const animatedTextureData = this.animatedTextureData[key]
+        animatedTextureData.lastFrameNowTime++
+        if (animatedTextureData.lastFrameNowTime >= animatedTextureData.lastFrameTime) {
+          const lastTextureIndex =
+            animatedTextureData.texture.frames[animatedTextureData.lastFrameIndex]
+          animatedTextureData.lastFrameIndex =
+            (animatedTextureData.lastFrameIndex + 1) % animatedTextureData.texture.frames.length
+          const nowTextureIndex =
+            animatedTextureData.texture.frames[animatedTextureData.lastFrameIndex]
+          animatedTextureData.lastFrameNowTime = 0
+          animatedTextureData.lastFrameTime =
+            animatedTextureData.texture.time[animatedTextureData.lastFrameIndex]
+          const textureFromAtlas = this.atlasMapping[nowTextureIndex] as number[]
+          if (lastTextureIndex !== nowTextureIndex) {
+            updateData.push({
+              targetX: animatedTextureData.x,
+              targetY: animatedTextureData.y,
+              width: animatedTextureData.width,
+              height: animatedTextureData.height,
+              sourceX: textureFromAtlas[0],
+              sourceY: textureFromAtlas[1],
+            })
+          }
+        } else if (animatedTextureData.texture.interpolate) {
+          const delta = 1 - animatedTextureData.lastFrameNowTime / animatedTextureData.lastFrameTime
+          const lastTextureIndex =
+            animatedTextureData.texture.frames[animatedTextureData.lastFrameIndex]
+          const lastTextureFromAtlas = this.atlasMapping[lastTextureIndex] as number[]
+          const nextFrameIndex =
+            (animatedTextureData.lastFrameIndex + 1) % animatedTextureData.texture.frames.length
+          const nextTextureIndex = animatedTextureData.texture.frames[nextFrameIndex]
+          const nextTextureFromAtlas = this.atlasMapping[nextTextureIndex] as number[]
           updateData.push({
             targetX: animatedTextureData.x,
             targetY: animatedTextureData.y,
             width: animatedTextureData.width,
             height: animatedTextureData.height,
-            sourceX: textureFromAtlas[0],
-            sourceY: textureFromAtlas[1],
+            sourceX: lastTextureFromAtlas[0],
+            sourceY: lastTextureFromAtlas[1],
+            interpolateX: nextTextureFromAtlas[0],
+            interpolateY: nextTextureFromAtlas[1],
+            interpolateMix: delta,
           })
         }
-      } else if (animatedTextureData.texture.interpolate) {
-        const delta = 1 - animatedTextureData.lastFrameNowTime / animatedTextureData.lastFrameTime
-        const lastTextureIndex =
-          animatedTextureData.texture.frames[animatedTextureData.lastFrameIndex]
-        const lastTextureFromAtlas = this.atlasMapping[lastTextureIndex] as number[]
-        const nextFrameIndex =
-          (animatedTextureData.lastFrameIndex + 1) % animatedTextureData.texture.frames.length
-        const nextTextureIndex = animatedTextureData.texture.frames[nextFrameIndex]
-        const nextTextureFromAtlas = this.atlasMapping[nextTextureIndex] as number[]
-        updateData.push({
-          targetX: animatedTextureData.x,
-          targetY: animatedTextureData.y,
-          width: animatedTextureData.width,
-          height: animatedTextureData.height,
-          sourceX: lastTextureFromAtlas[0],
-          sourceY: lastTextureFromAtlas[1],
-          interpolateX: nextTextureFromAtlas[0],
-          interpolateY: nextTextureFromAtlas[1],
-          interpolateMix: delta,
-        })
       }
-    }
-    if (updateData.length > 0) {
-      const context = this.canvas.getContext('2d')!
-      for (const update of updateData) {
-        context.clearRect(update.targetX, update.targetY, update.width, update.height)
-        if (update.interpolateMix) {
-          const mix = update.interpolateMix
-          context.globalAlpha = mix
-          context.drawImage(
-            this.atlasSource!.image,
-            update.sourceX,
-            update.sourceY,
-            update.width,
-            update.height,
-            update.targetX,
-            update.targetY,
-            update.width,
-            update.height,
-          )
-          context.globalAlpha = 1 - mix
-          context.drawImage(
-            this.atlasSource!.image,
-            update.interpolateX!,
-            update.interpolateY!,
-            update.width,
-            update.height,
-            update.targetX,
-            update.targetY,
-            update.width,
-            update.height,
-          )
-          context.globalAlpha = 1
-        } else {
-          context.drawImage(
-            this.atlasSource!.image,
-            update.sourceX,
-            update.sourceY,
-            update.width,
-            update.height,
-            update.targetX,
-            update.targetY,
-            update.width,
-            update.height,
-          )
+      if (updateData.length > 0) {
+        const context = this.canvas.getContext('2d')!
+        for (const update of updateData) {
+          context.clearRect(update.targetX, update.targetY, update.width, update.height)
+          if (update.interpolateMix) {
+            const mix = update.interpolateMix
+            context.globalAlpha = mix
+            context.drawImage(
+              this.atlasSource!.image,
+              update.sourceX,
+              update.sourceY,
+              update.width,
+              update.height,
+              update.targetX,
+              update.targetY,
+              update.width,
+              update.height,
+            )
+            context.globalAlpha = 1 - mix
+            context.drawImage(
+              this.atlasSource!.image,
+              update.interpolateX!,
+              update.interpolateY!,
+              update.width,
+              update.height,
+              update.targetX,
+              update.targetY,
+              update.width,
+              update.height,
+            )
+            context.globalAlpha = 1
+          } else {
+            context.drawImage(
+              this.atlasSource!.image,
+              update.sourceX,
+              update.sourceY,
+              update.width,
+              update.height,
+              update.targetX,
+              update.targetY,
+              update.width,
+              update.height,
+            )
+          }
         }
+        this.atlas.needsUpdate = true
+        this.atlasMipped.needsUpdate = true
       }
-      this.atlas.needsUpdate = true
-      this.atlasMipped.needsUpdate = true
     }
     setTimeout(() => this.animatedTextureTick(), 1000 / 20)
   }
@@ -327,6 +334,7 @@ export function makeMaterialPicker(
   textureAtlas: string[],
   renderTypes: string[],
   loadedCallback: () => void,
+  animateOption: () => boolean,
 ): MaterialPicker {
   const atlasMapping = {} as Record<number, number[]>
   textureAtlas.forEach((atlasPair) => {
@@ -341,7 +349,7 @@ export function makeMaterialPicker(
     renderTypesMapping[renderTypeName] = renderTypePair.substring(splitPoint + 1)
   })
 
-  return new MaterialPicker(atlasMapping, renderTypesMapping, loadedCallback)
+  return new MaterialPicker(atlasMapping, renderTypesMapping, loadedCallback, animateOption)
 }
 
 export class MaterialPicker {
@@ -356,10 +364,11 @@ export class MaterialPicker {
     atlasMapping: Record<number, number[] | AnimatedTexture>,
     renderTypeMapping: Record<string, string>,
     loadedCallback: () => void,
+    animateOption: () => boolean,
   ) {
     this.atlasMapping = atlasMapping
     this.renderTypeMapping = renderTypeMapping
-    this.animatedTextureManager = new AnimatedTextureManager(atlasMapping)
+    this.animatedTextureManager = new AnimatedTextureManager(atlasMapping, animateOption)
 
     const refNoMipped = ref()
     const textureAtlasMipped = new THREE.TextureLoader().load(

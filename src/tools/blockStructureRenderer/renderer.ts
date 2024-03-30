@@ -138,7 +138,7 @@ export class BlockStructure {
     let maxY = this.y
     if (this.yRange) {
       minY = this.yRange[0]
-      maxY = this.yRange[1] + 1
+      maxY = this.yRange[1]
     }
     for (let y = minY; y < maxY; y++) {
       for (let z = 0; z < this.z; z++) {
@@ -152,7 +152,7 @@ export class BlockStructure {
 
   getBlock(x: number, y: number, z: number): string {
     if (x < 0 || y < 0 || z < 0 || x >= this.x || y >= this.y || z >= this.z) return '-'
-    if (this.yRange && (y < this.yRange[0] || y > this.yRange[1])) return '-'
+    if (this.yRange && (y < this.yRange[0] || y > this.yRange[1] - 1)) return '-'
     return this.structures[y][z][x]
   }
 }
