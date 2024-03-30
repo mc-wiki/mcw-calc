@@ -33,7 +33,5 @@ jobs:
       - name: Deploy
         run: pnpm run deploy
         env:
-          USERNAME_PROD: ${{ secrets.USERNAME }}
-          PASSWORD_PROD: ${{ secrets.PASSWORD }}
-          USERNAME_DEV: ${{ secrets.USERNAME_DEV }}
-          PASSWORD_DEV: ${{ secrets.PASSWORD_DEV }}
+          ACCESS_TOKEN_PROD: ${{ secrets.ACCESS_TOKEN_PROD }}
+          # ACCESS_TOKEN_DEV: ${{ secrets.ACCESS_TOKEN_DEV }}

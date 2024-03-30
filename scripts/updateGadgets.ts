@@ -39,8 +39,10 @@ async function update(target: DeployTarget, names: string[], definition: string)
   const bot = await Mwn.init({
     apiUrl: target.apiUrl,
 
-    username: env[`USERNAME_${target.credentials}`],
-    password: env[`PASSWORD_${target.credentials}`],
+    // username: env[`USERNAME_${target.credentials}`],
+    // password: env[`PASSWORD_${target.credentials}`],
+
+    OAuth2AccessToken: env[`ACCESS_TOKEN_${target.credentials}`],
 
     userAgent: env.USER_AGENT ?? 'MCWCalcDeploy (mwn/1; +https://github.com/mc-wiki/mcw-calc)',
 

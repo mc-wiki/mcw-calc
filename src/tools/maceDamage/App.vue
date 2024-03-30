@@ -28,7 +28,9 @@ const damage = computed({
     // damageFromEnchantments is currently not taken into account
     if (edition.value === 'java') {
       return (
-        (baseDamage.value * cooldownModifier.value + 3 * fallHeight.value + densityLevel.value * fallHeight.value) *
+        (baseDamage.value * cooldownModifier.value +
+          3 * fallHeight.value +
+          densityLevel.value * fallHeight.value) *
         criticalModifier.value
       )
     } else {
@@ -36,11 +38,12 @@ const damage = computed({
     }
   },
   set: (val) => {
-    if (val <= baseDamage.value * criticalModifier.value) return fallHeight.value = 0
+    if (val <= baseDamage.value * criticalModifier.value) return (fallHeight.value = 0)
 
     if (edition.value === 'java') {
       const height =
-        (val - criticalModifier.value * baseDamage.value  * cooldownModifier.value) / (criticalModifier.value * (densityLevel.value + 3))
+        (val - criticalModifier.value * baseDamage.value * cooldownModifier.value) /
+        (criticalModifier.value * (densityLevel.value + 3))
       fallHeight.value = Math.max(1.5, height)
     } else {
       const height = (val / criticalModifier.value / baseDamage.value - 1) * 2
@@ -52,7 +55,6 @@ const damage = computed({
 function validateDensity(value: number) {
   // density needs to be integer between 0 and 5
   const density = Math.floor(Math.min(5, Math.max(0, densityLevel.value)))
-  console.log(value, density)
   if (value !== density) densityLevel.value = density
 }
 </script>
