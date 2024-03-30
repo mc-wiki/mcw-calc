@@ -192,6 +192,14 @@ export const hardCodedRenderers = [
     block: /.*_head$/,
     renderFunc: renderSkull,
   },
+  {
+    block: /.*_hanging_sign$/,
+    renderFunc: renderHangingSign,
+  },
+  {
+    block: /.*_sign$/,
+    renderFunc: renderSign,
+  },
 ] as {
   block: string | RegExp
   renderFunc: (
@@ -1035,14 +1043,10 @@ function renderSkull(
   }
 
   const material = blockState.blockName.includes('player')
-    ? (animated: boolean) => {
-        const material = animated
+    ? (animated: boolean) =>
+        animated
           ? materialPicker.animatedTexture.translucent
           : materialPicker.staticTexture.translucent
-        const materialClone = material.clone()
-        materialClone.side = THREE.DoubleSide
-        return materialClone
-      }
     : (animated: boolean) => {
         const material = animated
           ? materialPicker.animatedTexture.cutout
@@ -1058,5 +1062,124 @@ function renderSkull(
     renderPiglinHead(scene, blockState, texture, materialPicker, material, matrix, rot)
   } else {
     renderPlainSkull(scene, blockState, texture, materialPicker, material, matrix, rot)
+  }
+}
+
+function renderSign(
+  scene: THREE.Scene,
+  x: number,
+  y: number,
+  z: number,
+  blockState: BlockState,
+  modelManager: BlockStateModelManager,
+  materialPicker: MaterialPicker,
+) {
+  const texture = modelManager.getSpecialBlocksData(blockState.blockName)[0]
+
+  const modelSign = boxModel(texture, materialPicker, [-12, -14, -1], [24, 12, 2], [0, 0])
+  const modelStick = boxModel(texture, materialPicker, [-1, -2, -1], [2, 14, 2], [0, 14])
+
+  const transform = new THREE.Matrix4().makeTranslation(x, y, z)
+  if (blockState.blockName.includes('wall')) {
+    const rotation = fromFacingToRotation(blockState.blockProperties['facing'])
+    transform
+      .multiply(new THREE.Matrix4().makeTranslation(0.5, 0.5, 0.5))
+      .multiply(new THREE.Matrix4().makeRotationY((rotation.y / 180) * Math.PI))
+      .multiply(new THREE.Matrix4().makeTranslation(0, -0.3125, -0.4375))
+  } else {
+    const rotation = parseInt(blockState.blockProperties['rotation'])
+    transform
+      .multiply(new THREE.Matrix4().makeTranslation(0.5, 0.5, 0.5))
+      .multiply(new THREE.Matrix4().makeRotationY((-rotation / 8) * Math.PI))
+  }
+  transform.multiply(new THREE.Matrix4().makeScale(2 / 3, -2 / 3, -2 / 3))
+
+  const material = (animated: boolean) => {
+    const material = animated
+      ? materialPicker.animatedTexture.cutout
+      : materialPicker.staticTexture.cutout
+    const materialClone = material.clone()
+    materialClone.side = THREE.DoubleSide
+    return materialClone
+  }
+  renderModelNoCullsWithMS(modelSign, blockState, material, scene, transform, true)
+  if (!blockState.blockName.includes('wall'))
+    renderModelNoCullsWithMS(modelStick, blockState, material, scene, transform, true)
+}
+
+function renderHangingSign(
+  scene: THREE.Scene,
+  x: number,
+  y: number,
+  z: number,
+  blockState: BlockState,
+  modelManager: BlockStateModelManager,
+  materialPicker: MaterialPicker,
+) {
+  const texture = modelManager.getSpecialBlocksData(blockState.blockName)[0]
+
+  const modelBoard = boxModel(texture, materialPicker, [-7, 0, -1], [14, 10, 2], [0, 12])
+  const modelPlank = boxModel(texture, materialPicker, [-8, -6, -2], [16, 2, 4], [0, 0])
+  const modelChain1 = boxModel(texture, materialPicker, [-1.5, 0, 0], [3, 6, 0], [0, 6])
+  const modelChain2 = boxModel(texture, materialPicker, [-1.5, 0, 0], [3, 6, 0], [6, 6])
+  const modelVChains = boxModel(texture, materialPicker, [-6, -6, 0], [12, 6, 0], [14, 6])
+
+  const transform = new THREE.Matrix4().makeTranslation(x, y, z)
+  if (blockState.blockName.includes('wall')) {
+    const rotation = fromFacingToRotation(blockState.blockProperties['facing'])
+    transform
+      .multiply(new THREE.Matrix4().makeTranslation(0.5, 0.9375, 0.5))
+      .multiply(new THREE.Matrix4().makeRotationY((rotation.y / 180) * Math.PI))
+      .multiply(new THREE.Matrix4().makeTranslation(0, -0.3125, 0))
+  } else {
+    const rotation = parseInt(blockState.blockProperties['rotation'])
+    transform
+      .multiply(new THREE.Matrix4().makeTranslation(0.5, 0.9375, 0.5))
+      .multiply(new THREE.Matrix4().makeRotationY((-rotation / 8) * Math.PI))
+      .multiply(new THREE.Matrix4().makeTranslation(0, -0.3125, 0))
+  }
+  transform.multiply(new THREE.Matrix4().makeScale(1, -1, -1))
+  const chainL1Matrix = new THREE.Matrix4()
+    .multiply(transform)
+    .multiply(new THREE.Matrix4().makeTranslation(-5 / 16, -6 / 16, 0))
+    .multiply(new THREE.Matrix4().makeRotationY(-Math.PI / 4))
+  const chainL2Matrix = new THREE.Matrix4()
+    .multiply(transform)
+    .multiply(new THREE.Matrix4().makeTranslation(-5 / 16, -6 / 16, 0))
+    .multiply(new THREE.Matrix4().makeRotationY(Math.PI / 4))
+  const chainR1Matrix = new THREE.Matrix4()
+    .multiply(transform)
+    .multiply(new THREE.Matrix4().makeTranslation(5 / 16, -6 / 16, 0))
+    .multiply(new THREE.Matrix4().makeRotationY(-Math.PI / 4))
+  const chainR2Matrix = new THREE.Matrix4()
+    .multiply(transform)
+    .multiply(new THREE.Matrix4().makeTranslation(5 / 16, -6 / 16, 0))
+    .multiply(new THREE.Matrix4().makeRotationY(Math.PI / 4))
+
+  const material = (animated: boolean) => {
+    const material = animated
+      ? materialPicker.animatedTexture.cutout
+      : materialPicker.staticTexture.cutout
+    const materialClone = material.clone()
+    materialClone.side = THREE.DoubleSide
+    return materialClone
+  }
+
+  renderModelNoCullsWithMS(modelBoard, blockState, material, scene, transform, true)
+  if (blockState.blockName.includes('wall')) {
+    renderModelNoCullsWithMS(modelPlank, blockState, material, scene, transform, true)
+    renderModelNoCullsWithMS(modelChain1, blockState, material, scene, chainL1Matrix, true)
+    renderModelNoCullsWithMS(modelChain2, blockState, material, scene, chainL2Matrix, true)
+    renderModelNoCullsWithMS(modelChain1, blockState, material, scene, chainR1Matrix, true)
+    renderModelNoCullsWithMS(modelChain2, blockState, material, scene, chainR2Matrix, true)
+  } else {
+    if (blockState.blockProperties['attached'] === 'false') {
+      renderModelNoCullsWithMS(modelChain1, blockState, material, scene, chainL1Matrix, true)
+      renderModelNoCullsWithMS(modelChain2, blockState, material, scene, chainL2Matrix, true)
+      renderModelNoCullsWithMS(modelChain1, blockState, material, scene, chainR1Matrix, true)
+      renderModelNoCullsWithMS(modelChain2, blockState, material, scene, chainR2Matrix, true)
+    } else {
+      renderModelNoCullsWithMS(modelVChains, blockState, material, scene, transform, true)
+    }
   }
 }

@@ -94,6 +94,8 @@ export class BlockStructure {
   readonly y: number
   readonly z: number
 
+  yRange?: number[]
+
   constructor(structureStr: string) {
     const splitHeightLines = structureStr.split(';')
     let maxX = 0,
@@ -132,7 +134,13 @@ export class BlockStructure {
   }
 
   forEach(callback: (x: number, y: number, z: number, blockKey: string) => void) {
-    for (let y = 0; y < this.y; y++) {
+    let minY = 0
+    let maxY = this.y
+    if (this.yRange) {
+      minY = this.yRange[0]
+      maxY = this.yRange[1] + 1
+    }
+    for (let y = minY; y < maxY; y++) {
       for (let z = 0; z < this.z; z++) {
         for (let x = 0; x < this.x; x++) {
           if (this.structures[y][z][x] === '-') continue
@@ -144,6 +152,7 @@ export class BlockStructure {
 
   getBlock(x: number, y: number, z: number): string {
     if (x < 0 || y < 0 || z < 0 || x >= this.x || y >= this.y || z >= this.z) return '-'
+    if (this.yRange && (y < this.yRange[0] || y > this.yRange[1])) return '-'
     return this.structures[y][z][x]
   }
 }
@@ -197,18 +206,28 @@ export function bakeBlockModelRenderLayer(
       value.block instanceof RegExp ? value.block.test(blockName) : value.block === blockName,
     )
     if (matchHardcodedRenderer.length > 0) {
-      matchHardcodedRenderer[0].renderFunc(
-        scene,
-        x,
-        y,
-        z,
-        thisBlock,
-        modelManager,
-        materialPicker,
-        nameMapping,
-        blockStructure,
-      )
+      try {
+        matchHardcodedRenderer[0].renderFunc(
+          scene,
+          x,
+          y,
+          z,
+          thisBlock,
+          modelManager,
+          materialPicker,
+          nameMapping,
+          blockStructure,
+        )
+      } catch (e) {
+        console.error(`Error in hard-coded renderer for block ${blockName} at [${x},${y},${z}]`)
+        console.error(e)
+      }
       if (!matchHardcodedRenderer[0].needRenderModel) return
+    }
+
+    if (!modelManager.modelsMapping[blockKey]) {
+      console.warn(`No model mapping for block ${blockName} at [${x},${y},${z}]`)
+      return
     }
 
     modelManager.modelsMapping[blockKey].forEach((provider) => {
@@ -222,24 +241,36 @@ export function bakeBlockModelRenderLayer(
         uvlock ?? false,
       )
 
-      renderModelNoCullFaces(baked, thisBlock, materialPicker, scene, translate)
+      try {
+        renderModelNoCullFaces(baked, thisBlock, materialPicker, scene, translate)
+      } catch (e) {
+        console.error(`Error in rendering noncull faces for block ${blockName} at [${x},${y},${z}]`)
+        console.error(e)
+      }
 
-      Object.entries(baked.cullfaces).forEach(([direction, value]) => {
-        const directionFace = rotation.transformDirection(getDirectionFromName(direction))
-        const oppositeFace = oppositeDirection(directionFace)
-        const otherBlock = blockStructure.getBlock(...moveTowardsDirection(x, y, z, directionFace))
-        const otherBlockState = nameMapping.toBlockState(otherBlock)
+      try {
+        Object.entries(baked.cullfaces).forEach(([direction, value]) => {
+          const directionFace = rotation.transformDirection(getDirectionFromName(direction))
+          const oppositeFace = oppositeDirection(directionFace)
+          const otherBlock = blockStructure.getBlock(
+            ...moveTowardsDirection(x, y, z, directionFace),
+          )
+          const otherBlockState = nameMapping.toBlockState(otherBlock)
 
-        if (hardCodedSkipRendering(thisBlock, otherBlockState, directionFace)) return
-        const otherOcclusion = modelManager.getOcclusionFaceData(otherBlockState)
-        if (otherOcclusion.can_occlude) {
-          const occlusionThis = modelManager.getOcclusionFaceData(thisBlock)[directionFace] ?? []
-          const occlusionOther = otherOcclusion[oppositeFace] ?? []
-          if (isOcclusion(occlusionThis, occlusionOther)) return
-        }
+          if (hardCodedSkipRendering(thisBlock, otherBlockState, directionFace)) return
+          const otherOcclusion = modelManager.getOcclusionFaceData(otherBlockState)
+          if (otherOcclusion.can_occlude) {
+            const occlusionThis = modelManager.getOcclusionFaceData(thisBlock)[directionFace] ?? []
+            const occlusionOther = otherOcclusion[oppositeFace] ?? []
+            if (isOcclusion(occlusionThis, occlusionOther)) return
+          }
 
-        renderBakedFaces(value, thisBlock, materialPicker, scene, translate)
-      })
+          renderBakedFaces(value, thisBlock, materialPicker, scene, translate)
+        })
+      } catch (e) {
+        console.error(`Error in rendering cull faces for block ${blockName} at [${x},${y},${z}]`)
+        console.error(e)
+      }
     })
   })
 }
