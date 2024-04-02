@@ -337,17 +337,21 @@ export function makeMaterialPicker(
   animateOption: () => boolean,
 ): MaterialPicker {
   const atlasMapping = {} as Record<number, number[]>
-  textureAtlas.forEach((atlasPair) => {
-    const [spriteName, atlasData] = atlasPair.split('=', 2)
-    atlasMapping[parseInt(spriteName, 10)] = JSON.parse(atlasData) as number[]
-  })
+  textureAtlas
+    .filter((s) => s.trim() !== '')
+    .forEach((atlasPair) => {
+      const [spriteName, atlasData] = atlasPair.split('=', 2)
+      atlasMapping[parseInt(spriteName, 10)] = JSON.parse(atlasData) as number[]
+    })
 
   const renderTypesMapping = {} as Record<string, string>
-  renderTypes.forEach((renderTypePair) => {
-    const splitPoint = renderTypePair.indexOf('=')
-    const renderTypeName = renderTypePair.substring(0, splitPoint)
-    renderTypesMapping[renderTypeName] = renderTypePair.substring(splitPoint + 1)
-  })
+  renderTypes
+    .filter((s) => s.trim() !== '')
+    .forEach((renderTypePair) => {
+      const splitPoint = renderTypePair.indexOf('=')
+      const renderTypeName = renderTypePair.substring(0, splitPoint)
+      renderTypesMapping[renderTypeName] = renderTypePair.substring(splitPoint + 1)
+    })
 
   return new MaterialPicker(atlasMapping, renderTypesMapping, loadedCallback, animateOption)
 }
