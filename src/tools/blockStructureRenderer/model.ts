@@ -434,20 +434,24 @@ export class BlockStateModelManager {
     this.nameMapping = nameMapping
 
     const blockStatesMapping = {} as Record<string, BlockStateModelCollection>
-    blockStates.forEach((blockStatePair) => {
-      const splitPoint = blockStatePair.indexOf('=')
-      const blockStateName = blockStatePair.substring(0, splitPoint)
-      const blockStateData = blockStatePair.substring(splitPoint + 1)
-      blockStatesMapping[blockStateName] = JSON.parse(blockStateData) as BlockStateModelCollection
-    })
+    blockStates
+      .filter((s) => s.trim() !== '')
+      .forEach((blockStatePair) => {
+        const splitPoint = blockStatePair.indexOf('=')
+        const blockStateName = blockStatePair.substring(0, splitPoint)
+        const blockStateData = blockStatePair.substring(splitPoint + 1)
+        blockStatesMapping[blockStateName] = JSON.parse(blockStateData) as BlockStateModelCollection
+      })
 
-    specialBlocksData.forEach((specialBlockDataPair) => {
-      const splitPoint = specialBlockDataPair.indexOf('=')
-      const specialBlockName = specialBlockDataPair.substring(0, splitPoint)
-      this.specialBlocksData[specialBlockName] = JSON.parse(
-        specialBlockDataPair.substring(splitPoint + 1),
-      )
-    })
+    specialBlocksData
+      .filter((s) => s.trim() !== '')
+      .forEach((specialBlockDataPair) => {
+        const splitPoint = specialBlockDataPair.indexOf('=')
+        const specialBlockName = specialBlockDataPair.substring(0, splitPoint)
+        this.specialBlocksData[specialBlockName] = JSON.parse(
+          specialBlockDataPair.substring(splitPoint + 1),
+        )
+      })
 
     Object.entries(nameMapping.nameStateMapping)
       .filter((blockData) => blockStatesMapping[blockData[1].blockName])
@@ -455,24 +459,31 @@ export class BlockStateModelManager {
         this.modelsMapping[blockName] = chooseModel(blockState.sourceDefinition, blockStatesMapping)
       })
 
-    models.forEach((modelPair) => {
-      const [modelId, modelData] = modelPair.split('=', 2)
-      this.blockModelMapping[parseInt(modelId, 10)] = JSON.parse(modelData) as BlockModel
-    })
+    models
+      .filter((s) => s.trim() !== '')
+      .forEach((modelPair) => {
+        const [modelId, modelData] = modelPair.split('=', 2)
+        this.blockModelMapping[parseInt(modelId, 10)] = JSON.parse(modelData) as BlockModel
+      })
 
-    occlusionShapes.forEach((occlusionShapePair) => {
-      const splitPoint = occlusionShapePair.indexOf('=')
-      const occlusionShapeName = occlusionShapePair.substring(0, splitPoint)
-      this.occlusionShapesMapping[nameMapping.toBlockState(occlusionShapeName).sourceDefinition] =
-        JSON.parse(occlusionShapePair.substring(splitPoint + 1))
-    })
+    occlusionShapes
+      .filter((s) => s.trim() !== '')
+      .forEach((occlusionShapePair) => {
+        const splitPoint = occlusionShapePair.indexOf('=')
+        const occlusionShapeName = occlusionShapePair.substring(0, splitPoint)
+        this.occlusionShapesMapping[nameMapping.toBlockState(occlusionShapeName).sourceDefinition] =
+          JSON.parse(occlusionShapePair.substring(splitPoint + 1))
+      })
 
-    liquidComputation.forEach((liquidComputationPair) => {
-      const splitPoint = liquidComputationPair.indexOf('=')
-      const liquidComputationName = liquidComputationPair.substring(0, splitPoint)
-      this.liquidComputationData[nameMapping.toBlockState(liquidComputationName).sourceDefinition] =
-        JSON.parse(liquidComputationPair.substring(splitPoint + 1))
-    })
+    liquidComputation
+      .filter((s) => s.trim() !== '')
+      .forEach((liquidComputationPair) => {
+        const splitPoint = liquidComputationPair.indexOf('=')
+        const liquidComputationName = liquidComputationPair.substring(0, splitPoint)
+        this.liquidComputationData[
+          nameMapping.toBlockState(liquidComputationName).sourceDefinition
+        ] = JSON.parse(liquidComputationPair.substring(splitPoint + 1))
+      })
   }
 
   getSpecialBlocksData(blockName: string) {
