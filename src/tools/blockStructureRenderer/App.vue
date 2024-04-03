@@ -399,11 +399,11 @@ onUpdated(() => {
         }"
       >
         <span>{{ t('blockStructureRenderer.cameraSetting.position') }} (</span>
-        <cdx-text-input v-model="cameraX" inputType="number" />
+        <cdx-text-input v-model="cameraX" inputType="number" step="0.1" />
         <span>, </span>
-        <cdx-text-input v-model="cameraY" inputType="number" />
+        <cdx-text-input v-model="cameraY" inputType="number" step="0.1" />
         <span>, </span>
-        <cdx-text-input v-model="cameraZ" inputType="number" />
+        <cdx-text-input v-model="cameraZ" inputType="number" step="0.1" />
         <span>)</span>
       </div>
       <div
@@ -415,11 +415,11 @@ onUpdated(() => {
         }"
       >
         <span>{{ t('blockStructureRenderer.cameraSetting.target') }} (</span>
-        <cdx-text-input v-model="cameraTargetX" inputType="number" />
+        <cdx-text-input v-model="cameraTargetX" inputType="number" step="0.1" />
         <span>, </span>
-        <cdx-text-input v-model="cameraTargetY" inputType="number" />
+        <cdx-text-input v-model="cameraTargetY" inputType="number" step="0.1" />
         <span>, </span>
-        <cdx-text-input v-model="cameraTargetZ" inputType="number" />
+        <cdx-text-input v-model="cameraTargetZ" inputType="number" step="0.1" />
         <span>)</span>
       </div>
     </div>
