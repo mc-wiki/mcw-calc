@@ -12,7 +12,7 @@ export default {
     'blockStructureRenderer.cameraSetting': 'Move camera mode',
     'blockStructureRenderer.cameraSetting.drag': 'Drag',
     'blockStructureRenderer.cameraSetting.manual': 'Manually set',
-    'blockStructureRenderer.cameraSetting.position': 'Camera position',
+    'blockStructureRenderer.cameraSetting.position': 'Camera position (relative to target)',
     'blockStructureRenderer.cameraSetting.target': 'Camera target',
     'blockStructureRenderer.cameraSetting.confirm': 'Confirm',
     'blockStructureRenderer.backgroundColor': 'Background color',

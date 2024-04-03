@@ -156,18 +156,26 @@ function onCameraSettingModeChanged() {
     orbitOrthoControls.enabled = false
     orbitPerspectiveControls.enabled = false
   }
-  cameraX.value = camera.value.position.x
-  cameraY.value = camera.value.position.y
-  cameraZ.value = camera.value.position.z
   const control = orthographic.value ? orbitOrthoControls : orbitPerspectiveControls
+  cameraX.value = camera.value.position.x - control.target.x
+  cameraY.value = camera.value.position.y - control.target.y
+  cameraZ.value = camera.value.position.z - control.target.z
   cameraTargetX.value = control.target.x
   cameraTargetY.value = control.target.y
   cameraTargetZ.value = control.target.z
 }
 
 function setCamera() {
-  orthographicCamera.position.set(cameraX.value, cameraY.value, cameraZ.value)
-  perspectiveCamera.position.set(cameraX.value, cameraY.value, cameraZ.value)
+  orthographicCamera.position.set(
+    cameraX.value + cameraTargetX.value,
+    cameraY.value + cameraTargetY.value,
+    cameraZ.value + cameraTargetZ.value,
+  )
+  perspectiveCamera.position.set(
+    cameraX.value + cameraTargetX.value,
+    cameraY.value + cameraTargetY.value,
+    cameraZ.value + cameraTargetZ.value,
+  )
   orthographicCamera.lookAt(cameraTargetX.value, cameraTargetY.value, cameraTargetZ.value)
   perspectiveCamera.lookAt(cameraTargetX.value, cameraTargetY.value, cameraTargetZ.value)
   orbitPerspectiveControls.target.set(cameraTargetX.value, cameraTargetY.value, cameraTargetZ.value)
@@ -179,9 +187,9 @@ function setCamera() {
 function resetCamera() {
   orbitOrthoControls.reset()
   orbitPerspectiveControls.reset()
-  cameraX.value = camera.value.position.x
-  cameraY.value = camera.value.position.y
-  cameraZ.value = camera.value.position.z
+  cameraX.value = camera.value.position.x - blockStructure.x / 2
+  cameraY.value = camera.value.position.y - blockStructure.y / 2
+  cameraZ.value = camera.value.position.z - blockStructure.z / 2
   cameraTargetX.value = blockStructure.x / 2
   cameraTargetY.value = blockStructure.y / 2
   cameraTargetZ.value = blockStructure.z / 2
