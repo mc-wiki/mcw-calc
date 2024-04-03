@@ -32,6 +32,7 @@ const loaded = ref(false)
 
 const orthographic = ref(false)
 const animatedTexture = ref(true)
+const backgroundColor = ref('#ffffff')
 
 const displayModeStr = [
   t('blockStructureRenderer.displayModes.all'),
@@ -75,18 +76,15 @@ const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 1000)
 const perspectiveCamera = new THREE.PerspectiveCamera(75, 2, 0.1, 1000)
 const camera = computed(() => (orthographic.value ? orthographicCamera : perspectiveCamera))
 
-const orthographicCameraControls = new OrbitControls(orthographicCamera, renderer.domElement)
-orthographicCameraControls.addEventListener('change', () =>
-  renderer.render(scene, orthographicCamera),
-)
-orthographicCameraControls.update()
-const perspectiveCameraControls = new OrbitControls(perspectiveCamera, renderer.domElement)
-perspectiveCameraControls.addEventListener('change', () =>
-  renderer.render(scene, perspectiveCamera),
-)
-perspectiveCameraControls.update()
+const orbitOrthoControls = new OrbitControls(orthographicCamera, renderer.domElement)
+orbitOrthoControls.addEventListener('change', () => renderer.render(scene, orthographicCamera))
+orbitOrthoControls.update()
+const orbitPerspectiveControls = new OrbitControls(perspectiveCamera, renderer.domElement)
+orbitPerspectiveControls.addEventListener('change', () => renderer.render(scene, perspectiveCamera))
+orbitPerspectiveControls.update()
+
 const controls = computed(() =>
-  orthographic.value ? orthographicCameraControls : perspectiveCameraControls,
+  orthographic.value ? orbitOrthoControls : orbitPerspectiveControls,
 )
 
 const blockStructure = new BlockStructure(props.structure)
@@ -113,14 +111,14 @@ const materialPicker = makeMaterialPicker(
 if (rendererAvailable) {
   const [maxX, maxY, maxZ] = [blockStructure.x, blockStructure.y, blockStructure.z]
   yRangeMax.value = maxY - 1
-  orthographicCameraControls.target.set(maxX / 2, maxY / 2, maxZ / 2)
-  perspectiveCameraControls.target.set(maxX / 2, maxY / 2, maxZ / 2)
+  orbitOrthoControls.target.set(maxX / 2, maxY / 2, maxZ / 2)
+  orbitPerspectiveControls.target.set(maxX / 2, maxY / 2, maxZ / 2)
   orthographicCamera.position.set(maxX / 2, maxY * 1.5, maxZ * 1.5)
   perspectiveCamera.position.set(maxX / 2, maxY * 1.5, maxZ * 1.5)
-  orthographicCameraControls.update()
-  orthographicCameraControls.saveState()
-  perspectiveCameraControls.update()
-  perspectiveCameraControls.saveState()
+  orbitOrthoControls.update()
+  orbitOrthoControls.saveState()
+  orbitPerspectiveControls.update()
+  orbitPerspectiveControls.saveState()
 }
 
 function reBakeRenderLayers() {
@@ -152,46 +150,45 @@ function onDisplayModeChanged() {
 function onCameraSettingModeChanged() {
   const mode = cameraSettingModeStr.findIndex((str) => str === cameraSettingMode.value)
   if (mode === 0) {
-    orthographicCameraControls.enabled = true
-    perspectiveCameraControls.enabled = true
+    orbitOrthoControls.enabled = true
+    orbitPerspectiveControls.enabled = true
   } else {
-    orthographicCameraControls.enabled = false
-    perspectiveCameraControls.enabled = false
+    orbitOrthoControls.enabled = false
+    orbitPerspectiveControls.enabled = false
   }
   cameraX.value = camera.value.position.x
   cameraY.value = camera.value.position.y
   cameraZ.value = camera.value.position.z
-  cameraTargetX.value = controls.value.target.x
-  cameraTargetY.value = controls.value.target.y
-  cameraTargetZ.value = controls.value.target.z
+  const control = orthographic.value ? orbitOrthoControls : orbitPerspectiveControls
+  cameraTargetX.value = control.target.x
+  cameraTargetY.value = control.target.y
+  cameraTargetZ.value = control.target.z
 }
 
 function setCamera() {
   orthographicCamera.position.set(cameraX.value, cameraY.value, cameraZ.value)
   perspectiveCamera.position.set(cameraX.value, cameraY.value, cameraZ.value)
-  orthographicCameraControls.target.set(
-    cameraTargetX.value,
-    cameraTargetY.value,
-    cameraTargetZ.value,
-  )
-  perspectiveCameraControls.target.set(
-    cameraTargetX.value,
-    cameraTargetY.value,
-    cameraTargetZ.value,
-  )
-  orthographicCameraControls.update()
-  perspectiveCameraControls.update()
+  orthographicCamera.lookAt(cameraTargetX.value, cameraTargetY.value, cameraTargetZ.value)
+  perspectiveCamera.lookAt(cameraTargetX.value, cameraTargetY.value, cameraTargetZ.value)
+  orbitPerspectiveControls.target.set(cameraTargetX.value, cameraTargetY.value, cameraTargetZ.value)
+  orbitOrthoControls.target.set(cameraTargetX.value, cameraTargetY.value, cameraTargetZ.value)
+  orbitOrthoControls.update()
+  orbitPerspectiveControls.update()
 }
 
 function resetCamera() {
-  orthographicCameraControls.reset()
-  perspectiveCameraControls.reset()
+  orbitOrthoControls.reset()
+  orbitPerspectiveControls.reset()
   cameraX.value = camera.value.position.x
   cameraY.value = camera.value.position.y
   cameraZ.value = camera.value.position.z
-  cameraTargetX.value = controls.value.target.x
-  cameraTargetY.value = controls.value.target.y
-  cameraTargetZ.value = controls.value.target.z
+  cameraTargetX.value = blockStructure.x / 2
+  cameraTargetY.value = blockStructure.y / 2
+  cameraTargetZ.value = blockStructure.z / 2
+}
+
+function changeBackgroundColor() {
+  scene.background = new THREE.Color(backgroundColor.value)
 }
 
 function saveRenderedImage() {
@@ -212,18 +209,17 @@ function animate() {
 
 function updateDisplay() {
   const nowSize = renderTarget.value.getBoundingClientRect()
-  if (camera.value instanceof THREE.PerspectiveCamera) {
-    camera.value.aspect = nowSize.width / nowSize.height
-  } else {
-    const aspect = nowSize.width / nowSize.height
-    camera.value.left = -aspect * 2
-    camera.value.right = aspect * 2
-    camera.value.top = 2
-    camera.value.bottom = -2
-  }
-  camera.value.updateProjectionMatrix()
+  const aspect = nowSize.width / nowSize.height
+  perspectiveCamera.aspect = aspect
+  orthographicCamera.left = -aspect * 2
+  orthographicCamera.right = aspect * 2
+  orthographicCamera.top = 2
+  orthographicCamera.bottom = -2
+  orthographicCamera.updateProjectionMatrix()
+  perspectiveCamera.updateProjectionMatrix()
   renderer.setSize(nowSize.width, nowSize.height)
-  controls.value.update()
+  orbitOrthoControls.update()
+  orbitPerspectiveControls.update()
 }
 
 onMounted(() => {
@@ -246,10 +242,11 @@ onUpdated(() => {
 
 <template>
   <div
+    class="do-not-remount-this"
     ref="renderTarget"
     :style="{
       height: '50vh',
-      width: '60%',
+      width: 'max(60%, 50vh)',
       marginBottom: '0.5em',
     }"
   />
@@ -259,6 +256,25 @@ onUpdated(() => {
   <cdx-checkbox v-if="loaded" v-model="animatedTexture">
     {{ t('blockStructureRenderer.animatedTexture') }}
   </cdx-checkbox>
+
+  <div
+    v-if="loaded"
+    :style="{
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: '.5rem',
+      marginBottom: '0.5em',
+    }"
+  >
+    <label for="color-picker">{{ t('blockStructureRenderer.backgroundColor') }}</label>
+    <input
+      type="color"
+      v-model="backgroundColor"
+      id="color-picker"
+      @change="changeBackgroundColor"
+    />
+  </div>
   <div
     v-if="loaded"
     :style="{

@@ -60,8 +60,8 @@ export function hardCodedSkipRendering(
     thisBlock.blockName === 'iron_bars' &&
     otherBlock.blockName === 'iron_bars' &&
     isHorizontalDirection(direction) &&
-    thisBlock.blockProperties[direction] === 'true' &&
-    otherBlock.blockProperties[oppositeDirection(direction)] === 'true'
+    thisBlock.getBlockProperty(direction) === 'true' &&
+    otherBlock.getBlockProperty(oppositeDirection(direction)) === 'true'
   )
     return true
   if (
@@ -74,6 +74,69 @@ export function hardCodedSkipRendering(
     checkNameInSet(thisBlock.blockName, halfTransparentBlocks) &&
     thisBlock.blockName === otherBlock.blockName
   )
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max)
+}
+
+const GRASS_LIKE_BLOCK = [
+  'large_fern',
+  'tall_grass',
+  'grass_block',
+  'fern',
+  'short_grass',
+  'potted_fern',
+  'pink_petals',
+  'sugar_cane',
+]
+
+const FOLIAGE_BLOCK = [
+  'oak_leaves',
+  'jungle_leaves',
+  'acacia_leaves',
+  'dark_oak_leaves',
+  'vine',
+  'mangrove_leaves',
+]
+
+export function hardcodedBlockTint(blockState: BlockState) {
+  if (blockState.blockName === 'redstone_wire') {
+    const power = blockState.getBlockProperty('power')
+    const percent = parseInt(power) / 15
+    const red = Math.floor((percent * 0.6 + (percent > 0 ? 0.4 : 0.3)) * 255)
+    const green = Math.floor(clamp(percent * percent * 0.7 - 0.5, 0, 1) * 255)
+    const blue = Math.floor(clamp(percent * percent * 0.6 - 0.7, 0, 1) * 255)
+    const color = (red << 16) | (green << 8) | blue
+    blockState.tintData[0] = color.toString(16)
+  } else if (GRASS_LIKE_BLOCK.includes(blockState.blockName)) {
+    if (blockState.tintData.length > 0) return
+    blockState.tintData[0] = '7cbd6b'
+  } else if (blockState.blockName === 'spruce_leaves') {
+    blockState.tintData[0] = '619961'
+  } else if (blockState.blockName === 'birch_leaves') {
+    blockState.tintData[0] = '80a755'
+  } else if (FOLIAGE_BLOCK.includes(blockState.blockName)) {
+    if (blockState.tintData.length > 0) return
+    blockState.tintData[0] = '48b518'
+  } else if (blockState.blockName === 'water_cauldron') {
+    if (blockState.tintData.length > 0) return
+    blockState.tintData[0] = '3f76e4'
+  } else if (
+    blockState.blockName === 'attached_melon_stem' ||
+    blockState.blockName === 'attached_pumpkin_stem'
+  ) {
+    blockState.tintData[0] = 'e0c71c'
+  } else if (blockState.blockName === 'melon_stem' || blockState.blockName === 'pumpkin_stem') {
+    const age = parseInt(blockState.getBlockProperty('age'))
+    const red = age * 32
+    const green = 255 - age * 8
+    const blue = age * 4
+    const color = (red << 16) | (green << 8) | blue
+    blockState.tintData[0] = color.toString(16)
+  } else if (blockState.blockName === 'lily_pad') {
+    blockState.tintData[0] = '208030'
+  }
 }
 
 export function getShade(direction: Direction, shade: boolean) {
@@ -134,6 +197,10 @@ export const hardCodedRenderers = [
   },
   {
     block: 'lava',
+    renderFunc: () => {},
+  },
+  {
+    block: 'bubble_column',
     renderFunc: () => {},
   },
   {
@@ -352,7 +419,7 @@ function fromFacingToRotation(facing: string) {
     case 'east':
       return new Rotation(0, 270)
   }
-  return new Rotation(0, 0)
+  throw new Error(`Unknown facing: ${facing}`)
 }
 
 // net.minecraft.client.renderer.blockentity.ChestRenderer
@@ -369,13 +436,13 @@ function renderChest(
   const normalTexture = specials[0]
   const leftTexture = specials[1]
   const rightTexture = specials[2]
-  const facing = blockState.blockProperties['facing']
+  const facing = blockState.getBlockProperty('facing')
   const rotation = fromFacingToRotation(facing)
 
   let modelBottom
   let modelLid
   let modelLock
-  if (blockState.blockProperties['type'] == 'single') {
+  if (blockState.getBlockProperty('type') == 'single') {
     modelBottom = boxModel(
       normalTexture,
       materialPicker,
@@ -403,7 +470,7 @@ function renderChest(
       [0, 9, 1],
       rotation!,
     )
-  } else if (blockState.blockProperties['type'] == 'left') {
+  } else if (blockState.getBlockProperty('type') == 'left') {
     modelBottom = boxModel(
       leftTexture,
       materialPicker,
@@ -431,7 +498,7 @@ function renderChest(
       [0, 9, 1],
       rotation!,
     )
-  } else if (blockState.blockProperties['type'] == 'right') {
+  } else if (blockState.getBlockProperty('type') == 'right') {
     modelBottom = boxModel(
       rightTexture,
       materialPicker,
@@ -460,8 +527,7 @@ function renderChest(
       rotation!,
     )
   } else {
-    console.warn('Unknown chest type', blockState.blockProperties['type'])
-    return
+    throw new Error(`Unknown chest type for ${blockState}`)
   }
 
   const transform = new THREE.Matrix4().makeTranslation(x, y, z)
@@ -483,7 +549,7 @@ function renderShulkerBox(
   materialPicker: MaterialPicker,
 ) {
   const texture = modelManager.getSpecialBlocksData(blockState.blockName)[0]
-  const facing = blockState.blockProperties['facing']
+  const facing = blockState.getBlockProperty('facing')
   let rotation = IDENTITY_ROTATION
   let move = [0.5, -0.5, 0.5]
   switch (facing) {
@@ -506,6 +572,8 @@ function renderShulkerBox(
     case 'east':
       rotation = new Rotation(-90, 90)
       break
+    default:
+      throw new Error(`Unknown facing for shulker box: ${facing}`)
   }
 
   const modelLid = boxModel(
@@ -593,9 +661,9 @@ function renderLecternBlock(
   modelManager: BlockStateModelManager,
   materialPicker: MaterialPicker,
 ) {
-  if (blockState.blockProperties['has_book'] === 'false') return
+  if (blockState.getBlockProperty('has_book') === 'false') return
   const texture = modelManager.getSpecialBlocksData(blockState.blockName)[0]
-  const rotation = fromFacingToRotation(blockState.blockProperties['facing'])
+  const rotation = fromFacingToRotation(blockState.getBlockProperty('facing'))
   const transform = new THREE.Matrix4()
     .multiply(new THREE.Matrix4().makeTranslation(x, y, z))
     .multiply(new THREE.Matrix4().makeTranslation(0.5, 1.0625, 0.5))
@@ -638,7 +706,7 @@ function renderBell(
   materialPicker: MaterialPicker,
 ) {
   const texture = modelManager.getSpecialBlocksData(blockState.blockName)[0]
-  const rotation = fromFacingToRotation(blockState.blockProperties['facing'])
+  const rotation = fromFacingToRotation(blockState.getBlockProperty('facing'))
 
   const modelBellBody = boxModel(
     texture,
@@ -678,7 +746,7 @@ function renderDecoratedPot(
   materialPicker: MaterialPicker,
 ) {
   const [base, side] = modelManager.getSpecialBlocksData(blockState.blockName)
-  const rotation = fromFacingToRotation(blockState.blockProperties['facing'])
+  const rotation = fromFacingToRotation(blockState.getBlockProperty('facing'))
 
   const modelNeck1 = boxModel(base, materialPicker, [4, 17, 4], [8, 3, 8], [0, 0])
   const modelNeck2 = boxModel(base, materialPicker, [5, 20, 5], [6, 1, 6], [0, 5])
@@ -760,14 +828,14 @@ function renderBed(
   materialPicker: MaterialPicker,
 ) {
   const texture = modelManager.getSpecialBlocksData(blockState.blockName)[0]
-  const rotation = fromFacingToRotation(blockState.blockProperties['facing'])
+  const rotation = fromFacingToRotation(blockState.getBlockProperty('facing'))
 
   let main
   let left
   let right
   let leftMatrixRaw
   let rightMatrixRaw
-  if (blockState.blockProperties['part'] === 'head') {
+  if (blockState.getBlockProperty('part') === 'head') {
     main = boxModel(texture, materialPicker, [0, 0, 0], [16, 16, 6], [0, 0])
     left = boxModel(texture, materialPicker, [0, 6, 0], [3, 3, 3], [50, 6])
     right = boxModel(texture, materialPicker, [-16, 6, 0], [3, 3, 3], [50, 6])
@@ -777,7 +845,7 @@ function renderBed(
     rightMatrixRaw = new THREE.Matrix4()
       .multiply(new THREE.Matrix4().makeRotationZ(Math.PI))
       .multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2))
-  } else if (blockState.blockProperties['part'] === 'foot') {
+  } else if (blockState.getBlockProperty('part') === 'foot') {
     main = boxModel(texture, materialPicker, [0, 0, 0], [16, 16, 6], [0, 22])
     left = boxModel(texture, materialPicker, [0, 6, -16], [3, 3, 3], [50, 0])
     right = boxModel(texture, materialPicker, [-16, 6, -16], [3, 3, 3], [50, 12])
@@ -786,8 +854,7 @@ function renderBed(
       .multiply(new THREE.Matrix4().makeRotationZ((Math.PI * 3) / 2))
       .multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2))
   } else {
-    console.warn('Unknown bed part', blockState.blockProperties['part'])
-    return
+    throw new Error(`Unknown bed part for ${blockState}`)
   }
 
   const matrix = new THREE.Matrix4()
@@ -847,14 +914,14 @@ function renderBanner(
   let poleVisible
   if (blockName.endsWith('_wall_banner')) {
     poleVisible = false
-    const rotation = fromFacingToRotation(blockState.blockProperties['facing'])
+    const rotation = fromFacingToRotation(blockState.getBlockProperty('facing'))
     matrixBase
       .multiply(new THREE.Matrix4().makeTranslation(0.5, -1 / 6, 0.5))
       .multiply(new THREE.Matrix4().makeRotationY((-rotation.y / 180) * Math.PI))
       .multiply(new THREE.Matrix4().makeTranslation(0, -0.3125, -0.4375))
   } else {
     poleVisible = true
-    const rotation = parseInt(blockState.blockProperties['rotation'])
+    const rotation = parseInt(blockState.getBlockProperty('rotation'))
     matrixBase
       .multiply(new THREE.Matrix4().makeTranslation(0.5, 0.5, 0.5))
       .multiply(new THREE.Matrix4().makeRotationY((-rotation / 8) * Math.PI))
@@ -1022,8 +1089,8 @@ function renderSkull(
   const matrix = new THREE.Matrix4().makeTranslation(x, y, z)
   let rot
   if (blockState.blockName.includes('wall')) {
-    const direction = getDirectionFromName(blockState.blockProperties['facing'])
-    const rotation = fromFacingToRotation(blockState.blockProperties['facing'])
+    const direction = getDirectionFromName(blockState.getBlockProperty('facing'))
+    const rotation = fromFacingToRotation(blockState.getBlockProperty('facing'))
     matrix
       .multiply(
         new THREE.Matrix4().makeTranslation(
@@ -1035,7 +1102,7 @@ function renderSkull(
       .multiply(new THREE.Matrix4().makeScale(-1, -1, 1))
     rot = (1 - rotation.y / 180) * Math.PI
   } else {
-    const rotation = parseInt(blockState.blockProperties['rotation'])
+    const rotation = parseInt(blockState.getBlockProperty('rotation'))
     matrix
       .multiply(new THREE.Matrix4().makeTranslation(0.5, 0, 0.5))
       .multiply(new THREE.Matrix4().makeScale(-1, -1, 1))
@@ -1081,13 +1148,13 @@ function renderSign(
 
   const transform = new THREE.Matrix4().makeTranslation(x, y, z)
   if (blockState.blockName.includes('wall')) {
-    const rotation = fromFacingToRotation(blockState.blockProperties['facing'])
+    const rotation = fromFacingToRotation(blockState.getBlockProperty('facing'))
     transform
       .multiply(new THREE.Matrix4().makeTranslation(0.5, 0.5, 0.5))
       .multiply(new THREE.Matrix4().makeRotationY((rotation.y / 180) * Math.PI))
       .multiply(new THREE.Matrix4().makeTranslation(0, -0.3125, -0.4375))
   } else {
-    const rotation = parseInt(blockState.blockProperties['rotation'])
+    const rotation = parseInt(blockState.getBlockProperty('rotation'))
     transform
       .multiply(new THREE.Matrix4().makeTranslation(0.5, 0.5, 0.5))
       .multiply(new THREE.Matrix4().makeRotationY((-rotation / 8) * Math.PI))
@@ -1126,13 +1193,13 @@ function renderHangingSign(
 
   const transform = new THREE.Matrix4().makeTranslation(x, y, z)
   if (blockState.blockName.includes('wall')) {
-    const rotation = fromFacingToRotation(blockState.blockProperties['facing'])
+    const rotation = fromFacingToRotation(blockState.getBlockProperty('facing'))
     transform
       .multiply(new THREE.Matrix4().makeTranslation(0.5, 0.9375, 0.5))
       .multiply(new THREE.Matrix4().makeRotationY((rotation.y / 180) * Math.PI))
       .multiply(new THREE.Matrix4().makeTranslation(0, -0.3125, 0))
   } else {
-    const rotation = parseInt(blockState.blockProperties['rotation'])
+    const rotation = parseInt(blockState.getBlockProperty('rotation'))
     transform
       .multiply(new THREE.Matrix4().makeTranslation(0.5, 0.9375, 0.5))
       .multiply(new THREE.Matrix4().makeRotationY((-rotation / 8) * Math.PI))
@@ -1173,7 +1240,7 @@ function renderHangingSign(
     renderModelNoCullsWithMS(modelChain1, blockState, material, scene, chainR1Matrix, true)
     renderModelNoCullsWithMS(modelChain2, blockState, material, scene, chainR2Matrix, true)
   } else {
-    if (blockState.blockProperties['attached'] === 'false') {
+    if (blockState.getBlockProperty('attached') === 'false') {
       renderModelNoCullsWithMS(modelChain1, blockState, material, scene, chainL1Matrix, true)
       renderModelNoCullsWithMS(modelChain2, blockState, material, scene, chainL2Matrix, true)
       renderModelNoCullsWithMS(modelChain1, blockState, material, scene, chainR1Matrix, true)

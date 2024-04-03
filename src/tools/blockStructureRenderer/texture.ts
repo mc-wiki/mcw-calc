@@ -238,7 +238,7 @@ export class AnimatedTextureManager {
     }
     const insertNode = this.rootNode.insert(textureSize)
     if (!insertNode) {
-      return [0, 0]
+      return [0, 0, ...textureSize]
     }
     this.animatedTextureData[textureId] = {
       texture,
@@ -315,7 +315,7 @@ export function makeTextureAtlasMaterials(
     fog: false,
     alphaTest: 0.1,
   })
-  const translucentRenderingMaterial = new THREE.MeshBasicMaterial({
+  const translucentMaterial = new THREE.MeshBasicMaterial({
     map: atlasTexture[0],
     fog: false,
     transparent: true,
@@ -325,7 +325,7 @@ export function makeTextureAtlasMaterials(
     solid: solidRenderingMaterial,
     cutout: cutoutMaterial,
     cutout_mipped: cutoutMippedMaterial,
-    translucent: translucentRenderingMaterial,
+    translucent: translucentMaterial,
     tripwire: tripwireMaterial,
   }
 }

@@ -13,6 +13,7 @@ import {
   renderModelNoCullFaces,
 } from '@/tools/blockStructureRenderer/model.ts'
 import {
+  hardcodedBlockTint,
   hardCodedRenderers,
   hardCodedSkipRendering,
 } from '@/tools/blockStructureRenderer/hardcodes.ts'
@@ -69,18 +70,46 @@ export class BlockState {
       })
     }
 
+    try {
+      hardcodedBlockTint(this)
+    } catch (e) {
+      console.error(
+        `Error in tinting block ${this.blockName} with properties ${this.blockProperties}`,
+      )
+      console.error(e)
+    }
+
     if (this.blockName === 'water' || this.blockName === 'lava') {
-      const level = parseInt(this.blockProperties.level)
-      if (level == 0) this.fluidState = new FluidState(this.blockName, 0, false)
-      else if (level >= 8) this.fluidState = new FluidState(this.blockName, 8, true)
-      else this.fluidState = new FluidState(this.blockName, 8 - level, false)
-    } else if (this.blockName === 'seagrass' || this.blockName === 'kelp') {
+      if (this.blockProperties.level === undefined) {
+        console.error(
+          `Block ${this.blockName} does not have level property, fluid state will be ignored.`,
+        )
+        this.fluidState = new FluidState('air', 0, false)
+      } else {
+        const level = parseInt(this.blockProperties.level)
+        if (level == 0) this.fluidState = new FluidState(this.blockName, 0, false)
+        else if (level >= 8) this.fluidState = new FluidState(this.blockName, 8, true)
+        else this.fluidState = new FluidState(this.blockName, 8 - level, false)
+      }
+    } else if (
+      this.blockName === 'seagrass' ||
+      this.blockName === 'kelp' ||
+      this.blockName === 'bubble_column'
+    ) {
       this.fluidState = new FluidState('water', 0, false)
     } else if (this.blockProperties['waterlogged'] === 'true') {
       this.fluidState = new FluidState('water', 0, false)
     } else {
       this.fluidState = new FluidState('air', 0, false)
     }
+  }
+
+  getBlockProperty(property: string) {
+    if (this.blockProperties[property]) return this.blockProperties[property]
+    throw new Error(
+      `Block ${this.blockName} with properties map ${this.blockProperties} does not have property ${property},
+       maybe it is not defined in the block state? Please check the block state definition.`,
+    )
   }
 }
 
@@ -185,9 +214,14 @@ export function bakeFluidRenderLayer(
   blockStructure.forEach((x, y, z, blockKey) => {
     const thisFluid = nameMapping.toBlockState(blockKey).fluidState
     if (thisFluid.fluid === 'air') return
-    renderFluid(scene, materialPicker, modelManager, x, y, z, (x, y, z) =>
-      nameMapping.toBlockState(blockStructure.getBlock(x, y, z)),
-    )
+    try {
+      renderFluid(scene, materialPicker, modelManager, x, y, z, (x, y, z) =>
+        nameMapping.toBlockState(blockStructure.getBlock(x, y, z)),
+      )
+    } catch (e) {
+      console.error(`Error in rendering fluid ${thisFluid} at [${x},${y},${z}]`)
+      console.error(e)
+    }
   })
 }
 
@@ -219,14 +253,16 @@ export function bakeBlockModelRenderLayer(
           blockStructure,
         )
       } catch (e) {
-        console.error(`Error in hard-coded renderer for block ${blockName} at [${x},${y},${z}]`)
+        console.error(
+          `Error in hard-coded renderer for block ${thisBlock}(${blockKey}) at [${x},${y},${z}]`,
+        )
         console.error(e)
       }
       if (!matchHardcodedRenderer[0].needRenderModel) return
     }
 
     if (!modelManager.modelsMapping[blockKey]) {
-      console.warn(`No model mapping for block ${blockName} at [${x},${y},${z}]`)
+      console.warn(`No model mapping for block ${thisBlock}(${blockKey}) at [${x},${y},${z}]`)
       return
     }
 
@@ -244,7 +280,9 @@ export function bakeBlockModelRenderLayer(
       try {
         renderModelNoCullFaces(baked, thisBlock, materialPicker, scene, translate)
       } catch (e) {
-        console.error(`Error in rendering noncull faces for block ${blockName} at [${x},${y},${z}]`)
+        console.error(
+          `Error in rendering noncull faces for block ${thisBlock}(${blockKey}) at [${x},${y},${z}]`,
+        )
         console.error(e)
       }
 
@@ -268,7 +306,9 @@ export function bakeBlockModelRenderLayer(
           renderBakedFaces(value, thisBlock, materialPicker, scene, translate)
         })
       } catch (e) {
-        console.error(`Error in rendering cull faces for block ${blockName} at [${x},${y},${z}]`)
+        console.error(
+          `Error in rendering cull faces for block ${thisBlock}(${blockKey}) at [${x},${y},${z}]`,
+        )
         console.error(e)
       }
     })

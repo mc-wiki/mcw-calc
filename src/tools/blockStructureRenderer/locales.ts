@@ -15,5 +15,6 @@ export default {
     'blockStructureRenderer.cameraSetting.position': 'Camera position',
     'blockStructureRenderer.cameraSetting.target': 'Camera target',
     'blockStructureRenderer.cameraSetting.confirm': 'Confirm',
+    'blockStructureRenderer.backgroundColor': 'Background color',
   },
 }
