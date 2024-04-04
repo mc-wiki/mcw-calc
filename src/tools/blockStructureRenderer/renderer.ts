@@ -137,7 +137,7 @@ export class BlockStructure {
       maxZ = 0
     const maxY = splitHeightLines.length
     for (let y = 0; y < splitHeightLines.length; y++) {
-      const splitLines = splitHeightLines[y].split(',')
+      const splitLines = splitHeightLines[y].replace(/\s/, '').split(',')
       if (splitLines.length > maxZ) maxZ = splitLines.length
       for (let z = 0; z < splitLines.length; z++) {
         const line = splitLines[z]
