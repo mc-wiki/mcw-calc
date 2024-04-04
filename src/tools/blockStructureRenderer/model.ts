@@ -102,7 +102,7 @@ function conditionMatch(
     )
   } else {
     return Object.entries(condition).every(([key, value]) =>
-      blockProperties[key].split('|').includes(value),
+      value.split('|').includes(blockProperties[key]),
     )
   }
 }

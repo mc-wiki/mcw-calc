@@ -221,7 +221,7 @@ export function renderFluid(
   const thisBlockState = blockStateGetter(x, y, z)
   const thisFluidState = thisBlockState.fluidState
   const fluidColor = thisFluidState.fluid === 'water' ?
-    parseInt(thisBlockState.tintData[thisBlockState.tintData.length - 1] ?? '3F76E4', 16) :
+    parseInt(thisBlockState.tintData[thisBlockState.tintData.length - 1] ?? '3f76e4', 16) :
     0xffffff
   const [resolvedMaterial, resolvedSprites] = resolveSpecialTextures(
     thisFluidState.fluid,
