@@ -438,11 +438,13 @@ function renderChest(
   const rightTexture = specials[2]
   const facing = blockState.getBlockProperty('facing')
   const rotation = fromFacingToRotation(facing)
+  const type =
+    blockState.blockName === 'ender_chest' ? 'single' : blockState.getBlockProperty('type')
 
   let modelBottom
   let modelLid
   let modelLock
-  if (blockState.getBlockProperty('type') == 'single') {
+  if (type === 'single') {
     modelBottom = boxModel(
       normalTexture,
       materialPicker,
@@ -470,7 +472,7 @@ function renderChest(
       [0, 9, 1],
       rotation!,
     )
-  } else if (blockState.getBlockProperty('type') == 'left') {
+  } else if (type === 'left') {
     modelBottom = boxModel(
       leftTexture,
       materialPicker,
@@ -498,7 +500,7 @@ function renderChest(
       [0, 9, 1],
       rotation!,
     )
-  } else if (blockState.getBlockProperty('type') == 'right') {
+  } else if (type === 'right') {
     modelBottom = boxModel(
       rightTexture,
       materialPicker,
@@ -553,6 +555,8 @@ function renderShulkerBox(
   let rotation = IDENTITY_ROTATION
   let move = [0.5, -0.5, 0.5]
   switch (facing) {
+    case 'down':
+      break
     case 'up':
       rotation = new Rotation(180, 0)
       move = [0.5, 0.5, -0.5]
@@ -1151,7 +1155,7 @@ function renderSign(
     const rotation = fromFacingToRotation(blockState.getBlockProperty('facing'))
     transform
       .multiply(new THREE.Matrix4().makeTranslation(0.5, 0.5, 0.5))
-      .multiply(new THREE.Matrix4().makeRotationY((rotation.y / 180) * Math.PI))
+      .multiply(new THREE.Matrix4().makeRotationY((-rotation.y / 180) * Math.PI))
       .multiply(new THREE.Matrix4().makeTranslation(0, -0.3125, -0.4375))
   } else {
     const rotation = parseInt(blockState.getBlockProperty('rotation'))

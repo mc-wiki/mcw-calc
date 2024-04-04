@@ -111,6 +111,12 @@ export class BlockState {
        maybe it is not defined in the block state? Please check the block state definition.`,
     )
   }
+
+  toString() {
+    return `${this.blockName}[${Object.entries(this.blockProperties)
+      .map(([key, value]) => `${key}=${value}`)
+      .join(',')}]`
+  }
 }
 
 const AIR_STATE = new BlockState('air')
@@ -260,6 +266,8 @@ export function bakeBlockModelRenderLayer(
       }
       if (!matchHardcodedRenderer[0].needRenderModel) return
     }
+
+    if (blockName === 'air') return
 
     if (!modelManager.modelsMapping[blockKey]) {
       console.warn(`No model mapping for block ${thisBlock}(${blockKey}) at [${x},${y},${z}]`)
