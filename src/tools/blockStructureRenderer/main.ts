@@ -25,6 +25,7 @@ targetElAll.forEach((targetEl) => {
       'special-blocks-data',
       'liquid-computation-data',
       'camera-pos-data',
+      'marks',
     ],
     {
       blocks: 'A=air',
@@ -37,6 +38,7 @@ targetElAll.forEach((targetEl) => {
       'special-blocks-data': '',
       'liquid-computation-data': '',
       'camera-pos-data': '',
+      marks: '',
     },
   )
 
@@ -51,5 +53,6 @@ targetElAll.forEach((targetEl) => {
     specialBlocksData: params.get('special-blocks-data')?.split(';'),
     liquidComputationData: params.get('liquid-computation-data')?.split(';'),
     cameraPosData: params.get('camera-pos-data')?.split(';'),
+    marks: params.get('marks')?.split(';'),
   }).mount(targetEl)
 })

@@ -8,6 +8,7 @@ import { CdxCheckbox, CdxTextInput, CdxSelect, CdxButton } from '@wikimedia/code
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
 import {
+  bakeBlockMarkers,
   bakeBlockModelRenderLayer,
   bakeFluidRenderLayer,
   BlockStructure,
@@ -26,6 +27,7 @@ const props = defineProps<{
   specialBlocksData: string[]
   liquidComputationData: string[]
   cameraPosData: string[]
+  marks: string[]
 }>()
 const { t } = useI18n(__TOOL_NAME__, locales)
 const renderTarget = ref()
@@ -33,6 +35,7 @@ const loaded = ref(false)
 
 const orthographic = ref(false)
 const animatedTexture = ref(true)
+const displayMarks = ref(true)
 const backgroundColor = ref('#ffffff')
 const backgroundAlpha = ref(255)
 
@@ -91,7 +94,7 @@ const controls = computed(() =>
   orthographic.value ? orbitOrthoControls : orbitPerspectiveControls,
 )
 
-const blockStructure = new BlockStructure(props.structure)
+const blockStructure = new BlockStructure(props.structure, props.marks)
 const nameMapping = new NameMapping(props.blocks)
 const modelManager = new BlockStateModelManager(
   props.blockStates,
@@ -108,6 +111,7 @@ const materialPicker = makeMaterialPicker(
     loaded.value = true
     bakeFluidRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
     bakeBlockModelRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
+    bakeBlockMarkers(scene, blockStructure)
   },
   () => animatedTexture.value,
 )
@@ -147,6 +151,7 @@ function reBakeRenderLayers() {
   scene.clear()
   bakeFluidRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
   bakeBlockModelRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
+  if (displayMarks.value) bakeBlockMarkers(scene, blockStructure)
 }
 
 function onDisplayModeChanged() {
@@ -285,6 +290,13 @@ onUpdated(() => {
   </cdx-checkbox>
   <cdx-checkbox v-if="loaded" v-model="animatedTexture">
     {{ t('blockStructureRenderer.animatedTexture') }}
+  </cdx-checkbox>
+  <cdx-checkbox
+    v-if="loaded && blockStructure.hasMarks()"
+    v-model="displayMarks"
+    @change="reBakeRenderLayers"
+  >
+    {{ t('blockStructureRenderer.renderMarks') }}
   </cdx-checkbox>
 
   <div

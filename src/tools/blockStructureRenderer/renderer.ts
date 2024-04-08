@@ -124,6 +124,7 @@ const AIR_STATE = new BlockState('air')
 export class BlockStructure {
   readonly structures: string[][][] // yzx
   readonly bakedModelReference: [number, boolean?, number?, number?][][][][]
+  readonly marks: [number, number, number, THREE.Color][] = []
 
   readonly x: number
   readonly y: number
@@ -131,7 +132,7 @@ export class BlockStructure {
 
   yRange?: number[]
 
-  constructor(structureStr: string) {
+  constructor(structureStr: string, marks: string[]) {
     const splitHeightLines = structureStr.split(';')
     let maxX = 0,
       maxZ = 0
@@ -166,9 +167,23 @@ export class BlockStructure {
         }
       }
     }
+
+    marks.forEach((mark) => {
+      mark = mark.trim()
+      const splitPointMark = mark.indexOf('#')
+      const markColor = mark.substring(splitPointMark + 1)
+      const markData = mark.substring(0, splitPointMark).split(',')
+      const x = parseInt(markData[0])
+      const y = parseInt(markData[1])
+      const z = parseInt(markData[2])
+      const colorInt = parseInt(markColor, 16)
+      if (isNaN(x) || isNaN(y) || isNaN(z) || isNaN(colorInt))
+        console.warn(`Invalid mark data: ${markData}`)
+      else this.marks.push([x, y, z, new THREE.Color(colorInt)])
+    })
   }
 
-  forEach(callback: (x: number, y: number, z: number, blockKey: string) => void) {
+  forEachBlock(callback: (x: number, y: number, z: number, blockKey: string) => void) {
     let minY = 0
     let maxY = this.y
     if (this.yRange) {
@@ -183,6 +198,23 @@ export class BlockStructure {
         }
       }
     }
+  }
+
+  forEachMark(callback: (x: number, y: number, z: number, color: THREE.Color) => void) {
+    let minY = 0
+    let maxY = this.y
+    if (this.yRange) {
+      minY = this.yRange[0]
+      maxY = this.yRange[1]
+    }
+    this.marks.forEach(([x, y, z, color]) => {
+      if (y < minY || y >= maxY) return
+      callback(x, y, z, color)
+    })
+  }
+
+  hasMarks() {
+    return this.marks.length > 0
   }
 
   getBlock(x: number, y: number, z: number): string {
@@ -220,7 +252,7 @@ export function bakeFluidRenderLayer(
   nameMapping: NameMapping,
   modelManager: BlockStateModelManager,
 ) {
-  blockStructure.forEach((x, y, z, blockKey) => {
+  blockStructure.forEachBlock((x, y, z, blockKey) => {
     const thisFluid = nameMapping.toBlockState(blockKey).fluidState
     if (thisFluid.fluid === 'air') return
     try {
@@ -241,7 +273,7 @@ export function bakeBlockModelRenderLayer(
   nameMapping: NameMapping,
   modelManager: BlockStateModelManager,
 ) {
-  blockStructure.forEach((x, y, z, blockKey) => {
+  blockStructure.forEachBlock((x, y, z, blockKey) => {
     const thisBlock = nameMapping.toBlockState(blockKey)
     const blockName = thisBlock.blockName
 
@@ -321,5 +353,21 @@ export function bakeBlockModelRenderLayer(
         console.error(e)
       }
     })
+  })
+}
+
+export function bakeBlockMarkers(scene: THREE.Scene, structure: BlockStructure) {
+  structure.forEachMark((x, y, z, color) => {
+    const boxGeometry = new THREE.BoxGeometry(1.001, 1.001, 1.001)
+    const boxMaterial = new THREE.MeshBasicMaterial({
+      color,
+      opacity: 0.2,
+      transparent: true,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    })
+    const box = new THREE.Mesh(boxGeometry, boxMaterial)
+    box.position.set(x + 0.5, y + 0.5, z + 0.5)
+    scene.add(box)
   })
 }
