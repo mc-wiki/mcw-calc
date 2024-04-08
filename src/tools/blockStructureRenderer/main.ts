@@ -24,6 +24,7 @@ targetElAll.forEach((targetEl) => {
       'occlusion-shapes',
       'special-blocks-data',
       'liquid-computation-data',
+      'camera-pos-data',
     ],
     {
       blocks: 'A=air',
@@ -35,6 +36,7 @@ targetElAll.forEach((targetEl) => {
       'occlusion-shapes': '',
       'special-blocks-data': '',
       'liquid-computation-data': '',
+      'camera-pos-data': '',
     },
   )
 
@@ -48,5 +50,6 @@ targetElAll.forEach((targetEl) => {
     occlusionShapes: params.get('occlusion-shapes')?.split(';'),
     specialBlocksData: params.get('special-blocks-data')?.split(';'),
     liquidComputationData: params.get('liquid-computation-data')?.split(';'),
+    cameraPosData: params.get('camera-pos-data')?.split(';'),
   }).mount(targetEl)
 })

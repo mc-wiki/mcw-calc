@@ -158,7 +158,7 @@ export class BlockStructure {
       )
 
     for (let y = 0; y < splitHeightLines.length; y++) {
-      const splitLines = splitHeightLines[y].split(',')
+      const splitLines = splitHeightLines[y].replace(/\s/, '').split(',')
       for (let z = 0; z < splitLines.length; z++) {
         const line = splitLines[z]
         for (let x = 0; x < line.length; x++) {
@@ -206,6 +206,9 @@ export class NameMapping {
   }
 
   toBlockState(blockKey: string): BlockState {
+    if (blockKey === '-') return AIR_STATE
+    if (this.nameStateMapping[blockKey] === undefined)
+      console.warn(`No name mapping for block key '${blockKey}'`)
     return this.nameStateMapping[blockKey] ?? AIR_STATE
   }
 }
@@ -266,8 +269,6 @@ export function bakeBlockModelRenderLayer(
       }
       if (!matchHardcodedRenderer[0].needRenderModel) return
     }
-
-    if (blockName === 'air') return
 
     if (!modelManager.modelsMapping[blockKey]) {
       console.warn(`No model mapping for block ${thisBlock}(${blockKey}) at [${x},${y},${z}]`)
