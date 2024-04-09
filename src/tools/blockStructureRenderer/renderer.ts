@@ -217,6 +217,12 @@ export class BlockStructure {
     return this.marks.length > 0
   }
 
+  getMark(x: number, y: number, z: number): THREE.Color | undefined {
+    if (x < 0 || y < 0 || z < 0 || x >= this.x || y >= this.y || z >= this.z) return undefined
+    if (this.yRange && (y < this.yRange[0] || y > this.yRange[1] - 1)) return undefined
+    return this.marks.find(([mx, my, mz]) => mx === x && my === y && mz === z)?.[3]
+  }
+
   getBlock(x: number, y: number, z: number): string {
     if (x < 0 || y < 0 || z < 0 || x >= this.x || y >= this.y || z >= this.z) return '-'
     if (this.yRange && (y < this.yRange[0] || y > this.yRange[1] - 1)) return '-'
@@ -358,16 +364,57 @@ export function bakeBlockModelRenderLayer(
 
 export function bakeBlockMarkers(scene: THREE.Scene, structure: BlockStructure) {
   structure.forEachMark((x, y, z, color) => {
-    const boxGeometry = new THREE.BoxGeometry(1.001, 1.001, 1.001)
-    const boxMaterial = new THREE.MeshBasicMaterial({
+    const material = new THREE.MeshBasicMaterial({
       color,
       opacity: 0.2,
       transparent: true,
       side: THREE.DoubleSide,
       depthWrite: false,
     })
-    const box = new THREE.Mesh(boxGeometry, boxMaterial)
-    box.position.set(x + 0.5, y + 0.5, z + 0.5)
-    scene.add(box)
+
+    const hexColor = color.getHex()
+    const faces = []
+
+    // Avoid z-fighting and self-occlusion
+    if (structure.getMark(x, y, z + 1)?.getHex() !== hexColor) {
+      const southGeometry = new THREE.PlaneGeometry(1.0001, 1.0001)
+      southGeometry.translate(0.5, 0.5, 1.00005)
+      faces.push(new THREE.Mesh(southGeometry, material))
+    }
+    if (structure.getMark(x, y, z - 1)?.getHex() !== hexColor) {
+      const northGeometry = new THREE.PlaneGeometry(1.0001, 1.0001)
+      northGeometry.rotateY(Math.PI)
+      northGeometry.translate(0.5, 0.5, -0.00005)
+      faces.push(new THREE.Mesh(northGeometry, material))
+    }
+    if (structure.getMark(x + 1, y, z)?.getHex() !== hexColor) {
+      const eastGeometry = new THREE.PlaneGeometry(1.0001, 1.0001)
+      eastGeometry.rotateY(Math.PI / 2)
+      eastGeometry.translate(1.00005, 0.5, 0.5)
+      faces.push(new THREE.Mesh(eastGeometry, material))
+    }
+    if (structure.getMark(x - 1, y, z)?.getHex() !== hexColor) {
+      const westGeometry = new THREE.PlaneGeometry(1.0001, 1.0001)
+      westGeometry.rotateY(-Math.PI / 2)
+      westGeometry.translate(-0.00005, 0.5, 0.5)
+      faces.push(new THREE.Mesh(westGeometry, material))
+    }
+    if (structure.getMark(x, y + 1, z)?.getHex() !== hexColor) {
+      const upGeometry = new THREE.PlaneGeometry(1.0001, 1.0001)
+      upGeometry.rotateX(-Math.PI / 2)
+      upGeometry.translate(0.5, 1.00005, 0.5)
+      faces.push(new THREE.Mesh(upGeometry, material))
+    }
+    if (structure.getMark(x, y - 1, z)?.getHex() !== hexColor) {
+      const downGeometry = new THREE.PlaneGeometry(1.0001, 1.0001)
+      downGeometry.rotateX(Math.PI / 2)
+      downGeometry.translate(0.5, -0.00005, 0.5)
+      faces.push(new THREE.Mesh(downGeometry, material))
+    }
+
+    faces.forEach((face) => {
+      face.position.set(x, y, z)
+      scene.add(face)
+    })
   })
 }
