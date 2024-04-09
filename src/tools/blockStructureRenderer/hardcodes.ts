@@ -123,6 +123,11 @@ export function hardcodedBlockTint(blockState: BlockState) {
     if (blockState.tintData.length > 0) return
     blockState.tintData[0] = '3f76e4'
   } else if (
+    blockState.blockName === 'lava_cauldron' ||
+    blockState.blockName === 'powder_snow_cauldron'
+  ) {
+    blockState.tintData[0] = 'ffffff'
+  } else if (
     blockState.blockName === 'attached_melon_stem' ||
     blockState.blockName === 'attached_pumpkin_stem'
   ) {
@@ -190,18 +195,28 @@ export function resolveSpecialTextures(
   return [resolvedMaterial, resolvedSprites]
 }
 
+const NOP = () => {}
+
 export const hardCodedRenderers = [
   {
+    block: 'air',
+    renderFunc: NOP,
+  },
+  {
+    block: /.*_air$/,
+    renderFunc: NOP,
+  },
+  {
     block: 'water',
-    renderFunc: () => {},
+    renderFunc: NOP,
   },
   {
     block: 'lava',
-    renderFunc: () => {},
+    renderFunc: NOP,
   },
   {
     block: 'bubble_column',
-    renderFunc: () => {},
+    renderFunc: NOP,
   },
   {
     block: 'chest',
@@ -248,7 +263,7 @@ export const hardCodedRenderers = [
   },
   {
     block: 'piston_head', // Avoid wrongly matching
-    renderFunc: () => {},
+    renderFunc: NOP,
     needRenderModel: true,
   },
   {

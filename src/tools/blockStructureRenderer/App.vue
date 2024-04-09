@@ -8,6 +8,7 @@ import { CdxCheckbox, CdxTextInput, CdxSelect, CdxButton } from '@wikimedia/code
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
 import {
+  bakeBlockMarkers,
   bakeBlockModelRenderLayer,
   bakeFluidRenderLayer,
   BlockStructure,
@@ -25,6 +26,8 @@ const props = defineProps<{
   occlusionShapes: string[]
   specialBlocksData: string[]
   liquidComputationData: string[]
+  cameraPosData: string[]
+  marks: string[]
 }>()
 const { t } = useI18n(__TOOL_NAME__, locales)
 const renderTarget = ref()
@@ -32,7 +35,9 @@ const loaded = ref(false)
 
 const orthographic = ref(false)
 const animatedTexture = ref(true)
+const displayMarks = ref(true)
 const backgroundColor = ref('#ffffff')
+const backgroundAlpha = ref(255)
 
 const displayModeStr = [
   t('blockStructureRenderer.displayModes.all'),
@@ -66,11 +71,13 @@ const cameraTargetZ = ref(0)
 const rendererAvailable = WebGL.isWebGLAvailable()
 const renderer = new THREE.WebGLRenderer({
   preserveDrawingBuffer: true,
+  alpha: true,
+  antialias: false,
 }) // Do not enable antialiasing: it makes block edges black
 renderer.setPixelRatio(window.devicePixelRatio)
 
 const scene = new THREE.Scene()
-scene.background = new THREE.Color(0xffffff)
+renderer.setClearColor(backgroundColor.value, backgroundAlpha.value / 255)
 
 const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 1000)
 const perspectiveCamera = new THREE.PerspectiveCamera(75, 2, 0.1, 1000)
@@ -87,7 +94,7 @@ const controls = computed(() =>
   orthographic.value ? orbitOrthoControls : orbitPerspectiveControls,
 )
 
-const blockStructure = new BlockStructure(props.structure)
+const blockStructure = new BlockStructure(props.structure, props.marks)
 const nameMapping = new NameMapping(props.blocks)
 const modelManager = new BlockStateModelManager(
   props.blockStates,
@@ -104,6 +111,7 @@ const materialPicker = makeMaterialPicker(
     loaded.value = true
     bakeFluidRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
     bakeBlockModelRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
+    bakeBlockMarkers(scene, blockStructure)
   },
   () => animatedTexture.value,
 )
@@ -111,20 +119,39 @@ const materialPicker = makeMaterialPicker(
 if (rendererAvailable) {
   const [maxX, maxY, maxZ] = [blockStructure.x, blockStructure.y, blockStructure.z]
   yRangeMax.value = maxY - 1
-  orbitOrthoControls.target.set(maxX / 2, maxY / 2, maxZ / 2)
-  orbitPerspectiveControls.target.set(maxX / 2, maxY / 2, maxZ / 2)
-  orthographicCamera.position.set(maxX / 2, maxY * 1.5, maxZ * 1.5)
-  perspectiveCamera.position.set(maxX / 2, maxY * 1.5, maxZ * 1.5)
+
+  let cameraPos = [maxX / 2, maxY * 1.5, maxZ * 1.5]
+  const parsedPos = parsePosition(props.cameraPosData[0])
+  if (parsedPos) cameraPos = parsedPos
+  let cameraTarget = [maxX / 2, maxY / 2, maxZ / 2]
+  const parsedTarget = parsePosition(props.cameraPosData[1])
+  if (parsedTarget) cameraTarget = parsedTarget
+
+  orthographicCamera.position.set(cameraPos[0], cameraPos[1], cameraPos[2])
+  perspectiveCamera.position.set(cameraPos[0], cameraPos[1], cameraPos[2])
+  orbitOrthoControls.target.set(cameraTarget[0], cameraTarget[1], cameraTarget[2])
+  orbitPerspectiveControls.target.set(cameraTarget[0], cameraTarget[1], cameraTarget[2])
   orbitOrthoControls.update()
   orbitOrthoControls.saveState()
   orbitPerspectiveControls.update()
   orbitPerspectiveControls.saveState()
 }
 
+function parsePosition(value?: string) {
+  if (value) {
+    const pos = value.split(',')
+    const x = parseFloat(pos[0].trim())
+    const y = parseFloat(pos[1].trim())
+    const z = parseFloat(pos[2].trim())
+    if (!isNaN(x) && !isNaN(y) && !isNaN(z)) return [x, y, z]
+  }
+}
+
 function reBakeRenderLayers() {
   scene.clear()
   bakeFluidRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
   bakeBlockModelRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
+  if (displayMarks.value) bakeBlockMarkers(scene, blockStructure)
 }
 
 function onDisplayModeChanged() {
@@ -196,7 +223,7 @@ function resetCamera() {
 }
 
 function changeBackgroundColor() {
-  scene.background = new THREE.Color(backgroundColor.value)
+  renderer.setClearColor(backgroundColor.value, backgroundAlpha.value / 255)
 }
 
 function saveRenderedImage() {
@@ -264,6 +291,13 @@ onUpdated(() => {
   <cdx-checkbox v-if="loaded" v-model="animatedTexture">
     {{ t('blockStructureRenderer.animatedTexture') }}
   </cdx-checkbox>
+  <cdx-checkbox
+    v-if="loaded && blockStructure.hasMarks()"
+    v-model="displayMarks"
+    @change="reBakeRenderLayers"
+  >
+    {{ t('blockStructureRenderer.renderMarks') }}
+  </cdx-checkbox>
 
   <div
     v-if="loaded"
@@ -281,6 +315,16 @@ onUpdated(() => {
       v-model="backgroundColor"
       id="color-picker"
       @change="changeBackgroundColor"
+    />
+    <label for="alpha">{{ t('blockStructureRenderer.backgroundAlpha') }}</label>
+    <cdx-text-input
+      id="alpha"
+      v-model="backgroundAlpha"
+      inputType="number"
+      :min="0"
+      :max="255"
+      step="1"
+      @input="changeBackgroundColor"
     />
   </div>
   <div

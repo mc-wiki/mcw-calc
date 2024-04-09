@@ -16,5 +16,7 @@ export default {
     'blockStructureRenderer.cameraSetting.target': 'Camera target',
     'blockStructureRenderer.cameraSetting.confirm': 'Confirm',
     'blockStructureRenderer.backgroundColor': 'Background color',
+    'blockStructureRenderer.backgroundAlpha': 'Opacity',
+    'blockStructureRenderer.renderMarks': 'Render marks',
   },
 }

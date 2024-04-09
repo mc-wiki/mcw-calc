@@ -124,6 +124,7 @@ const AIR_STATE = new BlockState('air')
 export class BlockStructure {
   readonly structures: string[][][] // yzx
   readonly bakedModelReference: [number, boolean?, number?, number?][][][][]
+  readonly marks: [number, number, number, THREE.Color][] = []
 
   readonly x: number
   readonly y: number
@@ -131,7 +132,7 @@ export class BlockStructure {
 
   yRange?: number[]
 
-  constructor(structureStr: string) {
+  constructor(structureStr: string, marks: string[]) {
     const splitHeightLines = structureStr.split(';')
     let maxX = 0,
       maxZ = 0
@@ -158,7 +159,7 @@ export class BlockStructure {
       )
 
     for (let y = 0; y < splitHeightLines.length; y++) {
-      const splitLines = splitHeightLines[y].split(',')
+      const splitLines = splitHeightLines[y].replace(/\s/, '').split(',')
       for (let z = 0; z < splitLines.length; z++) {
         const line = splitLines[z]
         for (let x = 0; x < line.length; x++) {
@@ -166,9 +167,23 @@ export class BlockStructure {
         }
       }
     }
+
+    marks.forEach((mark) => {
+      mark = mark.trim()
+      const splitPointMark = mark.indexOf('#')
+      const markColor = mark.substring(splitPointMark + 1)
+      const markData = mark.substring(0, splitPointMark).split(',')
+      const x = parseInt(markData[0])
+      const y = parseInt(markData[1])
+      const z = parseInt(markData[2])
+      const colorInt = parseInt(markColor, 16)
+      if (isNaN(x) || isNaN(y) || isNaN(z) || isNaN(colorInt))
+        console.warn(`Invalid mark data: ${markData}`)
+      else this.marks.push([x, y, z, new THREE.Color(colorInt)])
+    })
   }
 
-  forEach(callback: (x: number, y: number, z: number, blockKey: string) => void) {
+  forEachBlock(callback: (x: number, y: number, z: number, blockKey: string) => void) {
     let minY = 0
     let maxY = this.y
     if (this.yRange) {
@@ -183,6 +198,29 @@ export class BlockStructure {
         }
       }
     }
+  }
+
+  forEachMark(callback: (x: number, y: number, z: number, color: THREE.Color) => void) {
+    let minY = 0
+    let maxY = this.y
+    if (this.yRange) {
+      minY = this.yRange[0]
+      maxY = this.yRange[1]
+    }
+    this.marks.forEach(([x, y, z, color]) => {
+      if (y < minY || y >= maxY) return
+      callback(x, y, z, color)
+    })
+  }
+
+  hasMarks() {
+    return this.marks.length > 0
+  }
+
+  getMark(x: number, y: number, z: number): THREE.Color | undefined {
+    if (x < 0 || y < 0 || z < 0 || x >= this.x || y >= this.y || z >= this.z) return undefined
+    if (this.yRange && (y < this.yRange[0] || y > this.yRange[1] - 1)) return undefined
+    return this.marks.find(([mx, my, mz]) => mx === x && my === y && mz === z)?.[3]
   }
 
   getBlock(x: number, y: number, z: number): string {
@@ -206,6 +244,9 @@ export class NameMapping {
   }
 
   toBlockState(blockKey: string): BlockState {
+    if (blockKey === '-') return AIR_STATE
+    if (this.nameStateMapping[blockKey] === undefined)
+      console.warn(`No name mapping for block key '${blockKey}'`)
     return this.nameStateMapping[blockKey] ?? AIR_STATE
   }
 }
@@ -217,7 +258,7 @@ export function bakeFluidRenderLayer(
   nameMapping: NameMapping,
   modelManager: BlockStateModelManager,
 ) {
-  blockStructure.forEach((x, y, z, blockKey) => {
+  blockStructure.forEachBlock((x, y, z, blockKey) => {
     const thisFluid = nameMapping.toBlockState(blockKey).fluidState
     if (thisFluid.fluid === 'air') return
     try {
@@ -238,7 +279,7 @@ export function bakeBlockModelRenderLayer(
   nameMapping: NameMapping,
   modelManager: BlockStateModelManager,
 ) {
-  blockStructure.forEach((x, y, z, blockKey) => {
+  blockStructure.forEachBlock((x, y, z, blockKey) => {
     const thisBlock = nameMapping.toBlockState(blockKey)
     const blockName = thisBlock.blockName
 
@@ -266,8 +307,6 @@ export function bakeBlockModelRenderLayer(
       }
       if (!matchHardcodedRenderer[0].needRenderModel) return
     }
-
-    if (blockName === 'air') return
 
     if (!modelManager.modelsMapping[blockKey]) {
       console.warn(`No model mapping for block ${thisBlock}(${blockKey}) at [${x},${y},${z}]`)
@@ -319,6 +358,63 @@ export function bakeBlockModelRenderLayer(
         )
         console.error(e)
       }
+    })
+  })
+}
+
+export function bakeBlockMarkers(scene: THREE.Scene, structure: BlockStructure) {
+  structure.forEachMark((x, y, z, color) => {
+    const material = new THREE.MeshBasicMaterial({
+      color,
+      opacity: 0.2,
+      transparent: true,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    })
+
+    const hexColor = color.getHex()
+    const faces = []
+
+    // Avoid z-fighting and self-occlusion
+    if (structure.getMark(x, y, z + 1)?.getHex() !== hexColor) {
+      const southGeometry = new THREE.PlaneGeometry(1.0001, 1.0001)
+      southGeometry.translate(0.5, 0.5, 1.00005)
+      faces.push(new THREE.Mesh(southGeometry, material))
+    }
+    if (structure.getMark(x, y, z - 1)?.getHex() !== hexColor) {
+      const northGeometry = new THREE.PlaneGeometry(1.0001, 1.0001)
+      northGeometry.rotateY(Math.PI)
+      northGeometry.translate(0.5, 0.5, -0.00005)
+      faces.push(new THREE.Mesh(northGeometry, material))
+    }
+    if (structure.getMark(x + 1, y, z)?.getHex() !== hexColor) {
+      const eastGeometry = new THREE.PlaneGeometry(1.0001, 1.0001)
+      eastGeometry.rotateY(Math.PI / 2)
+      eastGeometry.translate(1.00005, 0.5, 0.5)
+      faces.push(new THREE.Mesh(eastGeometry, material))
+    }
+    if (structure.getMark(x - 1, y, z)?.getHex() !== hexColor) {
+      const westGeometry = new THREE.PlaneGeometry(1.0001, 1.0001)
+      westGeometry.rotateY(-Math.PI / 2)
+      westGeometry.translate(-0.00005, 0.5, 0.5)
+      faces.push(new THREE.Mesh(westGeometry, material))
+    }
+    if (structure.getMark(x, y + 1, z)?.getHex() !== hexColor) {
+      const upGeometry = new THREE.PlaneGeometry(1.0001, 1.0001)
+      upGeometry.rotateX(-Math.PI / 2)
+      upGeometry.translate(0.5, 1.00005, 0.5)
+      faces.push(new THREE.Mesh(upGeometry, material))
+    }
+    if (structure.getMark(x, y - 1, z)?.getHex() !== hexColor) {
+      const downGeometry = new THREE.PlaneGeometry(1.0001, 1.0001)
+      downGeometry.rotateX(Math.PI / 2)
+      downGeometry.translate(0.5, -0.00005, 0.5)
+      faces.push(new THREE.Mesh(downGeometry, material))
+    }
+
+    faces.forEach((face) => {
+      face.position.set(x, y, z)
+      scene.add(face)
     })
   })
 }
