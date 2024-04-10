@@ -239,12 +239,15 @@ function animate() {
   // Check if the render target is visible
   if (renderTarget.value.offsetParent === null) return
   const bounds = renderTarget.value.getBoundingClientRect()
-  const isInViewport =
-    bounds.top >= 0 &&
-    bounds.left >= 0 &&
-    bounds.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-    bounds.right <= (window.innerWidth || document.documentElement.clientWidth)
-  if (!isInViewport) return
+  if (
+    (bounds.top <= 0 && bounds.bottom <= 0) ||
+    (bounds.top >= document.documentElement.clientHeight &&
+      bounds.bottom >= document.documentElement.clientHeight) ||
+    (bounds.left <= 0 && bounds.right <= 0) ||
+    (bounds.left >= document.documentElement.clientWidth &&
+      bounds.right >= document.documentElement.clientWidth)
+  )
+    return
 
   controls.value.update()
   renderer.render(scene, camera.value)
