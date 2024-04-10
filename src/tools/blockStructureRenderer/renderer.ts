@@ -20,6 +20,9 @@ import {
   specialInvisibleBlocks,
 } from '@/tools/blockStructureRenderer/hardcodes.ts'
 import { renderFluid } from '@/tools/blockStructureRenderer/fluid.ts'
+import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
+import { LineSegments2 } from 'three/examples/jsm/lines/LineSegments2.js'
+import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js'
 
 // Block Structure ---------------------------------------------------------------------------------
 
@@ -438,10 +441,12 @@ export function bakeBlockMarkers(scene: THREE.Scene, structure: BlockStructure) 
 }
 
 export function bakeInvisibleBlocks(
+  renderer: THREE.Renderer,
   scene: THREE.Scene,
   nameMapping: NameMapping,
   structure: BlockStructure,
-) {
+): LineMaterial[] {
+  const materialList = [] as LineMaterial[]
   structure.forEachBlock((x, y, z, blockKey) => {
     const blockState = nameMapping.toBlockState(blockKey)
     const color = invisibleBlockColor[blockState.blockName]
@@ -449,10 +454,14 @@ export function bakeInvisibleBlocks(
       const offset = blockState.blockName === 'air' ? 0.1 : 0
       const box = new THREE.BoxGeometry(0.1 + offset, 0.1 + offset, 0.1 + offset)
       const edges = new THREE.EdgesGeometry(box)
-      const material = new THREE.LineBasicMaterial({ color, linewidth: 2.5 })
-      const line = new THREE.LineSegments(edges, material)
+      const material = new LineMaterial({ color, linewidth: 2.5 })
+      const line = new LineSegments2(new LineSegmentsGeometry().fromEdgesGeometry(edges), material)
       line.position.set(x + 0.5, y + 0.5, z + 0.5)
       scene.add(line)
+
+      material.resolution.set(renderer.domElement.width, renderer.domElement.height)
+      materialList.push(material)
     }
   }, false)
+  return materialList
 }

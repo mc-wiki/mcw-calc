@@ -16,6 +16,7 @@ import {
   NameMapping,
 } from '@/tools/blockStructureRenderer/renderer.ts'
 import { makeMaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
+import type { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
 
 const props = defineProps<{
   blocks: string[]
@@ -145,6 +146,8 @@ function parsePosition(value?: string) {
   }
 }
 
+const lineMaterialList = ref([] as LineMaterial[])
+
 function clearScene() {
   scene.children.forEach((child) => {
     child.traverse((obj) => {
@@ -155,6 +158,7 @@ function clearScene() {
     })
   })
   scene.clear()
+  lineMaterialList.value = []
 }
 
 function reBakeRenderLayers() {
@@ -162,7 +166,8 @@ function reBakeRenderLayers() {
   bakeFluidRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
   bakeBlockModelRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
   if (displayMarks.value) bakeBlockMarkers(scene, blockStructure)
-  if (invisibleBlocks.value) bakeInvisibleBlocks(scene, nameMapping, blockStructure)
+  if (invisibleBlocks.value)
+    lineMaterialList.value = bakeInvisibleBlocks(renderer, scene, nameMapping, blockStructure)
 }
 
 function onDisplayModeChanged() {
@@ -298,6 +303,9 @@ function updateDisplay() {
   perspectiveCamera.updateProjectionMatrix()
   orbitOrthoControls.update()
   orbitPerspectiveControls.update()
+  lineMaterialList.value.forEach((lineMaterial) => {
+    lineMaterial.resolution.set(width, height)
+  })
 }
 
 onMounted(() => {
