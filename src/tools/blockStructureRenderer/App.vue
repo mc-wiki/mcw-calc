@@ -143,8 +143,20 @@ function parsePosition(value?: string) {
   }
 }
 
-function reBakeRenderLayers() {
+function clearScene() {
+  scene.children.forEach((child) => {
+    child.traverse((obj) => {
+      if (obj instanceof THREE.Mesh) {
+        obj.material.dispose()
+        obj.geometry.dispose()
+      }
+    })
+  })
   scene.clear()
+}
+
+function reBakeRenderLayers() {
+  clearScene()
   bakeFluidRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
   bakeBlockModelRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
   if (displayMarks.value) bakeBlockMarkers(scene, blockStructure)
@@ -233,11 +245,23 @@ function saveRenderedImage() {
   })
 }
 
+const hidden = ref(false)
 function animate() {
   requestAnimationFrame(animate)
 
   // Check if the render target is visible
-  if (renderTarget.value.offsetParent === null) return
+  if (renderTarget.value.offsetParent === null) {
+    if (hidden.value)
+      return
+    hidden.value = true
+    clearScene()
+    return
+  }
+  if (hidden.value) {
+    hidden.value = false
+    reBakeRenderLayers()
+  }
+
   const bounds = renderTarget.value.getBoundingClientRect()
   if (
     (bounds.top <= 0 && bounds.bottom <= 0) ||
