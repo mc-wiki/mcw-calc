@@ -18,5 +18,6 @@ export default {
     'blockStructureRenderer.backgroundColor': 'Background color',
     'blockStructureRenderer.backgroundAlpha': 'Opacity',
     'blockStructureRenderer.renderMarks': 'Render marks',
+    'blockStructureRenderer.renderInvisibleBlocks': 'Render invisible blocks',
   },
 }

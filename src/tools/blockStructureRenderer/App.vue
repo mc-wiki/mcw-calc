@@ -11,10 +11,12 @@ import {
   bakeBlockMarkers,
   bakeBlockModelRenderLayer,
   bakeFluidRenderLayer,
+  bakeInvisibleBlocks,
   BlockStructure,
   NameMapping,
 } from '@/tools/blockStructureRenderer/renderer.ts'
 import { makeMaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
+import type { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
 
 const props = defineProps<{
   blocks: string[]
@@ -35,6 +37,7 @@ const loaded = ref(false)
 
 const orthographic = ref(false)
 const animatedTexture = ref(true)
+const invisibleBlocks = ref(false)
 const displayMarks = ref(true)
 const backgroundColor = ref('#ffffff')
 const backgroundAlpha = ref(255)
@@ -120,12 +123,8 @@ if (rendererAvailable) {
   const [maxX, maxY, maxZ] = [blockStructure.x, blockStructure.y, blockStructure.z]
   yRangeMax.value = maxY - 1
 
-  let cameraPos = [maxX / 2, maxY * 1.5, maxZ * 1.5]
-  const parsedPos = parsePosition(props.cameraPosData[0])
-  if (parsedPos) cameraPos = parsedPos
-  let cameraTarget = [maxX / 2, maxY / 2, maxZ / 2]
-  const parsedTarget = parsePosition(props.cameraPosData[1])
-  if (parsedTarget) cameraTarget = parsedTarget
+  const cameraPos = parsePosition(props.cameraPosData[0]) ?? [maxX / 2, maxY * 1.5, maxZ * 1.5]
+  const cameraTarget = parsePosition(props.cameraPosData[1]) ?? [maxX / 2, maxY / 2, maxZ / 2]
 
   orthographicCamera.position.set(cameraPos[0], cameraPos[1], cameraPos[2])
   perspectiveCamera.position.set(cameraPos[0], cameraPos[1], cameraPos[2])
@@ -147,11 +146,28 @@ function parsePosition(value?: string) {
   }
 }
 
-function reBakeRenderLayers() {
+const lineMaterialList = ref([] as LineMaterial[])
+
+function clearScene() {
+  scene.children.forEach((child) => {
+    child.traverse((obj) => {
+      if (obj instanceof THREE.Mesh) {
+        obj.material.dispose()
+        obj.geometry.dispose()
+      }
+    })
+  })
   scene.clear()
+  lineMaterialList.value = []
+}
+
+function reBakeRenderLayers() {
+  clearScene()
   bakeFluidRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
   bakeBlockModelRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
   if (displayMarks.value) bakeBlockMarkers(scene, blockStructure)
+  if (invisibleBlocks.value)
+    lineMaterialList.value = bakeInvisibleBlocks(renderer, scene, nameMapping, blockStructure)
 }
 
 function onDisplayModeChanged() {
@@ -214,12 +230,13 @@ function setCamera() {
 function resetCamera() {
   orbitOrthoControls.reset()
   orbitPerspectiveControls.reset()
-  cameraX.value = camera.value.position.x - blockStructure.x / 2
-  cameraY.value = camera.value.position.y - blockStructure.y / 2
-  cameraZ.value = camera.value.position.z - blockStructure.z / 2
-  cameraTargetX.value = blockStructure.x / 2
-  cameraTargetY.value = blockStructure.y / 2
-  cameraTargetZ.value = blockStructure.z / 2
+
+  cameraX.value = camera.value.position.x - orbitOrthoControls.target.x
+  cameraY.value = camera.value.position.y - orbitOrthoControls.target.y
+  cameraZ.value = camera.value.position.z - orbitOrthoControls.target.z
+  cameraTargetX.value = orbitOrthoControls.target.x
+  cameraTargetY.value = orbitOrthoControls.target.y
+  cameraTargetZ.value = orbitOrthoControls.target.z
 }
 
 function changeBackgroundColor() {
@@ -236,25 +253,59 @@ function saveRenderedImage() {
   })
 }
 
+const hidden = ref(false)
+
 function animate() {
   requestAnimationFrame(animate)
+
+  // Check if the render target is visible
+  if (renderTarget.value.offsetParent === null) {
+    if (hidden.value) return
+    hidden.value = true
+    clearScene()
+    return
+  }
+  if (hidden.value) {
+    hidden.value = false
+    reBakeRenderLayers()
+  }
+
+  const bounds = renderTarget.value.getBoundingClientRect()
+  if (
+    (bounds.top <= 0 && bounds.bottom <= 0) ||
+    (bounds.top >= document.documentElement.clientHeight &&
+      bounds.bottom >= document.documentElement.clientHeight) ||
+    (bounds.left <= 0 && bounds.right <= 0) ||
+    (bounds.left >= document.documentElement.clientWidth &&
+      bounds.right >= document.documentElement.clientWidth)
+  )
+    return
+
   controls.value.update()
   renderer.render(scene, camera.value)
 }
 
 function updateDisplay() {
-  const nowSize = renderTarget.value.getBoundingClientRect()
-  const aspect = nowSize.width / nowSize.height
+  const width =
+    renderTarget.value.getBoundingClientRect().right -
+    renderTarget.value.getBoundingClientRect().left
+  const height =
+    renderTarget.value.getBoundingClientRect().bottom -
+    renderTarget.value.getBoundingClientRect().top
+  const aspect = width / height
   perspectiveCamera.aspect = aspect
   orthographicCamera.left = -aspect * 2
   orthographicCamera.right = aspect * 2
   orthographicCamera.top = 2
   orthographicCamera.bottom = -2
+  renderer.setSize(width, height)
   orthographicCamera.updateProjectionMatrix()
   perspectiveCamera.updateProjectionMatrix()
-  renderer.setSize(nowSize.width, nowSize.height)
   orbitOrthoControls.update()
   orbitPerspectiveControls.update()
+  lineMaterialList.value.forEach((lineMaterial) => {
+    lineMaterial.resolution.set(width, height)
+  })
 }
 
 onMounted(() => {
@@ -273,15 +324,21 @@ onUpdated(() => {
     updateDisplay()
   }
 })
+
+const labelColorPicker = ref('color-picker-' + Math.random().toString(36).substring(7))
+const labelBackgroundAlpha = ref('background-alpha-' + Math.random().toString(36).substring(7))
+const labelDisplayMode = ref('display-mode-' + Math.random().toString(36).substring(7))
+const labelCameraSetting = ref('camera-setting-' + Math.random().toString(36).substring(7))
 </script>
 
 <template>
   <div
-    class="do-not-remount-this"
+    class="do-not-remount-this renderer-component"
     ref="renderTarget"
     :style="{
       height: '50vh',
       width: 'max(60%, 50vh)',
+      marginTop: '0.5em',
       marginBottom: '0.5em',
     }"
   />
@@ -290,6 +347,13 @@ onUpdated(() => {
   </cdx-checkbox>
   <cdx-checkbox v-if="loaded" v-model="animatedTexture">
     {{ t('blockStructureRenderer.animatedTexture') }}
+  </cdx-checkbox>
+  <cdx-checkbox
+    v-if="loaded && blockStructure.hasInvisibleBlocks(nameMapping)"
+    v-model="invisibleBlocks"
+    @change="reBakeRenderLayers"
+  >
+    {{ t('blockStructureRenderer.renderInvisibleBlocks') }}
   </cdx-checkbox>
   <cdx-checkbox
     v-if="loaded && blockStructure.hasMarks()"
@@ -309,16 +373,16 @@ onUpdated(() => {
       marginBottom: '0.5em',
     }"
   >
-    <label for="color-picker">{{ t('blockStructureRenderer.backgroundColor') }}</label>
+    <label :for="labelColorPicker">{{ t('blockStructureRenderer.backgroundColor') }}</label>
     <input
       type="color"
       v-model="backgroundColor"
-      id="color-picker"
+      :id="labelColorPicker"
       @change="changeBackgroundColor"
     />
-    <label for="alpha">{{ t('blockStructureRenderer.backgroundAlpha') }}</label>
+    <label :for="labelBackgroundAlpha">{{ t('blockStructureRenderer.backgroundAlpha') }}</label>
     <cdx-text-input
-      id="alpha"
+      :id="labelBackgroundAlpha"
       v-model="backgroundAlpha"
       inputType="number"
       :min="0"
@@ -338,11 +402,11 @@ onUpdated(() => {
     }"
   >
     <div>
-      <label for="displayMode" :style="{ marginRight: '.5rem' }">
+      <label :for="labelDisplayMode" :style="{ marginRight: '.5rem' }">
         {{ t('blockStructureRenderer.displayMode') }}
       </label>
       <cdx-select
-        id="displayMode"
+        :id="labelDisplayMode"
         v-model:selected="displayMode"
         :menu-items="displayModes"
         :style="{
@@ -410,11 +474,11 @@ onUpdated(() => {
         gap: '.5rem',
       }"
     >
-      <label for="displayMode">
+      <label :for="labelCameraSetting">
         {{ t('blockStructureRenderer.cameraSetting') }}
       </label>
       <cdx-select
-        id="displayMode"
+        :id="labelCameraSetting"
         v-model:selected="cameraSettingMode"
         :menu-items="cameraSettingModes"
         :style="{
