@@ -120,12 +120,8 @@ if (rendererAvailable) {
   const [maxX, maxY, maxZ] = [blockStructure.x, blockStructure.y, blockStructure.z]
   yRangeMax.value = maxY - 1
 
-  let cameraPos = [maxX / 2, maxY * 1.5, maxZ * 1.5]
-  const parsedPos = parsePosition(props.cameraPosData[0])
-  if (parsedPos) cameraPos = parsedPos
-  let cameraTarget = [maxX / 2, maxY / 2, maxZ / 2]
-  const parsedTarget = parsePosition(props.cameraPosData[1])
-  if (parsedTarget) cameraTarget = parsedTarget
+  const cameraPos = parsePosition(props.cameraPosData[0]) ?? [maxX / 2, maxY * 1.5, maxZ * 1.5]
+  const cameraTarget = parsePosition(props.cameraPosData[1]) ?? [maxX / 2, maxY / 2, maxZ / 2]
 
   orthographicCamera.position.set(cameraPos[0], cameraPos[1], cameraPos[2])
   perspectiveCamera.position.set(cameraPos[0], cameraPos[1], cameraPos[2])
@@ -214,12 +210,13 @@ function setCamera() {
 function resetCamera() {
   orbitOrthoControls.reset()
   orbitPerspectiveControls.reset()
-  cameraX.value = camera.value.position.x - blockStructure.x / 2
-  cameraY.value = camera.value.position.y - blockStructure.y / 2
-  cameraZ.value = camera.value.position.z - blockStructure.z / 2
-  cameraTargetX.value = blockStructure.x / 2
-  cameraTargetY.value = blockStructure.y / 2
-  cameraTargetZ.value = blockStructure.z / 2
+
+  cameraX.value = camera.value.position.x - orbitOrthoControls.target.x
+  cameraY.value = camera.value.position.y - orbitOrthoControls.target.y
+  cameraZ.value = camera.value.position.z - orbitOrthoControls.target.z
+  cameraTargetX.value = orbitOrthoControls.target.x
+  cameraTargetY.value = orbitOrthoControls.target.y
+  cameraTargetZ.value = orbitOrthoControls.target.z
 }
 
 function changeBackgroundColor() {
