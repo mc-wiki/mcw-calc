@@ -295,11 +295,12 @@ const labelCameraSetting = ref('camera-setting-' + Math.random().toString(36).su
 
 <template>
   <div
-    class="do-not-remount-this"
+    class="do-not-remount-this renderer-component"
     ref="renderTarget"
     :style="{
       height: '50vh',
       width: 'max(60%, 50vh)',
+      marginTop: '0.5em',
       marginBottom: '0.5em',
     }"
   />
