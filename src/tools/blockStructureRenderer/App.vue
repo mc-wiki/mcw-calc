@@ -11,6 +11,7 @@ import {
   bakeBlockMarkers,
   bakeBlockModelRenderLayer,
   bakeFluidRenderLayer,
+  bakeInvisibleBlocks,
   BlockStructure,
   NameMapping,
 } from '@/tools/blockStructureRenderer/renderer.ts'
@@ -35,6 +36,7 @@ const loaded = ref(false)
 
 const orthographic = ref(false)
 const animatedTexture = ref(true)
+const invisibleBlocks = ref(false)
 const displayMarks = ref(true)
 const backgroundColor = ref('#ffffff')
 const backgroundAlpha = ref(255)
@@ -160,6 +162,7 @@ function reBakeRenderLayers() {
   bakeFluidRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
   bakeBlockModelRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
   if (displayMarks.value) bakeBlockMarkers(scene, blockStructure)
+  if (invisibleBlocks.value) bakeInvisibleBlocks(scene, nameMapping, blockStructure)
 }
 
 function onDisplayModeChanged() {
@@ -246,13 +249,13 @@ function saveRenderedImage() {
 }
 
 const hidden = ref(false)
+
 function animate() {
   requestAnimationFrame(animate)
 
   // Check if the render target is visible
   if (renderTarget.value.offsetParent === null) {
-    if (hidden.value)
-      return
+    if (hidden.value) return
     hidden.value = true
     clearScene()
     return
@@ -336,6 +339,13 @@ const labelCameraSetting = ref('camera-setting-' + Math.random().toString(36).su
   </cdx-checkbox>
   <cdx-checkbox v-if="loaded" v-model="animatedTexture">
     {{ t('blockStructureRenderer.animatedTexture') }}
+  </cdx-checkbox>
+  <cdx-checkbox
+    v-if="loaded && blockStructure.hasInvisibleBlocks(nameMapping)"
+    v-model="invisibleBlocks"
+    @change="reBakeRenderLayers"
+  >
+    {{ t('blockStructureRenderer.renderInvisibleBlocks') }}
   </cdx-checkbox>
   <cdx-checkbox
     v-if="loaded && blockStructure.hasMarks()"

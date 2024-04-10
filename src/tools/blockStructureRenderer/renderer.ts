@@ -16,6 +16,8 @@ import {
   hardcodedBlockTint,
   hardCodedRenderers,
   hardCodedSkipRendering,
+  invisibleBlockColor,
+  specialInvisibleBlocks,
 } from '@/tools/blockStructureRenderer/hardcodes.ts'
 import { renderFluid } from '@/tools/blockStructureRenderer/fluid.ts'
 
@@ -186,7 +188,10 @@ export class BlockStructure {
       })
   }
 
-  forEachBlock(callback: (x: number, y: number, z: number, blockKey: string) => void) {
+  forEachBlock(
+    callback: (x: number, y: number, z: number, blockKey: string) => void,
+    ignoreAir: boolean,
+  ) {
     let minY = 0
     let maxY = this.y
     if (this.yRange) {
@@ -196,7 +201,7 @@ export class BlockStructure {
     for (let y = minY; y < maxY; y++) {
       for (let z = 0; z < this.z; z++) {
         for (let x = 0; x < this.x; x++) {
-          if (this.structures[y][z][x] === '-') continue
+          if (this.structures[y][z][x] === '-' && ignoreAir) continue
           callback(x, y, z, this.structures[y][z][x])
         }
       }
@@ -218,6 +223,16 @@ export class BlockStructure {
 
   hasMarks() {
     return this.marks.length > 0
+  }
+
+  hasInvisibleBlocks(nameMapping: NameMapping) {
+    return this.structures.some((y) =>
+      y.some((z) =>
+        z.some((block) =>
+          specialInvisibleBlocks.includes(nameMapping.toBlockState(block).blockName),
+        ),
+      ),
+    )
   }
 
   getMark(x: number, y: number, z: number): THREE.Color | undefined {
@@ -272,7 +287,7 @@ export function bakeFluidRenderLayer(
       console.error(`Error in rendering fluid ${thisFluid} at [${x},${y},${z}]`)
       console.error(e)
     }
-  })
+  }, true)
 }
 
 export function bakeBlockModelRenderLayer(
@@ -362,7 +377,7 @@ export function bakeBlockModelRenderLayer(
         console.error(e)
       }
     })
-  })
+  }, true)
 }
 
 export function bakeBlockMarkers(scene: THREE.Scene, structure: BlockStructure) {
@@ -420,4 +435,24 @@ export function bakeBlockMarkers(scene: THREE.Scene, structure: BlockStructure) 
       scene.add(face)
     })
   })
+}
+
+export function bakeInvisibleBlocks(
+  scene: THREE.Scene,
+  nameMapping: NameMapping,
+  structure: BlockStructure,
+) {
+  structure.forEachBlock((x, y, z, blockKey) => {
+    const blockState = nameMapping.toBlockState(blockKey)
+    const color = invisibleBlockColor[blockState.blockName]
+    if (color) {
+      const offset = blockState.blockName === 'air' ? 0.1 : 0
+      const box = new THREE.BoxGeometry(0.1 + offset, 0.1 + offset, 0.1 + offset)
+      const edges = new THREE.EdgesGeometry(box)
+      const material = new THREE.LineBasicMaterial({ color, linewidth: 2.5 })
+      const line = new THREE.LineSegments(edges, material)
+      line.position.set(x + 0.5, y + 0.5, z + 0.5)
+      scene.add(line)
+    }
+  }, false)
 }

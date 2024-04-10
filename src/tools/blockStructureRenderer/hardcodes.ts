@@ -46,6 +46,15 @@ export const halfTransparentBlocks = [
 // Subclasses of net.minecraft.world.level.block.LeavesBlock
 export const leavesBlocks = /.*_leaves$/
 
+export const specialInvisibleBlocks = ['structure_void', 'barrier', 'light']
+
+export const invisibleBlockColor = {
+  air: new THREE.Color(0.5, 0.5, 1),
+  structure_void: new THREE.Color(1, 0.75, 0.75),
+  barrier: new THREE.Color(1, 0, 0),
+  light: new THREE.Color(1, 1, 0),
+} as Record<string, THREE.Color>
+
 // net.minecraft.world.level.block.state.BlockBehaviour
 // protected boolean skipRendering(BlockState blockState, BlockState blockState2, Direction direction)
 //  default: return false
@@ -204,6 +213,18 @@ export const hardCodedRenderers = [
   },
   {
     block: /.*_air$/,
+    renderFunc: NOP,
+  },
+  {
+    block: 'structure_void',
+    renderFunc: NOP,
+  },
+  {
+    block: 'barrier',
+    renderFunc: NOP,
+  },
+  {
+    block: 'light',
     renderFunc: NOP,
   },
   {
