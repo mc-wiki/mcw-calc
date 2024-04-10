@@ -238,21 +238,37 @@ function saveRenderedImage() {
 
 function animate() {
   requestAnimationFrame(animate)
+
+  // Check if the render target is visible
+  if (renderTarget.value.offsetParent === null) return
+  const bounds = renderTarget.value.getBoundingClientRect()
+  const isInViewport =
+    bounds.top >= 0 &&
+    bounds.left >= 0 &&
+    bounds.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+    bounds.right <= (window.innerWidth || document.documentElement.clientWidth)
+  if (!isInViewport) return
+
   controls.value.update()
   renderer.render(scene, camera.value)
 }
 
 function updateDisplay() {
-  const nowSize = renderTarget.value.getBoundingClientRect()
-  const aspect = nowSize.width / nowSize.height
+  const width =
+    renderTarget.value.getBoundingClientRect().right -
+    renderTarget.value.getBoundingClientRect().left
+  const height =
+    renderTarget.value.getBoundingClientRect().bottom -
+    renderTarget.value.getBoundingClientRect().top
+  const aspect = width / height
   perspectiveCamera.aspect = aspect
   orthographicCamera.left = -aspect * 2
   orthographicCamera.right = aspect * 2
   orthographicCamera.top = 2
   orthographicCamera.bottom = -2
+  renderer.setSize(width, height)
   orthographicCamera.updateProjectionMatrix()
   perspectiveCamera.updateProjectionMatrix()
-  renderer.setSize(nowSize.width, nowSize.height)
   orbitOrthoControls.update()
   orbitPerspectiveControls.update()
 }
@@ -273,6 +289,11 @@ onUpdated(() => {
     updateDisplay()
   }
 })
+
+const labelColorPicker = ref('color-picker-' + Math.random().toString(36).substring(7))
+const labelBackgroundAlpha = ref('background-alpha-' + Math.random().toString(36).substring(7))
+const labelDisplayMode = ref('display-mode-' + Math.random().toString(36).substring(7))
+const labelCameraSetting = ref('camera-setting-' + Math.random().toString(36).substring(7))
 </script>
 
 <template>
@@ -309,16 +330,16 @@ onUpdated(() => {
       marginBottom: '0.5em',
     }"
   >
-    <label for="color-picker">{{ t('blockStructureRenderer.backgroundColor') }}</label>
+    <label :for="labelColorPicker">{{ t('blockStructureRenderer.backgroundColor') }}</label>
     <input
       type="color"
       v-model="backgroundColor"
-      id="color-picker"
+      :id="labelColorPicker"
       @change="changeBackgroundColor"
     />
-    <label for="alpha">{{ t('blockStructureRenderer.backgroundAlpha') }}</label>
+    <label :for="labelBackgroundAlpha">{{ t('blockStructureRenderer.backgroundAlpha') }}</label>
     <cdx-text-input
-      id="alpha"
+      :id="labelBackgroundAlpha"
       v-model="backgroundAlpha"
       inputType="number"
       :min="0"
@@ -338,11 +359,11 @@ onUpdated(() => {
     }"
   >
     <div>
-      <label for="displayMode" :style="{ marginRight: '.5rem' }">
+      <label :for="labelDisplayMode" :style="{ marginRight: '.5rem' }">
         {{ t('blockStructureRenderer.displayMode') }}
       </label>
       <cdx-select
-        id="displayMode"
+        :id="labelDisplayMode"
         v-model:selected="displayMode"
         :menu-items="displayModes"
         :style="{
@@ -410,11 +431,11 @@ onUpdated(() => {
         gap: '.5rem',
       }"
     >
-      <label for="displayMode">
+      <label :for="labelCameraSetting">
         {{ t('blockStructureRenderer.cameraSetting') }}
       </label>
       <cdx-select
-        id="displayMode"
+        :id="labelCameraSetting"
         v-model:selected="cameraSettingMode"
         :menu-items="cameraSettingModes"
         :style="{

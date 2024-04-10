@@ -168,19 +168,22 @@ export class BlockStructure {
       }
     }
 
-    marks.forEach((mark) => {
-      mark = mark.trim()
-      const splitPointMark = mark.indexOf('#')
-      const markColor = mark.substring(splitPointMark + 1)
-      const markData = mark.substring(0, splitPointMark).split(',')
-      const x = parseInt(markData[0])
-      const y = parseInt(markData[1])
-      const z = parseInt(markData[2])
-      const colorInt = parseInt(markColor, 16)
-      if (isNaN(x) || isNaN(y) || isNaN(z) || isNaN(colorInt))
-        console.warn(`Invalid mark data: ${markData}`)
-      else this.marks.push([x, y, z, new THREE.Color(colorInt)])
-    })
+    marks
+      .map((mark) => mark.trim())
+      .filter((s) => s !== '')
+      .forEach((mark) => {
+        mark = mark.trim()
+        const splitPointMark = mark.indexOf('#')
+        const markColor = mark.substring(splitPointMark + 1)
+        const markData = mark.substring(0, splitPointMark).split(',')
+        const x = parseInt(markData[0])
+        const y = parseInt(markData[1])
+        const z = parseInt(markData[2])
+        const colorInt = parseInt(markColor, 16)
+        if (isNaN(x) || isNaN(y) || isNaN(z) || isNaN(colorInt))
+          console.warn(`Invalid mark data: ${markData}`)
+        else this.marks.push([x, y, z, new THREE.Color(colorInt)])
+      })
   }
 
   forEachBlock(callback: (x: number, y: number, z: number, blockKey: string) => void) {
