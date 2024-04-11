@@ -106,6 +106,8 @@ const controls = computed(() =>
   orthographic.value ? orbitOrthoControls : orbitPerspectiveControls,
 )
 
+const lineMaterialList = ref([] as LineMaterial[])
+
 const blockStructure = new BlockStructure(props.structure, props.marks)
 const nameMapping = new NameMapping(props.blocks)
 const modelManager = new BlockStateModelManager(
@@ -123,7 +125,9 @@ const materialPicker = makeMaterialPicker(
     loaded.value = true
     bakeFluidRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
     bakeBlockModelRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
-    bakeBlockMarkers(scene, blockStructure)
+    if (displayMarks.value) bakeBlockMarkers(scene, blockStructure)
+    if (invisibleBlocks.value)
+      lineMaterialList.value = bakeInvisibleBlocks(renderer, scene, nameMapping, blockStructure)
   },
   () => animatedTexture.value,
 )
@@ -154,8 +158,6 @@ function parsePosition(value?: string) {
     if (!isNaN(x) && !isNaN(y) && !isNaN(z)) return [x, y, z]
   }
 }
-
-const lineMaterialList = ref([] as LineMaterial[])
 
 function clearScene() {
   scene.children.forEach((child) => {

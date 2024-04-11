@@ -76,7 +76,7 @@ function makeBlockStructureRenderer() {
       animatedTextureDefault: params.get('animated-texture')?.toLocaleLowerCase() === 'true',
       showInvisibleBlocksDefault: params.get('show-invisible-blocks')?.toLocaleLowerCase() === 'true',
       displayMarksDefault: params.get('display-marks')?.toLocaleLowerCase() === 'true',
-      backgroundColorDefault: params.get('background-color'),
+      backgroundColorDefault: params.get('background-color') ?? '#ffffff',
       backgroundAlphaDefault: parseInt(params.get('background-alpha') ?? '255'),
     }).mount(targetEl)
   })

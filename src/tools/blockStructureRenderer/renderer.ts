@@ -471,7 +471,8 @@ export function bakeInvisibleBlocks(
       line.position.set(x + 0.5, y + 0.5, z + 0.5)
       scene.add(line)
 
-      material.resolution.set(renderer.domElement.width, renderer.domElement.height)
+      const rect = renderer.domElement.getBoundingClientRect()
+      material.resolution.set(rect.right - rect.left, rect.bottom - rect.top)
       materialList.push(material)
     }
   }, false)
