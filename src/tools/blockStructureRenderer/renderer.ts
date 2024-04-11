@@ -124,6 +124,8 @@ export class BlockState {
   }
 }
 
+const AIR_KEY = '+'
+const STRUCTURE_VOID_KEY = '-'
 const AIR_STATE = new BlockState('air')
 const STRUCTURE_VOID = new BlockState('structure_void')
 
@@ -157,7 +159,7 @@ export class BlockStructure {
     this.z = maxZ
     this.structures = new Array(maxY)
       .fill(0)
-      .map(() => new Array(maxZ).fill(0).map(() => new Array(maxX).fill('-')))
+      .map(() => new Array(maxZ).fill(0).map(() => new Array(maxX).fill(AIR_KEY)))
     this.bakedModelReference = new Array(maxY)
       .fill(0)
       .map(() =>
@@ -194,7 +196,7 @@ export class BlockStructure {
 
   forEachBlock(
     callback: (x: number, y: number, z: number, blockKey: string) => void,
-    ignoreAir: boolean,
+    ignoreInvisible: boolean,
   ) {
     let minY = 0
     let maxY = this.y
@@ -206,7 +208,8 @@ export class BlockStructure {
       for (let z = 0; z < this.z; z++) {
         for (let x = 0; x < this.x; x++) {
           const blockKeyHere = this.structures[y][z][x]
-          if ((blockKeyHere === '-' || blockKeyHere === '+') && ignoreAir) continue
+          if ((blockKeyHere === STRUCTURE_VOID_KEY || blockKeyHere === AIR_KEY) && ignoreInvisible)
+            continue
           callback(x, y, z, blockKeyHere)
         }
       }
@@ -247,8 +250,8 @@ export class BlockStructure {
   }
 
   getBlock(x: number, y: number, z: number): string {
-    if (x < 0 || y < 0 || z < 0 || x >= this.x || y >= this.y || z >= this.z) return '+'
-    if (this.yRange && (y < this.yRange[0] || y > this.yRange[1] - 1)) return '+'
+    if (x < 0 || y < 0 || z < 0 || x >= this.x || y >= this.y || z >= this.z) return AIR_KEY
+    if (this.yRange && (y < this.yRange[0] || y > this.yRange[1] - 1)) return AIR_KEY
     return this.structures[y][z][x]
   }
 }
@@ -264,13 +267,19 @@ export class NameMapping {
       const blockData = blockPair.substring(splitPoint + 1)
       this.nameStateMapping[blockName] = new BlockState(blockData)
     })
+    if (this.nameStateMapping[AIR_KEY])
+      console.warn('Block key "+" is reserved for air, please do not use it in the block mapping')
+    if (this.nameStateMapping[STRUCTURE_VOID_KEY])
+      console.warn(
+        'Block key "-" is reserved for structure void, please do not use it in the block mapping',
+      )
   }
 
   toBlockState(blockKey: string): BlockState {
-    if (blockKey === '+') return AIR_STATE
-    if (blockKey === '-') return STRUCTURE_VOID
-    if (this.nameStateMapping[blockKey] === undefined)
-      console.warn(`No name mapping for block key '${blockKey}'`)
+    if (blockKey === AIR_KEY) return AIR_STATE
+    if (blockKey === STRUCTURE_VOID_KEY) return STRUCTURE_VOID
+    if (!this.nameStateMapping[blockKey])
+      console.warn(`No name mapping for block key '${blockKey}, using default air (+)`)
     return this.nameStateMapping[blockKey] ?? AIR_STATE
   }
 }
@@ -325,7 +334,7 @@ export function bakeBlockModelRenderLayer(
         )
       } catch (e) {
         console.error(
-          `Error in hard-coded renderer for block ${thisBlock}(${blockKey}) at [${x},${y},${z}]`,
+          `Error in hard-coded renderer for block ${thisBlock} (${blockKey}) at [${x},${y},${z}]`,
         )
         console.error(e)
       }
@@ -333,7 +342,7 @@ export function bakeBlockModelRenderLayer(
     }
 
     if (!modelManager.modelsMapping[blockKey]) {
-      console.warn(`No model mapping for block ${thisBlock}(${blockKey}) at [${x},${y},${z}]`)
+      console.warn(`No model mapping for block ${thisBlock} (${blockKey}) at [${x},${y},${z}]`)
       return
     }
 
@@ -352,7 +361,7 @@ export function bakeBlockModelRenderLayer(
         renderModelNoCullFaces(baked, thisBlock, materialPicker, scene, translate)
       } catch (e) {
         console.error(
-          `Error in rendering noncull faces for block ${thisBlock}(${blockKey}) at [${x},${y},${z}]`,
+          `Error in rendering noncull faces for block ${thisBlock} (${blockKey}) at [${x},${y},${z}]`,
         )
         console.error(e)
       }
@@ -378,7 +387,7 @@ export function bakeBlockModelRenderLayer(
         })
       } catch (e) {
         console.error(
-          `Error in rendering cull faces for block ${thisBlock}(${blockKey}) at [${x},${y},${z}]`,
+          `Error in rendering cull faces for block ${thisBlock} (${blockKey}) at [${x},${y},${z}]`,
         )
         console.error(e)
       }
