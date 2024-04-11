@@ -108,28 +108,22 @@ function conditionMatch(
 }
 
 function chooseModel(
-  blockState: string,
+  blockState: BlockState,
   blockStatesMapping: Record<string, BlockStateModelCollection>,
 ): ModelReferenceProvider[] {
-  const blockName = blockState.split('[')[0]
+  const blockName = blockState.blockName
   const blockStateData = blockStatesMapping[blockName] ?? {}
   if (!blockStateData.variants && !blockStateData.multipart)
     console.warn(`Block ${blockName} has no variants or multipart data`)
-  if (blockState.includes('[')) {
-    const blockProperties = blockState.split('[')[1].split(']')[0].split(',')
-    const blockPropertiesMap: Record<string, string> = {}
-    for (const property of blockProperties) {
-      const [key, value] = property.split('=')
-      blockPropertiesMap[key] = value
-    }
-
+  if (blockState.blockProperties) {
+    const blockProperties = blockState.blockProperties
     if (blockStateData.variants) {
       for (const [key, value] of Object.entries(blockStateData.variants)) {
         const stateCondition = key.split(',')
         let match = true
         for (const condition of stateCondition) {
           const [key, value] = condition.split('=')
-          if (blockPropertiesMap[key] !== value) {
+          if (blockProperties[key] !== value) {
             match = false
             break
           }
@@ -140,7 +134,7 @@ function chooseModel(
       }
     } else if (blockStateData.multipart) {
       const matchingPart = blockStateData.multipart.filter((part) =>
-        conditionMatch(part.when ?? {}, blockPropertiesMap),
+        conditionMatch(part.when ?? {}, blockProperties),
       )
       if (matchingPart.length > 0) {
         return matchingPart.map((part) => parseModelReferenceProvider(part.apply))
@@ -148,6 +142,8 @@ function chooseModel(
     }
   } else {
     if (blockStateData.variants && blockStateData.variants['']) {
+      if (!blockStateData.variants[''])
+        console.warn(`Block ${blockName} has no default variant! Please check the block state!`)
       return [parseModelReferenceProvider(blockStateData.variants[''])]
     } else if (blockStateData.multipart) {
       return blockStateData.multipart.map((part) => parseModelReferenceProvider(part.apply))
@@ -435,7 +431,8 @@ export class BlockStateModelManager {
 
     const blockStatesMapping = {} as Record<string, BlockStateModelCollection>
     blockStates
-      .filter((s) => s.trim() !== '')
+      .map((s) => s.trim())
+      .filter((s) => s !== '')
       .forEach((blockStatePair) => {
         const splitPoint = blockStatePair.indexOf('=')
         const blockStateName = blockStatePair.substring(0, splitPoint)
@@ -444,7 +441,8 @@ export class BlockStateModelManager {
       })
 
     specialBlocksData
-      .filter((s) => s.trim() !== '')
+      .map((s) => s.trim())
+      .filter((s) => s !== '')
       .forEach((specialBlockDataPair) => {
         const splitPoint = specialBlockDataPair.indexOf('=')
         const specialBlockName = specialBlockDataPair.substring(0, splitPoint)
@@ -456,18 +454,20 @@ export class BlockStateModelManager {
     Object.entries(nameMapping.nameStateMapping)
       .filter((blockData) => blockStatesMapping[blockData[1].blockName])
       .forEach(([blockName, blockState]) => {
-        this.modelsMapping[blockName] = chooseModel(blockState.sourceDefinition, blockStatesMapping)
+        this.modelsMapping[blockName] = chooseModel(blockState, blockStatesMapping)
       })
 
     models
-      .filter((s) => s.trim() !== '')
+      .map((s) => s.trim())
+      .filter((s) => s !== '')
       .forEach((modelPair) => {
         const [modelId, modelData] = modelPair.split('=', 2)
         this.blockModelMapping[parseInt(modelId, 10)] = JSON.parse(modelData) as BlockModel
       })
 
     occlusionShapes
-      .filter((s) => s.trim() !== '')
+      .map((s) => s.trim())
+      .filter((s) => s !== '')
       .forEach((occlusionShapePair) => {
         const splitPoint = occlusionShapePair.indexOf('=')
         const occlusionShapeName = occlusionShapePair.substring(0, splitPoint)
@@ -476,7 +476,8 @@ export class BlockStateModelManager {
       })
 
     liquidComputation
-      .filter((s) => s.trim() !== '')
+      .map((s) => s.trim())
+      .filter((s) => s !== '')
       .forEach((liquidComputationPair) => {
         const splitPoint = liquidComputationPair.indexOf('=')
         const liquidComputationName = liquidComputationPair.substring(0, splitPoint)

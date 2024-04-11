@@ -17,6 +17,7 @@ function makeBlockStructureRenderer() {
     const params = getParams(
       targetEl,
       [
+        // Required parameters
         'blocks',
         'structure',
         'block-states',
@@ -26,21 +27,35 @@ function makeBlockStructureRenderer() {
         'occlusion-shapes',
         'special-blocks-data',
         'liquid-computation-data',
-        'camera-pos-data',
+        // Additional render object
         'marks',
+        // Default options
+        'camera-pos-data',
+        'orthographic',
+        'animated-texture',
+        'show-invisible-blocks',
+        'display-marks',
+        'background-color',
+        'background-alpha',
       ],
       {
-        blocks: 'A=air',
-        structure: '-',
-        'block-states': 'air={}',
+        blocks: '',
+        structure: '+',
+        'block-states': '',
         models: '',
         'texture-atlas': '',
         'render-types': '',
         'occlusion-shapes': '',
         'special-blocks-data': '',
         'liquid-computation-data': '',
-        'camera-pos-data': '',
         marks: '',
+        'camera-pos-data': '',
+        orthographic: 'false',
+        'animated-texture': 'true',
+        'show-invisible-blocks': 'false',
+        'display-marks': 'true',
+        'background-color': '#ffffff',
+        'background-alpha': '255',
       },
     )
 
@@ -54,8 +69,15 @@ function makeBlockStructureRenderer() {
       occlusionShapes: params.get('occlusion-shapes')?.split(';'),
       specialBlocksData: params.get('special-blocks-data')?.split(';'),
       liquidComputationData: params.get('liquid-computation-data')?.split(';'),
-      cameraPosData: params.get('camera-pos-data')?.split(';'),
       marks: params.get('marks')?.split(';'),
+      // -------------------------------------------------------------------------------------------
+      cameraPosData: params.get('camera-pos-data')?.split(';'),
+      orthographicDefault: params.get('orthographic')?.toLocaleLowerCase() === 'true',
+      animatedTextureDefault: params.get('animated-texture')?.toLocaleLowerCase() === 'true',
+      showInvisibleBlocksDefault: params.get('show-invisible-blocks')?.toLocaleLowerCase() === 'true',
+      displayMarksDefault: params.get('display-marks')?.toLocaleLowerCase() === 'true',
+      backgroundColorDefault: params.get('background-color') ?? '#ffffff',
+      backgroundAlphaDefault: parseInt(params.get('background-alpha') ?? '255'),
     }).mount(targetEl)
   })
 }

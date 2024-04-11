@@ -28,19 +28,28 @@ const props = defineProps<{
   occlusionShapes: string[]
   specialBlocksData: string[]
   liquidComputationData: string[]
-  cameraPosData: string[]
   marks: string[]
+
+  cameraPosData: string[]
+  orthographicDefault: boolean
+  animatedTextureDefault: boolean
+  showInvisibleBlocksDefault: boolean
+  displayMarksDefault: boolean
+  backgroundColorDefault: string
+  backgroundAlphaDefault: number
 }>()
 const { t } = useI18n(__TOOL_NAME__, locales)
 const renderTarget = ref()
 const loaded = ref(false)
 
-const orthographic = ref(false)
-const animatedTexture = ref(true)
-const invisibleBlocks = ref(false)
-const displayMarks = ref(true)
-const backgroundColor = ref('#ffffff')
-const backgroundAlpha = ref(255)
+const orthographic = ref(props.orthographicDefault)
+const animatedTexture = ref(props.animatedTextureDefault)
+const invisibleBlocks = ref(props.showInvisibleBlocksDefault)
+const displayMarks = ref(props.displayMarksDefault)
+const backgroundColor = ref(props.backgroundColorDefault)
+const backgroundAlpha = ref(
+  isNaN(props.backgroundAlphaDefault) ? 255 : props.backgroundAlphaDefault,
+)
 
 const displayModeStr = [
   t('blockStructureRenderer.displayModes.all'),
@@ -97,6 +106,8 @@ const controls = computed(() =>
   orthographic.value ? orbitOrthoControls : orbitPerspectiveControls,
 )
 
+const lineMaterialList = ref([] as LineMaterial[])
+
 const blockStructure = new BlockStructure(props.structure, props.marks)
 const nameMapping = new NameMapping(props.blocks)
 const modelManager = new BlockStateModelManager(
@@ -114,7 +125,9 @@ const materialPicker = makeMaterialPicker(
     loaded.value = true
     bakeFluidRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
     bakeBlockModelRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
-    bakeBlockMarkers(scene, blockStructure)
+    if (displayMarks.value) bakeBlockMarkers(scene, blockStructure)
+    if (invisibleBlocks.value)
+      lineMaterialList.value = bakeInvisibleBlocks(renderer, scene, nameMapping, blockStructure)
   },
   () => animatedTexture.value,
 )
@@ -145,8 +158,6 @@ function parsePosition(value?: string) {
     if (!isNaN(x) && !isNaN(y) && !isNaN(z)) return [x, y, z]
   }
 }
-
-const lineMaterialList = ref([] as LineMaterial[])
 
 function clearScene() {
   scene.children.forEach((child) => {
@@ -349,7 +360,9 @@ const labelCameraSetting = ref('camera-setting-' + Math.random().toString(36).su
     {{ t('blockStructureRenderer.animatedTexture') }}
   </cdx-checkbox>
   <cdx-checkbox
-    v-if="loaded && blockStructure.hasInvisibleBlocks(nameMapping)"
+    v-if="
+      loaded && (blockStructure.hasInvisibleBlocks(nameMapping) || props.showInvisibleBlocksDefault)
+    "
     v-model="invisibleBlocks"
     @change="reBakeRenderLayers"
   >
