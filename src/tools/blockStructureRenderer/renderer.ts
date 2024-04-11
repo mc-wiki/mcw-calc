@@ -125,6 +125,7 @@ export class BlockState {
 }
 
 const AIR_STATE = new BlockState('air')
+const STRUCTURE_VOID = new BlockState('structure_void')
 
 export class BlockStructure {
   readonly structures: string[][][] // yzx
@@ -204,8 +205,9 @@ export class BlockStructure {
     for (let y = minY; y < maxY; y++) {
       for (let z = 0; z < this.z; z++) {
         for (let x = 0; x < this.x; x++) {
-          if (this.structures[y][z][x] === '-' && ignoreAir) continue
-          callback(x, y, z, this.structures[y][z][x])
+          const blockKeyHere = this.structures[y][z][x]
+          if ((blockKeyHere === '-' || blockKeyHere === '+') && ignoreAir) continue
+          callback(x, y, z, blockKeyHere)
         }
       }
     }
@@ -245,8 +247,8 @@ export class BlockStructure {
   }
 
   getBlock(x: number, y: number, z: number): string {
-    if (x < 0 || y < 0 || z < 0 || x >= this.x || y >= this.y || z >= this.z) return '-'
-    if (this.yRange && (y < this.yRange[0] || y > this.yRange[1] - 1)) return '-'
+    if (x < 0 || y < 0 || z < 0 || x >= this.x || y >= this.y || z >= this.z) return '+'
+    if (this.yRange && (y < this.yRange[0] || y > this.yRange[1] - 1)) return '+'
     return this.structures[y][z][x]
   }
 }
@@ -265,7 +267,8 @@ export class NameMapping {
   }
 
   toBlockState(blockKey: string): BlockState {
-    if (blockKey === '-') return AIR_STATE
+    if (blockKey === '+') return AIR_STATE
+    if (blockKey === '-') return STRUCTURE_VOID
     if (this.nameStateMapping[blockKey] === undefined)
       console.warn(`No name mapping for block key '${blockKey}'`)
     return this.nameStateMapping[blockKey] ?? AIR_STATE
