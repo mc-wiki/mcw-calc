@@ -1,6 +1,6 @@
 /**
  * @public
- * @dependencies mediawiki.jqueryMsg, codex-search-styles
+ * @dependencies mediawiki.jqueryMsg, codex-styles
  */
 
 import L from 'leaflet'
