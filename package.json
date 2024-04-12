@@ -34,7 +34,7 @@
     "@tiptap/vue-3": "^2.2.4",
     "@types/webpack-env": "^1.18.4",
     "@vueuse/core": "^10.9.0",
-    "@wikimedia/codex": "0.1.1",
+    "@wikimedia/codex": "1.0.0",
     "d3": "^7.9.0",
     "three": "^0.162.0",
     "vue": "3.2.37"
@@ -80,10 +80,5 @@
     "webpack-bundle-analyzer": "^4.10.1",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.0.4"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "@wikimedia/codex@0.1.1": "patches/@wikimedia__codex@0.1.1.patch"
-    }
   }
 }

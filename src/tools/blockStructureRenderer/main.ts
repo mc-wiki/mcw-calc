@@ -74,7 +74,8 @@ function makeBlockStructureRenderer() {
       cameraPosData: params.get('camera-pos-data')?.split(';'),
       orthographicDefault: params.get('orthographic')?.toLocaleLowerCase() === 'true',
       animatedTextureDefault: params.get('animated-texture')?.toLocaleLowerCase() === 'true',
-      showInvisibleBlocksDefault: params.get('show-invisible-blocks')?.toLocaleLowerCase() === 'true',
+      showInvisibleBlocksDefault:
+        params.get('show-invisible-blocks')?.toLocaleLowerCase() === 'true',
       displayMarksDefault: params.get('display-marks')?.toLocaleLowerCase() === 'true',
       backgroundColorDefault: params.get('background-color') ?? '#ffffff',
       backgroundAlphaDefault: parseInt(params.get('background-alpha') ?? '255'),

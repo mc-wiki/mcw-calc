@@ -1,6 +1,6 @@
 /**
  * @public
- * @dependencies mediawiki.jqueryMsg
+ * @dependencies mediawiki.jqueryMsg, codex-search-styles
  */
 
 import L from 'leaflet'
@@ -76,7 +76,9 @@ for (const targetEl of targetEls) {
         ${
           marker.popup.image ? `<img class="leaflet-popup-image" src="${marker.popup.image}" >` : ''
         }
-        <a href="${marker.popup.link.url}" class="mw-ui-button mw-ui-progressive" role="button">
+        <a href="${
+          marker.popup.link.url
+        }" class="cdx-button cdx-button--action-progressive" role="button">
           ${marker.popup.link.label}
         </a>
       `)
