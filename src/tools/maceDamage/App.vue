@@ -13,16 +13,26 @@ const edition = ref<'java' | 'bedrock'>('java')
 const fallHeight = ref(1.5)
 const densityLevel = ref(0)
 const critical = ref(true)
+const cooldownResetRef = ref(true)
+const cooldownReset = computed({
+  get: () => cooldownResetRef.value,
+  set: (val) => {
+    if (val === false) {
+      critical.value = false
+    }
+    cooldownResetRef.value = val
+  },
+})
 
 const baseDamage = computed(() => (edition.value === 'java' ? 7 : 8))
 const criticalModifier = computed(() => (critical.value ? 1.5 : 1))
-const cooldownModifier = computed(() => (critical.value ? 1 : 0.2))
+const cooldownModifier = computed(() => (cooldownReset.value ? 1 : 0.2))
 
 const damage = computed({
   get: () => {
     if (fallHeight.value < 1.5) return baseDamage.value * criticalModifier.value
 
-    // Java formula as of 24w13a:
+    // Java formula as of 1.20.5-pre1:
     // Full: (baseDamage + (3 * fallHeight) + (densityLevel * fallHeight)) * criticalModifier + damageFromEnchantments
     // Cooldown not reset: ((baseDamage * 0.2) + (3 * fallHeight) + (densityLevel * fallHeight)) * criticalModifier
     // damageFromEnchantments is currently not taken into account
@@ -94,19 +104,18 @@ function validateDensity(value: number) {
             v-model="fallHeight"
             id="fall-height-input"
           />
-          <div
-            :style="{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: '.5rem',
-            }"
-            class="explain"
-            :title="t('maceDamage.critical.help')"
-          >
-            <label for="critical-checkbox">{{ t('maceDamage.critical') }}</label>
-            <CdxCheckbox v-model="critical" id="critical-checkbox" />
-          </div>
+
+          <CdxCheckbox v-model="critical" id="critical-checkbox">
+            <span class="explain" :title="t('maceDamage.critical.help')">{{
+              t('maceDamage.critical')
+            }}</span>
+          </CdxCheckbox>
+
+          <CdxCheckbox v-model="cooldownReset" id="cooldown-reset-checkbox">
+            <span class="explain" :title="t('maceDamage.cooldownReset.help')">{{
+              t('maceDamage.cooldownReset')
+            }}</span>
+          </CdxCheckbox>
         </div>
         <div
           :style="{

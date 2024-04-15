@@ -424,9 +424,9 @@ function update() {
   </cdx-tabs>
   <cdx-checkbox v-model="logarithmicScale">
     {{ t('blockDistribution.logarithmicScale') }}
-    <div class="oo-ui-labelWidget oo-ui-inline-help">
+    <template #description>
       {{ t('blockDistribution.logarithmicScaleHelp') }}
-    </div>
+    </template>
   </cdx-checkbox>
 </template>
 <style>

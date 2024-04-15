@@ -1,11 +1,13 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { CdxField } from '@wikimedia/codex'
+</script>
 <template>
-  <div class="mcw-calc-field">
-    <h4 class="mcw-calc-field-header">
+  <CdxField class="mcw-calc-field">
+    <template #label>
       <slot name="heading">Calculator</slot>
-    </h4>
+    </template>
     <slot />
-  </div>
+  </CdxField>
 </template>
 <style>
 .mcw-calc-field {
@@ -13,11 +15,5 @@
   border: 1px solid #ccc;
   padding: 1em;
   margin: 1em 0;
-}
-
-.mcw-calc-field-header {
-  font-size: 16px !important;
-  margin: 0 !important;
-  padding-top: 0;
 }
 </style>
