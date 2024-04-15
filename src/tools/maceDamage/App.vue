@@ -105,13 +105,13 @@ function validateDensity(value: number) {
             id="fall-height-input"
           />
 
-          <CdxCheckbox v-model="critical" id="critical-checkbox">
+          <CdxCheckbox v-model="critical" id="critical-checkbox" inline>
             <span class="explain" :title="t('maceDamage.critical.help')">{{
               t('maceDamage.critical')
             }}</span>
           </CdxCheckbox>
 
-          <CdxCheckbox v-model="cooldownReset" id="cooldown-reset-checkbox">
+          <CdxCheckbox v-model="cooldownReset" id="cooldown-reset-checkbox" inline>
             <span class="explain" :title="t('maceDamage.cooldownReset.help')">{{
               t('maceDamage.cooldownReset')
             }}</span>
