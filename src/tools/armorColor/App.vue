@@ -98,15 +98,12 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
     false,
   )
   if (props.type === 'horse') {
-    // [[File:Leather Horse Armor (texture) JE2.png]]
     img.src = 'https://minecraft.wiki/images/Leather_Horse_Armor_(texture)_JE2.png?format=original'
   } else if (props.type === 'wolf') {
-    // [[File:Wolf Armor (overlay texture) JE2 BE2.png]]
     img.src =
       'https://minecraft.wiki/images/Wolf_Armor_(overlay_texture)_JE2_BE2.png?format=original'
 
     img.addEventListener('load', () => {
-      // [[File:Wolf Armor JE2 BE2.png]]
       const dyeCanvas = document.createElement('canvas')
       dyeCanvas.setAttribute('width', '160')
       dyeCanvas.setAttribute('height', '160')
@@ -135,7 +132,6 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
       background.src = 'https://minecraft.wiki/images/Wolf_Armor_JE2_BE2.png?format=original'
     })
   } else {
-    // [[File:Leather Tunic (texture) JE4 BE3.png]]
     img.src = 'https://minecraft.wiki/images/Leather_Tunic_(texture)_JE4_BE3.png?format=original'
   }
   img.crossOrigin = 'anonymous'

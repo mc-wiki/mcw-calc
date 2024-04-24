@@ -63,7 +63,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
     },
     false,
   )
-  // [[File:Beacon Beam (texture).png]]
+
   img.src = 'https://minecraft.wiki/images/Beacon_Beam_(texture).png?format=original'
   img.crossOrigin = 'anonymous'
 })
