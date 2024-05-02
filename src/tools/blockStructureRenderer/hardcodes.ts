@@ -46,8 +46,6 @@ export const halfTransparentBlocks = [
 // Subclasses of net.minecraft.world.level.block.LeavesBlock
 export const leavesBlocks = /.*_leaves$/
 
-export const specialInvisibleBlocks = ['structure_void', 'barrier', 'light']
-
 export const invisibleBlockColor = {
   air: new THREE.Color(0.5, 0.5, 1),
   structure_void: new THREE.Color(1, 0.75, 0.75),

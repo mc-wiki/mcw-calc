@@ -37,7 +37,8 @@
     "@wikimedia/codex": "1.0.0",
     "d3": "^7.9.0",
     "three": "^0.162.0",
-    "vue": "3.2.37"
+    "vue": "3.2.37",
+    "zlibt2": "^0.6.1"
   },
   "devDependencies": {
     "@babel/core": "^7.24.5",

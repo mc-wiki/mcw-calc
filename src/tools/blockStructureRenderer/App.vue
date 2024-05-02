@@ -17,6 +17,7 @@ import {
 } from '@/tools/blockStructureRenderer/renderer.ts'
 import { makeMaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
 import type { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
+import { saveAsLitematic, saveAsStructureFile } from '@/tools/blockStructureRenderer/structure.ts'
 
 const props = defineProps<{
   blocks: string[]
@@ -264,6 +265,24 @@ function saveRenderedImage() {
   })
 }
 
+function saveStructureFile() {
+  const downloadLink = document.createElement('a')
+  downloadLink.setAttribute('download', 'block_structure.nbt')
+  const blob = new Blob([saveAsStructureFile(blockStructure, nameMapping)])
+  let url = URL.createObjectURL(blob)
+  downloadLink.setAttribute('href', url)
+  downloadLink.click()
+}
+
+function saveLitematic() {
+  const downloadLink = document.createElement('a')
+  downloadLink.setAttribute('download', 'block_structure.litematic')
+  const blob = new Blob([saveAsLitematic(blockStructure, nameMapping)])
+  let url = URL.createObjectURL(blob)
+  downloadLink.setAttribute('href', url)
+  downloadLink.click()
+}
+
 const hidden = ref(false)
 
 function animate() {
@@ -359,13 +378,7 @@ const labelCameraSetting = ref('camera-setting-' + Math.random().toString(36).su
   <cdx-checkbox v-if="loaded" v-model="animatedTexture">
     {{ t('blockStructureRenderer.animatedTexture') }}
   </cdx-checkbox>
-  <cdx-checkbox
-    v-if="
-      loaded && (blockStructure.hasInvisibleBlocks(nameMapping) || props.showInvisibleBlocksDefault)
-    "
-    v-model="invisibleBlocks"
-    @change="reBakeRenderLayers"
-  >
+  <cdx-checkbox v-if="loaded" v-model="invisibleBlocks" @change="reBakeRenderLayers">
     {{ t('blockStructureRenderer.renderInvisibleBlocks') }}
   </cdx-checkbox>
   <cdx-checkbox
@@ -552,9 +565,22 @@ const labelCameraSetting = ref('camera-setting-' + Math.random().toString(36).su
       flexDirection: 'row',
       flexWrap: 'wrap',
       gap: '.5rem',
+      marginBottom: '0.5em',
     }"
   >
     <cdx-button @click="resetCamera">{{ t('blockStructureRenderer.resetCamera') }}</cdx-button>
     <cdx-button @click="saveRenderedImage">{{ t('blockStructureRenderer.saveImage') }}</cdx-button>
+  </div>
+  <div
+    v-if="loaded"
+    :style="{
+      display: 'flex',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: '.5rem',
+    }"
+  >
+    <cdx-button @click="saveStructureFile">{{ t('blockStructureRenderer.saveStructureFile') }}</cdx-button>
+    <cdx-button @click="saveLitematic">{{ t('blockStructureRenderer.saveLitematic') }}</cdx-button>
   </div>
 </template>
