@@ -25,15 +25,17 @@ const definitionLocalMessages = await fs.readFile('./dist/Gadgets-definition.loc
   encoding: 'utf-8',
 })
 
-Promise.all(
-  targets.map((target) =>
-    target.type === 'production'
-      ? target.useLocalMessages
-        ? update(target, filesProd, definitionLocalMessages)
-        : update(target, filesProd, definitionProd)
-      : update(target, filesDev, definitionDev),
-  ),
+const promises = targets.map((target) =>
+  target.type === 'production'
+    ? target.useLocalMessages
+      ? update(target, filesProd, definitionLocalMessages)
+      : update(target, filesProd, definitionProd)
+    : update(target, filesDev, definitionDev),
 )
+
+for (const promise of promises) {
+  await promise
+}
 
 async function update(target: DeployTarget, names: string[], definition: string) {
   const bot = await Mwn.init({
@@ -63,6 +65,8 @@ async function update(target: DeployTarget, names: string[], definition: string)
       )
       console.log(`Deployed ${names[index]} to ${target.name}`)
     }
+
+    await new Promise((resolve) => setTimeout(resolve, 200))
   })
 
   bot.edit('MediaWiki:Gadgets-definition', (rev) => {
