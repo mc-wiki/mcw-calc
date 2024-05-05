@@ -10,12 +10,14 @@ const targetEl = document.querySelector('.mcw-calc[data-type="blockDistribution"
 const createApp =
   process.env.NODE_ENV === 'development' ? vue.createApp : vue.createMwApp || vue.createApp
 
-const params = getParams(targetEl, ['blocks', 'block-names'], {
+const params = getParams(targetEl, ['blocks', 'block-names', 'page-name'], {
   blocks: 'minecraft:diamond_ore',
   'block-names': 'Diamond Ore',
+  'page-name': mw.config.get('wgPageName'),
 })
 
 createApp(App, {
   blocks: params.get('blocks')?.split(','),
   blockNames: params.get('block-names')?.split(','),
+  pageName: params.get('page-name'),
 }).mount(targetEl)

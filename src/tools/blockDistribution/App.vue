@@ -10,10 +10,12 @@ import locales from './locales'
 const props = defineProps<{
   blocks: string[]
   blockNames: string[]
+  pageName: string
 }>()
 
 const { t, language, message } = useI18n(__TOOL_NAME__, locales)
-const pageName = mw.Title.newFromText(mw.config.get('wgPageName'))!.getMainText()
+
+const pageName = mw.Title.newFromText(props.pageName)!.getMainText()
 
 const validBlocks = props.blocks
   .slice()
