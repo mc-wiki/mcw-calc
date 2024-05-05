@@ -407,21 +407,21 @@ function update() {
       :label="t('blockDistribution.overworld')"
       v-if="overworldBlockMapFiltered.length !== 0"
     >
-      <div style="width: 100%; overflow: auto" ref="overworld" />
+      <div style="overflow: auto" ref="overworld" />
     </cdx-tab>
     <cdx-tab
       name="nether"
       :label="t('blockDistribution.theNether')"
       v-if="netherBlockMapFiltered.length !== 0"
     >
-      <div style="width: 100%; overflow: auto" ref="nether" />
+      <div style="woverflow: auto" ref="nether" />
     </cdx-tab>
     <cdx-tab
       name="end"
       :label="t('blockDistribution.theEnd')"
       v-if="endBlockMapFiltered.length !== 0"
     >
-      <div style="width: 100%; overflow: auto" ref="end" />
+      <div style="overflow: auto" ref="end" />
     </cdx-tab>
   </cdx-tabs>
   <cdx-checkbox v-model="logarithmicScale">
