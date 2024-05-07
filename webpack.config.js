@@ -139,7 +139,7 @@ const config = (env, argv) => {
         __TOOL_NAME__: webpack.DefinePlugin.runtimeValue((args) => {
           try {
             const { relativePath } = args.module.resourceResolveData
-            return JSON.stringify(path.parse(relativePath).dir.replace('\\', '/').split('/').at(-1))
+            return JSON.stringify(path.parse(relativePath).dir.replace(/\\/g, '/').split('/').at(-1))
           } catch {
             return JSON.stringify(undefined)
           }
