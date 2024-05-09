@@ -6,8 +6,7 @@ import * as vue from 'vue'
 import App from './App.vue'
 import getParams from '@/utils/getParams.ts'
 
-const createApp =
-  process.env.NODE_ENV === 'development' ? vue.createApp : vue.createMwApp || vue.createApp
+const createApp = vue.createApp
 
 function makeBlockStructureRenderer() {
   const targetElAll = document.querySelectorAll('.mcw-calc[data-type="blockStructureRenderer"]')!

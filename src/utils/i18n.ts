@@ -5,7 +5,7 @@ const FALLBACK_CHAIN = {
   'zh-hant': ['zh-tw', 'zh-hk', 'zh-cn', 'en'],
   'zh-tw': ['zh-hk', 'zh-cn', 'en'],
   'zh-hk': ['zh-tw', 'zh-cn', 'en'],
-  default: mw.language.getFallbackLanguages(),
+  default: ['en'],
 }
 const MESSAGES_LOCAL = ['en']
 
