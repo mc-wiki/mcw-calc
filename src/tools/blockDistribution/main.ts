@@ -6,8 +6,7 @@ import * as vue from 'vue'
 import App from './App.vue'
 import getParams from '@/utils/getParams'
 
-const targetEl = document.querySelector('.mcw-calc[data-type="blockDistribution"]')!
-const createApp = vue.createApp
+const targetEl = document.querySelector('#app')!
 
 const params = getParams(targetEl, ['blocks', 'block-names', 'page-name'], {
   blocks: 'minecraft:diamond_ore',
@@ -15,8 +14,10 @@ const params = getParams(targetEl, ['blocks', 'block-names', 'page-name'], {
   'page-name': mw.config.get('wgPageName'),
 })
 
-createApp(App, {
-  blocks: params.get('blocks')?.split(','),
-  blockNames: params.get('block-names')?.split(','),
-  pageName: params.get('page-name'),
-}).mount(targetEl)
+vue
+  .createApp(App, {
+    blocks: params.get('blocks')?.split(','),
+    blockNames: params.get('block-names')?.split(','),
+    pageName: params.get('page-name'),
+  })
+  .mount(targetEl)

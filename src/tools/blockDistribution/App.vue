@@ -4,8 +4,7 @@ import { overworldBlockMap, netherBlockMap, endBlockMap, getColor, type Block } 
 import { onMounted, ref, computed, onUpdated } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
 import { CdxTab, CdxTabs, CdxCheckbox } from '@wikimedia/codex'
-import { useI18n } from '@/utils/i18n'
-import locales from './locales'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   blocks: string[]
@@ -13,7 +12,7 @@ const props = defineProps<{
   pageName: string
 }>()
 
-const { t, language, message } = useI18n(__TOOL_NAME__, locales)
+const { t, language, message } = useI18n('blockDistribution', locales)
 
 const pageName = mw.Title.newFromText(props.pageName)!.getMainText()
 

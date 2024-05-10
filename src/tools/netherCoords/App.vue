@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { CdxTextInput } from '@wikimedia/codex'
-import { useI18n } from '@/utils/i18n'
-import locales from './locales'
+import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n(__TOOL_NAME__, locales)
+const { t } = useI18n()
 
 const overworldX = ref(0)
 const netherX = computed<number>({

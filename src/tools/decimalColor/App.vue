@@ -2,10 +2,9 @@
 import CalcField from '@/components/CalcField.vue'
 import { ref, computed } from 'vue'
 import { colorStringToRgb } from '@/utils/color'
-import { useI18n } from '@/utils/i18n'
-import locales from './locales'
+import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n(__TOOL_NAME__, locales)
+const { t } = useI18n()
 
 const color = ref('#f9fffe')
 const result = computed({

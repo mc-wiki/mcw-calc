@@ -11,12 +11,11 @@ import {
 } from '@/utils/color'
 import { colorRgbMap as javaColorRgbMap } from '@/utils/color/java'
 import { colorRgbMap as bedrockColorRgbMap } from '@/utils/color/bedrock'
-import { useI18n } from '@/utils/i18n'
-import locales from './locales'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{ type: 'normal' | 'horse' | 'wolf' }>()
 
-const { t } = useI18n(__TOOL_NAME__, locales)
+const { t } = useI18n()
 
 const color = ref('#f9fffe')
 const edition = ref<'java' | 'bedrock'>('java')

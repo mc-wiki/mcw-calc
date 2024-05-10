@@ -38,7 +38,7 @@ const props = defineProps<{
   backgroundColorDefault: string
   backgroundAlphaDefault: number
 }>()
-const { t } = useI18n(__TOOL_NAME__, locales)
+const { t } = useI18n()
 const renderTarget = ref()
 const loaded = ref(false)
 

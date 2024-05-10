@@ -6,8 +6,6 @@ import * as vue from 'vue'
 import App from './App.vue'
 import getParams from '@/utils/getParams.ts'
 
-const createApp = vue.createApp
-
 function makeBlockStructureRenderer() {
   const targetElAll = document.querySelectorAll('.mcw-calc[data-type="blockStructureRenderer"]')!
 
@@ -82,7 +80,7 @@ function makeBlockStructureRenderer() {
   })
 }
 
-if (process.env.NODE_ENV === 'development' || localStorage.getItem('mcwCalcLocal') === 'true') {
+if (import.meta.env.DEV || localStorage.getItem('mcwCalcLocal') === 'true') {
   makeBlockStructureRenderer()
 } else {
   mw.hook('wikipage.content').add(makeBlockStructureRenderer)

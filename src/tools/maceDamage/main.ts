@@ -2,10 +2,12 @@
  * @dependencies vue, @wikimedia/codex
  * @public
  */
+import '@/init'
 import * as vue from 'vue'
 import App from './App.vue'
+import { createMcwI18n } from '@/utils/i18n'
 
-const targetEl = document.querySelector('.mcw-calc[data-type="maceDamage"]')!
-const createApp = vue.createApp
+const targetEl = document.querySelector('#app')!
 
-createApp(App).mount(targetEl)
+const i18n = createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }), 'en')
+vue.createApp(App).use(i18n).mount(targetEl)

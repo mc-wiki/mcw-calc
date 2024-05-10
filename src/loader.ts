@@ -6,7 +6,7 @@ mw.hook('wikipage.content').add(() => {
       console.error('No data-type attribute found on .mcw-calc', calc)
       return
     }
-    if (process.env.NODE_ENV === 'development' || localStorage.getItem('mcwCalcLocal') === 'true') {
+    if (import.meta.env.MODE === 'development' || localStorage.getItem('mcwCalcLocal') === 'true') {
       console.log('You are in development environment and tools are loaded from localhost.')
       mw.loader.load('@wikimedia/codex')
       mw.loader.load('http://localhost:8080/Gadget-mcw-calc-' + type + '.js')

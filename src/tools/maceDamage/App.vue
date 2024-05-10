@@ -2,10 +2,10 @@
 import { ref, computed } from 'vue'
 import { CdxTextInput, CdxCheckbox, CdxTab, CdxTabs } from '@wikimedia/codex'
 import CalcField from '@/components/CalcField.vue'
-import { useI18n } from '@/utils/i18n'
-import locales from './locales'
+import { useI18n } from 'vue-i18n'
+import { parseWikitext } from '@/utils/i18n'
 
-const { t, message } = useI18n(__TOOL_NAME__, locales)
+const { t } = useI18n()
 
 const maceImage = 'https://minecraft.wiki/images/Mace_JE1_BE1.png?format=original'
 
@@ -146,7 +146,7 @@ function validateDensity(value: number) {
         >
           <label
             for="density-level-input"
-            v-html="message('maceDamage.densityLevel').parse()"
+            v-html="parseWikitext(t('maceDamage.densityLevel'))"
           ></label>
           <CdxTextInput
             inputType="number"

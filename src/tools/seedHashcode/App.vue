@@ -2,11 +2,10 @@
 import { ref } from 'vue'
 import { CdxTextInput } from '@wikimedia/codex'
 import CalcField from '@/components/CalcField.vue'
-import { useI18n } from '@/utils/i18n'
+import { useI18n } from 'vue-i18n'
 import { hashCode } from '@/utils/seed'
-import locales from './locales'
 
-const { t } = useI18n(__TOOL_NAME__, locales)
+const { t } = useI18n()
 
 const seed = ref('Minecraft Wiki')
 </script>
