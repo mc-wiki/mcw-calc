@@ -9,9 +9,7 @@ const input = globSync('./src/tools/*/index.html', {
   .map((path) => `./${path}`)
   .reduce((acc, path) => {
     const key = path.match(/src\/tools\/(.+)\/index\.html/)![1]
-    acc[key] = {
-      import: path,
-    }
+    acc[key] = path
     return acc
   }, {})
 
@@ -24,8 +22,14 @@ export default defineConfig({
     },
   },
   build: {
+    outDir: '../dist',
     rollupOptions: {
       input,
+      output: {
+        manualChunks: {
+          three: ['three'],
+        },
+      },
     },
   },
   plugins: [vue()],

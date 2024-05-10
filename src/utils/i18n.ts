@@ -25,8 +25,6 @@ export function createMcwI18n(
     ]),
   )
 
-  console.log(messages)
-
   return createI18n({
     legacy: false,
     locale,

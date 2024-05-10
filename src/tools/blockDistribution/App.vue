@@ -243,10 +243,9 @@ function plot(
     dot.attr('transform', `translate(${x1},${y1})`)
     const formatter = d3.format('d')
     dot.select('text').html(
-      `<tspan x="0" dy="1.2em">${t(
-        'blockDistribution.xInTenThousand',
-        formatter(y.invert(y1)),
-      )}</tspan>
+      `<tspan x="0" dy="1.2em">${t('blockDistribution.xInTenThousand', {
+        num: formatter(y.invert(y1)),
+      })}</tspan>
         <tspan x="0" dy="1.2em">Y=${formatter(x.invert(x1))}</tspan>
         <tspan x="0" dy="1.2em">${k}</tspan>`,
     )
