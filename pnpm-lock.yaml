@@ -153,6 +153,9 @@ importers:
       tsx:
         specifier: ^4.9.3
         version: 4.9.3
+      types-mediawiki:
+        specifier: ^1.7.0
+        version: 1.7.0(typescript@5.5.0-beta)
       typescript:
         specifier: 5.5.0-beta
         version: 5.5.0-beta

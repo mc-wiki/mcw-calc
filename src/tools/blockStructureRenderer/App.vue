@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onUpdated, ref } from 'vue'
-import { useI18n } from '@/utils/i18n.ts'
-import locales from '@/tools/blockStructureRenderer/locales.ts'
+import { useI18n } from 'vue-i18n'
 import * as THREE from 'three'
 import WebGL from 'three/addons/capabilities/WebGL.js'
 import { CdxCheckbox, CdxTextInput, CdxSelect, CdxButton } from '@wikimedia/codex'
@@ -344,7 +343,7 @@ const labelCameraSetting = ref('camera-setting-' + Math.random().toString(36).su
 
 <template>
   <div
-    class="do-not-remount-this renderer-component"
+    class="renderer-component"
     ref="renderTarget"
     :style="{
       height: '50vh',

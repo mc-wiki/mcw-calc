@@ -138,7 +138,9 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
 </script>
 <template>
   <CalcField>
-    <template #heading>{{ t('armorColor.title', t(`armorColor.type.${props.type}`)) }}</template>
+    <template #heading>{{
+      t('armorColor.title', { type: t(`armorColor.type.${props.type}`) })
+    }}</template>
 
     <cdx-tabs v-model:active="edition">
       <cdx-tab name="java" :label="t('armorColor.java')" />

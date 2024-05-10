@@ -5,6 +5,7 @@ import { onMounted, ref, computed, onUpdated } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
 import { CdxTab, CdxTabs, CdxCheckbox } from '@wikimedia/codex'
 import { useI18n } from 'vue-i18n'
+import { parseWikitext } from '@/utils/i18n'
 
 const props = defineProps<{
   blocks: string[]
@@ -12,7 +13,7 @@ const props = defineProps<{
   pageName: string
 }>()
 
-const { t, language, message } = useI18n('blockDistribution', locales)
+const { t } = useI18n()
 
 const pageName = mw.Title.newFromText(props.pageName)!.getMainText()
 
@@ -311,10 +312,12 @@ function update() {
 <template>
   <h4
     v-html="
-      message('blockDistribution.title', [
-        props.blockNames.length <= 5 ? language.listToText(props.blockNames) : pageName,
-        '1.20.4',
-      ]).parse()
+      parseWikitext(
+        t('blockDistribution.title', {
+          block: props.blockNames.length <= 5 ? new Intl.ListFormat(props.blockNames) : pageName,
+          version: '1.20.4',
+        }),
+      )
     "
   ></h4>
   <div style="display: flex; flex-wrap: wrap; margin-bottom: 0.5rem">
@@ -413,7 +416,7 @@ function update() {
       :label="t('blockDistribution.theNether')"
       v-if="netherBlockMapFiltered.length !== 0"
     >
-      <div style="woverflow: auto" ref="nether" />
+      <div style="overflow: auto" ref="nether" />
     </cdx-tab>
     <cdx-tab
       name="end"
