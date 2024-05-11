@@ -562,7 +562,6 @@ export function bakeModel(
 
     for (const [faceName, face] of Object.entries(element.faces)) {
       if (!face) continue
-      const cullface = face.cullface
       const faceDirection = getDirectionFromName(faceName)
 
       let blockFaceUV = new BlockFaceUV(
@@ -637,8 +636,8 @@ export function bakeModel(
         }
       }
 
-      if (cullface) {
-        bakedModel.cullfaces[faceDirection]?.push({
+      if (face.cullface) {
+        bakedModel.cullfaces[getDirectionFromName(face.cullface)]?.push({
           planeGeometry,
           animated,
           direction: direction ?? Direction.UP,
