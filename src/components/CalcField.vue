@@ -14,6 +14,9 @@ import { CdxField } from '@wikimedia/codex'
   border-radius: 4px;
   border: 1px solid #ccc;
   padding: 1em;
-  margin: 1em 0;
+}
+
+.dark .mcw-calc-field {
+  border-color: #595959;
 }
 </style>
