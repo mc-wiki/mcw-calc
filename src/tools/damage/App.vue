@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import CalcField from '@/components/CalcField.vue'
-import { CdxCheckbox, CdxSelect, CdxTextInput, } from '@wikimedia/codex'
-import {computed, ref} from "vue";
-import {useI18n} from "@/utils/i18n.ts";
-import locales from "@/tools/damage/locales.ts";
+import { CdxCheckbox, CdxSelect, CdxTextInput } from '@wikimedia/codex'
+import { computed, ref } from 'vue'
+import { useI18n } from '@/utils/i18n.ts'
+import locales from '@/tools/damage/locales.ts'
 
 const { t, message } = useI18n(__TOOL_NAME__, locales)
 
@@ -24,9 +24,9 @@ const enchantmentOptionMap = {
     { label: t('damage.density'), value: 'density' },
     { label: t('damage.smite'), value: 'smite' },
     { label: t('damage.baneOfArthropods'), value: 'baneOfArthropods' },
-  ]
+  ],
 }
-const attackSpeedMap: {[key: string]: {[key: string]: number}} = {
+const attackSpeedMap: { [key: string]: { [key: string]: number } } = {
   sword: {
     wooden: 1.6,
     stone: 1.6,
@@ -68,16 +68,16 @@ const attackSpeedMap: {[key: string]: {[key: string]: number}} = {
     netherite: 4,
   },
   trident: {
-    null: 1.1
+    null: 1.1,
   },
   mace: {
-    null: 0.5
+    null: 0.5,
   },
   hand: {
-    null: 4
+    null: 4,
   },
 }
-const attackDamageMap: {[key: string]: {[key: string]: number}} = {
+const attackDamageMap: { [key: string]: { [key: string]: number } } = {
   sword: {
     wooden: 4,
     stone: 5,
@@ -119,16 +119,16 @@ const attackDamageMap: {[key: string]: {[key: string]: number}} = {
     netherite: 1,
   },
   trident: {
-    null: 9
+    null: 9,
   },
   mace: {
-    null: 6
+    null: 6,
   },
   hand: {
-    null: 1
+    null: 1,
   },
 }
-const weaponImageMap: {[key: string]: {[key: string]: string}} = {
+const weaponImageMap: { [key: string]: { [key: string]: string } } = {
   sword: {
     wooden: 'https://minecraft.wiki/images/Wooden_Sword_JE2_BE2.png',
     stone: 'https://minecraft.wiki/images/Stone_Sword_JE2_BE2.png',
@@ -170,15 +170,14 @@ const weaponImageMap: {[key: string]: {[key: string]: string}} = {
     netherite: 'https://minecraft.wiki/images/Netherite_Hoe_JE2_BE2.png',
   },
   trident: {
-    null: 'https://minecraft.wiki/images/Trident_(item).png'
+    null: 'https://minecraft.wiki/images/Trident_(item).png',
   },
   mace: {
-    null: 'https://minecraft.wiki/images/Mace_JE1_BE1.png'
+    null: 'https://minecraft.wiki/images/Mace_JE1_BE1.png',
   },
   hand: {
-    null: 'https://upload.wikimedia.org/wikipedia/commons/c/ca/1x1.png'
+    null: 'https://upload.wikimedia.org/wikipedia/commons/c/ca/1x1.png',
   },
-
 }
 
 const enchantments = ref({
@@ -188,8 +187,8 @@ const enchantments = ref({
   impaling: { name: 'impaling', level: 0, max: 5 },
   density: { name: 'density', level: 0, max: 5 },
 })
-const strength = ref( { name: 'strength', level: 0, max: 2 })
-const weakness = ref( { name: 'weakness', level: 0, max: 1 })
+const strength = ref({ name: 'strength', level: 0, max: 2 })
+const weakness = ref({ name: 'weakness', level: 0, max: 1 })
 
 const type = ref('sword')
 const storedMaterial = ref('wooden')
@@ -200,7 +199,10 @@ const material = computed(() => {
 const damageEnchantmentType = ref('sharpness')
 const activeEnchantments = computed(() => {
   const enchantmentList = []
-  if (weaponsWithDamageEnchantment.includes(type.value)) enchantmentList.push(enchantments.value[damageEnchantmentType.value as keyof typeof enchantments.value])
+  if (weaponsWithDamageEnchantment.includes(type.value))
+    enchantmentList.push(
+      enchantments.value[damageEnchantmentType.value as keyof typeof enchantments.value],
+    )
   if (type.value === 'trident') enchantmentList.push(enchantments.value['impaling'])
   return enchantmentList
 })
@@ -208,9 +210,13 @@ const activeEffects = ref([strength.value, weakness.value])
 const fallDistance = ref(0)
 const criticalHit = ref(true)
 const secondsSinceLastAttack = ref(1.6)
-const attackQualificationType = computed( () => {
+const attackQualificationType = computed(() => {
   for (const enchantment of ['smite', 'baneOfArthropods', 'impaling']) {
-    if (activeEnchantments.value.some(e => e.name === enchantment) && getEnchantment(enchantment).level) return getName(enchantment + 'Attack')
+    if (
+      activeEnchantments.value.some((e) => e.name === enchantment) &&
+      getEnchantment(enchantment).level
+    )
+      return getName(enchantment + 'Attack')
   }
   return ''
 })
@@ -218,29 +224,42 @@ const attackQualificationType = computed( () => {
 const damage = computed(() => {
   let attackDamage = getAttackDamage()
   let enchantmentDamage = getEnchantmentDamage()!
-  const attackCooldownProgress = Math.max(0, Math.min((secondsSinceLastAttack.value + 0.025) * attackSpeedMap[type.value][material.value], 1))
-  attackDamage *= (0.2 + attackCooldownProgress ** 2 * 0.8)
+  const attackCooldownProgress = Math.max(
+    0,
+    Math.min(
+      (secondsSinceLastAttack.value + 0.025) * attackSpeedMap[type.value][material.value],
+      1,
+    ),
+  )
+  attackDamage *= 0.2 + attackCooldownProgress ** 2 * 0.8
   enchantmentDamage *= attackCooldownProgress
   attackDamage += getMaceDamage()
-  if ((type.value != 'mace' || fallDistance.value > 0) && criticalHit.value && attackCooldownProgress > 0.9) attackDamage = attackDamage * 1.5
+  if (
+    (type.value != 'mace' || fallDistance.value > 0) &&
+    criticalHit.value &&
+    attackCooldownProgress > 0.9
+  )
+    attackDamage = attackDamage * 1.5
   return attackDamage + enchantmentDamage
 })
 
 const attackSpeedMessage = computed(() => {
-  return ((weaponsWithMaterial.includes(type.value)) ? getName(material.value) + ' ' : '') +
-      getName(type.value) +
-      message('damage.attackSpeed', [
-          attackSpeedMap[type.value][material.value],
-          (Math.round((1 / attackSpeedMap[type.value][material.value] + Number.EPSILON) * 1000) / 1000),
-          (1 / attackSpeedMap[type.value][material.value]) == 1 ? '' : 's'
-      ]).parse()
+  return (
+    (weaponsWithMaterial.includes(type.value) ? getName(material.value) + ' ' : '') +
+    getName(type.value) +
+    message('damage.attackSpeed', [
+      attackSpeedMap[type.value][material.value],
+      Math.round((1 / attackSpeedMap[type.value][material.value] + Number.EPSILON) * 1000) / 1000,
+      1 / attackSpeedMap[type.value][material.value] == 1 ? '' : 's',
+    ]).parse()
+  )
 })
 
 function getEnchantment(enchantment: string) {
-  return activeEnchantments.value.find(e => e.name === enchantment)!
+  return activeEnchantments.value.find((e) => e.name === enchantment)!
 }
 function getEffect(effect: string) {
-  return activeEffects.value.find(e => e.name === effect)!
+  return activeEffects.value.find((e) => e.name === effect)!
 }
 
 function getAttackDamage() {
@@ -252,13 +271,19 @@ function getAttackDamage() {
 function getEnchantmentDamage() {
   let enchantmentDamage = 0
   for (const enchantment of activeEnchantments.value) {
-    if (enchantment.name == 'sharpness') enchantmentDamage += 1 + Math.max(0, enchantment.level - 1) * 0.5
-    else if (enchantment.name == 'smite' || enchantment.name == 'baneOfArthropods' || enchantment.name == 'impaling') enchantmentDamage += enchantment.level * 2.5
+    if (enchantment.name == 'sharpness')
+      enchantmentDamage += 1 + Math.max(0, enchantment.level - 1) * 0.5
+    else if (
+      enchantment.name == 'smite' ||
+      enchantment.name == 'baneOfArthropods' ||
+      enchantment.name == 'impaling'
+    )
+      enchantmentDamage += enchantment.level * 2.5
   }
   return enchantmentDamage
 }
 function getMaceDamage() {
-  if (activeEnchantments.value.some(e => e.name === 'density') && fallDistance.value > 1.5) {
+  if (activeEnchantments.value.some((e) => e.name === 'density') && fallDistance.value > 1.5) {
     let maceBaseDamage
     if (fallDistance.value <= 3) maceBaseDamage = 4 * fallDistance.value
     else if (fallDistance.value <= 8) maceBaseDamage = 6 + 2 * fallDistance.value
@@ -330,7 +355,7 @@ function handleTypeChange(type: string) {
   if (type == 'mace' && damageEnchantmentType.value == 'sharpness') {
     damageEnchantmentType.value = 'density'
     handleDamageEnchantmentChange('density')
-  } else if (type == 'sword' || type == 'axe' && damageEnchantmentType.value == 'density') {
+  } else if (type == 'sword' || (type == 'axe' && damageEnchantmentType.value == 'density')) {
     damageEnchantmentType.value = 'sharpness'
     handleDamageEnchantmentChange('sharpness')
   }
@@ -339,15 +364,15 @@ function handleDamageEnchantmentChange(enchantment: string) {
   const labelElement = document.querySelector('label[for="enchantment-level-input"]')!
   labelElement.textContent = getName(enchantment) + ' level'
 }
-function validateLevelInput(modifier: {name: string, level: number, max: number}) {
+function validateLevelInput(modifier: { name: string; level: number; max: number }) {
   modifier.level = Math.floor(Math.min(modifier.max, Math.max(0, modifier.level)))
 }
 </script>
 <template>
   <CalcField>
-    <template #heading>{{t('damage.title')}}</template>
-    <div style="display: flex; flex-direction: row; justify-content: space-between;">
-      <div style="display: flex; flex-direction: column;">
+    <template #heading>{{ t('damage.title') }}</template>
+    <div style="display: flex; flex-direction: row; justify-content: space-between">
+      <div style="display: flex; flex-direction: column">
         <div class="damage-calc-row">
           <CdxSelect
             v-model:selected="type"
@@ -376,7 +401,7 @@ function validateLevelInput(modifier: {name: string, level: number, max: number}
             ]"
           />
           <CdxCheckbox v-model="criticalHit" id="critical-checkbox">
-            <label for="critical-checkbox">{{t('damage.critical')}}</label>
+            <label for="critical-checkbox">{{ t('damage.critical') }}</label>
           </CdxCheckbox>
         </div>
         <div class="damage-calc-row">
@@ -387,10 +412,12 @@ function validateLevelInput(modifier: {name: string, level: number, max: number}
             @update:selected="handleDamageEnchantmentChange"
           />
         </div>
-        <div class="damage-calc-row"
-        v-for="enchantment in activeEnchantments"
-        :key="enchantment.name">
-          <label for="enchantment-level-input">{{getName(enchantment.name)}} level</label>
+        <div
+          class="damage-calc-row"
+          v-for="enchantment in activeEnchantments"
+          :key="enchantment.name"
+        >
+          <label for="enchantment-level-input">{{ getName(enchantment.name) }} level</label>
           <CdxTextInput
             inputType="number"
             min="0"
@@ -400,9 +427,8 @@ function validateLevelInput(modifier: {name: string, level: number, max: number}
             id="enchantment-level-input"
           />
         </div>
-        <div class="damage-calc-row"
-        v-if="type == 'mace'">
-          <label for="fall-height-input">{{t('damage.fallDistance')}}</label>
+        <div class="damage-calc-row" v-if="type == 'mace'">
+          <label for="fall-height-input">{{ t('damage.fallDistance') }}</label>
           <CdxTextInput
             inputType="number"
             min="0"
@@ -411,10 +437,8 @@ function validateLevelInput(modifier: {name: string, level: number, max: number}
             id="fall-height-input"
           />
         </div>
-        <div class="damage-calc-row"
-        v-for="effect in activeEffects"
-        :key="effect.name">
-          <label for="effect-level-input" >{{getName(effect.name) + t('damage.level')}}</label>
+        <div class="damage-calc-row" v-for="effect in activeEffects" :key="effect.name">
+          <label for="effect-level-input">{{ getName(effect.name) + t('damage.level') }}</label>
           <CdxTextInput
             inputType="number"
             min="0"
@@ -426,7 +450,7 @@ function validateLevelInput(modifier: {name: string, level: number, max: number}
         </div>
         <div class="damage-calc-row">
           <div class="damage-calc-row">
-            <label for="time-since-attack-input">{{t('damage.seconds')}}</label>
+            <label for="time-since-attack-input">{{ t('damage.seconds') }}</label>
             <CdxTextInput
               inputType="number"
               min="0"
@@ -434,12 +458,12 @@ function validateLevelInput(modifier: {name: string, level: number, max: number}
               v-model="secondsSinceLastAttack"
               id="time-since-attack-input"
             />
-            <span>{{attackSpeedMessage}}</span>
+            <span>{{ attackSpeedMessage }}</span>
           </div>
         </div>
         <div class="damage-calc-row">
-          <b>{{t('damage.damage') + (Math.round((damage + Number.EPSILON) * 100) / 100)}}</b>
-          <span>{{attackQualificationType}}</span>
+          <b>{{ t('damage.damage') + Math.round((damage + Number.EPSILON) * 100) / 100 }}</b>
+          <span>{{ attackQualificationType }}</span>
         </div>
       </div>
       <img width="64" height="64" :src="weaponImageMap[type][material]" />
@@ -452,6 +476,6 @@ function validateLevelInput(modifier: {name: string, level: number, max: number}
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
-  gap: .5rem;
+  gap: 0.5rem;
 }
 </style>
