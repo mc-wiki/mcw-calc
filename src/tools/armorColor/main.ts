@@ -10,7 +10,7 @@ import { createMcwI18n } from '@/utils/i18n'
 
 const targetEl = document.querySelector('#app')!
 
-const params = getParams(targetEl, ['icon'], {
+const params = getParams(['icon'], {
   icon: 'normal',
 })
 

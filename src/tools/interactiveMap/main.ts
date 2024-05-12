@@ -30,11 +30,13 @@ for (const targetEl of targetEls) {
   if (!(targetEl instanceof HTMLElement)) throw 'wtf'
   targetEl.innerHTML = '' // Remove loading notice
 
-  const params = getParams(targetEl, ['dataPage'], {
+  const params = getParams(['dataPage'], {
     dataPage: 'Module:Maps/Minecraft_Dungeons_Mainland.json',
   })
 
-  fetch(`/w/${encodeURIComponent(params.get('dataPage')!)}`).then((response) => {
+  fetch(
+    `${import.meta.env.DEV ? 'https://minecraft.wiki' : ''}/w/${encodeURIComponent(params.get('dataPage')!)}`,
+  ).then((response) => {
     response.json().then((json) => {
       const mapData = processJson(json)
 

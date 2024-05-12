@@ -10,7 +10,7 @@ import { createMcwI18n } from '@/utils/i18n'
 
 const targetEl = document.querySelector('#app')!
 
-const params = getParams(targetEl, ['player'], {
+const params = getParams(['player'], {
   player: 'MinecraftWiki',
 })
 const i18n = createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }), 'en')

@@ -10,7 +10,6 @@ import { createMcwI18n } from '@/utils/i18n'
 const targetEl = document.querySelector('#app')!
 
 const params = getParams(
-  targetEl,
   [
     // Required parameters
     'blocks',

@@ -15,8 +15,6 @@ const props = defineProps<{
 
 const { t } = useI18n()
 
-const pageName = mw.Title.newFromText(props.pageName)!.getMainText()
-
 const validBlocks = props.blocks
   .slice()
   .filter(
@@ -313,7 +311,10 @@ function update() {
     v-html="
       parseWikitext(
         t('blockDistribution.title', {
-          block: props.blockNames.length <= 5 ? new Intl.ListFormat(props.blockNames) : pageName,
+          block:
+            props.blockNames.length <= 5
+              ? new Intl.ListFormat('en').format(props.blockNames)
+              : props.pageName,
           version: '1.20.4',
         }),
       )
