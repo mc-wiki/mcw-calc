@@ -21,7 +21,5 @@ export default function getParams<K extends string>(
     }
   }
 
-  console.log(result)
-
   return result
 }
