@@ -1,7 +1,4 @@
-/**
- * @dependencies vue, @wikimedia/codex
- * @public
- */
+import '@/init'
 import * as vue from 'vue'
 import App from './App.vue'
 import getParams from '@/utils/getParams.ts'

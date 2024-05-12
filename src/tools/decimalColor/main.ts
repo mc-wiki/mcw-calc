@@ -1,7 +1,3 @@
-/**
- * @public
- * @dependencies vue, @wikimedia/codex
- */
 import '@/init'
 import * as vue from 'vue'
 import App from './App.vue'

@@ -1,11 +1,4 @@
-/**
- * Armor damage reduction calculator
- * @name armor
- * @author Dianliang233
- * @dependencies vue, @wikimedia/codex
- * @private
- */
-
+import '@/init'
 import * as vue from 'vue'
 import App from './App.vue'
 

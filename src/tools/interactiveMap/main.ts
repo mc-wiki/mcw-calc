@@ -1,8 +1,4 @@
-/**
- * @public
- * @dependencies mediawiki.jqueryMsg, codex-styles
- */
-
+import '@/init'
 import L from 'leaflet'
 import processJson from './processJson'
 import './main.css'
