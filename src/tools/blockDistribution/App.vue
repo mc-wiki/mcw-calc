@@ -434,6 +434,10 @@ function update() {
   </cdx-checkbox>
 </template>
 <style>
+#app {
+  overflow-x: auto;
+}
+
 g.isolate {
   isolation: isolate;
   pointer-events: none;

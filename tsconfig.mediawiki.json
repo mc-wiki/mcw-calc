@@ -1,12 +1,13 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["mediawiki/**/*.ts"],
+  "include": ["mediawiki/**/*.ts", "mediawiki/**/*.js"],
   "compilerOptions": {
     "isolatedModules": true,
     "composite": true,
     "baseUrl": ".",
     "types": ["vite/client"],
     "allowImportingTsExtensions": true,
-    "noEmit": true
+    "noEmit": true,
+    "allowJs": true
   }
 }
