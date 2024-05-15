@@ -38,7 +38,7 @@
     "d3": "^7.9.0",
     "three": "^0.162.0",
     "vue": "^3.4.27",
-    "vue-i18n": "9"
+    "vue-i18n": "^9.13.1"
   },
   "devDependencies": {
     "@prettier/sync": "^0.5.2",
@@ -46,10 +46,10 @@
     "@tsconfig/node20": "^20.1.4",
     "@types/d3": "^7.4.3",
     "@types/leaflet": "^1.9.12",
-    "@types/node": "^20.12.11",
+    "@types/node": "^20.12.12",
     "@types/three": "^0.162.0",
-    "@typescript-eslint/eslint-plugin": "^7.8.0",
-    "@typescript-eslint/parser": "^7.8.0",
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/parser": "^7.9.0",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vue/eslint-config-prettier": "^9.0.0",
     "@vue/eslint-config-typescript": "^13.0.0",
@@ -57,17 +57,17 @@
     "babel-preset-typescript-vue3": "^2.0.17",
     "dotenv": "^16.4.5",
     "eslint": "^8.57.0",
-    "glob": "^10.3.14",
+    "glob": "^10.3.15",
     "leaflet": "^1.9.4",
     "less": "^4.2.0",
     "mwn": "^2.0.2",
     "prettier": "3.2.5",
     "rollup-plugin-visualizer": "^5.12.0",
-    "tsx": "^4.9.3",
+    "tsx": "^4.10.2",
     "types-mediawiki": "^1.7.0",
     "typescript": "^5.4.5",
     "vite": "^5.2.11",
     "vitest": "^1.6.0",
-    "vue-tsc": "^2.0.16"
+    "vue-tsc": "^2.0.17"
   }
 }
