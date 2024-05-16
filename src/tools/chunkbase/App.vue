@@ -22,7 +22,7 @@ interface SeedMapEmbedParams {
   /**
    * Whether to enables terrain rendering and displaying Y coords on hover.
    */
-  showHeights: boolean
+  terrain: boolean
 
   /**
    * Minecraft platform, version, and world type. This follows the format of `platform_1_XX_type`.
@@ -73,40 +73,40 @@ interface SeedMapEmbedParams {
   /**
    * The point of interest to mark on the mark.
    */
-  poi:
-    | 'bastionRemnant'
-    | 'buriedTreasure'
-    | 'dungeon'
-    | 'endCity'
-    | 'netherFortress'
-    | 'slimeChunk'
-    | 'stronghold'
-    | 'village'
-    | 'mineshaft'
-    | 'woodlandMansion'
-    | 'pillagerOutpost'
-    | 'oceanRuin'
-    | 'oceanMonument'
-    | 'shipwreck'
-    | 'desertTemple'
-    | 'jungleTemple'
-    | 'witchHut'
-    | 'igloo'
-    | 'ruinedPortalOverworld'
-    | 'ruinedPortalNether'
-    | 'spawn'
-    | 'fossil'
-    | 'ravine'
-    | 'endGateway'
-    | 'amethystGeode'
-    | 'ancientCity'
-    | 'itemOverworld'
-    | 'oreVein'
-    | 'cave'
-    | 'desertWell'
-    | 'trailRuin'
-    | 'trialChamber'
-    | 'lavaPool'
+  pois:
+    | 'Ag'
+    | 'Ac'
+    | 'Br'
+    | 'Bt'
+    | 'Ca'
+    | 'Dt'
+    | 'Dw'
+    | 'D'
+    | 'E'
+    | 'Eg'
+    | 'F'
+    | 'I'
+    | 'IOw'
+    | 'J'
+    | 'Lp'
+    | 'M'
+    | 'N'
+    | 'Om'
+    | 'Or'
+    | 'Ov'
+    | 'Po'
+    | 'Rv'
+    | 'Rpn'
+    | 'Rp'
+    | 'Sw'
+    | 'Sc'
+    | 'Sp'
+    | 'St'
+    | 'Tr'
+    | 'Tc'
+    | 'V'
+    | 'Wh'
+    | 'Ma'
     | null
 
   /**
@@ -167,8 +167,11 @@ const chunkbaseUrl = computed(() => {
 
   const searchParams = new URLSearchParams(normalizedParams)
 
+  searchParams.set('bgColor', '#fff')
+  searchParams.set('theme', 'light')
+
   return new URL(
-    `?${searchParams.toString()}`,
+    `#${searchParams.toString()}`,
     'https://www.chunkbase.com/seed-map-embed',
   ).toString()
 })
