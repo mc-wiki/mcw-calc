@@ -17,3 +17,16 @@ const observer = new ResizeObserver(() => {
 for (const child of document.body.children) {
   observer.observe(child)
 }
+
+window.addEventListener('message', (event) => {
+  if (event.data.type === 'mcw-calc-theme-change') {
+    const { theme } = event.data.data
+    const { classList } = document.body
+
+    if (theme === 'dark') {
+      classList.add('dark')
+    } else {
+      classList.remove('dark')
+    }
+  }
+})

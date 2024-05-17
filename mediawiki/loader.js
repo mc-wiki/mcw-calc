@@ -43,10 +43,30 @@ mw.hook('wikipage.content').add(() => {
     iframe.style.border = 'none'
     iframe.style.display = 'block'
     iframe.style.width = '100%'
+    iframe.style.colorScheme = 'auto'
 
     const dataset = {}
     Object.entries(calc.dataset).forEach(([key, value]) => {
       dataset[key] = value
+    })
+
+    iframe.addEventListener('load', () => {
+      const postChange = () =>
+        iframe.contentWindow.postMessage(
+          {
+            type: 'mcw-calc-theme-change',
+            data: {
+              theme: document.body.classList.contains('wgl-theme-light') ? 'dark' : 'light',
+            },
+          },
+          new URL(iframe.src).origin,
+        )
+
+      postChange()
+
+      document.querySelector('#pt-dm-toggle > a').addEventListener('click', () => {
+        postChange()
+      })
     })
 
     window.addEventListener('message', (event) => {
