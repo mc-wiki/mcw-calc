@@ -8,7 +8,7 @@ const observer = new ResizeObserver(() => {
   window.parent.postMessage(
     {
       type: 'mcw-calc-height-change',
-      data: { height: document.body.scrollHeight + 5, id },
+      data: { height: document.body.scrollHeight + 10, id },
     },
     '*',
   )

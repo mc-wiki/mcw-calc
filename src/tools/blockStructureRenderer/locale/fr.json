@@ -1,0 +1,17 @@
+{
+  "blockStructureRenderer.orthographic": "Vue orthographique",
+  "blockStructureRenderer.displayMode": "Mode d'affichage",
+  "blockStructureRenderer.displayModes.all": "Afficher tous les blocs",
+  "blockStructureRenderer.displayModes.yRange": "Afficher seulement les blocs entre des Y spécifiques",
+  "blockStructureRenderer.displayModes.selectedY": "Afficher seulement les blocs à un Y spécifique",
+  "blockStructureRenderer.renderRange": "Plage d'affichage :",
+  "blockStructureRenderer.resetCamera": "Réinitialiser la caméra",
+  "blockStructureRenderer.saveImage": "Enregistrer comme image",
+  "blockStructureRenderer.animatedTexture": "Afficher les textures animées",
+  "blockStructureRenderer.cameraSetting": "Mode de déplacement de caméra",
+  "blockStructureRenderer.cameraSetting.drag": "Glisser",
+  "blockStructureRenderer.cameraSetting.manual": "Réglé manuellement",
+  "blockStructureRenderer.cameraSetting.position": "Position de la caméra",
+  "blockStructureRenderer.cameraSetting.target": "Cible de la caméra",
+  "blockStructureRenderer.cameraSetting.confirm": "Confirmer"
+}

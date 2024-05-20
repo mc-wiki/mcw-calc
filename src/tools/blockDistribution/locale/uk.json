@@ -1,0 +1,13 @@
+{
+  "blockDistribution.xAxis": "Рівень Y →",
+  "blockDistribution.yAxis": "↑ Кількість знайдених по X серед 100 000 блоків",
+  "blockDistribution.xInTenThousand": "$1 з 100 000",
+  "blockDistribution.title": "Розповсюдження у [[$2 (Java Edition)|Java Edition $2]] блоків: $1.",
+  "blockDistribution.total": "Усього",
+  "blockDistribution.overworld": "Верхній світ",
+  "blockDistribution.theNether": "Незер",
+  "blockDistribution.theEnd": "Енд",
+  "blockDistribution.logarithmicScale": "Логарифмічна шкала",
+  "blockDistribution.logarithmicScaleHelp": "Невелика різниця в координаті Y відображає велику зміну відносної частоти типу блоку, тому корисно бачити невеликі зміни на графіку, коли спостерігається великий сплеск.",
+  "blockDistribution.selectAll": "Вибрати все"
+}

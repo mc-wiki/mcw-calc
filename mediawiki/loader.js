@@ -22,11 +22,14 @@ mw.hook('wikipage.content').add(() => {
       iframe.setAttribute(attributes[i].name, attributes[i].value)
     }
 
+    // eslint-disable-next-line no-undef
+    const url = `/tools/${type}/#?id=${id}&locale=${mw.config.get('wgContentLanguage')}`
+
     if (localStorage.getItem('mcwCalcLocal') === 'true') {
       console.log('You are in development environment and tools are loaded from localhost.')
-      iframe.src = `http://localhost:5173/tools/${type}/#?id=${id}`
+      iframe.src = `http://localhost:5173${url}`
     } else {
-      iframe.src = `https://tools.minecraft.wiki/tools/${type}/#?id=${id}`
+      iframe.src = `https://tools.minecraft.wiki${url}`
     }
 
     // copy all children with .mcw-calc-parameter
