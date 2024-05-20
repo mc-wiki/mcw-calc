@@ -51,7 +51,17 @@ mw.hook('wikipage.content').add(() => {
     })
 
     iframe.addEventListener('load', () => {
-      const postChange = () =>
+      iframe.contentWindow.postMessage(
+        {
+          type: 'mcw-calc-theme-change',
+          data: {
+            theme: document.body.classList.contains('wgl-theme-light') ? 'light' : 'dark',
+          },
+        },
+        new URL(iframe.src).origin,
+      )
+
+      document.querySelector('#pt-dm-toggle > a').addEventListener('click', () => {
         iframe.contentWindow.postMessage(
           {
             type: 'mcw-calc-theme-change',
@@ -61,11 +71,6 @@ mw.hook('wikipage.content').add(() => {
           },
           new URL(iframe.src).origin,
         )
-
-      postChange()
-
-      document.querySelector('#pt-dm-toggle > a').addEventListener('click', () => {
-        postChange()
       })
     })
 
@@ -80,7 +85,7 @@ mw.hook('wikipage.content').add(() => {
             type: 'mcw-calc-init',
             data: {
               dataset,
-              innerHTML: iframe.innerHTML,
+              innerHTML: calc.innerHTML,
             },
           },
           new URL(iframe.src).origin,

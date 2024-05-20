@@ -28,6 +28,8 @@ export default function getParams<K extends string>(
           ? new DOMParser().parseFromString(source.innerHTML, 'text/html').body
           : null
 
+        console.log('mcw-calc targetEl:', targetEl)
+
         const result = fromSearchDefault(params, defaults)
 
         for (const param of params) {
@@ -35,11 +37,13 @@ export default function getParams<K extends string>(
 
           const paramEl = targetEl?.querySelector(`.mcw-calc-parameter[data-name="${param}"]`)
           const dataAttribute = source.dataset?.[camelCaseParam]
-          console.log('mcw-calc param:', param, dataAttribute)
+          console.log('mcw-calc param:', param, paramEl)
           if (paramEl) result.set(param, paramEl.innerHTML)
           else if (dataAttribute !== null && dataAttribute !== undefined)
             result.set(param, dataAttribute)
         }
+
+        console.log('mcw-calc result:', result)
 
         resolve(result)
       })
