@@ -24,54 +24,39 @@ const cooldownReset = computed({
   },
 })
 
-const baseDamage = computed(() => (edition.value === 'java' ? 7 : 5))
 const criticalModifier = computed(() => (critical.value ? 1.5 : 1))
 const cooldownModifier = computed(() => (cooldownReset.value ? 1 : 0.2))
 
 const damage = computed({
   get: () => {
-    if (fallHeight.value < 1.5) return baseDamage.value * criticalModifier.value
-
-    if (edition.value === 'java') {
-      // Java formula as of 1.20.5-pre1:
-      // Full: (baseDamage + (3 * fallHeight) + (densityLevel * fallHeight)) * criticalModifier + damageFromEnchantments
-      // Cooldown not reset: ((baseDamage * 0.2) + (3 * fallHeight) + (densityLevel * fallHeight)) * criticalModifier
-      // damageFromEnchantments is currently not taken into account
-      return (
-        (baseDamage.value * cooldownModifier.value +
-          3 * fallHeight.value +
-          densityLevel.value * fallHeight.value) *
-        criticalModifier.value
-      )
-    } else {
-      // Bedrock formula:
-      // (baseDamage + falloff + 0.5 * densityLevel * fallHeight) * criticalModifier
-      // fallOff = 4 * fallHeight                  when fallHeight <= 3
-      //         = 12 + 2 * (fallHeight - 3)       when fallHeight <= 8
-      //         = 12 + 10 + 1 * (fallHeight - 8)  when fallHeight > 8
-      const fallOff =
-        fallHeight.value <= 3
-          ? 4 * fallHeight.value
-          : fallHeight.value <= 8
-            ? 12 + 2 * (fallHeight.value - 3)
-            : 12 + fallHeight.value
-      return (
-        (baseDamage.value + fallOff + 0.5 * densityLevel.value * fallHeight.value) *
-        criticalModifier.value
-      )
-    }
+    // Java formula as of 1.20.5-pre1:
+    // Full: (baseDamage + (3 * fallHeight) + (densityLevel * fallHeight)) * criticalModifier + damageFromEnchantments
+    // Cooldown not reset: ((baseDamage * 0.2) + (3 * fallHeight) + (densityLevel * fallHeight)) * criticalModifier
+    // damageFromEnchantments is currently not taken into account
+    // New formula:
+    // (baseDamage + falloff + 0.5 * densityLevel * fallHeight) * criticalModifier
+    // fallOff = 4 * fallHeight                  when fallHeight <= 3
+    //         = 12 + 2 * (fallHeight - 3)       when fallHeight <= 8
+    //         = 12 + 10 + 1 * (fallHeight - 8)  when fallHeight > 8
+    return (
+      (fallHeight.value <= 3
+        ? 4 * fallHeight.value + 6 + 0.5 * densityLevel.value * fallHeight.value
+        : fallHeight.value < 8
+          ? 2 * fallHeight.value + 12 + 0.5 * densityLevel.value * fallHeight.value
+          : 1 * fallHeight.value + 20 + 0.5 * densityLevel.value * fallHeight.value) *
+      criticalModifier.value *
+      cooldownModifier.value
+    )
   },
   set: (val) => {
-    if (val <= baseDamage.value * criticalModifier.value) return (fallHeight.value = 0)
-
-    if (edition.value === 'java') {
-      const height =
-        (val - criticalModifier.value * baseDamage.value * cooldownModifier.value) /
-        (criticalModifier.value * (densityLevel.value + 3))
-      fallHeight.value = Math.max(1.5, height)
-    } else {
-      // bedrock formula is irreversible
-    }
+    const x = val / criticalModifier.value / cooldownModifier.value
+    fallHeight.value =
+      x < 18 + 1.5 * densityLevel.value
+        ? (x - 6) / (4 + 0.5 * densityLevel.value)
+        : x < 28 + 4 * densityLevel.value
+          ? (x - (18 + 1.5 * densityLevel.value)) / (2 + 0.5 * densityLevel.value) + 3
+          : (x - (28 + 4 * densityLevel.value)) / (1 + 0.5 * densityLevel.value) + 8
+    return fallHeight.value
   },
 })
 
@@ -142,7 +127,6 @@ function validateDensity(value: number) {
             alignItems: 'center',
             gap: '.5rem',
           }"
-          v-if="edition === 'java'"
         >
           <label
             for="density-level-input"
@@ -166,13 +150,7 @@ function validateDensity(value: number) {
           }"
         >
           <label for="damage-input">{{ t('maceDamage.damage') }}</label>
-          <CdxTextInput
-            inputType="number"
-            min="0"
-            v-model="damage"
-            id="damage-input"
-            :disabled="edition !== 'java'"
-          />
+          <CdxTextInput inputType="number" min="0" v-model="damage" id="damage-input" />
         </div>
       </div>
       <img width="64" height="64" :src="maceImage" />
