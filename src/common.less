@@ -1,3 +1,6 @@
+@import '@wikimedia/codex-design-tokens/theme-wikimedia-ui.less';
+@import '@wikimedia/codex-design-tokens/theme-wikimedia-ui-mixin-dark.less';
+
 html {
   font-family: 'Liberation Sans', Arial, Helvetica, FreeSans, sans-serif;
   font-size: 0.875em;
@@ -12,7 +15,7 @@ body {
 
 a {
   text-decoration: none;
-  color: #0645ad;
+  color: @color-progressive;
   background: none;
 
   &:not([href]) {
@@ -20,11 +23,19 @@ a {
   }
 
   &:visited {
-    color: #0b0080;
+    color: @color-visited;
+  }
+
+  &:hover {
+    color: @color-progressive--hover;
+  }
+
+  &:focus {
+    color: @color-progressive--focus;
   }
 
   &:active {
-    color: #faa700;
+    color: @color-progressive--active;
   }
 
   &:hover,
@@ -44,41 +55,10 @@ code {
 }
 
 .dark {
+  .cdx-mode-dark();
+
   color: #e6e6e6;
   color-scheme: dark;
-  --color-base: #e6e6e6;
-  --color-base--hover: #d9d9d9;
-  --color-progressive: #90c0fe;
-  --color-progressive--hover: #7e8eff;
-  --color-subtle: #9f9f9f;
-  --border-base: 1px solid #686869;
-  --border-color-base: #686869;
-  --background-color-base: #000;
-  --background-color-base-fixed: #1e1e1e;
-  --background-color-interactive-subtle: #1e1e1e;
-
-  a {
-    color: #90c0fe;
-  }
-
-  a:visited {
-    color: #9495f4;
-  }
-
-  a:hover {
-    color: #7e8eff;
-  }
-
-  a:active {
-    color: #faa700;
-  }
-
-  textarea,
-  .cdx-text-input__input:enabled {
-    background-color: #1e1e1e;
-    color: #fff;
-    border-color: #686869;
-  }
 
   pre,
   code {
