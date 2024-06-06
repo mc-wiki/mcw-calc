@@ -55,6 +55,7 @@ jobs:
 
       - name: rsync deployments
         uses: burnett01/rsync-deployments@7.0.1
+        if: ${{ env.SHOULD_DEPLOY == 'true' }}
         with:
           switches: -avzr --delete
           path: dist/
@@ -62,3 +63,21 @@ jobs:
           remote_host: ${{ secrets.TOOLS_SSH_IP }}
           remote_user: ${{ secrets.TOOLS_SSH_USER }}
           remote_key: ${{ secrets.TOOLS_SSH_PRIVATE_KEY }}
+
+      - name: Update deployment status (success)
+        if: success()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment-url: https://tools.minecraft.wiki/jigsaw/
+          state: 'success'
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+
+      - name: Update deployment status (failure)
+        if: failure()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment-url: https://tools.minecraft.wiki/jigsaw/
+          state: 'failure'
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
