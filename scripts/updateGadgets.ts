@@ -9,35 +9,17 @@ const { stdout: commitHash } = await promisify(exec)('git rev-parse HEAD')
 
 const env = process.env
 
-const manifest = await fs.readFile('./dist/manifest.json', {
-  encoding: 'utf-8',
-})
-const filesProd = JSON.parse(manifest).prod as string[]
-const filesDev = JSON.parse(manifest).dev as string[]
-
-const definitionProd = await fs.readFile('./dist/Gadgets-definition', {
-  encoding: 'utf-8',
-})
-const definitionDev = await fs.readFile('./dist/Gadgets-definition.dev', {
-  encoding: 'utf-8',
-})
-const definitionLocalMessages = await fs.readFile('./dist/Gadgets-definition.localMessages', {
+const loaderContent = await fs.readFile('./mediawiki/loader.js', {
   encoding: 'utf-8',
 })
 
-const promises = targets.map((target) =>
-  target.type === 'production'
-    ? target.useLocalMessages
-      ? update(target, filesProd, definitionLocalMessages)
-      : update(target, filesProd, definitionProd)
-    : update(target, filesDev, definitionDev),
-)
+const promises = targets.map((target) => update(target))
 
 for (const promise of promises) {
   await promise
 }
 
-async function update(target: DeployTarget, names: string[], definition: string) {
+async function update(target: DeployTarget) {
   const bot = await Mwn.init({
     apiUrl: target.apiUrl,
 
@@ -52,33 +34,10 @@ async function update(target: DeployTarget, names: string[], definition: string)
       assert: 'user',
     },
   })
-  const files = names.map((file) => `./dist/${file}`)
-  console.log(`Updating for ${target.name}: ${names.join(', ')}`)
 
-  files.forEach(async (path, index) => {
-    const file = await fs.readFile(path, { encoding: 'utf-8' })
-    if (names[index] !== 'Gadgets-definition') {
-      await bot.save(
-        `MediaWiki:${names[index]}`,
-        file,
-        `Bot: Automatically deploy changes from Git (${commitHash.trim().substring(0, 6)})`,
-      )
-      console.log(`Deployed ${names[index]} to ${target.name}`)
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, 200))
-  })
-
-  bot.edit('MediaWiki:Gadgets-definition', (rev) => {
-    // Replace content between two <!-- Automatically generated, your edit will be overwritten -->
-
-    const section = rev.content.match(
-      /<!-- Automatically generated, your edit will be overwritten -->\n((.|\n)+)\n<!-- Automatically generated, your edit will be overwritten -->/,
-    )![1]
-    const text = rev.content.replace(section, definition)
-    return {
-      text: text,
-      summary: `Bot: Automatically deploy changes from Git (${commitHash.trim().substring(0, 6)})`,
-    }
-  })
+  bot.save(
+    'MediaWiki:Gadgets-mcw-calc-loader.js',
+    loaderContent,
+    `Bot: Automatically deploy changes from Git (${commitHash.trim().substring(0, 6)})`,
+  )
 }

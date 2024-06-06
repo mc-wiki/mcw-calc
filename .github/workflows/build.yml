@@ -1,15 +1,14 @@
-name: Deploy
-concurrency: deployment
+name: Build
 on:
   push:
-    branches:
-      - main
   workflow_dispatch:
 
+env:
+  SHOULD_DEPLOY: ${{ (!contains(github.event.head_commit.message , '[skip ci]') && github.repository == 'mc-wiki/mcw-calc' && github.ref == 'refs/heads/main') || github.event == 'workflow_dispatch' }}
+
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message , '[skip ci]')"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,8 +29,33 @@ jobs:
       - name: Build
         run: pnpm run build
 
-      - name: Deploy
-        run: pnpm run deploy
-        env:
-          ACCESS_TOKEN_PROD: ${{ secrets.ACCESS_TOKEN_PROD }}
-          # ACCESS_TOKEN_DEV: ${{ secrets.ACCESS_TOKEN_DEV }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Create GitHub deployment
+        uses: chrnorm/deployment-action@v2
+        id: deployment
+        if: ${{ env.SHOULD_DEPLOY }}
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment-url: https://tools.minecraft.wiki/static/
+          environment: production
+
+      # - name: Deploy to MW
+      #   if: ${{ env.SHOULD_DEPLOY }}
+      #   run: pnpm run deploy
+      #   env:
+      #     ACCESS_TOKEN_PROD: ${{ secrets.ACCESS_TOKEN_PROD }}
+      #     # ACCESS_TOKEN_DEV: ${{ secrets.ACCESS_TOKEN_DEV }}
+
+      - name: Upload file to tools
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.TOOLS_SSH_IP }}
+          username: ${{ secrets.TOOLS_SSH_USER }}
+          key: ${{ secrets.TOOLS_SSH_PRIVATE_KEY }}
+          source: dist/
+          target: /var/www/html/static/
