@@ -29,7 +29,7 @@ jobs:
         run: pnpm install
 
       - name: Build
-        run: pnpm run build
+        run: pnpm run build --base=/static/
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
