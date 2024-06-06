@@ -59,5 +59,7 @@ jobs:
           host: ${{ secrets.TOOLS_SSH_IP }}
           username: ${{ secrets.TOOLS_SSH_USER }}
           key: ${{ secrets.TOOLS_SSH_PRIVATE_KEY }}
-          source: dist/
+          rm: true
+          overwrite: true
+          source: dist/*
           target: /var/www/html/static/
