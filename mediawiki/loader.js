@@ -29,7 +29,7 @@ mw.hook('wikipage.content').add(() => {
       console.log('You are in development environment and tools are loaded from localhost.')
       iframe.src = `http://localhost:5173${url}`
     } else {
-      iframe.src = `https://tools.minecraft.wiki${url}`
+      iframe.src = `https://tools.minecraft.wiki/static${url}`
     }
 
     // copy all children with .mcw-calc-parameter
