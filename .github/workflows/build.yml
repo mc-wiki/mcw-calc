@@ -53,13 +53,12 @@ jobs:
       #     ACCESS_TOKEN_PROD: ${{ secrets.ACCESS_TOKEN_PROD }}
       #     # ACCESS_TOKEN_DEV: ${{ secrets.ACCESS_TOKEN_DEV }}
 
-      - name: Upload file to tools
-        uses: appleboy/scp-action@v0.1.7
+      - name: rsync deployments
+        uses: burnett01/rsync-deployments@7.0.1
         with:
-          host: ${{ secrets.TOOLS_SSH_IP }}
-          username: ${{ secrets.TOOLS_SSH_USER }}
-          key: ${{ secrets.TOOLS_SSH_PRIVATE_KEY }}
-          rm: true
-          overwrite: true
-          source: dist/*
-          target: /var/www/html/static/
+          switches: -avzr --delete
+          path: dist/
+          remote_path: /var/www/html/static/
+          remote_host: ${{ secrets.TOOLS_SSH_IP }}
+          remote_user: ${{ secrets.TOOLS_SSH_USER }}
+          remote_key: ${{ secrets.TOOLS_SSH_PRIVATE_KEY }}
