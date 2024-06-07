@@ -7,6 +7,8 @@
   "blockStructureRenderer.renderRange": "Render range:",
   "blockStructureRenderer.resetCamera": "Reset camera",
   "blockStructureRenderer.saveImage": "Save as image",
+  "blockStructureRenderer.saveStructureFile": "Export as structure file",
+  "blockStructureRenderer.saveLitematic": "Export as litematic file",
   "blockStructureRenderer.animatedTexture": "Render animated textures",
   "blockStructureRenderer.cameraSetting": "Move camera mode",
   "blockStructureRenderer.cameraSetting.drag": "Drag",

@@ -7,6 +7,8 @@
   "blockStructureRenderer.renderRange": "渲染范围：",
   "blockStructureRenderer.resetCamera": "重置摄像机",
   "blockStructureRenderer.saveImage": "保存为图片",
+  "blockStructureRenderer.saveStructureFile": "导出为结构文件",
+  "blockStructureRenderer.saveLitematic": "导出为Litematic文件",
   "blockStructureRenderer.animatedTexture": "渲染动态纹理",
   "blockStructureRenderer.cameraSetting": "摄像机移动方式",
   "blockStructureRenderer.cameraSetting.drag": "拖动",
