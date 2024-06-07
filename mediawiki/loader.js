@@ -79,7 +79,6 @@ mw.hook('wikipage.content').add(() => {
 
     window.addEventListener('message', (event) => {
       if (event.origin !== new URL(iframe.src).origin) return
-      console.log('message1', event.data)
       if (event.data.data?.id !== id) return
 
       if (event.data.type === 'mcw-calc-init-request-data') {
@@ -94,7 +93,6 @@ mw.hook('wikipage.content').add(() => {
           new URL(iframe.src).origin,
         )
       } else if (event.data.type === 'mcw-calc-height-change') {
-        console.log('message2', event.data)
         iframe.style.height = `${event.data.data.height}px`
       }
     })

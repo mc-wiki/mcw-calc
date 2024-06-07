@@ -28,8 +28,6 @@ const targetEl = document.querySelector('#app')!
     datapage: 'Module:Maps/Minecraft_Dungeons_Mainland.json',
   })
 
-  console.log(params)
-
   const json = await (
     await fetch(
       `${import.meta.env.DEV ? 'https://minecraft.wiki' : ''}/w/${encodeURIComponent(params.get('datapage')!)}?action=raw`,
