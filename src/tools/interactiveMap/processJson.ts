@@ -59,7 +59,7 @@ export default function processJson({
         description: parseWikitext(marker.popup.description),
         link: {
           ...marker.popup.link,
-          url: window.parent.location.origin + '/w/' + marker.popup.link.url,
+          url: document.referrer + '/w/' + marker.popup.link.url,
         },
         image: marker.popup.image ? getImageLink(marker.popup.image) : undefined,
       },
@@ -76,5 +76,5 @@ export function convertCoordinate(
 
 export function getImageLink(image: string) {
   const imageNameNormalized = image.replace(/File:/g, '').replace(/ /g, '_')
-  return `${window.parent.location.origin}/images/${encodeURIComponent(imageNameNormalized)}`
+  return `${document.referrer}/images/${encodeURIComponent(imageNameNormalized)}`
 }

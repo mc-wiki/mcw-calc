@@ -45,6 +45,6 @@ export function parseWikitext(wikitext: string) {
   return wikitext.replace(
     /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g,
     (_, link, text) =>
-      `<a href="${window.parent.location.origin}/w/${encodeURIComponent(link)}">${text ?? link}</a>`,
+      `<a href="${document.referrer}/w/${encodeURIComponent(link)}">${text ?? link}</a>`,
   )
 }

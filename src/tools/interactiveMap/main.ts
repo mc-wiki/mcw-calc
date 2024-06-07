@@ -29,9 +29,7 @@ const targetEl = document.querySelector('#app')!
   })
 
   const json = await (
-    await fetch(
-      `${window.parent.location.origin}/w/${encodeURIComponent(params.get('datapage')!)}?action=raw`,
-    )
+    await fetch(`${document.referrer}/w/${encodeURIComponent(params.get('datapage')!)}?action=raw`)
   ).json()
 
   const mapData = processJson(json)
