@@ -32,6 +32,7 @@ function makePalette(structure: BlockStructure, nameMapping: NameMapping, ignore
         return nbt.compound({ Name: nbt.string(blockState.blockName) })
       }
     }),
+    'compound'
   )
 
   return { paletteMapping, paletteNbt }
@@ -51,7 +52,7 @@ export function saveAsStructureFile(structure: BlockStructure, nameMapping: Name
     false,
     true,
   )
-  const blocksNbt = nbt.list(blocks.map((block) => nbt.compound(block)))
+  const blocksNbt = nbt.list(blocks.map((block) => nbt.compound(block)), 'compound')
   const structureNbt = nbt.compound({
     size: nbt.list([nbt.int(structure.x), nbt.int(structure.y), nbt.int(structure.z)]),
     palette: paletteNbt,
