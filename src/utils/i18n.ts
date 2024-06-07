@@ -1,4 +1,5 @@
 import { createI18n } from 'vue-i18n'
+import { parentOrigin } from './iframe'
 
 const FALLBACK_CHAIN = new Map(
   Object.entries({
@@ -45,6 +46,6 @@ export function parseWikitext(wikitext: string) {
   return wikitext.replace(
     /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g,
     (_, link, text) =>
-      `<a href="${document.referrer}/w/${encodeURIComponent(link)}">${text ?? link}</a>`,
+      `<a href="${parentOrigin()}/w/${encodeURIComponent(link)}">${text ?? link}</a>`,
   )
 }

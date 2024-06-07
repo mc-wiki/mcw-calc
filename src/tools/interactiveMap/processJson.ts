@@ -1,4 +1,5 @@
 import { parseWikitext } from '@/utils/i18n'
+import { parentOrigin } from '@/utils/iframe'
 
 export type Coordinate = [number, number]
 export interface FandomMapConfig {
@@ -59,7 +60,7 @@ export default function processJson({
         description: parseWikitext(marker.popup.description),
         link: {
           ...marker.popup.link,
-          url: document.referrer + '/w/' + marker.popup.link.url,
+          url: parentOrigin() + '/w/' + marker.popup.link.url,
         },
         image: marker.popup.image ? getImageLink(marker.popup.image) : undefined,
       },
@@ -76,5 +77,5 @@ export function convertCoordinate(
 
 export function getImageLink(image: string) {
   const imageNameNormalized = image.replace(/File:/g, '').replace(/ /g, '_')
-  return `${document.referrer}/images/${encodeURIComponent(imageNameNormalized)}`
+  return `${parentOrigin()}/images/${encodeURIComponent(imageNameNormalized)}`
 }
