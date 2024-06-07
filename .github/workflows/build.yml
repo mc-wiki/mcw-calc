@@ -1,15 +1,16 @@
-name: Deploy
-concurrency: deployment
+name: Build
 on:
   push:
-    branches:
-      - main
   workflow_dispatch:
 
+env:
+  SHOULD_DEPLOY: ${{ (!contains(github.event.head_commit.message , '[skip ci]') && github.repository == 'mc-wiki/mcw-calc' && github.ref == 'refs/heads/main') || github.event == 'workflow_dispatch' }}
+
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message , '[skip ci]')"
+    permissions:
+      deployments: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,10 +29,55 @@ jobs:
         run: pnpm install
 
       - name: Build
-        run: pnpm run build
+        run: pnpm run build --base=/static/
 
-      - name: Deploy
-        run: pnpm run deploy
-        env:
-          ACCESS_TOKEN_PROD: ${{ secrets.ACCESS_TOKEN_PROD }}
-          # ACCESS_TOKEN_DEV: ${{ secrets.ACCESS_TOKEN_DEV }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Create GitHub deployment
+        uses: chrnorm/deployment-action@v2
+        id: deployment
+        if: ${{ env.SHOULD_DEPLOY == 'true' }}
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment-url: https://tools.minecraft.wiki/static/
+          environment: production
+
+      # - name: Deploy to MW
+      #   if: ${{ env.SHOULD_DEPLOY == 'true' }}
+      #   run: pnpm run deploy
+      #   env:
+      #     ACCESS_TOKEN_PROD: ${{ secrets.ACCESS_TOKEN_PROD }}
+      #     # ACCESS_TOKEN_DEV: ${{ secrets.ACCESS_TOKEN_DEV }}
+
+      - name: rsync deployments
+        uses: burnett01/rsync-deployments@7.0.1
+        if: ${{ env.SHOULD_DEPLOY == 'true' }}
+        with:
+          switches: -avzr --delete
+          path: dist/
+          remote_path: /var/www/html/static/
+          remote_host: ${{ secrets.TOOLS_SSH_IP }}
+          remote_user: ${{ secrets.TOOLS_SSH_USER }}
+          remote_key: ${{ secrets.TOOLS_SSH_PRIVATE_KEY }}
+
+      - name: Update deployment status (success)
+        if: success()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment-url: https://tools.minecraft.wiki/jigsaw/
+          state: 'success'
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+
+      - name: Update deployment status (failure)
+        if: failure()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment-url: https://tools.minecraft.wiki/jigsaw/
+          state: 'failure'
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}

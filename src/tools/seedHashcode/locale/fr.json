@@ -1,0 +1,5 @@
+{
+  "seedHashcode.title": "Convertir du texte en graine de monde réelle",
+  "seedHashcode.actual": "Graine de monde réelle :",
+  "seedHashcode.emptyString": "Cela devrait être 0, mais il s'agit d'un texte vide, donc Minecraft génère en fait un nombre aléatoire."
+}

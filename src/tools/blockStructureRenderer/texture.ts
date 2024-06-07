@@ -376,7 +376,7 @@ export class MaterialPicker {
 
     const refNoMipped = ref()
     const textureAtlasMipped = new THREE.TextureLoader().load(
-      '/images/Block_structure_rendering_atlas.png?format=original',
+      'https://zh.minecraft.wiki/images/Block_structure_rendering_atlas.png?format=original',
       () => {
         refNoMipped.value.needsUpdate = true
         this.animatedTextureManager.updateAtlas(textureAtlasMipped)

@@ -9,3 +9,14 @@ import { CdxField } from '@wikimedia/codex'
     <slot />
   </CdxField>
 </template>
+<style>
+.mcw-calc-field {
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  padding: 1em;
+}
+
+.dark .mcw-calc-field {
+  border-color: #595959;
+}
+</style>

@@ -4,16 +4,16 @@ import { overworldBlockMap, netherBlockMap, endBlockMap, getColor, type Block } 
 import { onMounted, ref, computed, onUpdated } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
 import { CdxTab, CdxTabs, CdxCheckbox } from '@wikimedia/codex'
-import { useI18n } from '@/utils/i18n'
-import locales from './locales'
+import { useI18n } from 'vue-i18n'
+import { parseWikitext } from '@/utils/i18n'
 
 const props = defineProps<{
   blocks: string[]
   blockNames: string[]
+  pageName: string
 }>()
 
-const { t, language, message } = useI18n(__TOOL_NAME__, locales)
-const pageName = mw.Title.newFromText(mw.config.get('wgPageName'))!.getMainText()
+const { t } = useI18n()
 
 const validBlocks = props.blocks
   .slice()
@@ -241,10 +241,9 @@ function plot(
     dot.attr('transform', `translate(${x1},${y1})`)
     const formatter = d3.format('d')
     dot.select('text').html(
-      `<tspan x="0" dy="1.2em">${t(
-        'blockDistribution.xInTenThousand',
-        formatter(y.invert(y1)),
-      )}</tspan>
+      `<tspan x="0" dy="1.2em">${t('blockDistribution.xInTenThousand', {
+        num: formatter(y.invert(y1)),
+      })}</tspan>
         <tspan x="0" dy="1.2em">Y=${formatter(x.invert(x1))}</tspan>
         <tspan x="0" dy="1.2em">${k}</tspan>`,
     )
@@ -310,10 +309,15 @@ function update() {
 <template>
   <h4
     v-html="
-      message('blockDistribution.title', [
-        props.blockNames.length <= 5 ? language.listToText(props.blockNames) : pageName,
-        '1.20.4',
-      ]).parse()
+      parseWikitext(
+        t('blockDistribution.title', {
+          block:
+            props.blockNames.length <= 5
+              ? new Intl.ListFormat('en').format(props.blockNames)
+              : props.pageName,
+          version: '1.20.4',
+        }),
+      )
     "
   ></h4>
   <div style="display: flex; flex-wrap: wrap; margin-bottom: 0.5rem">
@@ -405,21 +409,21 @@ function update() {
       :label="t('blockDistribution.overworld')"
       v-if="overworldBlockMapFiltered.length !== 0"
     >
-      <div style="width: 100%; overflow: auto" ref="overworld" />
+      <div style="overflow: auto" ref="overworld" />
     </cdx-tab>
     <cdx-tab
       name="nether"
       :label="t('blockDistribution.theNether')"
       v-if="netherBlockMapFiltered.length !== 0"
     >
-      <div style="width: 100%; overflow: auto" ref="nether" />
+      <div style="overflow: auto" ref="nether" />
     </cdx-tab>
     <cdx-tab
       name="end"
       :label="t('blockDistribution.theEnd')"
       v-if="endBlockMapFiltered.length !== 0"
     >
-      <div style="width: 100%; overflow: auto" ref="end" />
+      <div style="overflow: auto" ref="end" />
     </cdx-tab>
   </cdx-tabs>
   <cdx-checkbox v-model="logarithmicScale">
@@ -430,6 +434,10 @@ function update() {
   </cdx-checkbox>
 </template>
 <style>
+#app {
+  overflow-x: auto;
+}
+
 g.isolate {
   isolation: isolate;
   pointer-events: none;

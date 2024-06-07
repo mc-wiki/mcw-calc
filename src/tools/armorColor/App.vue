@@ -11,12 +11,11 @@ import {
 } from '@/utils/color'
 import { colorRgbMap as javaColorRgbMap } from '@/utils/color/java'
 import { colorRgbMap as bedrockColorRgbMap } from '@/utils/color/bedrock'
-import { useI18n } from '@/utils/i18n'
-import locales from './locales'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{ type: 'normal' | 'horse' | 'wolf' }>()
 
-const { t } = useI18n(__TOOL_NAME__, locales)
+const { t } = useI18n()
 
 const color = ref('#f9fffe')
 const edition = ref<'java' | 'bedrock'>('java')
@@ -139,7 +138,9 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
 </script>
 <template>
   <CalcField>
-    <template #heading>{{ t('armorColor.title', t(`armorColor.type.${props.type}`)) }}</template>
+    <template #heading>{{
+      t('armorColor.title', { type: t(`armorColor.type.${props.type}`) })
+    }}</template>
 
     <cdx-tabs v-model:active="edition">
       <cdx-tab name="java" :label="t('armorColor.java')" />

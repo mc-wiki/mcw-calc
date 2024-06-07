@@ -1,86 +1,51 @@
-const FALLBACK_CHAIN = {
-  zh: ['zh-cn', 'zh-tw', 'zh-hk', 'en'],
-  'zh-hans': ['zh-cn', 'zh-tw', 'zh-hk', 'en'],
-  'zh-cn': ['zh-tw', 'zh-hk', 'en'],
-  'zh-hant': ['zh-tw', 'zh-hk', 'zh-cn', 'en'],
-  'zh-tw': ['zh-hk', 'zh-cn', 'en'],
-  'zh-hk': ['zh-tw', 'zh-cn', 'en'],
-  default: mw.language.getFallbackLanguages(),
-}
-const MESSAGES_LOCAL = ['en']
+import { createI18n } from 'vue-i18n'
+import { parentOrigin } from './iframe'
 
-const resolvedLanguage = mw.config.get('wgPageContentLanguage')
+const FALLBACK_CHAIN = new Map(
+  Object.entries({
+    zh: ['zh-cn', 'zh-tw', 'zh-hk', 'en'],
+    'zh-hans': ['zh-cn', 'zh-tw', 'zh-hk', 'en'],
+    'zh-cn': ['zh-tw', 'zh-hk', 'en'],
+    'zh-hant': ['zh-tw', 'zh-hk', 'zh-cn', 'en'],
+    'zh-tw': ['zh-hk', 'zh-cn', 'en'],
+    'zh-hk': ['zh-tw', 'zh-cn', 'en'],
+    default: ['en'],
+  }),
+)
 
-export function useI18n<K extends string>(
-  toolName: string,
-  localMessages: Record<string, Record<K, string>>,
-) {
-  const messages = resolveFallback(toolName, localMessages)
+export function createMcwI18n(files: Record<string, { default: Record<string, string> }>) {
+  const locale =
+    new URLSearchParams(window.location.hash.substring(2)).get('locale') ??
+    window.navigator.language.split('-')[0]
+  const fallback = FALLBACK_CHAIN.get(locale) ?? FALLBACK_CHAIN.get('default')!
+  console.log('locale:', locale, 'fallback:', fallback)
 
-  for (const [key, value] of Object.entries(messages)) {
-    mw.messages.set(key, value)
-  }
-
-  return {
-    t: (key: K, ...parameters: any[]) => mw.msg(key, ...parameters),
-    message: (key: string, parameters?: any[] | undefined) =>
-      new mw.Message(mw.messages, key, parameters),
-    messagesMap: messages,
-    language: mw.language,
-  }
-}
-
-function resolveFallback(
-  toolName: string,
-  localMessages: Record<string, Record<string, string>>,
-): Record<string, string> {
-  const messages = findMessages(resolvedLanguage, toolName, localMessages) as Record<string, string>
-  const fallbackChain = isKeyOfObject(resolvedLanguage, FALLBACK_CHAIN)
-    ? FALLBACK_CHAIN[resolvedLanguage]
-    : FALLBACK_CHAIN.default
-
-  const fallbackMessages = fallbackChain.map((fallback) =>
-    findMessages(fallback, toolName, localMessages),
+  const messages: Record<string, Record<string, string>> = Object.fromEntries(
+    Object.entries(files).map(([path, value]) => [
+      path.match(/([a-z-]+)\.json/)![1],
+      value.default,
+    ]),
   )
 
-  for (const dictionary of fallbackMessages) {
-    for (const [key, value] of Object.entries(dictionary)) {
-      if (!isKeyOfObject(key, messages)) {
-        messages[key] = value
-      }
-    }
-  }
-
-  return messages
+  return createI18n({
+    legacy: false,
+    locale,
+    fallbackLocale: fallback,
+    messages,
+  })
 }
 
-function findMessages(
-  language: string,
-  toolName: string,
-  localMessages: Record<string, Record<string, string>>,
-) {
-  if (MESSAGES_LOCAL.includes(resolvedLanguage)) {
-    return localMessages[language]
-  } else {
-    if (process.env.NODE_ENV == 'development') {
-      return {}
-    }
+export function parseWikitext(wikitext: string) {
+  // convert ''italic'' or '''bold''' to <i>italic</i> or <b>bold</b>
+  wikitext = wikitext.replace(/'''''(.*?)'''''/g, '<b><i>$1</i></b>')
+  wikitext = wikitext.replace(/'''(.*?)'''/g, '<b>$1</b>')
+  wikitext = wikitext.replace(/''(.*?)''/g, '<i>$1</i>')
 
-    let json
-    try {
-      json = __non_webpack_require__<Record<string, Record<string, string>>>(
-        `./mcw-calc-${toolName}-locales.json`,
-      )
-    } catch {
-      json = {}
-      console.warn(`${toolName} is missing messages for ${language}.`)
-    }
-
-    return isKeyOfObject(language, json) ? json[language] : {}
-  }
-}
-
-function isKeyOfObject<T extends object>(key: string | number | symbol, obj: T): key is keyof T {
-  // Type guard
-  return key in obj
+  // convert [[wiki links]] or [[wiki links|with text]]
+  // to <a href="/w/wiki links">with text</a>
+  return wikitext.replace(
+    /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g,
+    (_, link, text) =>
+      `<a href="${parentOrigin()}/w/${encodeURIComponent(link)}">${text ?? link}</a>`,
+  )
 }

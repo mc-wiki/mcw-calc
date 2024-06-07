@@ -1,15 +1,7 @@
-/**
- * Armor damage reduction calculator
- * @name armor
- * @author Dianliang233
- * @dependencies vue, @wikimedia/codex
- * @private
- */
-
+import '@/init'
 import * as vue from 'vue'
 import App from './App.vue'
 
-const targetEl = document.querySelector('.mcw-calc[data-type="armor"]')!
-const createApp =
-  process.env.NODE_ENV === 'development' ? vue.createApp : vue.createMwApp || vue.createApp
-createApp(App).mount(targetEl)
+const targetEl = document.querySelector('#app')!
+
+vue.createApp(App).mount(targetEl)

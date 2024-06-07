@@ -1,3 +1,6 @@
+import { parseWikitext } from '@/utils/i18n'
+import { parentOrigin } from '@/utils/iframe'
+
 export type Coordinate = [number, number]
 export interface FandomMapConfig {
   mapImage: string
@@ -57,7 +60,7 @@ export default function processJson({
         description: parseWikitext(marker.popup.description),
         link: {
           ...marker.popup.link,
-          url: '/w/' + marker.popup.link.url,
+          url: parentOrigin() + '/w/' + marker.popup.link.url,
         },
         image: marker.popup.image ? getImageLink(marker.popup.image) : undefined,
       },
@@ -74,17 +77,5 @@ export function convertCoordinate(
 
 export function getImageLink(image: string) {
   const imageNameNormalized = image.replace(/File:/g, '').replace(/ /g, '_')
-  if (process.env.NODE_ENV === 'development') {
-    return `https://minecraft.wiki/images/${encodeURIComponent(imageNameNormalized)}`
-  } else {
-    return `/images/${encodeURIComponent(imageNameNormalized)}`
-  }
-}
-
-export function parseWikitext(wikitext: string) {
-  const map = new mw.Map()
-  map.set('parse', wikitext)
-  const parsed = new mw.Message(map, 'parse').parse().replace(/'''(.*)'''/g, '<b>$1</b>')
-
-  return parsed
+  return `${parentOrigin()}/images/${encodeURIComponent(imageNameNormalized)}`
 }

@@ -1,0 +1,5 @@
+{
+  "seedHashcode.title": "Converter um texto em uma semente real",
+  "seedHashcode.actual": "Semente real:",
+  "seedHashcode.emptyString": "Isso deveria ser 0, mas é um texto em branco, então o Minecraft gerará um número aleatório"
+}

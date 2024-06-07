@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { CdxTextInput } from '@wikimedia/codex'
-import { useI18n } from '@/utils/i18n'
-import locales from './locales'
+import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n(__TOOL_NAME__, locales)
+const { t } = useI18n()
 
 const overworldX = ref(0)
 const netherX = computed<number>({
@@ -51,3 +50,52 @@ const netherZ = computed<number>({
     </tbody>
   </table>
 </template>
+<style scoped lang="less">
+.wikitable {
+  background-color: #f8f9fa;
+  color: #202122;
+  margin: 1em 0;
+  border: 1px solid #a2a9b1;
+  border-collapse: collapse;
+
+  & > tr > th,
+  & > tr > td,
+  & > * > tr > th,
+  & > * > tr > td {
+    border: 1px solid #a2a9b1;
+    padding: 0.2em 0.4em;
+  }
+
+  & > tr > th,
+  & > * > tr > th {
+    background-color: #eaecf0;
+    text-align: center;
+  }
+
+  & > caption {
+    font-weight: bold;
+  }
+
+  #catlinks {
+    text-align: left;
+  }
+}
+
+.dark .wikitable {
+  color: #e6e6e6;
+  background-color: #2f2f2f;
+
+  &,
+  & > tr > th,
+  & > tr > td,
+  & > * > tr > th,
+  & > * > tr > td {
+    border-color: #444;
+  }
+
+  & > tr > th,
+  & > * > tr > th {
+    background-color: #222;
+  }
+}
+</style>

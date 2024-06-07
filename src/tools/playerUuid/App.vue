@@ -2,12 +2,12 @@
 import { ref } from 'vue'
 import { CdxButton } from '@wikimedia/codex'
 import CalcField from '@/components/CalcField.vue'
-import { useI18n } from '@/utils/i18n'
-import locales from './locales'
+import { useI18n } from 'vue-i18n'
+import { parseWikitext } from '@/utils/i18n'
 
 const props = defineProps<{ player: string }>()
 
-const { t, message } = useI18n(__TOOL_NAME__, locales)
+const { t } = useI18n()
 
 const apiUrl = 'https://playerdb.co/api/player/minecraft/'
 const playerName = ref(props.player)
@@ -86,7 +86,7 @@ getUuid(playerName.value)
             gap: '.5rem',
           }"
         >
-          <p v-html="message('playerUuid.uuid').parse()"></p>
+          <p v-html="parseWikitext(t('playerUuid.uuid'))"></p>
           <code v-if="playerUuid !== ''">{{ playerUuid }}</code>
           <template v-else>{{ errorText }}</template>
           <cdx-button v-if="playerUuid !== ''" @click="copyUuid(playerUuid)">{{
