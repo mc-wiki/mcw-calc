@@ -1,10 +1,7 @@
-/**
- * @dependencies vue, @wikimedia/codex
- */
+import '@/init'
 import * as vue from 'vue'
 import App from './App.vue'
 
-const targetEl = document.querySelector('.mcw-calc[data-type="formattingCodeEditor"]')!
-const createApp =
-  process.env.NODE_ENV === 'development' ? vue.createApp : vue.createMwApp || vue.createApp
-createApp(App).mount(targetEl)
+const targetEl = document.querySelector('#app')!
+
+vue.createApp(App).mount(targetEl)

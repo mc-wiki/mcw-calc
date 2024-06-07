@@ -1,0 +1,13 @@
+{
+  "blockDistribution.xAxis": "高度 →",
+  "blockDistribution.yAxis": "↑ 每十萬個方塊中X的數量",
+  "blockDistribution.xInTenThousand": "100,000分之$1",
+  "blockDistribution.title": "[[Java版$2]]中$1每層的分佈",
+  "blockDistribution.total": "總計",
+  "blockDistribution.overworld": "主世界",
+  "blockDistribution.theNether": "下界",
+  "blockDistribution.theEnd": "末地",
+  "blockDistribution.logarithmicScale": "對數尺度",
+  "blockDistribution.logarithmicScaleHelp": "使每層中方塊數量的小變化更明顯，適用於圖中有非常大的峯值時觀察小的變化。",
+  "blockDistribution.selectAll": "全選"
+}

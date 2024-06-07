@@ -1,8 +1,0 @@
-export default {
-  en: {
-    'netherCoords.title': 'Nether coordinate converter',
-    'netherCoords.dimension': 'Dimension',
-    'netherCoords.overworld': 'Overworld',
-    'netherCoords.nether': 'Nether',
-  },
-}

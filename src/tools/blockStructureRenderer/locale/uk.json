@@ -1,0 +1,21 @@
+{
+  "blockStructureRenderer.orthographic": "Орфографічний вигляд",
+  "blockStructureRenderer.displayMode": "Режим відображення",
+  "blockStructureRenderer.displayModes.all": "Відрендерити всі блоки",
+  "blockStructureRenderer.displayModes.yRange": "Відображати тільки блоки між певними Y",
+  "blockStructureRenderer.displayModes.selectedY": "Відображати блоки лише за певним значенням Y",
+  "blockStructureRenderer.renderRange": "Відобразити діапазон:",
+  "blockStructureRenderer.resetCamera": "Перезавантажити камеру",
+  "blockStructureRenderer.saveImage": "Зберегти як зображення",
+  "blockStructureRenderer.animatedTexture": "Відтворення анімованих текстур",
+  "blockStructureRenderer.cameraSetting": "Режим переміщення камери",
+  "blockStructureRenderer.cameraSetting.drag": "Перетягнути",
+  "blockStructureRenderer.cameraSetting.manual": "Встановлюється вручну",
+  "blockStructureRenderer.cameraSetting.position": "Положення камери (відносно цілі)",
+  "blockStructureRenderer.cameraSetting.target": "Ціль камери",
+  "blockStructureRenderer.cameraSetting.confirm": "Підтвердити",
+  "blockStructureRenderer.backgroundColor": "Колір фону",
+  "blockStructureRenderer.backgroundAlpha": "Непрозорість",
+  "blockStructureRenderer.renderMarks": "Рендеринг позначок",
+  "blockStructureRenderer.renderInvisibleBlocks": "Візуалізувати невидимі блоки"
+}

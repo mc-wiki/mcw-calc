@@ -1,0 +1,12 @@
+{
+  "maceDamage.title": "Розрахувати шкоду від булави",
+  "maceDamage.java": "Java Edition",
+  "maceDamage.bedrock": "Bedrock Edition",
+  "maceDamage.fallHeight": "Висота падіння в блоках:",
+  "maceDamage.densityLevel": "Рівень чарів «Тяга»:",
+  "maceDamage.critical": "Критична атака",
+  "maceDamage.critical.help": "Удар булавою по сутности здебільшого призводить до критичних атак, якщо тільки не скинути відлік атаки.",
+  "maceDamage.cooldownReset": "Скидання часу відновлення",
+  "maceDamage.cooldownReset.help": "Зніміть цей прапорець, якщо час відновлення атаки не скидається перед атакою.",
+  "maceDamage.damage": "Шкода:"
+}

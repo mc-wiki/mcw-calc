@@ -1,0 +1,5 @@
+{
+  "seedHashcode.title": "Перетворити текст на справжнє зерно",
+  "seedHashcode.actual": "Справжнє зерно:",
+  "seedHashcode.emptyString": "Це має бути 0, але це порожній рядок, тому Minecraft насправді генерує випадкове число."
+}

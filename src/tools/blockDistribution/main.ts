@@ -1,23 +1,26 @@
-/**
- * @public
- * @dependencies vue, @wikimedia/codex
- */
+import '@/init'
 import * as vue from 'vue'
 import App from './App.vue'
 import getParams from '@/utils/getParams'
+import { createMcwI18n } from '@/utils/i18n'
 
-const targetEl = document.querySelector('.mcw-calc[data-type="blockDistribution"]')!
-const createApp =
-  process.env.NODE_ENV === 'development' ? vue.createApp : vue.createMwApp || vue.createApp
+const targetEl = document.querySelector('#app')!
 
-const params = getParams(targetEl, ['blocks', 'block-names', 'page-name'], {
-  blocks: 'minecraft:diamond_ore',
-  'block-names': 'Diamond Ore',
-  'page-name': mw.config.get('wgPageName'),
-})
+const i18n = createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }))
 
-createApp(App, {
-  blocks: params.get('blocks')?.split(','),
-  blockNames: params.get('block-names')?.split(','),
-  pageName: params.get('page-name'),
-}).mount(targetEl)
+;(async () => {
+  const params = await getParams(['blocks', 'block-names', 'page-name'], {
+    blocks: 'minecraft:diamond_ore',
+    'block-names': 'Diamond Ore',
+    'page-name': 'Diamond Ore',
+  })
+
+  vue
+    .createApp(App, {
+      blocks: params.get('blocks')?.split(','),
+      blockNames: params.get('block-names')?.split(','),
+      pageName: params.get('page-name'),
+    })
+    .use(i18n)
+    .mount(targetEl)
+})()

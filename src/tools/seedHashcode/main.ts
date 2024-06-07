@@ -1,11 +1,9 @@
-/**
- * @dependencies vue, @wikimedia/codex
- * @public
- */
+import '@/init'
 import * as vue from 'vue'
 import App from './App.vue'
+import { createMcwI18n } from '@/utils/i18n'
 
-const targetEl = document.querySelector('.mcw-calc[data-type="seedHashcode"]')!
-const createApp =
-  process.env.NODE_ENV === 'development' ? vue.createApp : vue.createMwApp || vue.createApp
-createApp(App).mount(targetEl)
+const targetEl = document.querySelector('#app')!
+
+const i18n = createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }))
+vue.createApp(App).use(i18n).mount(targetEl)

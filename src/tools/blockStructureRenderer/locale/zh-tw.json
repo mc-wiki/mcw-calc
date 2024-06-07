@@ -1,0 +1,21 @@
+{
+  "blockStructureRenderer.orthographic": "使用正交投影",
+  "blockStructureRenderer.displayMode": "顯示模式",
+  "blockStructureRenderer.displayModes.all": "繪製全部方塊",
+  "blockStructureRenderer.displayModes.yRange": "繪製指定高度範圍的方塊",
+  "blockStructureRenderer.displayModes.selectedY": "只繪製指定高度的方塊",
+  "blockStructureRenderer.renderRange": "繪製範圍：",
+  "blockStructureRenderer.resetCamera": "重置鏡頭",
+  "blockStructureRenderer.saveImage": "儲存為圖片",
+  "blockStructureRenderer.animatedTexture": "繪製動態紋理",
+  "blockStructureRenderer.cameraSetting": "鏡頭移動方式",
+  "blockStructureRenderer.cameraSetting.drag": "拖曳",
+  "blockStructureRenderer.cameraSetting.manual": "手動設定",
+  "blockStructureRenderer.cameraSetting.position": "鏡頭位置（相對於朝向目標）",
+  "blockStructureRenderer.cameraSetting.target": "鏡頭朝向目標",
+  "blockStructureRenderer.cameraSetting.confirm": "確定",
+  "blockStructureRenderer.backgroundColor": "背景顏色",
+  "blockStructureRenderer.backgroundAlpha": "背景透明度",
+  "blockStructureRenderer.renderMarks": "顯示標記",
+  "blockStructureRenderer.renderInvisibleBlocks": "顯示隱形方塊"
+}
