@@ -49,7 +49,9 @@ mw.hook('wikipage.content').add(() => {
     iframe.style.colorScheme = 'auto'
 
     const dataset = {}
-    Object.entries(calc.dataset).forEach(([key, value]) => {
+    Object.entries(calc.dataset).forEach((entry) => {
+      const key = entry[0]
+      const value = entry[1]
       dataset[key] = value
     })
 
@@ -61,7 +63,7 @@ mw.hook('wikipage.content').add(() => {
             theme: document.body.classList.contains('wgl-theme-light') ? 'light' : 'dark',
           },
         },
-        new URL(iframe.src).origin,
+        new URL(iframe.src).origin
       )
 
       document.querySelector('#pt-dm-toggle > a').addEventListener('click', () => {
@@ -72,14 +74,14 @@ mw.hook('wikipage.content').add(() => {
               theme: document.body.classList.contains('wgl-theme-light') ? 'dark' : 'light',
             },
           },
-          new URL(iframe.src).origin,
+          new URL(iframe.src).origin
         )
       })
     })
 
     window.addEventListener('message', (event) => {
       if (event.origin !== new URL(iframe.src).origin) return
-      if (event.data.data?.id !== id) return
+      if (event.data.data.id !== id) return
 
       if (event.data.type === 'mcw-calc-init-request-data') {
         event.source.postMessage(
@@ -90,7 +92,7 @@ mw.hook('wikipage.content').add(() => {
               innerHTML: calc.innerHTML,
             },
           },
-          new URL(iframe.src).origin,
+          new URL(iframe.src).origin
         )
       } else if (event.data.type === 'mcw-calc-height-change') {
         iframe.style.height = `${event.data.data.height}px`

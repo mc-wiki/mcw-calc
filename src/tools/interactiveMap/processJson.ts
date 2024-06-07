@@ -59,7 +59,7 @@ export default function processJson({
         description: parseWikitext(marker.popup.description),
         link: {
           ...marker.popup.link,
-          url: '/w/' + marker.popup.link.url,
+          url: window.parent.location.origin + '/w/' + marker.popup.link.url,
         },
         image: marker.popup.image ? getImageLink(marker.popup.image) : undefined,
       },
@@ -76,9 +76,5 @@ export function convertCoordinate(
 
 export function getImageLink(image: string) {
   const imageNameNormalized = image.replace(/File:/g, '').replace(/ /g, '_')
-  if (import.meta.env.DEV) {
-    return `https://minecraft.wiki/images/${encodeURIComponent(imageNameNormalized)}`
-  } else {
-    return `/images/${encodeURIComponent(imageNameNormalized)}`
-  }
+  return `${window.parent.location.origin}/images/${encodeURIComponent(imageNameNormalized)}`
 }

@@ -30,7 +30,7 @@ const targetEl = document.querySelector('#app')!
 
   const json = await (
     await fetch(
-      `${import.meta.env.DEV ? 'https://minecraft.wiki' : ''}/w/${encodeURIComponent(params.get('datapage')!)}?action=raw`,
+      `${window.parent.location.origin}/w/${encodeURIComponent(params.get('datapage')!)}?action=raw`,
     )
   ).json()
 

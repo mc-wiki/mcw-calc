@@ -2,6 +2,7 @@
   "extends": "@vue/tsconfig/tsconfig.dom.json",
   "include": ["mediawiki/**/*.ts", "mediawiki/**/*.js"],
   "compilerOptions": {
+    "lib": ["ES2016", "DOM"],
     "isolatedModules": true,
     "composite": true,
     "baseUrl": ".",
