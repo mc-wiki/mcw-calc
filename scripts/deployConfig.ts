@@ -6,36 +6,36 @@ export interface DeployTarget {
 }
 
 export const targets: DeployTarget[] = [
-  {
-    type: 'production',
-    name: 'en',
-    apiUrl: 'https://minecraft.wiki/api.php',
-    credentials: 'PROD',
-  },
-  {
-    type: 'production',
-    name: 'fr',
-    apiUrl: 'https://fr.minecraft.wiki/api.php',
-    credentials: 'PROD',
-  },
-  {
-    type: 'production',
-    name: 'pt',
-    apiUrl: 'https://pt.minecraft.wiki/api.php',
-    credentials: 'PROD',
-  },
+  // {
+  //   type: 'production',
+  //   name: 'en',
+  //   apiUrl: 'https://minecraft.wiki/api.php',
+  //   credentials: 'PROD',
+  // },
+  // {
+  //   type: 'production',
+  //   name: 'fr',
+  //   apiUrl: 'https://fr.minecraft.wiki/api.php',
+  //   credentials: 'PROD',
+  // },
+  // {
+  //   type: 'production',
+  //   name: 'pt',
+  //   apiUrl: 'https://pt.minecraft.wiki/api.php',
+  //   credentials: 'PROD',
+  // },
   // {
   //   type: 'production',
   //   name: 'ru',
   //   apiUrl: 'https://ru.minecraft.wiki/api.php',
   //   credentials: 'PROD',
   // },
-  {
-    type: 'production',
-    name: 'uk',
-    apiUrl: 'https://uk.minecraft.wiki/api.php',
-    credentials: 'PROD',
-  },
+  // {
+  //   type: 'production',
+  //   name: 'uk',
+  //   apiUrl: 'https://uk.minecraft.wiki/api.php',
+  //   credentials: 'PROD',
+  // },
   {
     type: 'production',
     name: 'zh',

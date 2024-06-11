@@ -46,12 +46,12 @@ jobs:
           environment-url: https://tools.minecraft.wiki/static/
           environment: production
 
-      # - name: Deploy to MW
-      #   if: ${{ env.SHOULD_DEPLOY == 'true' }}
-      #   run: pnpm run deploy
-      #   env:
-      #     ACCESS_TOKEN_PROD: ${{ secrets.ACCESS_TOKEN_PROD }}
-      #     # ACCESS_TOKEN_DEV: ${{ secrets.ACCESS_TOKEN_DEV }}
+      - name: Deploy to MW
+        if: ${{ env.SHOULD_DEPLOY == 'true' }}
+        run: pnpm run deploy
+        env:
+          ACCESS_TOKEN_PROD: ${{ secrets.ACCESS_TOKEN_PROD }}
+          # ACCESS_TOKEN_DEV: ${{ secrets.ACCESS_TOKEN_DEV }}
 
       - name: rsync deployments
         uses: burnett01/rsync-deployments@7.0.1
