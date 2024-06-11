@@ -77,6 +77,9 @@ importers:
       vue-i18n:
         specifier: ^9.13.1
         version: 9.13.1(vue@3.4.27(typescript@5.4.5))
+      zlibt2:
+        specifier: ^0.6.1
+        version: 0.6.1
     devDependencies:
       '@prettier/sync':
         specifier: ^0.5.2
@@ -2730,6 +2733,9 @@ packages:
   yocto-queue@1.0.0:
     resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
     engines: {node: '>=12.20'}
+
+  zlibt2@0.6.1:
+    resolution: {integrity: sha512-Co0bVG6Bp5Ut7AxrUjM+Q3GMnIXsaWKl/tELbhNohQM8MB9d9ixVXW1Aqbv4o464HCpDsSD//itCnaI6qF8ssg==}
 
 snapshots:
 
@@ -5417,3 +5423,5 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   yocto-queue@1.0.0: {}
+
+  zlibt2@0.6.1: {}

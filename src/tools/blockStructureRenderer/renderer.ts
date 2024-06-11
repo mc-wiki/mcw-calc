@@ -17,7 +17,6 @@ import {
   hardCodedRenderers,
   hardCodedSkipRendering,
   invisibleBlockColor,
-  specialInvisibleBlocks,
 } from '@/tools/blockStructureRenderer/hardcodes.ts'
 import { renderFluid } from '@/tools/blockStructureRenderer/fluid.ts'
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
@@ -197,10 +196,11 @@ export class BlockStructure {
   forEachBlock(
     callback: (x: number, y: number, z: number, blockKey: string) => void,
     ignoreInvisible: boolean,
+    fullY: boolean = false,
   ) {
     let minY = 0
     let maxY = this.y
-    if (this.yRange) {
+    if (this.yRange && !fullY) {
       minY = this.yRange[0]
       maxY = this.yRange[1]
     }
@@ -231,16 +231,6 @@ export class BlockStructure {
 
   hasMarks() {
     return this.marks.length > 0
-  }
-
-  hasInvisibleBlocks(nameMapping: NameMapping) {
-    return this.structures.some((y) =>
-      y.some((z) =>
-        z.some((block) =>
-          specialInvisibleBlocks.includes(nameMapping.toBlockState(block).blockName),
-        ),
-      ),
-    )
   }
 
   getMark(x: number, y: number, z: number): THREE.Color | undefined {
