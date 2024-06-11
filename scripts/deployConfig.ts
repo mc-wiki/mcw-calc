@@ -6,12 +6,12 @@ export interface DeployTarget {
 }
 
 export const targets: DeployTarget[] = [
-  // {
-  //   type: 'production',
-  //   name: 'en',
-  //   apiUrl: 'https://minecraft.wiki/api.php',
-  //   credentials: 'PROD',
-  // },
+  {
+    type: 'production',
+    name: 'en',
+    apiUrl: 'https://minecraft.wiki/api.php',
+    credentials: 'PROD',
+  },
   // {
   //   type: 'production',
   //   name: 'fr',
