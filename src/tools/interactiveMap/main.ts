@@ -29,8 +29,8 @@ const targetEl = document.querySelector('#app')!
     datapage: 'Module:Maps/Minecraft_Dungeons_Mainland.json',
   })
 
-  const json = await(
-    await fetch(`${parentOrigin()}/w/${encodeURIComponent(params.get('datapage')!)}?action=raw`),
+  const json = await (
+    await fetch(`${parentOrigin()}/w/${encodeURIComponent(params.get('datapage')!)}?action=raw`)
   ).json()
 
   const mapData = processJson(json)
