@@ -313,7 +313,9 @@ function update() {
         t('blockDistribution.title', {
           block:
             props.blockNames.length <= 5
-              ? new Intl.ListFormat('en').format(props.blockNames)
+              ? Intl.ListFormat // progressive enhancement
+                ? new Intl.ListFormat($i18n.locale).format(props.blockNames)
+                : props.blockNames.join(', ')
               : props.pageName,
           version: '1.20.4',
         }),
