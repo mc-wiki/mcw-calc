@@ -23,7 +23,7 @@ mw.hook('wikipage.content').add(() => {
     }
 
     // eslint-disable-next-line no-undef
-    const url = `/tools/${type}/#?id=${id}&locale=${mw.config.get('wgContentLanguage')}`
+    const url = `/tools/${type}/#?id=${id}&locale=${mw.config.get('wgContentLanguage')}&origin=${encodeURIComponent(window.location.origin)}`
 
     if (localStorage.getItem('mcwCalcLocal') === 'true') {
       console.log('You are in development environment and tools are loaded from localhost.')
