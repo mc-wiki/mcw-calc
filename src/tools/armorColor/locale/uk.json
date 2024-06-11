@@ -1,5 +1,5 @@
 {
-  "armorColor.title": "Розрахувати послідовність фарбування для кольору $1",
+  "armorColor.title": "Розрахувати послідовність фарбування для кольору {type}",
   "armorColor.java": "Java Edition",
   "armorColor.bedrock": "Bedrock Edition",
   "armorColor.color": "Колір:",

@@ -1,5 +1,5 @@
 {
-  "armorColor.title": "Calcular sequência de corantes para cores na $1",
+  "armorColor.title": "Calcular sequência de corantes para cores na {type}",
   "armorColor.java": "Edição Java",
   "armorColor.bedrock": "Edição Bedrock",
   "armorColor.color": "Cor:",

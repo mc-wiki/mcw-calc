@@ -1,5 +1,5 @@
 {
-  "armorColor.title": "Calculer la séquence de teintures pour une couleur $1",
+  "armorColor.title": "Calculer la séquence de teintures pour une couleur {type}",
   "armorColor.java": "Édition Java",
   "armorColor.bedrock": "Édition Bedrock",
   "armorColor.color": "Couleur :",

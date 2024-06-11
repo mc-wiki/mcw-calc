@@ -36,8 +36,28 @@ async function update(target: DeployTarget) {
   })
 
   bot.save(
-    'MediaWiki:Gadgets-mcw-calc-loader.js',
+    'MediaWiki:Gadget-mcw-calc-loader.js',
     loaderContent,
     `Bot: Automatically deploy changes from Git (${commitHash.trim().substring(0, 6)})`,
   )
+
+  bot.edit('MediaWiki:Gadgets-definition', (rev) => {
+    // Replace content between two <!-- Automatically generated, your edit will be overwritten -->
+
+    const section = rev.content.match(
+      /<!-- Automatically generated, your edit will be overwritten -->\n((.|\n)+)\n<!-- Automatically generated, your edit will be overwritten -->/,
+    )
+    if (section !== null && section.length > 1) {
+      const text = rev.content.replace(
+        section[1],
+        `* mcw-calc-loader[ResourceLoader|targets=desktop,mobile|type=general|default|hidden]|mcw-calc-loader.js`,
+      )
+      return {
+        text: text,
+        summary: `Bot: Upgrade to the new mcw-calc system (${commitHash.trim().substring(0, 6)})`,
+      }
+    }
+
+    return rev.content
+  })
 }
