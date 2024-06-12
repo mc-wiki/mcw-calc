@@ -9,7 +9,6 @@ const { t } = useI18n()
 
 const maceImage = 'https://minecraft.wiki/images/Mace_JE1_BE1.png?format=original'
 
-const edition = ref<'java' | 'bedrock'>('java')
 const fallHeight = ref(1.5)
 const densityLevel = ref(0)
 const critical = ref(true)
@@ -38,6 +37,7 @@ const damage = computed({
     )
   },
   set: (val) => {
+    if (val < 18) return 0
     const damage = val / criticalModifier.value
     fallHeight.value =
       damage > 28 + 4 * densityLevel.value
@@ -57,11 +57,6 @@ function validateDensity(value: number) {
 <template>
   <CalcField>
     <template #heading>{{ t('maceDamage.title') }}</template>
-
-    <cdx-tabs v-model:active="edition">
-      <cdx-tab name="java" :label="t('maceDamage.java')" />
-      <cdx-tab name="bedrock" :label="t('maceDamage.bedrock')" />
-    </cdx-tabs>
 
     <div
       :style="{
