@@ -1,5 +1,6 @@
 {
   "netherCoords.title": "地獄座標轉換器",
   "netherCoords.dimension": "緯度",
+  "netherCoords.overworld": "主世界",
   "netherCoords.nether": "地獄"
 }
