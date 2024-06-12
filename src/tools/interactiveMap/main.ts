@@ -25,9 +25,12 @@ L.Map.addInitHook('addHandler', 'smoothWheelZoom', L.Map.SmoothWheelZoom)
 const targetEl = document.querySelector('#app')!
 
 ;(async () => {
-  const params = await getParams(['datapage'], {
+  const params = await getParams(['datapage', 'disable-marker-title-link'], {
     datapage: 'Module:Maps/Minecraft_Dungeons_Mainland.json',
+    'disable-marker-title-link': 'false',
   })
+
+  const disableMarkerTitleLink = params.get('disable-marker-title-link') === 'true'
 
   const json = await (
     await fetch(`${parentOrigin()}/w/${encodeURIComponent(params.get('datapage')!)}?action=raw`)
@@ -69,7 +72,7 @@ const targetEl = document.querySelector('#app')!
         })
 
     const popup = L.popup().setContent(`
-        <h3><a href="${marker.popup.link.url}">${marker.popup.title}</a></h3>
+        <h3>${disableMarkerTitleLink ? marker.popup.title : `<a target="_parent" href="${marker.popup.link.url}">${marker.popup.title}</a>`}</h3>
         <p>${marker.popup.description}</p>
         ${
           marker.popup.image ? `<img class="leaflet-popup-image" src="${marker.popup.image}" >` : ''
