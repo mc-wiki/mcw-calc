@@ -29,23 +29,21 @@ const cooldownModifier = computed(() => (cooldownReset.value ? 1 : 0.2))
 
 const damage = computed({
   get: () => {
-    // Java formula as of 1.20.5-pre1:
-    // Full: (baseDamage + (3 * fallHeight) + (densityLevel * fallHeight)) * criticalModifier + damageFromEnchantments
-    // Cooldown not reset: ((baseDamage * 0.2) + (3 * fallHeight) + (densityLevel * fallHeight)) * criticalModifier
-    // damageFromEnchantments is currently not taken into account
     // New formula:
     // (baseDamage + falloff + 0.5 * densityLevel * fallHeight) * criticalModifier
     // fallOff = 4 * fallHeight                  when fallHeight <= 3
     //         = 12 + 2 * (fallHeight - 3)       when fallHeight <= 8
     //         = 12 + 10 + 1 * (fallHeight - 8)  when fallHeight > 8
     return (
+      6 +
       (fallHeight.value <= 3
-        ? 4 * fallHeight.value + 6 + 0.5 * densityLevel.value * fallHeight.value
-        : fallHeight.value < 8
-          ? 2 * fallHeight.value + 12 + 0.5 * densityLevel.value * fallHeight.value
-          : 1 * fallHeight.value + 20 + 0.5 * densityLevel.value * fallHeight.value) *
-      criticalModifier.value *
-      cooldownModifier.value
+        ? 4 * fallHeight.value
+        : fallHeight.value <= 8
+          ? 12 + 2 * (fallHeight.value - 3)
+          : 12 + 10 + 1 * (fallHeight.value - 8)) *
+        (0.5 * densityLevel.value * fallHeight.value) *
+        criticalModifier.value *
+        cooldownModifier.value
     )
   },
   set: (val) => {
