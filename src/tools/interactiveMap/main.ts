@@ -72,7 +72,7 @@ const targetEl = document.querySelector('#app')!
         })
 
     const popup = L.popup().setContent(`
-        <h3>${disableMarkerTitleLink ? marker.popup.title : `<a target="_parent" href="${marker.popup.link.url}">${marker.popup.title}</a>`}</h3>
+        <h2>${disableMarkerTitleLink ? marker.popup.title : `<a target="_parent" href="${marker.popup.link.url}">${marker.popup.title}</a>`}</h2>
         <p>${marker.popup.description}</p>
         ${
           marker.popup.image ? `<img class="leaflet-popup-image" src="${marker.popup.image}" >` : ''
