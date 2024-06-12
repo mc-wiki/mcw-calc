@@ -13,16 +13,6 @@ const edition = ref<'java' | 'bedrock'>('java')
 const fallHeight = ref(1.5)
 const densityLevel = ref(0)
 const critical = ref(true)
-const cooldownResetRef = ref(true)
-const cooldownReset = computed({
-  get: () => cooldownResetRef.value,
-  set: (val) => {
-    if (val === false) {
-      critical.value = false
-    }
-    cooldownResetRef.value = val
-  },
-})
 
 const criticalModifier = computed(() => (critical.value ? 1.5 : 1))
 
@@ -104,17 +94,6 @@ function validateDensity(value: number) {
           <CdxCheckbox v-model="critical" id="critical-checkbox" inline>
             <span class="explain" :title="t('maceDamage.critical.help')">{{
               t('maceDamage.critical')
-            }}</span>
-          </CdxCheckbox>
-
-          <CdxCheckbox
-            v-if="edition === 'java'"
-            v-model="cooldownReset"
-            id="cooldown-reset-checkbox"
-            inline
-          >
-            <span class="explain" :title="t('maceDamage.cooldownReset.help')">{{
-              t('maceDamage.cooldownReset')
             }}</span>
           </CdxCheckbox>
         </div>
