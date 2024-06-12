@@ -40,14 +40,14 @@ jobs:
       - name: Create GitHub deployment
         uses: chrnorm/deployment-action@v2
         id: deployment
-        if: ${{ env.SHOULD_DEPLOY == 'true' }}
+        if: env.SHOULD_DEPLOY == 'true'
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           environment-url: https://tools.minecraft.wiki/static/
           environment: production
 
       - name: Deploy to MW
-        if: ${{ env.SHOULD_DEPLOY == 'true' }}
+        if: env.SHOULD_DEPLOY == 'true'
         run: pnpm run deploy
         env:
           ACCESS_TOKEN_PROD: ${{ secrets.ACCESS_TOKEN_PROD }}
@@ -55,7 +55,7 @@ jobs:
 
       - name: rsync deployments
         uses: burnett01/rsync-deployments@7.0.1
-        if: ${{ env.SHOULD_DEPLOY == 'true' }}
+        if: env.SHOULD_DEPLOY == 'true'
         with:
           switches: -avzr --delete
           path: dist/
@@ -65,7 +65,7 @@ jobs:
           remote_key: ${{ secrets.TOOLS_SSH_PRIVATE_KEY }}
 
       - name: Update deployment status (success)
-        if: success()
+        if: env.SHOULD_DEPLOY == 'true' && success()
         uses: chrnorm/deployment-status@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -74,7 +74,7 @@ jobs:
           deployment-id: ${{ steps.deployment.outputs.deployment_id }}
 
       - name: Update deployment status (failure)
-        if: failure()
+        if: env.SHOULD_DEPLOY == 'true' && failure()
         uses: chrnorm/deployment-status@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
