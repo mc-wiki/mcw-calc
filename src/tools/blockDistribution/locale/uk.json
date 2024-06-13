@@ -2,7 +2,7 @@
   "blockDistribution.xAxis": "Рівень Y →",
   "blockDistribution.yAxis": "↑ Кількість знайдених по X серед 100 000 блоків",
   "blockDistribution.xInTenThousand": "{num} з 100 000",
-  "blockDistribution.title": "Розповсюдження у [[{version} (Java Edition)|Java Edition $2]] блоків: {block}.",
+  "blockDistribution.title": "Розповсюдження у [[{version} (Java Edition){'|'}Java Edition {version}]] блоків: {block}.",
   "blockDistribution.total": "Усього",
   "blockDistribution.overworld": "Верхній світ",
   "blockDistribution.theNether": "Незер",
