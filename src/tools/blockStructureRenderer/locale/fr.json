@@ -7,8 +7,8 @@
   "blockStructureRenderer.renderRange": "Plage d'affichage :",
   "blockStructureRenderer.resetCamera": "Réinitialiser la caméra",
   "blockStructureRenderer.saveImage": "Enregistrer comme image",
-  "blockStructureRenderer.saveStructureFile": "Export as structure file",
-  "blockStructureRenderer.saveLitematic": "Export as litematic file",
+  "blockStructureRenderer.saveStructureFile": "Exporter en tant que fichier de structure",
+  "blockStructureRenderer.saveLitematic": "Exporter en tant que fichier litematic",
   "blockStructureRenderer.animatedTexture": "Afficher les textures animées",
   "blockStructureRenderer.cameraSetting": "Mode de déplacement de caméra",
   "blockStructureRenderer.cameraSetting.drag": "Glisser",
@@ -16,8 +16,8 @@
   "blockStructureRenderer.cameraSetting.position": "Position de la caméra",
   "blockStructureRenderer.cameraSetting.target": "Cible de la caméra",
   "blockStructureRenderer.cameraSetting.confirm": "Confirmer",
-  "blockStructureRenderer.backgroundColor": "Background color",
-  "blockStructureRenderer.backgroundAlpha": "Opacity",
+  "blockStructureRenderer.backgroundColor": "Couleur d'arrière-plan",
+  "blockStructureRenderer.backgroundAlpha": "Opacité",
   "blockStructureRenderer.renderMarks": "Render marks",
-  "blockStructureRenderer.renderInvisibleBlocks": "Render invisible blocks"
+  "blockStructureRenderer.renderInvisibleBlocks": "Indiquer les blocs invisibles"
 }
