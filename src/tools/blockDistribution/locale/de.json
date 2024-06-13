@@ -1,0 +1,13 @@
+{
+  "blockDistribution.xAxis": "Y-Ebene →",
+  "blockDistribution.yAxis": "↑ Anzahl von X unter 100.000 Blöcken gefunden",
+  "blockDistribution.xInTenThousand": "{num} in 100.000",
+  "blockDistribution.title": "Blockverteilung für {block} in der [[Java Edition]] [[{version}]]",
+  "blockDistribution.total": "Insgesamt",
+  "blockDistribution.overworld": "Oberwelt",
+  "blockDistribution.theNether": "Nether",
+  "blockDistribution.theEnd": "Das Ende",
+  "blockDistribution.logarithmicScale": "Logarithmische Skalierung",
+  "blockDistribution.logarithmicScaleHelp": "Geringe Unterschiede in der Y-Koordinate bedeuten eine große Veränderung in der relativen Häufigkeit eines Blocktyps, so dass es nützlich ist, kleine Veränderungen im Diagramm zu sehen, wenn es eine große Spitze gibt.",
+  "blockDistribution.selectAll": "Alle auswählen"
+}
