@@ -5,7 +5,7 @@
   "beaconColor.color": "Колір:",
   "beaconColor.calculate": "Розрахувати",
   "beaconColor.sequence": "Послідовність:",
-  "beaconColor.dE": "dE",
+  "beaconColor.dE": "ΔE",
   "beaconColor.dE.help": "Дельта Е — це міра близькості кольору. Чим менше значення, тим краще. Значення ≤1.0 означає, що різницю не видно неозброєним оком.",
   "beaconColor.glass.white": "Біле скло",
   "beaconColor.glass.lightGray": "Світло-сіре скло",
