@@ -5,6 +5,6 @@
   "playerUuid.uuid": "[[UUID]]:",
   "playerUuid.error.invalid": "Це ім'я користувача є недійсним!",
   "playerUuid.error.notFound": "Такого імені користувача не існує!",
-  "playerUuid.copy": "Копіювати",
+  "playerUuid.copy": "Скопіювати",
   "playerUuid.copied": "Скопійовано!"
 }
