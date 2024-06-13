@@ -1,0 +1,12 @@
+{
+  "maceDamage.title": "Вычислить урон булавой",
+  "maceDamage.java": "Java Edition",
+  "maceDamage.bedrock": "Bedrock Edition",
+  "maceDamage.fallHeight": "Высота падения в блоках:",
+  "maceDamage.densityLevel": "Уровень чар «[[Утяжеление]]»:",
+  "maceDamage.critical": "Критический удар",
+  "maceDamage.critical.help": "Булава зачастую наносит критический удар по сущности, если не соблюдён ряд условий, например наличие задержки между атаками.",
+  "maceDamage.cooldownReset": "Сбросить задержку между атаками",
+  "maceDamage.cooldownReset.help": "Снимите флажок, если задержка между атаками не была сброшена перед ударом.",
+  "maceDamage.damage": "Нанесённый урон:"
+}
