@@ -8,6 +8,6 @@
   "blockDistribution.theNether": "地獄",
   "blockDistribution.theEnd": "終界",
   "blockDistribution.logarithmicScale": "對數尺度",
-  "blockDistribution.logarithmicScaleHelp": "使每層中方塊數量的小變化更明顯，適用於圖中有非常大的峰值時觀察小的變化。",
+  "blockDistribution.logarithmicScaleHelp": "使每層中方塊數量的小變化更明顯，適合在圖中有非常大的峰值時觀察小的變化。",
   "blockDistribution.selectAll": "全選"
 }
