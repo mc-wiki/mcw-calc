@@ -1,6 +1,6 @@
 {
   "netherCoords.title": "下界坐标转换器",
-  "netherCoords.dimension": "纬度",
+  "netherCoords.dimension": "维度",
   "netherCoords.overworld": "主世界",
   "netherCoords.nether": "下界"
 }
