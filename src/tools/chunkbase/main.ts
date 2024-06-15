@@ -1,19 +1,16 @@
-/**
- * @public
- * @dependencies vue, @wikimedia/codex
- */
+import '@/init'
 import * as vue from 'vue'
 import App from './App.vue'
 import getParams from '@/utils/getParams'
+import { createMcwI18n } from '@/utils/i18n'
 import { hashCode } from '@/utils/seed'
 
-const targetEls = document.querySelectorAll('.mcw-calc[data-type="chunkbase"]')!
-const createApp = vue.createApp
+const targetEl = document.querySelector('#app')!
 
-for (const targetEl of targetEls) {
-  // random signed 64bit integer
-  const params = getParams(
-    targetEl,
+const i18n = createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }))
+
+;(async () => {
+  const params = await getParams(
     [
       'seed',
       'show-biomes',
@@ -51,17 +48,20 @@ for (const targetEl of targetEls) {
     seed = BigInt(hashCode(params.get('seed')!))
   }
 
-  createApp(App, {
-    seed: seed,
-    showBiomes: !!params.get('show-biomes'),
-    showHeights: !!params.get('show-heights'),
-    platform: params.get('platform'),
-    poi: params.get('poi') === 'null' ? null : params.get('poi'),
-    biomeHeight: params.get('biome-height'),
-    zoom: params.get('zoom'),
-    x: parseInt(params.get('x')!),
-    z: parseInt(params.get('z')!),
-    dimension: params.get('dimension'),
-    promo: !!params.get('promo'),
-  }).mount(targetEl)
-}
+  vue
+    .createApp(App, {
+      seed: seed,
+      showBiomes: !!params.get('show-biomes'),
+      showHeights: !!params.get('show-heights'),
+      platform: params.get('platform'),
+      poi: params.get('poi') === 'null' ? null : params.get('poi'),
+      biomeHeight: params.get('biome-height'),
+      zoom: params.get('zoom'),
+      x: parseInt(params.get('x')!),
+      z: parseInt(params.get('z')!),
+      dimension: params.get('dimension'),
+      promo: !!params.get('promo'),
+    })
+    .use(i18n)
+    .mount(targetEl)
+})()

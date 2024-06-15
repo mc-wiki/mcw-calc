@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useI18n } from '@/utils/i18n.ts'
+import { useI18n } from 'vue-i18n'
 import { CdxButton } from '@wikimedia/codex'
 import CalcField from '@/components/CalcField.vue'
 import { computed } from 'vue'
-import locales from './locales'
 
-const { t } = useI18n(__TOOL_NAME__, locales)
+const { t } = useI18n()
 
 interface SeedMapEmbedParams {
   /**
@@ -73,7 +72,7 @@ interface SeedMapEmbedParams {
   /**
    * The point of interest to mark on the mark.
    */
-  pois:
+  poi:
     | 'Ag'
     | 'Ac'
     | 'Br'
@@ -137,19 +136,19 @@ interface SeedMapEmbedParams {
    * The dimension the map is in.
    */
   dimension: 'overworld' | 'nether' | 'end'
-
-  // FIXME: This should be removed once we update Vue version and split into another type.
-  // See https://github.com/vuejs/core/pull/8083
-  /**
-   * Whether to lead reader to Chunkbase's apps page.
-   *
-   */
-  promo: boolean
 }
 
-const props = defineProps<SeedMapEmbedParams>()
+const props = defineProps<
+  | SeedMapEmbedParams
+  | {
+      /**
+       * Whether to lead reader to Chunkbase's apps page.
+       */
+      promo: boolean
+    }
+>()
 
-const params = ref<SeedMapEmbedParams>(props)
+const params = ref(props)
 
 console.log(props, params)
 
@@ -167,7 +166,7 @@ const chunkbaseUrl = computed(() => {
 
   const searchParams = new URLSearchParams(normalizedParams)
 
-  searchParams.set('bgColor', '#fff')
+  searchParams.set('bgColor', '#ffffff')
   searchParams.set('theme', 'light')
 
   return new URL(
@@ -186,8 +185,8 @@ const chunkbaseUrl = computed(() => {
       :style="{
         border: 'none',
         width: '100%',
-        maxWidth: '1000px',
-        height: '600px',
+        maxWidth: '1024px',
+        height: '768px',
       }"
     />
 
