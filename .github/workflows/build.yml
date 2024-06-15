@@ -64,6 +64,12 @@ jobs:
           remote_user: ${{ secrets.TOOLS_SSH_USER }}
           remote_key: ${{ secrets.TOOLS_SSH_PRIVATE_KEY }}
 
+      - name: Purge Cloudflare cache
+        if: env.SHOULD_DEPLOY == 'true'
+        run: pnpm run purge
+        env:
+          WG_API_TOKEN: ${{ secrets.WG_API_TOKEN }}
+
       - name: Update deployment status (success)
         if: env.SHOULD_DEPLOY == 'true' && success()
         uses: chrnorm/deployment-status@v2

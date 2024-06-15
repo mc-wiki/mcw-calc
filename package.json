@@ -7,6 +7,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "updateGadgets": "tsx ./scripts/updateGadgets.ts",
+    "purge": "tsx ./scripts/purgeCdnCache.ts",
     "deploy": "pnpm run updateGadgets",
     "build-deploy": "pnpm run build && pnpm run deploy",
     "type-check": "vue-tsc --build --force",
