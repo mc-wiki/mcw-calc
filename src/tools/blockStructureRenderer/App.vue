@@ -112,6 +112,7 @@ const isUpMoving = ref(false)
 const isDownMoving = ref(false)
 
 document.addEventListener('keydown', (event) => {
+  if (!controls.isLocked) return
   switch (event.key.toLowerCase()) {
     case 'w':
       isForwardMoving.value = true
@@ -322,6 +323,11 @@ function resetCamera() {
       'YXZ',
     ),
   )
+  cameraX.value = defaultCameraPos[0]
+  cameraY.value = defaultCameraPos[1]
+  cameraZ.value = defaultCameraPos[2]
+  cameraPitch.value = defaultCameraAngles[0]
+  cameraYaw.value = defaultCameraAngles[1]
 }
 
 function changeBackgroundColor() {
