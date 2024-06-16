@@ -4,7 +4,6 @@ import { useI18n } from 'vue-i18n'
 import * as THREE from 'three'
 import WebGL from 'three/addons/capabilities/WebGL.js'
 import { CdxCheckbox, CdxTextInput, CdxSelect, CdxButton } from '@wikimedia/codex'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
 import {
   bakeBlockMarkers,
@@ -17,6 +16,7 @@ import {
 import { makeMaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
 import type { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
 import { saveAsLitematic, saveAsStructureFile } from '@/tools/blockStructureRenderer/structure.ts'
+import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
 
 const props = defineProps<{
   blocks: string[]
@@ -72,12 +72,12 @@ const cameraSettingModes = cameraSettingModeStr.map((str) => ({
   value: str,
 }))
 const cameraSettingMode = ref(cameraSettingModeStr[0])
+
 const cameraX = ref(0)
 const cameraY = ref(0)
 const cameraZ = ref(0)
-const cameraTargetX = ref(0)
-const cameraTargetY = ref(0)
-const cameraTargetZ = ref(0)
+const cameraPitch = ref(0)
+const cameraYaw = ref(0)
 
 // Three.js setup
 const rendererAvailable = WebGL.isWebGLAvailable()
@@ -94,17 +94,69 @@ renderer.setClearColor(backgroundColor.value, backgroundAlpha.value / 255)
 const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 1000)
 const perspectiveCamera = new THREE.PerspectiveCamera(75, 2, 0.1, 1000)
 const camera = computed(() => (orthographic.value ? orthographicCamera : perspectiveCamera))
+const controls = new PointerLockControls(camera.value, renderer.domElement)
+controls.pointerSpeed = 5
+controls.addEventListener('change', () => renderer.render(scene, perspectiveCamera))
 
-const orbitOrthoControls = new OrbitControls(orthographicCamera, renderer.domElement)
-orbitOrthoControls.addEventListener('change', () => renderer.render(scene, orthographicCamera))
-orbitOrthoControls.update()
-const orbitPerspectiveControls = new OrbitControls(perspectiveCamera, renderer.domElement)
-orbitPerspectiveControls.addEventListener('change', () => renderer.render(scene, perspectiveCamera))
-orbitPerspectiveControls.update()
+renderer.domElement.addEventListener('click', () => {
+  if (cameraSettingModeStr.findIndex((str) => str === cameraSettingMode.value) === 0)
+    controls.lock()
+})
 
-const controls = computed(() =>
-  orthographic.value ? orbitOrthoControls : orbitPerspectiveControls,
-)
+// Action ------------------------------------------------------------------------------------------
+const isLeftMoving = ref(false)
+const isRightMoving = ref(false)
+const isForwardMoving = ref(false)
+const isBackwardMoving = ref(false)
+const isUpMoving = ref(false)
+const isDownMoving = ref(false)
+
+document.addEventListener('keydown', (event) => {
+  switch (event.key.toLowerCase()) {
+    case 'w':
+      isForwardMoving.value = true
+      break
+    case 'a':
+      isLeftMoving.value = true
+      break
+    case 's':
+      isBackwardMoving.value = true
+      break
+    case 'd':
+      isRightMoving.value = true
+      break
+    case ' ':
+      isUpMoving.value = true
+      break
+    case 'shift':
+      isDownMoving.value = true
+      break
+  }
+})
+document.addEventListener('keyup', (event) => {
+  switch (event.key.toLowerCase()) {
+    case 'w':
+      isForwardMoving.value = false
+      break
+    case 'a':
+      isLeftMoving.value = false
+      break
+    case 's':
+      isBackwardMoving.value = false
+      break
+    case 'd':
+      isRightMoving.value = false
+      break
+    case ' ':
+      isUpMoving.value = false
+      break
+    case 'shift':
+      isDownMoving.value = false
+      break
+  }
+})
+
+// Material and model setup ------------------------------------------------------------------------
 
 const lineMaterialList = ref([] as LineMaterial[])
 
@@ -131,33 +183,6 @@ const materialPicker = makeMaterialPicker(
   },
   () => animatedTexture.value,
 )
-
-if (rendererAvailable) {
-  const [maxX, maxY, maxZ] = [blockStructure.x, blockStructure.y, blockStructure.z]
-  yRangeMax.value = maxY - 1
-
-  const cameraPos = parsePosition(props.cameraPosData[0]) ?? [maxX / 2, maxY * 1.5, maxZ * 1.5]
-  const cameraTarget = parsePosition(props.cameraPosData[1]) ?? [maxX / 2, maxY / 2, maxZ / 2]
-
-  orthographicCamera.position.set(cameraPos[0], cameraPos[1], cameraPos[2])
-  perspectiveCamera.position.set(cameraPos[0], cameraPos[1], cameraPos[2])
-  orbitOrthoControls.target.set(cameraTarget[0], cameraTarget[1], cameraTarget[2])
-  orbitPerspectiveControls.target.set(cameraTarget[0], cameraTarget[1], cameraTarget[2])
-  orbitOrthoControls.update()
-  orbitOrthoControls.saveState()
-  orbitPerspectiveControls.update()
-  orbitPerspectiveControls.saveState()
-}
-
-function parsePosition(value?: string) {
-  if (value) {
-    const pos = value.split(',')
-    const x = parseFloat(pos[0].trim())
-    const y = parseFloat(pos[1].trim())
-    const z = parseFloat(pos[2].trim())
-    if (!isNaN(x) && !isNaN(y) && !isNaN(z)) return [x, y, z]
-  }
-}
 
 function clearScene() {
   scene.children.forEach((child) => {
@@ -201,58 +226,109 @@ function onDisplayModeChanged() {
   reBakeRenderLayers()
 }
 
-function onCameraSettingModeChanged() {
-  const mode = cameraSettingModeStr.findIndex((str) => str === cameraSettingMode.value)
-  if (mode === 0) {
-    orbitOrthoControls.enabled = true
-    orbitPerspectiveControls.enabled = true
-  } else {
-    orbitOrthoControls.enabled = false
-    orbitPerspectiveControls.enabled = false
+// Camera settings ---------------------------------------------------------------------------------
+function parsePosition(value?: string) {
+  if (value) {
+    const pos = value.split(',')
+    const x = parseFloat(pos[0].trim())
+    const y = parseFloat(pos[1].trim())
+    const z = parseFloat(pos[2].trim())
+    if (!isNaN(x) && !isNaN(y) && !isNaN(z)) return [x, y, z]
   }
-  const control = orthographic.value ? orbitOrthoControls : orbitPerspectiveControls
-  cameraX.value = camera.value.position.x - control.target.x
-  cameraY.value = camera.value.position.y - control.target.y
-  cameraZ.value = camera.value.position.z - control.target.z
-  cameraTargetX.value = control.target.x
-  cameraTargetY.value = control.target.y
-  cameraTargetZ.value = control.target.z
+}
+
+function parseAngles(value?: string) {
+  if (value) {
+    const angles = value.split(',')
+    const pitch = parseFloat(angles[0].trim())
+    const yaw = parseFloat(angles[1].trim())
+    if (!isNaN(pitch) && !isNaN(yaw)) return [pitch, yaw]
+  }
+}
+
+const defaultCameraPos = parsePosition(props.cameraPosData[0]) ?? [
+  blockStructure.x / 2,
+  blockStructure.y * 1.5,
+  blockStructure.z * 1.5,
+]
+const defaultCameraAngles = parseAngles(props.cameraPosData[1]) ?? [0, 0]
+
+if (rendererAvailable) {
+  yRangeMax.value = blockStructure.y - 1
+  resetCamera()
+}
+
+function onCameraChanged() {
+  if (orthographic.value) {
+    orthographicCamera.position.set(...perspectiveCamera.position.toArray())
+    orthographicCamera.setRotationFromEuler(perspectiveCamera.rotation)
+    controls.camera = orthographicCamera
+  } else {
+    perspectiveCamera.position.set(...orthographicCamera.position.toArray())
+    perspectiveCamera.setRotationFromEuler(orthographicCamera.rotation)
+    controls.camera = perspectiveCamera
+  }
+}
+
+function onCameraSettingModeChanged() {
+  if (cameraSettingModeStr.findIndex((str) => str === cameraSettingMode.value) !== 0) {
+    const [x, y, z] = camera.value.position.toArray()
+    cameraX.value = x
+    cameraY.value = y
+    cameraZ.value = z
+    const euler = camera.value.rotation.reorder('YXZ')
+    cameraPitch.value = (euler.x * 180) / Math.PI
+    cameraYaw.value = (euler.y * 180) / Math.PI
+  }
 }
 
 function setCamera() {
-  orthographicCamera.position.set(
-    cameraX.value + cameraTargetX.value,
-    cameraY.value + cameraTargetY.value,
-    cameraZ.value + cameraTargetZ.value,
+  orthographicCamera.position.set(cameraX.value, cameraY.value, cameraZ.value)
+  perspectiveCamera.position.set(cameraX.value, cameraY.value, cameraZ.value)
+  orthographicCamera.setRotationFromEuler(
+    new THREE.Euler(
+      (cameraPitch.value * Math.PI) / 180,
+      (cameraYaw.value * Math.PI) / 180,
+      0,
+      'YXZ',
+    ),
   )
-  perspectiveCamera.position.set(
-    cameraX.value + cameraTargetX.value,
-    cameraY.value + cameraTargetY.value,
-    cameraZ.value + cameraTargetZ.value,
+  perspectiveCamera.setRotationFromEuler(
+    new THREE.Euler(
+      (cameraPitch.value * Math.PI) / 180,
+      (cameraYaw.value * Math.PI) / 180,
+      0,
+      'YXZ',
+    ),
   )
-  orthographicCamera.lookAt(cameraTargetX.value, cameraTargetY.value, cameraTargetZ.value)
-  perspectiveCamera.lookAt(cameraTargetX.value, cameraTargetY.value, cameraTargetZ.value)
-  orbitPerspectiveControls.target.set(cameraTargetX.value, cameraTargetY.value, cameraTargetZ.value)
-  orbitOrthoControls.target.set(cameraTargetX.value, cameraTargetY.value, cameraTargetZ.value)
-  orbitOrthoControls.update()
-  orbitPerspectiveControls.update()
 }
 
 function resetCamera() {
-  orbitOrthoControls.reset()
-  orbitPerspectiveControls.reset()
-
-  cameraX.value = camera.value.position.x - orbitOrthoControls.target.x
-  cameraY.value = camera.value.position.y - orbitOrthoControls.target.y
-  cameraZ.value = camera.value.position.z - orbitOrthoControls.target.z
-  cameraTargetX.value = orbitOrthoControls.target.x
-  cameraTargetY.value = orbitOrthoControls.target.y
-  cameraTargetZ.value = orbitOrthoControls.target.z
+  orthographicCamera.position.set(defaultCameraPos[0], defaultCameraPos[1], defaultCameraPos[2])
+  perspectiveCamera.position.set(defaultCameraPos[0], defaultCameraPos[1], defaultCameraPos[2])
+  orthographicCamera.setRotationFromEuler(
+    new THREE.Euler(
+      (defaultCameraAngles[0] * Math.PI) / 180,
+      (defaultCameraAngles[1] * Math.PI) / 180,
+      0,
+      'YXZ',
+    ),
+  )
+  perspectiveCamera.setRotationFromEuler(
+    new THREE.Euler(
+      (defaultCameraAngles[0] * Math.PI) / 180,
+      (defaultCameraAngles[1] * Math.PI) / 180,
+      0,
+      'YXZ',
+    ),
+  )
 }
 
 function changeBackgroundColor() {
   renderer.setClearColor(backgroundColor.value, backgroundAlpha.value / 255)
 }
+
+// Save as file ------------------------------------------------------------------------------------
 
 function saveRenderedImage() {
   const downloadLink = document.createElement('a')
@@ -282,7 +358,10 @@ function saveLitematic() {
   downloadLink.click()
 }
 
+// Main render loop --------------------------------------------------------------------------------
+
 const hidden = ref(false)
+const lastTime = ref(Date.now())
 
 function animate() {
   requestAnimationFrame(animate)
@@ -310,17 +389,28 @@ function animate() {
   )
     return
 
-  controls.value.update()
+  // Move Control
+  const delta = (Date.now() - lastTime.value) / 1000
+  lastTime.value = Date.now()
+  const moveSpeed = 5 * delta
+  let x = 0
+  let z = 0
+  if (isForwardMoving.value) z += moveSpeed
+  if (isBackwardMoving.value) z -= moveSpeed
+  if (isLeftMoving.value) x -= moveSpeed
+  if (isRightMoving.value) x += moveSpeed
+  if (isUpMoving.value) camera.value.position.y += moveSpeed
+  if (isDownMoving.value) camera.value.position.y -= moveSpeed
+  controls.moveRight(x)
+  controls.moveForward(z)
+
   renderer.render(scene, camera.value)
 }
 
 function updateDisplay() {
-  const width =
-    renderTarget.value.getBoundingClientRect().right -
-    renderTarget.value.getBoundingClientRect().left
-  const height =
-    renderTarget.value.getBoundingClientRect().bottom -
-    renderTarget.value.getBoundingClientRect().top
+  const rect = renderTarget.value.getBoundingClientRect()
+  const width = rect.right - rect.left
+  const height = rect.bottom - rect.top
   const aspect = width / height
   perspectiveCamera.aspect = aspect
   orthographicCamera.left = -aspect * 2
@@ -330,8 +420,6 @@ function updateDisplay() {
   renderer.setSize(width, height)
   orthographicCamera.updateProjectionMatrix()
   perspectiveCamera.updateProjectionMatrix()
-  orbitOrthoControls.update()
-  orbitPerspectiveControls.update()
   lineMaterialList.value.forEach((lineMaterial) => {
     lineMaterial.resolution.set(width, height)
   })
@@ -353,11 +441,6 @@ onUpdated(() => {
     updateDisplay()
   }
 })
-
-const labelColorPicker = ref('color-picker-' + Math.random().toString(36).substring(7))
-const labelBackgroundAlpha = ref('background-alpha-' + Math.random().toString(36).substring(7))
-const labelDisplayMode = ref('display-mode-' + Math.random().toString(36).substring(7))
-const labelCameraSetting = ref('camera-setting-' + Math.random().toString(36).substring(7))
 </script>
 
 <template>
@@ -365,13 +448,13 @@ const labelCameraSetting = ref('camera-setting-' + Math.random().toString(36).su
     class="renderer-component"
     ref="renderTarget"
     :style="{
-      height: '50vh',
-      width: 'max(60%, 50vh)',
+      height: '60vh',
+      width: 'max(60%, 60vh)',
       marginTop: '0.5em',
       marginBottom: '0.5em',
     }"
   />
-  <cdx-checkbox v-if="loaded" v-model="orthographic">
+  <cdx-checkbox v-if="loaded" v-model="orthographic" @change="onCameraChanged">
     {{ t('blockStructureRenderer.orthographic') }}
   </cdx-checkbox>
   <cdx-checkbox v-if="loaded" v-model="animatedTexture">
@@ -398,16 +481,16 @@ const labelCameraSetting = ref('camera-setting-' + Math.random().toString(36).su
       marginBottom: '0.5em',
     }"
   >
-    <label :for="labelColorPicker">{{ t('blockStructureRenderer.backgroundColor') }}</label>
+    <label for="colorPicker">{{ t('blockStructureRenderer.backgroundColor') }}</label>
     <input
       type="color"
       v-model="backgroundColor"
-      :id="labelColorPicker"
+      id="colorPicker"
       @change="changeBackgroundColor"
     />
-    <label :for="labelBackgroundAlpha">{{ t('blockStructureRenderer.backgroundAlpha') }}</label>
+    <label for="backgroundAlpha">{{ t('blockStructureRenderer.backgroundAlpha') }}</label>
     <cdx-text-input
-      :id="labelBackgroundAlpha"
+      id="backgroundAlpha"
       v-model="backgroundAlpha"
       inputType="number"
       :min="0"
@@ -427,11 +510,11 @@ const labelCameraSetting = ref('camera-setting-' + Math.random().toString(36).su
     }"
   >
     <div>
-      <label :for="labelDisplayMode" :style="{ marginRight: '.5rem' }">
+      <label for="displayMode" :style="{ marginRight: '.5rem' }">
         {{ t('blockStructureRenderer.displayMode') }}
       </label>
       <cdx-select
-        :id="labelDisplayMode"
+        id="displayMode"
         v-model:selected="displayMode"
         :menu-items="displayModes"
         :style="{
@@ -499,11 +582,11 @@ const labelCameraSetting = ref('camera-setting-' + Math.random().toString(36).su
         gap: '.5rem',
       }"
     >
-      <label :for="labelCameraSetting">
+      <label for="cameraSetting">
         {{ t('blockStructureRenderer.cameraSetting') }}
       </label>
       <cdx-select
-        :id="labelCameraSetting"
+        id="cameraSetting"
         v-model:selected="cameraSettingMode"
         :menu-items="cameraSettingModes"
         :style="{
@@ -547,12 +630,10 @@ const labelCameraSetting = ref('camera-setting-' + Math.random().toString(36).su
           gap: '.5rem',
         }"
       >
-        <span>{{ t('blockStructureRenderer.cameraSetting.target') }} (</span>
-        <cdx-text-input v-model="cameraTargetX" inputType="number" step="0.1" />
+        <span>{{ t('blockStructureRenderer.cameraSetting.pose') }} (</span>
+        <cdx-text-input v-model="cameraPitch" inputType="number" step="0.1" />
         <span>, </span>
-        <cdx-text-input v-model="cameraTargetY" inputType="number" step="0.1" />
-        <span>, </span>
-        <cdx-text-input v-model="cameraTargetZ" inputType="number" step="0.1" />
+        <cdx-text-input v-model="cameraYaw" inputType="number" step="0.1" />
         <span>)</span>
       </div>
     </div>
@@ -579,7 +660,9 @@ const labelCameraSetting = ref('camera-setting-' + Math.random().toString(36).su
       gap: '.5rem',
     }"
   >
-    <cdx-button @click="saveStructureFile">{{ t('blockStructureRenderer.saveStructureFile') }}</cdx-button>
+    <cdx-button @click="saveStructureFile"
+      >{{ t('blockStructureRenderer.saveStructureFile') }}
+    </cdx-button>
     <cdx-button @click="saveLitematic">{{ t('blockStructureRenderer.saveLitematic') }}</cdx-button>
   </div>
 </template>
