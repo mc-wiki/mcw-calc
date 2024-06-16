@@ -6,7 +6,7 @@
   "armorColor.calculate": "Обчислити",
   "armorColor.sequence": "Послідовність",
   "armorColor.sequence.help": "Фарбувати обладунки слід одразу всіма барвниками.",
-  "armorColor.dE": "dE",
+  "armorColor.dE": "δE",
   "armorColor.dE.help": "Дельта Е — це міра близькости кольорів. Чим нижче, тим краще. Значення ≤1.0 означає, що різниця не сприймається людським оком.",
   "armorColor.type.normal": "шкіряних обладунків",
   "armorColor.type.horse": "шкіряних кінських обладунків",
