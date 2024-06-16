@@ -156,6 +156,18 @@ document.addEventListener('keyup', (event) => {
       break
   }
 })
+renderer.domElement.addEventListener('wheel', (event) => {
+  event.preventDefault()
+  if (orthographic.value) {
+    orthographicCamera.zoom -= event.deltaY * 0.0001
+    orthographicCamera.zoom = Math.max(0.1, orthographicCamera.zoom)
+    orthographicCamera.updateProjectionMatrix()
+  } else {
+    perspectiveCamera.fov += event.deltaY * 0.01
+    perspectiveCamera.fov = Math.min(120, Math.max(10, perspectiveCamera.fov))
+    perspectiveCamera.updateProjectionMatrix()
+  }
+})
 
 // Material and model setup ------------------------------------------------------------------------
 
@@ -252,7 +264,7 @@ const defaultCameraPos = parsePosition(props.cameraPosData[0]) ?? [
   blockStructure.y * 1.5,
   blockStructure.z * 1.5,
 ]
-const defaultCameraAngles = parseAngles(props.cameraPosData[1]) ?? [0, 0]
+const defaultCameraAngles = parseAngles(props.cameraPosData[1]) ?? [-45, 0]
 
 if (rendererAvailable) {
   yRangeMax.value = blockStructure.y - 1
