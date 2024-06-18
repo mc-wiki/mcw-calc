@@ -9,7 +9,6 @@ const targetEl = document.querySelector('#app')!
 const i18n = createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }))
 
 ;(async () => {
-  console.log('playerUuid')
   const params = await getParams(['player'], {
     player: 'MinecraftWiki',
   })
