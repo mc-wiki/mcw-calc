@@ -1,0 +1,23 @@
+{
+  "blockStructureRenderer.orthographic": "Ортографический вид",
+  "blockStructureRenderer.displayMode": "Режим отображения",
+  "blockStructureRenderer.displayModes.all": "Отрисовывать все блоки",
+  "blockStructureRenderer.displayModes.yRange": "Отрисовывать только те блоки, что находятся между конкретными позициями Y",
+  "blockStructureRenderer.displayModes.selectedY": "Отрисовывать только те блоки, что находятся на конкретных позициях Y",
+  "blockStructureRenderer.renderRange": "Дальность прорисовки:",
+  "blockStructureRenderer.resetCamera": "Сбросить камеру",
+  "blockStructureRenderer.saveImage": "Сохранить как изображение",
+  "blockStructureRenderer.saveStructureFile": "Экспортировать как файл структуры",
+  "blockStructureRenderer.saveLitematic": "Экспортировать как файл Litematica",
+  "blockStructureRenderer.animatedTexture": "Отрисовывать анимации",
+  "blockStructureRenderer.cameraSetting": "Перемещение камеры",
+  "blockStructureRenderer.cameraSetting.drag": "Перетащить",
+  "blockStructureRenderer.cameraSetting.manual": "Настроить вручную",
+  "blockStructureRenderer.cameraSetting.position": "Положение камеры (относительно цели)",
+  "blockStructureRenderer.cameraSetting.target": "Цель камеры",
+  "blockStructureRenderer.cameraSetting.confirm": "Подтвердить",
+  "blockStructureRenderer.backgroundColor": "Цвет фона",
+  "blockStructureRenderer.backgroundAlpha": "Непрозрачность",
+  "blockStructureRenderer.renderMarks": "Показать отметку",
+  "blockStructureRenderer.renderInvisibleBlocks": "Показать невидимые блоки"
+}
