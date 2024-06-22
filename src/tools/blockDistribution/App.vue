@@ -402,7 +402,7 @@ function update() {
           backgroundColor: getColor(block),
         }"
       />
-      <label :for="`blockLabel_${block}`">{{ props.blockNames[validBlocks.indexOf(block)] }}</label>
+      <label :for="`blockLabel_${block}`">{{ props.blockNames[props.blocks.indexOf(block)] }}</label>
     </div>
   </div>
   <cdx-tabs v-model:active="currentTab">
