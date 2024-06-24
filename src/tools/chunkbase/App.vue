@@ -188,7 +188,7 @@ const chunkbaseUrl = computed(() => {
         width: '100%',
         maxWidth: '1024px',
         height: '0',
-        paddingBottom: '50%',
+        paddingBottom: 'min(50%, 500px)',
         position: 'relative',
         overflow: 'hidden',
       }"
