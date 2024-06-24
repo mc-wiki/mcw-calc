@@ -37,6 +37,7 @@
     "@vueuse/core": "^10.11.0",
     "@wikimedia/codex": "^1.7.0",
     "@wikimedia/codex-design-tokens": "^1.7.0",
+    "comlink": "^4.4.1",
     "d3": "^7.9.0",
     "three": "^0.162.0",
     "vue": "^3.4.29",
@@ -70,6 +71,7 @@
     "types-mediawiki": "^1.8.0",
     "typescript": "^5.4.5",
     "vite": "^5.3.1",
+    "vite-plugin-comlink": "^5.0.1",
     "vitest": "^1.6.0",
     "vue-tsc": "^2.0.21"
   }

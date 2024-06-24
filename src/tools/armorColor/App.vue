@@ -9,8 +9,6 @@ import {
   sequenceToColorFloatAverage,
   imgNames,
 } from '@/utils/color'
-import { colorRgbMap as javaColorRgbMap } from '@/utils/color/java'
-import { colorRgbMap as bedrockColorRgbMap } from '@/utils/color/bedrock'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{ type: 'normal' | 'horse' | 'wolf' }>()
@@ -22,37 +20,6 @@ const edition = ref<'java' | 'bedrock'>('java')
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const sequence = ref<[Color[], number, [number, number, number]]>([['white'], 0, [249, 255, 254]])
 
-function sequenceToColorJavaArmor(
-  c: Color[],
-  colorRgbMap: typeof javaColorRgbMap,
-): [number, number, number] {
-  let numberOfColors = 0
-  let totalRed = 0
-  let totalGreen = 0
-  let totalBlue = 0
-  let totalMaximum = 0
-  for (const color of c) {
-    totalRed = totalRed + colorRgbMap[color][0]
-    totalGreen = totalGreen + colorRgbMap[color][1]
-    totalBlue = totalBlue + colorRgbMap[color][2]
-    totalMaximum = totalMaximum + Math.max(...colorRgbMap[color])
-    numberOfColors++
-  }
-  const averageRed = totalRed / numberOfColors
-  const averageGreen = totalGreen / numberOfColors
-  const averageBlue = totalBlue / numberOfColors
-  const averageMaximum = totalMaximum / numberOfColors
-  const maximumOfAverage = Math.max(averageRed, averageGreen, averageBlue)
-
-  const gainFactor = averageMaximum / maximumOfAverage
-
-  const resultRed = averageRed * gainFactor
-  const resultGreen = averageGreen * gainFactor
-  const resultBlue = averageBlue * gainFactor
-
-  return [resultRed, resultGreen, resultBlue]
-}
-
 function generateDye(color: Color) {
   return `https://minecraft.wiki/images/Invicon_${imgNames[color]}_Dye.png?format=original`
 }
@@ -61,13 +28,11 @@ function generateDyeName(color: Color) {
   return t(`armorColor.dye.${color}`)
 }
 
+const worker = new ComlinkWorker<typeof import('./worker')>(new URL('./worker', import.meta.url))
+
 async function updateSequence(targetColor: [number, number, number]) {
   await nextTick()
-  sequence.value = colorToSequence(
-    edition.value === 'java' ? javaColorRgbMap : bedrockColorRgbMap,
-    edition.value === 'java' ? sequenceToColorJavaArmor : sequenceToColorFloatAverage,
-    targetColor,
-  )
+  sequence.value = await worker.colorToSequence(targetColor, edition.value)
 }
 
 watch([sequence, canvasRef], ([sequence, canvasRef]) => {

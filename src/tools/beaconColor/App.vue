@@ -20,13 +20,11 @@ const edition = ref<'java' | 'bedrock'>('java')
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const sequence = ref<[Color[], number, [number, number, number]]>([['white'], 0, [249, 255, 254]])
 
+const worker = new ComlinkWorker<typeof import('./worker')>(new URL('./worker', import.meta.url))
+
 async function updateSequence(targetColor: [number, number, number]) {
   await nextTick()
-  sequence.value = colorToSequence(
-    edition.value === 'java' ? javaColorRgbMap : bedrockColorRgbMap,
-    sequenceToColorFloatAverage,
-    targetColor,
-  )
+  sequence.value = await worker.colorToSequence(edition.value, targetColor)
 }
 
 function generateGlass(color: Color) {

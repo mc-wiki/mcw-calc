@@ -10,7 +10,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["node", "vite/client"],
+    "types": ["node", "vite/client", "vite-plugin-comlink/client"],
     "allowImportingTsExtensions": true,
     "noEmit": true
   }
