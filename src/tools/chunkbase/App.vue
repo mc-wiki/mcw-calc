@@ -7,7 +7,7 @@ import { computed } from 'vue'
 
 const { t } = useI18n()
 
-interface SeedMapEmbedParams {
+interface ChunkbaseEmbedParams {
   /**
    * The seed to display. Note that it must be in numeric form.
    */
@@ -72,7 +72,7 @@ interface SeedMapEmbedParams {
   /**
    * The point of interest to mark on the mark.
    */
-  poi:
+  pois:
     | 'Ag'
     | 'Ac'
     | 'Br'
@@ -138,15 +138,14 @@ interface SeedMapEmbedParams {
   dimension: 'overworld' | 'nether' | 'end'
 }
 
-const props = defineProps<
-  | SeedMapEmbedParams
-  | {
-      /**
-       * Whether to lead reader to Chunkbase's apps page.
-       */
-      promo: boolean
-    }
->()
+interface AppEmbedProps extends ChunkbaseEmbedParams {
+  /**
+   * Whether to lead reader to Chunkbase's apps page.
+   */
+  promo: boolean
+}
+
+const props = defineProps<AppEmbedProps>()
 
 const params = ref(props)
 
@@ -180,15 +179,26 @@ const chunkbaseUrl = computed(() => {
   <CalcField>
     <template #heading>{{ t('chunkbase.title') }}</template>
 
-    <iframe
-      :src="chunkbaseUrl"
+    <div
       :style="{
-        border: 'none',
         width: '100%',
         maxWidth: '1024px',
-        height: '768px',
+        height: '0',
+        paddingBottom: '50%',
+        position: 'relative',
+        overflow: 'hidden',
       }"
-    />
+    >
+      <iframe
+        :src="chunkbaseUrl"
+        :style="{
+          position: 'absolute',
+          border: 'none',
+          width: '100%',
+          height: '100%',
+        }"
+      />
+    </div>
 
     <div
       v-if="props.promo"
