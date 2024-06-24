@@ -39,8 +39,6 @@ const i18n = createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }))
     },
   )
 
-  console.log(params)
-
   let seed: bigint
   try {
     seed = BigInt(params.get('seed')!)
@@ -51,8 +49,8 @@ const i18n = createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }))
   vue
     .createApp(App, {
       seed: seed,
-      showBiomes: !!params.get('show-biomes'),
-      terrain: !!params.get('terrain'),
+      showBiomes: params.get('show-biomes') === 'true',
+      terrain: params.get('terrain') === 'true',
       platform: params.get('platform') ?? '',
       pois: params.get('pois') === 'null' ? null : params.get('pois'),
       biomeHeight: params.get('biome-height') ?? '',
@@ -60,7 +58,7 @@ const i18n = createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }))
       x: parseInt(params.get('x')!),
       z: parseInt(params.get('z')!),
       dimension: params.get('dimension') ?? '',
-      promo: !!params.get('promo'),
+      promo: params.get('promo') === 'true',
     })
     .use(i18n)
     .mount(targetEl)

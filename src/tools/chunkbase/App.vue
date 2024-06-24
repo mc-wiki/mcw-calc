@@ -12,7 +12,7 @@ interface ChunkbaseEmbedParams {
   /**
    * The seed to display. Note that it must be in numeric form.
    */
-  seed: number
+  seed: bigint
 
   /**
    * Whether to enable biomes/terrain rendering.
