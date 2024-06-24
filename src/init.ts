@@ -1,5 +1,6 @@
 import '@wikimedia/codex/dist/codex.style.css'
 import './common.less'
+import { theme as themeRef } from './utils/theme'
 
 // use ResizeObserver to detect change of height and postMessage to parent
 
@@ -25,8 +26,10 @@ window.addEventListener('message', (event) => {
 
     if (theme === 'dark') {
       classList.add('dark')
+      themeRef.value = 'dark'
     } else {
       classList.remove('dark')
+      themeRef.value = 'light'
     }
   }
 })

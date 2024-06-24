@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { CdxButton } from '@wikimedia/codex'
 import CalcField from '@/components/CalcField.vue'
 import { computed } from 'vue'
+import { theme } from '@/utils/theme'
 
 const { t } = useI18n()
 
@@ -149,8 +150,6 @@ const props = defineProps<AppEmbedProps>()
 
 const params = ref(props)
 
-console.log(props, params)
-
 const chunkbaseUrl = computed(() => {
   let normalizedParams: Record<string, string> = {}
   for (const [key, value] of Object.entries(params.value)) {
@@ -165,8 +164,13 @@ const chunkbaseUrl = computed(() => {
 
   const searchParams = new URLSearchParams(normalizedParams)
 
-  searchParams.set('bgColor', '#ffffff')
-  searchParams.set('theme', 'light')
+  if (theme.value === 'dark') {
+    searchParams.set('bgColor', '#2b2f39')
+    searchParams.set('theme', 'dark')
+  } else {
+    searchParams.set('bgColor', '#e6eff4')
+    searchParams.set('theme', 'light')
+  }
 
   return new URL(
     `#${searchParams.toString()}`,
