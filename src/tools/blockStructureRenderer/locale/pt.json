@@ -1,0 +1,23 @@
+{
+  "blockStructureRenderer.orthographic": "Visão ortogonal",
+  "blockStructureRenderer.displayMode": "Modo de exibição",
+  "blockStructureRenderer.displayModes.all": "Exibir todos os blocos",
+  "blockStructureRenderer.displayModes.yRange": "Apenas exibir blocos entre alturas específicas",
+  "blockStructureRenderer.displayModes.selectedY": "Apenas exibir blocos na altura específica",
+  "blockStructureRenderer.renderRange": "Raio de exibição:",
+  "blockStructureRenderer.resetCamera": "Redefinir a câmera",
+  "blockStructureRenderer.saveImage": "Salvar como imagem",
+  "blockStructureRenderer.saveStructureFile": "Exportar como arquivo de estrutura",
+  "blockStructureRenderer.saveLitematic": "Exportar como arquivo Litematic",
+  "blockStructureRenderer.animatedTexture": "Exibir texturas animadas",
+  "blockStructureRenderer.cameraSetting": "Movimentação da câmera",
+  "blockStructureRenderer.cameraSetting.drag": "Arrastar",
+  "blockStructureRenderer.cameraSetting.manual": "Definição manual",
+  "blockStructureRenderer.cameraSetting.position": "Camera position",
+  "blockStructureRenderer.cameraSetting.pose": "Camera pose",
+  "blockStructureRenderer.cameraSetting.confirm": "Confirmar",
+  "blockStructureRenderer.backgroundColor": "Cor do fundo",
+  "blockStructureRenderer.backgroundAlpha": "Opacidade",
+  "blockStructureRenderer.renderMarks": "Exibir marcas",
+  "blockStructureRenderer.renderInvisibleBlocks": "Exibir blocos invisíveis"
+}
