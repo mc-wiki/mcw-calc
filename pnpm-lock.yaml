@@ -68,6 +68,9 @@ importers:
       '@wikimedia/codex-design-tokens':
         specifier: ^1.7.0
         version: 1.7.0
+      '@wikimedia/codex-icons':
+        specifier: ^1.8.0
+        version: 1.8.0
       comlink:
         specifier: ^4.4.1
         version: 4.4.1
@@ -1268,6 +1271,10 @@ packages:
 
   '@wikimedia/codex-icons@1.7.0':
     resolution: {integrity: sha512-LuMauHme5FDcY+eKhTya//1q5R22uj+QzShkFRmYQn4HjCpiNJDJ2YJWzDxRCEPtK2Fs21NmZuORmTKyZnHqNg==}
+    engines: {node: '>=18', npm: '>=7.21.0'}
+
+  '@wikimedia/codex-icons@1.8.0':
+    resolution: {integrity: sha512-9XIjGDYV0TCEymBOb3CQbrVQ7HqpFiGB8YVE8Z+NGIO+d8N17hFUHv4RStHaxUztKO2ZNh7vvpa/Xdw71OL6xg==}
     engines: {node: '>=18', npm: '>=7.21.0'}
 
   '@wikimedia/codex@1.7.0':
@@ -3969,6 +3976,8 @@ snapshots:
   '@wikimedia/codex-design-tokens@1.7.0': {}
 
   '@wikimedia/codex-icons@1.7.0': {}
+
+  '@wikimedia/codex-icons@1.8.0': {}
 
   '@wikimedia/codex@1.7.0(vue@3.4.29(typescript@5.4.5))':
     dependencies:

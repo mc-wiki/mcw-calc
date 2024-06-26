@@ -1,4 +1,10 @@
 {
+  "blockStructureRenderer.optionsCamera": "Camera",
+  "blockStructureRenderer.optionsScene": "Scene",
+  "blockStructureRenderer.optionsExport": "Export",
+  "blockStructureRenderer.lockTooltip": "Click to control the camera",
+  "blockStructureRenderer.controlHelp": "Use your mouse and keyboard to control the camera. Press ESC to quit.",
+  "blockStructureRenderer.closePopup": "Close",
   "blockStructureRenderer.orthographic": "Orthographic view",
   "blockStructureRenderer.displayMode": "Display mode",
   "blockStructureRenderer.displayModes.all": "Render all blocks",

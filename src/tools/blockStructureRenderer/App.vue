@@ -3,7 +3,15 @@ import { computed, onMounted, onUpdated, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import * as THREE from 'three'
 import WebGL from 'three/addons/capabilities/WebGL.js'
-import { CdxCheckbox, CdxTextInput, CdxSelect, CdxButton } from '@wikimedia/codex'
+import {
+  CdxCheckbox,
+  CdxTextInput,
+  CdxSelect,
+  CdxButton,
+  CdxIcon,
+  CdxField,
+} from '@wikimedia/codex'
+import { cdxIconImage, cdxIconCamera, cdxIconShare, cdxIconCut } from '@wikimedia/codex-icons'
 import { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
 import {
   bakeBlockMarkers,
@@ -17,6 +25,8 @@ import { makeMaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
 import type { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
 import { saveAsLitematic, saveAsStructureFile } from '@/tools/blockStructureRenderer/structure.ts'
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
+import { type VirtualElement, flip, offset, shift, useFloating } from '@floating-ui/vue'
+import Popup from './Popup.vue'
 
 const props = defineProps<{
   blocks: string[]
@@ -41,6 +51,65 @@ const props = defineProps<{
 const { t } = useI18n()
 const renderTarget = ref()
 const loaded = ref(false)
+const locked = ref(false)
+
+const lockTooltip = ref()
+const virtualEl = ref<VirtualElement>({
+  getBoundingClientRect() {
+    return {
+      width: 0,
+      height: 0,
+      x: 0,
+      y: 0,
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+    }
+  },
+  contextElement: renderTarget.value,
+})
+
+const tooltipOpen = ref(false)
+const { floatingStyles, update } = useFloating(virtualEl, lockTooltip, {
+  open: tooltipOpen,
+  placement: 'right-start',
+  middleware: [
+    offset({
+      alignmentAxis: 20,
+    }),
+    flip(),
+    shift(),
+  ],
+})
+
+document.addEventListener('mousemove', (event) => {
+  if (!locked.value) {
+    virtualEl.value.getBoundingClientRect = () => {
+      const x = Math.min(
+        Math.max(event.clientX, renderTarget.value.getBoundingClientRect().left),
+        renderTarget.value.getBoundingClientRect().right,
+      )
+      const y = Math.min(
+        Math.max(event.clientY, renderTarget.value.getBoundingClientRect().top),
+        renderTarget.value.getBoundingClientRect().bottom,
+      )
+      return {
+        width: 0,
+        height: 0,
+        x,
+        y,
+        top: y,
+        left: x,
+        right: x,
+        bottom: y,
+      }
+    }
+    update()
+  }
+})
+
+const showHelp = ref(false)
 
 const orthographic = ref(props.orthographicDefault)
 const animatedTexture = ref(props.animatedTextureDefault)
@@ -97,6 +166,21 @@ const camera = computed(() => (orthographic.value ? orthographicCamera : perspec
 const controls = new PointerLockControls(camera.value, renderer.domElement)
 controls.pointerSpeed = 5
 controls.addEventListener('change', () => renderer.render(scene, perspectiveCamera))
+
+controls.addEventListener('lock', () => {
+  locked.value = true
+  tooltipOpen.value = false
+  showHelp.value = true
+
+  setTimeout(() => {
+    showHelp.value = false
+  }, 4000)
+})
+controls.addEventListener('unlock', () => {
+  locked.value = false
+  tooltipOpen.value = true
+  showHelp.value = false
+})
 
 renderer.domElement.addEventListener('click', () => {
   if (cameraSettingModeStr.findIndex((str) => str === cameraSettingMode.value) === 0)
@@ -463,224 +547,287 @@ onUpdated(() => {
 
 <template>
   <div
-    class="renderer-component"
-    ref="renderTarget"
     :style="{
-      height: '60vh',
-      width: 'max(60%, 60vh)',
-      marginTop: '0.5em',
-      marginBottom: '0.5em',
+      height: '60vw',
+      width: 'max(60%, 60vw)',
+      position: 'relative',
     }"
-  />
-  <cdx-checkbox v-if="loaded" v-model="orthographic" @change="onCameraChanged">
-    {{ t('blockStructureRenderer.orthographic') }}
-  </cdx-checkbox>
-  <cdx-checkbox v-if="loaded" v-model="animatedTexture">
-    {{ t('blockStructureRenderer.animatedTexture') }}
-  </cdx-checkbox>
-  <cdx-checkbox v-if="loaded" v-model="invisibleBlocks" @change="reBakeRenderLayers">
-    {{ t('blockStructureRenderer.renderInvisibleBlocks') }}
-  </cdx-checkbox>
-  <cdx-checkbox
-    v-if="loaded && blockStructure.hasMarks()"
-    v-model="displayMarks"
-    @change="reBakeRenderLayers"
   >
-    {{ t('blockStructureRenderer.renderMarks') }}
-  </cdx-checkbox>
+    <div
+      class="renderer-component"
+      :style="{
+        width: '100%',
+        height: '100%',
+        position: 'relative',
+        cursor: locked ? 'none' : 'pointer',
+      }"
+      ref="renderTarget"
+      @mouseenter="tooltipOpen = true"
+      @mouseleave="tooltipOpen = false"
+    />
+    <div
+      v-if="loaded"
+      style="position: absolute; bottom: 0; right: 0; padding: 0.5em; display: flex; gap: 5px"
+    >
+      <Popup :name="t('blockStructureRenderer.optionsScene')" :icon="cdxIconImage">
+        <cdx-checkbox v-model="animatedTexture">
+          {{ t('blockStructureRenderer.animatedTexture') }}
+        </cdx-checkbox>
+        <cdx-checkbox v-model="invisibleBlocks" @change="reBakeRenderLayers">
+          {{ t('blockStructureRenderer.renderInvisibleBlocks') }}
+        </cdx-checkbox>
+        <cdx-checkbox
+          v-if="blockStructure.hasMarks()"
+          v-model="displayMarks"
+          @change="reBakeRenderLayers"
+        >
+          {{ t('blockStructureRenderer.renderMarks') }}
+        </cdx-checkbox>
 
-  <div
-    v-if="loaded"
-    :style="{
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: '.5rem',
-      marginBottom: '0.5em',
-    }"
-  >
-    <label for="colorPicker">{{ t('blockStructureRenderer.backgroundColor') }}</label>
-    <input
-      type="color"
-      v-model="backgroundColor"
-      id="colorPicker"
-      @change="changeBackgroundColor"
-    />
-    <label for="backgroundAlpha">{{ t('blockStructureRenderer.backgroundAlpha') }}</label>
-    <cdx-text-input
-      id="backgroundAlpha"
-      v-model="backgroundAlpha"
-      inputType="number"
-      :min="0"
-      :max="255"
-      step="1"
-      @input="changeBackgroundColor"
-    />
-  </div>
-  <div
-    v-if="loaded"
-    :style="{
-      display: 'flex',
-      flexDirection: 'column',
-      flexWrap: 'wrap',
-      gap: '.5rem',
-      marginBottom: '0.5em',
-    }"
-  >
-    <div>
-      <label for="displayMode" :style="{ marginRight: '.5rem' }">
-        {{ t('blockStructureRenderer.displayMode') }}
-      </label>
-      <cdx-select
-        id="displayMode"
-        v-model:selected="displayMode"
-        :menu-items="displayModes"
-        :style="{
-          width: 'fit-content',
-        }"
-        @update:selected="onDisplayModeChanged"
-      />
+        <cdx-field>
+          <input
+            type="color"
+            v-model="backgroundColor"
+            id="colorPicker"
+            @change="changeBackgroundColor"
+          />
+          <template #label>{{ t('blockStructureRenderer.backgroundColor') }}</template>
+        </cdx-field>
+        <cdx-field>
+          <cdx-text-input
+            id="backgroundAlpha"
+            v-model="backgroundAlpha"
+            inputType="number"
+            :min="0"
+            :max="255"
+            step="1"
+            @input="changeBackgroundColor"
+          />
+
+          <template #label>{{ t('blockStructureRenderer.backgroundAlpha') }}</template>
+        </cdx-field>
+
+        <cdx-field>
+          <cdx-select
+            id="displayMode"
+            v-model:selected="displayMode"
+            :menu-items="displayModes"
+            :style="{
+              width: 'fit-content',
+            }"
+            @update:selected="onDisplayModeChanged"
+          />
+
+          <template #label>{{ t('blockStructureRenderer.displayMode') }}</template>
+        </cdx-field>
+        <cdx-field v-if="displayMode !== displayModeStr[0]">
+          <template #label>{{ t('blockStructureRenderer.renderRange') }}</template>
+          <div
+            :style="{
+              display: 'flex',
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              gap: '.5rem',
+              width: 'max-content',
+            }"
+          >
+            <cdx-text-input
+              v-if="displayMode === displayModeStr[1]"
+              v-model="yRangeMin"
+              style="min-width: 100px"
+              inputType="number"
+              min="0"
+              :max="Math.max(yRangeMax, 0)"
+              step="1"
+              @input="onDisplayModeChanged"
+            />
+            <span v-if="displayMode === displayModeStr[1]"> - </span>
+            <cdx-text-input
+              v-if="displayMode === displayModeStr[1]"
+              v-model="yRangeMax"
+              style="min-width: 100px"
+              inputType="number"
+              :min="Math.min(yRangeMin, blockStructure.y - 1)"
+              :max="blockStructure.y - 1"
+              step="1"
+              @input="onDisplayModeChanged"
+            />
+            <cdx-text-input
+              v-if="displayMode === displayModeStr[2]"
+              v-model="ySelected"
+              style="min-width: 100px"
+              inputType="number"
+              min="0"
+              :max="blockStructure.y - 1"
+              step="1"
+              @input="onDisplayModeChanged"
+            />
+          </div>
+        </cdx-field>
+      </Popup>
+      <Popup :name="t('blockStructureRenderer.optionsCamera')" :icon="cdxIconCamera">
+        <cdx-checkbox v-model="orthographic" @change="onCameraChanged">
+          {{ t('blockStructureRenderer.orthographic') }}
+        </cdx-checkbox>
+        <div
+          :style="{
+            display: 'flex',
+            flexDirection: 'column',
+            flexWrap: 'wrap',
+            gap: '.5rem',
+            marginBottom: '0.5em',
+            width: 'max-content',
+          }"
+        >
+          <cdx-field>
+            <div style="display: flex; gap: 5px">
+              <cdx-select
+                id="cameraSetting"
+                v-model:selected="cameraSettingMode"
+                :menu-items="cameraSettingModes"
+                :style="{
+                  width: 'fit-content',
+                }"
+                @update:selected="onCameraSettingModeChanged"
+              />
+
+              <cdx-button v-if="cameraSettingMode === cameraSettingModeStr[1]" @click="setCamera">
+                {{ t('blockStructureRenderer.cameraSetting.confirm') }}
+              </cdx-button>
+            </div>
+
+            <template #label>{{ t('blockStructureRenderer.cameraSetting') }}</template>
+          </cdx-field>
+          <div
+            v-if="cameraSettingMode === cameraSettingModeStr[1]"
+            :style="{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '.5rem',
+            }"
+          >
+            <div
+              :style="{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: '.5rem',
+              }"
+            >
+              <span>{{ t('blockStructureRenderer.cameraSetting.position') }} (</span>
+              <cdx-text-input
+                v-model="cameraX"
+                inputType="number"
+                step="0.1"
+                style="min-width: 100px"
+              />
+              <span>, </span>
+              <cdx-text-input
+                v-model="cameraY"
+                inputType="number"
+                step="0.1"
+                style="min-width: 100px"
+              />
+              <span>, </span>
+              <cdx-text-input
+                v-model="cameraZ"
+                inputType="number"
+                step="0.1"
+                style="min-width: 100px"
+              />
+              <span>)</span>
+            </div>
+            <div
+              :style="{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: '.5rem',
+              }"
+            >
+              <span>{{ t('blockStructureRenderer.cameraSetting.pose') }} (</span>
+              <cdx-text-input
+                v-model="cameraPitch"
+                inputType="number"
+                step="0.1"
+                style="min-width: 100px"
+              />
+              <span>, </span>
+              <cdx-text-input
+                v-model="cameraYaw"
+                inputType="number"
+                step="0.1"
+                style="min-width: 100px"
+              />
+              <span>)</span>
+            </div>
+          </div>
+        </div>
+        <cdx-button @click="resetCamera">{{ t('blockStructureRenderer.resetCamera') }}</cdx-button>
+      </Popup>
+      <Popup :name="t('blockStructureRenderer.optionsExport')" :icon="cdxIconShare">
+        <div
+          :style="{
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            gap: '.5rem',
+          }"
+        >
+          <cdx-button @click="saveRenderedImage">
+            <cdx-icon :icon="cdxIconCut" /> {{ t('blockStructureRenderer.saveImage') }}
+          </cdx-button>
+          <cdx-button @click="saveStructureFile">
+            {{ t('blockStructureRenderer.saveStructureFile') }}
+          </cdx-button>
+          <cdx-button @click="saveLitematic">
+            {{ t('blockStructureRenderer.saveLitematic') }}
+          </cdx-button>
+        </div>
+      </Popup>
     </div>
     <div
-      v-if="displayMode !== displayModeStr[0]"
-      :style="{
-        display: 'flex',
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        alignItems: 'center',
-        gap: '.5rem',
-      }"
+      v-if="loaded"
+      class="dark"
+      style="
+        background-color: var(--background-color-base, #fff);
+        border: 1px solid var(--border-color-base, #a2a9b1);
+        border-radius: 4px;
+        padding: 6px;
+      "
+      ref="lockTooltip"
+      :style="{ ...floatingStyles, display: tooltipOpen ? 'block' : 'none' }"
     >
-      <span>{{ t('blockStructureRenderer.renderRange') }}</span>
-      <cdx-text-input
-        v-if="displayMode === displayModeStr[1]"
-        v-model="yRangeMin"
-        inputType="number"
-        min="0"
-        :max="Math.max(yRangeMax, 0)"
-        step="1"
-        @input="onDisplayModeChanged"
-      />
-      <span v-if="displayMode === displayModeStr[1]"> - </span>
-      <cdx-text-input
-        v-if="displayMode === displayModeStr[1]"
-        v-model="yRangeMax"
-        inputType="number"
-        :min="Math.min(yRangeMin, blockStructure.y - 1)"
-        :max="blockStructure.y - 1"
-        step="1"
-        @input="onDisplayModeChanged"
-      />
-      <cdx-text-input
-        v-if="displayMode === displayModeStr[2]"
-        v-model="ySelected"
-        inputType="number"
-        min="0"
-        :max="blockStructure.y - 1"
-        step="1"
-        @input="onDisplayModeChanged"
-      />
+      {{ t('blockStructureRenderer.lockTooltip') }}
     </div>
-  </div>
-  <div
-    v-if="loaded"
-    :style="{
-      display: 'flex',
-      flexDirection: 'column',
-      flexWrap: 'wrap',
-      gap: '.5rem',
-      marginBottom: '0.5em',
-    }"
-  >
-    <div
-      :style="{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: '.5rem',
-      }"
-    >
-      <label for="cameraSetting">
-        {{ t('blockStructureRenderer.cameraSetting') }}
-      </label>
-      <cdx-select
-        id="cameraSetting"
-        v-model:selected="cameraSettingMode"
-        :menu-items="cameraSettingModes"
-        :style="{
-          width: 'fit-content',
-        }"
-        @update:selected="onCameraSettingModeChanged"
-      />
-      <cdx-button v-if="cameraSettingMode === cameraSettingModeStr[1]" @click="setCamera">
-        {{ t('blockStructureRenderer.cameraSetting.confirm') }}
-      </cdx-button>
-    </div>
-    <div
-      v-if="cameraSettingMode === cameraSettingModeStr[1]"
-      :style="{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '.5rem',
-      }"
-    >
+    <Transition>
       <div
-        :style="{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: '.5rem',
-        }"
+        v-if="loaded && showHelp"
+        style="
+          position: absolute;
+          top: 0;
+          right: 0;
+          width: 100%;
+          background-color: #000000aa;
+          color: white;
+          text-align: center;
+          padding: 0.5em;
+        "
       >
-        <span>{{ t('blockStructureRenderer.cameraSetting.position') }} (</span>
-        <cdx-text-input v-model="cameraX" inputType="number" step="0.1" />
-        <span>, </span>
-        <cdx-text-input v-model="cameraY" inputType="number" step="0.1" />
-        <span>, </span>
-        <cdx-text-input v-model="cameraZ" inputType="number" step="0.1" />
-        <span>)</span>
+        {{ t('blockStructureRenderer.controlHelp') }}
       </div>
-      <div
-        :style="{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: '.5rem',
-        }"
-      >
-        <span>{{ t('blockStructureRenderer.cameraSetting.pose') }} (</span>
-        <cdx-text-input v-model="cameraPitch" inputType="number" step="0.1" />
-        <span>, </span>
-        <cdx-text-input v-model="cameraYaw" inputType="number" step="0.1" />
-        <span>)</span>
-      </div>
-    </div>
-  </div>
-  <div
-    v-if="loaded"
-    :style="{
-      display: 'flex',
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: '.5rem',
-      marginBottom: '0.5em',
-    }"
-  >
-    <cdx-button @click="resetCamera">{{ t('blockStructureRenderer.resetCamera') }}</cdx-button>
-    <cdx-button @click="saveRenderedImage">{{ t('blockStructureRenderer.saveImage') }}</cdx-button>
-  </div>
-  <div
-    v-if="loaded"
-    :style="{
-      display: 'flex',
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: '.5rem',
-    }"
-  >
-    <cdx-button @click="saveStructureFile"
-      >{{ t('blockStructureRenderer.saveStructureFile') }}
-    </cdx-button>
-    <cdx-button @click="saveLitematic">{{ t('blockStructureRenderer.saveLitematic') }}</cdx-button>
+    </Transition>
   </div>
 </template>
+<style>
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+</style>

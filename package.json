@@ -37,6 +37,7 @@
     "@vueuse/core": "^10.11.0",
     "@wikimedia/codex": "^1.7.0",
     "@wikimedia/codex-design-tokens": "^1.7.0",
+    "@wikimedia/codex-icons": "^1.8.0",
     "comlink": "^4.4.1",
     "d3": "^7.9.0",
     "three": "^0.162.0",
