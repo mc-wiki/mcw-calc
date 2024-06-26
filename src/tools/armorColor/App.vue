@@ -2,13 +2,7 @@
 import CalcField from '@/components/CalcField.vue'
 import { ref, nextTick, watch } from 'vue'
 import { CdxButton, CdxTabs, CdxTab } from '@wikimedia/codex'
-import {
-  type Color,
-  colorToSequence,
-  colorStringToRgb,
-  sequenceToColorFloatAverage,
-  imgNames,
-} from '@/utils/color'
+import { type Color, colorStringToRgb, imgNames } from '@/utils/color'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{ type: 'normal' | 'horse' | 'wolf' }>()

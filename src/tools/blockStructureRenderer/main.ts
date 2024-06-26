@@ -1,5 +1,6 @@
 import '@/init'
 import * as vue from 'vue'
+import { CdxTooltip } from '@wikimedia/codex'
 import App from './App.vue'
 import getParams from '@/utils/getParams.ts'
 import { createMcwI18n } from '@/utils/i18n'
@@ -76,5 +77,6 @@ const i18n = createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }))
       backgroundAlphaDefault: parseInt(params.get('background-alpha') ?? '255'),
     })
     .use(i18n)
+    .directive('tooltip', CdxTooltip)
     .mount(targetEl)
 })()

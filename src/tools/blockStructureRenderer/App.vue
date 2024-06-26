@@ -26,7 +26,7 @@ import type { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
 import { saveAsLitematic, saveAsStructureFile } from '@/tools/blockStructureRenderer/structure.ts'
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
 import { type VirtualElement, flip, offset, shift, useFloating } from '@floating-ui/vue'
-import Popup from './Popup.vue'
+import BsrPopup from './BsrPopup.vue'
 
 const props = defineProps<{
   blocks: string[]
@@ -569,7 +569,7 @@ onUpdated(() => {
       v-if="loaded"
       style="position: absolute; bottom: 0; right: 0; padding: 0.5em; display: flex; gap: 5px"
     >
-      <Popup :name="t('blockStructureRenderer.optionsScene')" :icon="cdxIconImage">
+      <BsrPopup :name="t('blockStructureRenderer.optionsScene')" :icon="cdxIconImage">
         <cdx-checkbox v-model="animatedTexture">
           {{ t('blockStructureRenderer.animatedTexture') }}
         </cdx-checkbox>
@@ -665,8 +665,8 @@ onUpdated(() => {
             />
           </div>
         </cdx-field>
-      </Popup>
-      <Popup :name="t('blockStructureRenderer.optionsCamera')" :icon="cdxIconCamera">
+      </BsrPopup>
+      <BsrPopup :name="t('blockStructureRenderer.optionsCamera')" :icon="cdxIconCamera">
         <cdx-checkbox v-model="orthographic" @change="onCameraChanged">
           {{ t('blockStructureRenderer.orthographic') }}
         </cdx-checkbox>
@@ -765,8 +765,8 @@ onUpdated(() => {
           </div>
         </div>
         <cdx-button @click="resetCamera">{{ t('blockStructureRenderer.resetCamera') }}</cdx-button>
-      </Popup>
-      <Popup :name="t('blockStructureRenderer.optionsExport')" :icon="cdxIconShare">
+      </BsrPopup>
+      <BsrPopup :name="t('blockStructureRenderer.optionsExport')" :icon="cdxIconShare">
         <div
           :style="{
             display: 'flex',
@@ -785,7 +785,7 @@ onUpdated(() => {
             {{ t('blockStructureRenderer.saveLitematic') }}
           </cdx-button>
         </div>
-      </Popup>
+      </BsrPopup>
     </div>
     <div
       v-if="loaded"
