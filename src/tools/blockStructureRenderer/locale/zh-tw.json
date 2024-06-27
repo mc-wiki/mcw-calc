@@ -1,7 +1,7 @@
 {
-  "blockStructureRenderer.optionsCamera": "Camera",
+  "blockStructureRenderer.optionsCamera": "鏡頭",
   "blockStructureRenderer.optionsScene": "Scene",
-  "blockStructureRenderer.optionsExport": "Export",
+  "blockStructureRenderer.optionsExport": "匯出",
   "blockStructureRenderer.lockTooltip": "Click to control the camera",
   "blockStructureRenderer.controlHelp": "Use your mouse and keyboard to control the camera. Press ESC to quit.",
   "blockStructureRenderer.closePopup": "Close",
