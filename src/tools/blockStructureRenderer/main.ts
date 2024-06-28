@@ -26,7 +26,7 @@ const i18n = createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }))
       // Additional render object
       marks: sz.array(sz.string(), ';'),
       // Default options
-      cameraPosData: sz.array(sz.string(), ';'),
+      cameraPosData: sz.array(sz.string(), ';').default([]),
       orthographic: sz.boolean().default(false),
       animatedTexture: sz.boolean().default(true),
       showInvisibleBlocks: sz.boolean().default(false),
