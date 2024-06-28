@@ -1,65 +1,41 @@
 import '@/init'
 import * as vue from 'vue'
 import App from './App.vue'
-import getParams from '@/utils/getParams'
+import { getParams, sz, handleParseError } from '@/utils/params'
 import { createMcwI18n } from '@/utils/i18n'
 import { hashCode } from '@/utils/seed'
+import { z } from 'zod'
 
 const targetEl = document.querySelector('#app')!
 
 const i18n = createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }))
 
 ;(async () => {
-  const params = await getParams(
-    [
-      'seed',
-      'show-biomes',
-      'terrain',
-      'platform',
-      'pois',
-      'biome-height',
-      'zoom',
-      'x',
-      'z',
-      'dimension',
-      'promo',
-    ],
-    {
-      seed: crypto.getRandomValues(new BigInt64Array(1))[0].toString(),
-      'show-biomes': 'true',
-      terrain: 'true',
-      platform: 'java_1_21',
-      pois: 'null',
-      'biome-height': 'depth0',
-      zoom: '0',
-      x: '0',
-      z: '0',
-      dimension: 'overworld',
-      promo: 'true',
-    },
-  )
-
-  let seed: bigint
-  try {
-    seed = BigInt(params.get('seed')!)
-  } catch (e) {
-    seed = BigInt(hashCode(params.get('seed')!))
-  }
-
-  vue
-    .createApp(App, {
-      seed: seed,
-      showBiomes: params.get('show-biomes') === 'true',
-      terrain: params.get('terrain') === 'true',
-      platform: params.get('platform') ?? '',
-      pois: params.get('pois') === 'null' ? null : params.get('pois'),
-      biomeHeight: params.get('biome-height') ?? '',
-      zoom: parseFloat(params.get('zoom') ?? '1'),
-      x: parseInt(params.get('x')!),
-      z: parseInt(params.get('z')!),
-      dimension: params.get('dimension') ?? '',
-      promo: params.get('promo') === 'true',
+  const parsed = z
+    .object({
+      seed: z
+        .preprocess((val) => {
+          try {
+            return BigInt(val as string)
+          } catch (e) {
+            return hashCode(val as string)
+          }
+        }, z.bigint())
+        .default(crypto.getRandomValues(new BigInt64Array(1))[0]),
+      showBiomes: sz.boolean().default(true),
+      terrain: sz.boolean().default(true),
+      platform: sz.string().default('java_1_21'),
+      pois: sz.string().nullable().default(null),
+      biomeHeight: sz.string().default('depth0'),
+      zoom: sz.number().default(0),
+      x: sz.number().default(0),
+      z: sz.number().default(0),
+      dimension: sz.string().default('overworld'),
+      promo: sz.boolean().default(true),
     })
-    .use(i18n)
-    .mount(targetEl)
+    .safeParse(await getParams())
+
+  const params = handleParseError(parsed, targetEl)
+
+  vue.createApp(App, params).use(i18n).mount(targetEl)
 })()

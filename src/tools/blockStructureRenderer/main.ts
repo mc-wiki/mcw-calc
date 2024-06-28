@@ -2,7 +2,8 @@ import '@/init'
 import * as vue from 'vue'
 import { CdxTooltip } from '@wikimedia/codex'
 import App from './App.vue'
-import getParams from '@/utils/getParams.ts'
+import { z } from 'zod'
+import { getParams, handleParseError, sz } from '@/utils/params'
 import { createMcwI18n } from '@/utils/i18n'
 
 const targetEl = document.querySelector('#app')!
@@ -10,71 +11,42 @@ const targetEl = document.querySelector('#app')!
 const i18n = createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }))
 
 ;(async () => {
-  const params = await getParams(
-    [
+  const parsed = z
+    .object({
       // Required parameters
-      'blocks',
-      'structure',
-      'block-states',
-      'models',
-      'texture-atlas',
-      'render-types',
-      'occlusion-shapes',
-      'special-blocks-data',
-      'liquid-computation-data',
+      blocks: sz.array(sz.string(), ';'),
+      structure: sz.string().default('+'),
+      blockStates: sz.array(sz.string(), ';'),
+      models: sz.array(sz.string(), ';'),
+      textureAtlas: sz.array(sz.string(), ';'),
+      renderTypes: sz.array(sz.string(), ';'),
+      occlusionShapes: sz.array(sz.string(), ';'),
+      specialBlocksData: sz.array(sz.string(), ';'),
+      liquidComputationData: sz.array(sz.string(), ';'),
       // Additional render object
-      'marks',
+      marks: sz.array(sz.string(), ';'),
       // Default options
-      'camera-pos-data',
-      'orthographic',
-      'animated-texture',
-      'show-invisible-blocks',
-      'display-marks',
-      'background-color',
-      'background-alpha',
-    ],
-    {
-      blocks: '',
-      structure: '+',
-      'block-states': '',
-      models: '',
-      'texture-atlas': '',
-      'render-types': '',
-      'occlusion-shapes': '',
-      'special-blocks-data': '',
-      'liquid-computation-data': '',
-      marks: '',
-      'camera-pos-data': '',
-      orthographic: 'false',
-      'animated-texture': 'true',
-      'show-invisible-blocks': 'false',
-      'display-marks': 'true',
-      'background-color': '#ffffff',
-      'background-alpha': '255',
-    },
-  )
+      cameraPosData: sz.array(sz.string(), ';'),
+      orthographic: sz.boolean().default(false),
+      animatedTexture: sz.boolean().default(true),
+      showInvisibleBlocks: sz.boolean().default(false),
+      displayMarks: sz.boolean().default(true),
+      backgroundColor: sz.string().default('#ffffff'),
+      backgroundAlpha: sz.number().default(255),
+    })
+    .safeParse(await getParams())
+
+  const params = handleParseError(parsed, targetEl)
 
   vue
     .createApp(App, {
-      blocks: params.get('blocks')?.split(';'),
-      structure: params.get('structure'),
-      blockStates: params.get('block-states')?.split(';'),
-      models: params.get('models')?.split(';'),
-      textureAtlas: params.get('texture-atlas')?.split(';'),
-      renderTypes: params.get('render-types')?.split(';'),
-      occlusionShapes: params.get('occlusion-shapes')?.split(';'),
-      specialBlocksData: params.get('special-blocks-data')?.split(';'),
-      liquidComputationData: params.get('liquid-computation-data')?.split(';'),
-      marks: params.get('marks')?.split(';'),
-      // -------------------------------------------------------------------------------------------
-      cameraPosData: params.get('camera-pos-data')?.split(';'),
-      orthographicDefault: params.get('orthographic')?.toLocaleLowerCase() === 'true',
-      animatedTextureDefault: params.get('animated-texture')?.toLocaleLowerCase() === 'true',
-      showInvisibleBlocksDefault:
-        params.get('show-invisible-blocks')?.toLocaleLowerCase() === 'true',
-      displayMarksDefault: params.get('display-marks')?.toLocaleLowerCase() === 'true',
-      backgroundColorDefault: params.get('background-color') ?? '#ffffff',
-      backgroundAlphaDefault: parseInt(params.get('background-alpha') ?? '255'),
+      ...params,
+      orthographicDefault: params.orthographic,
+      animatedTextureDefault: params.animatedTexture,
+      showInvisibleBlocksDefault: params.showInvisibleBlocks,
+      displayMarksDefault: params.displayMarks,
+      backgroundColorDefault: params.backgroundColor,
+      backgroundAlphaDefault: params.backgroundAlpha,
     })
     .use(i18n)
     .directive('tooltip', CdxTooltip)

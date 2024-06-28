@@ -2,9 +2,10 @@ import '@/init'
 import L from 'leaflet'
 import processJson from './processJson'
 import './main.css'
-import getParams from '@/utils/getParams'
+import { getParams, sz, handleParseError } from '@/utils/params'
 import smoothWheelScroll from './smoothWheelScroll'
 import { parentOrigin } from '@/utils/iframe'
+import { z } from 'zod'
 
 L.Map.mergeOptions({
   // @section Mousewheel options
@@ -25,15 +26,19 @@ L.Map.addInitHook('addHandler', 'smoothWheelZoom', L.Map.SmoothWheelZoom)
 const targetEl = document.querySelector('#app')!
 
 ;(async () => {
-  const params = await getParams(['datapage', 'disable-marker-title-link'], {
-    datapage: 'Module:Maps/Minecraft_Dungeons_Mainland.json',
-    'disable-marker-title-link': 'false',
-  })
+  const parsed = z
+    .object({
+      datapage: sz.string().default('Module:Maps/Minecraft_Dungeons_Mainland.json'),
+      disableMarkerTitleLink: sz.boolean().default(false),
+    })
+    .safeParse(await getParams())
 
-  const disableMarkerTitleLink = params.get('disable-marker-title-link') === 'true'
+  const params = handleParseError(parsed, targetEl)
+
+  const disableMarkerTitleLink = params.disableMarkerTitleLink
 
   const json = await (
-    await fetch(`${parentOrigin()}/w/${encodeURIComponent(params.get('datapage')!)}?action=raw`)
+    await fetch(`${parentOrigin()}/w/${encodeURIComponent(params.datapage)}?action=raw`)
   ).json()
 
   const mapData = processJson(json)
