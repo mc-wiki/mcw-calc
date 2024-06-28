@@ -3,7 +3,7 @@
   "maceDamage.java": "Java版",
   "maceDamage.bedrock": "基岩版",
   "maceDamage.fallHeight": "跌落高度格數：",
-  "maceDamage.densityLevel": "[[致密|緻密]]魔咒等級：",
+  "maceDamage.densityLevel": "[[緻密]]魔咒等級：",
   "maceDamage.critical": "暴擊",
   "maceDamage.critical.help": "重鎚的跌落攻擊通常會同時造成暴擊，但有些情況下可能因不滿足其他條件而未能觸發（例如仍在攻擊冷卻時間）。",
   "maceDamage.cooldownReset": "Cooldown reset",
