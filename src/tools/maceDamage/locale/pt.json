@@ -3,10 +3,10 @@
   "maceDamage.java": "Edição Java",
   "maceDamage.bedrock": "Edição Bedrock",
   "maceDamage.fallHeight": "Calcular blocos de altura",
+  "maceDamage.densityLevel": "Nível do encantamento de [[Densidade]]",
   "maceDamage.critical": "Ataque crítico",
   "maceDamage.critical.help": "Acertar uma entidade com a Clava, produzirá ataques críticos na maioria das vezes, a menos que o tempo de espera do ataque não seja reiniciado.",
   "maceDamage.cooldownReset": "Tempo de espera reiniciado",
   "maceDamage.cooldownReset.help": "Desmarque esta opção se o tempo de espera do ataque não estiver zerado antes do ataque.",
-  "maceDamage.damage": "Dano causado",
-  "maceDamage.densityLevel": "Nível do encantamento de [[Densidade]]"
+  "maceDamage.damage": "Dano causado"
 }
