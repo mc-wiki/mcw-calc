@@ -1,0 +1,5 @@
+{
+  "seedHashcode.title": "Wandle eine Zeichenkette in einen wirklichen Startwert um",
+  "seedHashcode.actual": "Wirklicher Startwert:",
+  "seedHashcode.emptyString": "Dies sollte 0 sein, aber es ist eine leere Zeichenkette, so dass Minecraft tatsächlich eine Zufallszahl generiert."
+}
