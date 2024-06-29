@@ -1,4 +1,10 @@
 {
+  "blockStructureRenderer.optionsCamera": "摄像机",
+  "blockStructureRenderer.optionsScene": "场景",
+  "blockStructureRenderer.optionsExport": "导出",
+  "blockStructureRenderer.lockTooltip": "点击控制摄像机",
+  "blockStructureRenderer.controlHelp": "使用你的鼠标与键盘来控制摄像机。按Esc键退出。",
+  "blockStructureRenderer.closePopup": "关闭",
   "blockStructureRenderer.orthographic": "使用正交投影",
   "blockStructureRenderer.displayMode": "显示模式",
   "blockStructureRenderer.displayModes.all": "渲染全部方块",

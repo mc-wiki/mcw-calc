@@ -1,4 +1,10 @@
 {
+  "blockStructureRenderer.optionsCamera": "鏡頭",
+  "blockStructureRenderer.optionsScene": "場景",
+  "blockStructureRenderer.optionsExport": "匯出",
+  "blockStructureRenderer.lockTooltip": "按此控制鏡頭",
+  "blockStructureRenderer.controlHelp": "使用你的滑鼠與鍵盤來控制鏡頭。按 Esc 鍵退出。",
+  "blockStructureRenderer.closePopup": "關閉",
   "blockStructureRenderer.orthographic": "使用正交投影",
   "blockStructureRenderer.displayMode": "顯示模式",
   "blockStructureRenderer.displayModes.all": "渲染全部方塊",
