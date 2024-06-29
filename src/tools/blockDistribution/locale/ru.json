@@ -1,0 +1,13 @@
+{
+  "blockDistribution.xAxis": "Уровень по оси Y",
+  "blockDistribution.yAxis": "↑ Number of X found among 100,000 blocks",
+  "blockDistribution.xInTenThousand": "{num} из 100 000",
+  "blockDistribution.title": "Распределение в [[Java Edition {version}]] блоков: {block}",
+  "blockDistribution.total": "Итого",
+  "blockDistribution.overworld": "Верхний мир",
+  "blockDistribution.theNether": "Нижний мир",
+  "blockDistribution.theEnd": "Край",
+  "blockDistribution.logarithmicScale": "Логарифмическая шкала",
+  "blockDistribution.logarithmicScaleHelp": "Slight difference in the Y-coordinate represents a large change in the relative frequency of a block type, making it useful to see small changes on the graph when there is a large spike.",
+  "blockDistribution.selectAll": "Выбрать все"
+}
