@@ -1,0 +1,12 @@
+{
+  "maceDamage.title": "Schaden durch Streitkolben berechnen",
+  "maceDamage.java": "Java Edition",
+  "maceDamage.bedrock": "Bedrock Edition",
+  "maceDamage.fallHeight": "Fallhöhe in Blöcken:",
+  "maceDamage.densityLevel": "[[Dichte]]-Stufe der Verzauberung:",
+  "maceDamage.critical": "Kritischer Treffer",
+  "maceDamage.critical.help": "Ein Treffer mit dem Streitkolben führt in den meisten Fällen zu kritischen Treffern, es sei denn, andere Bedingungen sind nicht erfüllt, z. B. wird die Abklingzeit des Angriffs nicht zurückgesetzt.",
+  "maceDamage.cooldownReset": "Abklingzeit zurückgesetzt",
+  "maceDamage.cooldownReset.help": "Deaktivieren Sie dieses Kontrollkästchen, wenn die Abklingzeit des Angriffs vor dem Angriff nicht zurückgesetzt wird.",
+  "maceDamage.damage": "Schaden angerichtet:"
+}
