@@ -5,7 +5,7 @@
   "beaconColor.color": "Couleur :",
   "beaconColor.calculate": "Calculer",
   "beaconColor.sequence": "Séquence :",
-  "beaconColor.dE": "dE",
+  "beaconColor.dE": "ΔE",
   "beaconColor.dE.help": "Le delta E est une mesure de la proximité d'une couleur. Plus la valeur est basse, mieux c'est. Les valeurs ≤1.0 signifient que la différence n'est pas visible à l'œil nu.",
   "beaconColor.glass.white": "Verre blanc",
   "beaconColor.glass.lightGray": "Vert gris clair",
