@@ -33,6 +33,7 @@ import {
   type ModelReferenceWithWeight,
 } from '@/tools/blockStructureRenderer/definitions.ts'
 import { fetchJigsawAPI } from '@/utils/jigsaw.ts'
+import { sha256 } from 'js-sha256'
 
 // Block Structure ---------------------------------------------------------------------------------
 
@@ -148,6 +149,7 @@ export class BlockState {
 }
 
 // Block Data Fetcher ------------------------------------------------------------------------------
+
 function blockStateDefinitionToString(blockState: BlockStateDefinition) {
   if (blockState.properties && Object.entries(blockState.properties).length > 0) {
     return `${blockState.name}[${Object.entries(blockState.properties)
@@ -159,15 +161,27 @@ function blockStateDefinitionToString(blockState: BlockStateDefinition) {
   }
 }
 
+async function fetchBlockData(blockStates: BlockState[]) {
+  const blockHashStr = sha256(blockStates.map((blockState) => blockState.toString()).join('|'))
+  const response = await fetchJigsawAPI(`renderer/${encodeURIComponent(blockHashStr)}`)
+  const json = await response.json()
+  if (json.processed) return json
+  const blockDefinitions = blockStates.map((blockState) => blockState.toBlockStateDefinition())
+  return await fetchJigsawAPI('renderer/process', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ states: blockDefinitions, hash: blockHashStr }),
+  }).then((res) => res.json())
+}
+
 export class BlockDataStorage {
   private readonly jigsawApiResponse: Promise<BSRApiResponse>
   private readonly blockStateInfos: Promise<Record<string, StateData>>
 
   constructor(blockStates: BlockState[]) {
-    const blockDefinitions = blockStates.map((blockState) => blockState.toString()).join('|')
-    this.jigsawApiResponse = fetchJigsawAPI(
-      `renderer?states=${encodeURIComponent(blockDefinitions)}`,
-    ).then((res) => res.json())
+    this.jigsawApiResponse = fetchBlockData(blockStates)
     this.blockStateInfos = this.jigsawApiResponse.then((data) => {
       const blockStateInfos: Record<string, StateData> = {}
       data.states.forEach((stateData) => {
@@ -374,7 +388,7 @@ export class NameMapping {
     const blockStates = Object.values(this.nameStateMapping)
     if (blockStates.some((blockState) => blockState.fluidState.fluid === 'water'))
       blockStates.push(new BlockState('water[level=0]'))
-    return blockStates
+    return blockStates.sort((a, b) => a.toString().localeCompare(b.toString()))
   }
 }
 
@@ -412,9 +426,6 @@ export function bakeBlockModelRenderLayer(
       value.block instanceof RegExp ? value.block.test(blockName) : value.block === blockName,
     )
     if (matchHardcodedRenderer.length > 0) {
-      console.log(
-        `Using hard-coded renderer for block ${thisBlock} (${blockKey}) at [${x},${y},${z}]`,
-      )
       matchHardcodedRenderer[0]
         .renderFunc(
           scene,
