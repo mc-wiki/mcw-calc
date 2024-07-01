@@ -8,16 +8,11 @@ import {
   Rotation,
 } from '@/tools/blockStructureRenderer/math.ts'
 import type {
-  AndCondition,
   BlockModel,
-  BlockStateModelCollection,
-  LiquidComputationData,
   ModelElement,
   ModelReference,
   ModelReferenceWithWeight,
   ModelRotation,
-  OcclusionFaceData,
-  OrCondition,
 } from '@/tools/blockStructureRenderer/definitions.ts'
 import {
   ANIMATED_TEXTURE_ATLAS_SIZE,
@@ -25,7 +20,7 @@ import {
   ATLAS_WIDTH,
   MaterialPicker,
 } from '@/tools/blockStructureRenderer/texture.ts'
-import type { NameMapping } from '@/tools/blockStructureRenderer/renderer.ts'
+import { BlockDataStorage, type NameMapping } from '@/tools/blockStructureRenderer/renderer.ts'
 import { BlockState } from '@/tools/blockStructureRenderer/renderer.ts'
 import { getShade } from '@/tools/blockStructureRenderer/hardcodes.ts'
 
@@ -84,72 +79,6 @@ function parseModelReferenceProvider(
   model: ModelReference | ModelReferenceWithWeight[],
 ): ModelReferenceProvider {
   return Array.isArray(model) ? new ModelReferenceGroup(model) : new SingleModelReference(model)
-}
-
-// Choose Model from Block State data --------------------------------------------------------------
-
-function conditionMatch(
-  condition: Record<string, any> | AndCondition | OrCondition,
-  blockProperties: Record<string, string>,
-): boolean {
-  if ('AND' in condition) {
-    return condition.AND.every((part: Record<string, any> | AndCondition | OrCondition) =>
-      conditionMatch(part, blockProperties),
-    )
-  } else if ('OR' in condition) {
-    return condition.OR.some((part: Record<string, any> | AndCondition | OrCondition) =>
-      conditionMatch(part, blockProperties),
-    )
-  } else {
-    return Object.entries(condition).every(([key, value]) =>
-      value.split('|').includes(blockProperties[key]),
-    )
-  }
-}
-
-function chooseModel(
-  blockState: BlockState,
-  blockStatesMapping: Record<string, BlockStateModelCollection>,
-): ModelReferenceProvider[] {
-  const blockName = blockState.blockName
-  const blockStateData = blockStatesMapping[blockName] ?? {}
-  if (!blockStateData.variants && !blockStateData.multipart)
-    console.warn(`Block ${blockName} has no variants or multipart data`)
-  if (blockState.blockProperties) {
-    const blockProperties = blockState.blockProperties
-    if (blockStateData.variants) {
-      for (const [key, value] of Object.entries(blockStateData.variants)) {
-        const stateCondition = key.split(',')
-        let match = true
-        for (const condition of stateCondition) {
-          const [key, value] = condition.split('=')
-          if (blockProperties[key] !== value) {
-            match = false
-            break
-          }
-        }
-        if (match) {
-          return [parseModelReferenceProvider(value)]
-        }
-      }
-    } else if (blockStateData.multipart) {
-      const matchingPart = blockStateData.multipart.filter((part) =>
-        conditionMatch(part.when ?? {}, blockProperties),
-      )
-      if (matchingPart.length > 0) {
-        return matchingPart.map((part) => parseModelReferenceProvider(part.apply))
-      }
-    }
-  } else {
-    if (blockStateData.variants && blockStateData.variants['']) {
-      if (!blockStateData.variants[''])
-        console.warn(`Block ${blockName} has no default variant! Please check the block state!`)
-      return [parseModelReferenceProvider(blockStateData.variants[''])]
-    } else if (blockStateData.multipart) {
-      return blockStateData.multipart.map((part) => parseModelReferenceProvider(part.apply))
-    }
-  }
-  return []
 }
 
 // Bake Block Face UV Functions --------------------------------------------------------------------
@@ -412,99 +341,61 @@ export interface BakedModel {
 
 export class BlockStateModelManager {
   readonly bakedModelCache: Record<string, BakedModel> = {}
-  readonly modelsMapping: Record<string, ModelReferenceProvider[]> = {}
-  readonly blockModelMapping: Record<number, BlockModel> = {}
-  readonly occlusionShapesMapping: Record<string, OcclusionFaceData> = {}
-  readonly specialBlocksData: Record<string, number[]> = {}
-  readonly liquidComputationData: Record<string, LiquidComputationData> = {}
+  readonly blockDataStorage: BlockDataStorage
   readonly nameMapping: NameMapping
+  readonly modelsMapping: Promise<Record<string, ModelReferenceProvider[]>>
 
-  constructor(
-    blockStates: string[],
-    models: string[],
-    occlusionShapes: string[],
-    liquidComputation: string[],
-    specialBlocksData: string[],
-    nameMapping: NameMapping,
-  ) {
+  constructor(nameMapping: NameMapping) {
     this.nameMapping = nameMapping
-
-    const blockStatesMapping = {} as Record<string, BlockStateModelCollection>
-    blockStates
-      .map((s) => s.trim())
-      .filter((s) => s !== '')
-      .forEach((blockStatePair) => {
-        const splitPoint = blockStatePair.indexOf('=')
-        const blockStateName = blockStatePair.substring(0, splitPoint)
-        const blockStateData = blockStatePair.substring(splitPoint + 1)
-        blockStatesMapping[blockStateName] = JSON.parse(blockStateData) as BlockStateModelCollection
-      })
-
-    specialBlocksData
-      .map((s) => s.trim())
-      .filter((s) => s !== '')
-      .forEach((specialBlockDataPair) => {
-        const splitPoint = specialBlockDataPair.indexOf('=')
-        const specialBlockName = specialBlockDataPair.substring(0, splitPoint)
-        this.specialBlocksData[specialBlockName] = JSON.parse(
-          specialBlockDataPair.substring(splitPoint + 1),
-        )
-      })
-
-    Object.entries(nameMapping.nameStateMapping)
-      .filter((blockData) => blockStatesMapping[blockData[1].blockName])
-      .forEach(([blockName, blockState]) => {
-        this.modelsMapping[blockName] = chooseModel(blockState, blockStatesMapping)
-      })
-
-    models
-      .map((s) => s.trim())
-      .filter((s) => s !== '')
-      .forEach((modelPair) => {
-        const [modelId, modelData] = modelPair.split('=', 2)
-        this.blockModelMapping[parseInt(modelId, 10)] = JSON.parse(modelData) as BlockModel
-      })
-
-    occlusionShapes
-      .map((s) => s.trim())
-      .filter((s) => s !== '')
-      .forEach((occlusionShapePair) => {
-        const splitPoint = occlusionShapePair.indexOf('=')
-        const occlusionShapeName = occlusionShapePair.substring(0, splitPoint)
-        this.occlusionShapesMapping[nameMapping.toBlockState(occlusionShapeName).sourceDefinition] =
-          JSON.parse(occlusionShapePair.substring(splitPoint + 1))
-      })
-
-    liquidComputation
-      .map((s) => s.trim())
-      .filter((s) => s !== '')
-      .forEach((liquidComputationPair) => {
-        const splitPoint = liquidComputationPair.indexOf('=')
-        const liquidComputationName = liquidComputationPair.substring(0, splitPoint)
-        this.liquidComputationData[
-          nameMapping.toBlockState(liquidComputationName).sourceDefinition
-        ] = JSON.parse(liquidComputationPair.substring(splitPoint + 1))
-      })
-  }
-
-  getSpecialBlocksData(blockName: string) {
-    return this.specialBlocksData[blockName] ?? []
-  }
-
-  getFluidComputationData(blockState: BlockState) {
-    return (
-      this.liquidComputationData[blockState.sourceDefinition] ?? {
-        blocksMotion: false,
-        face_sturdy: [],
+    this.blockDataStorage = new BlockDataStorage(nameMapping.getAllBlockStates())
+    this.modelsMapping = this.blockDataStorage.getModelRefs().then((models) => {
+      const result: Record<string, ModelReferenceProvider[]> = {}
+      for (const [blockName, model] of Object.entries(models)) {
+        result[blockName] = model.map(parseModelReferenceProvider)
       }
-    )
+      return result
+    })
   }
 
-  getOcclusionFaceData(blockState: BlockState) {
-    return this.occlusionShapesMapping[blockState.sourceDefinition] ?? { can_occlude: false }
+  async getSpecialBlocksData(blockName: string) {
+    const stateData = await this.blockDataStorage.getBlockDataByName(blockName)
+    if (!stateData || stateData.length == 0) return []
+    return stateData[0].special_textures
   }
 
-  getOrBakeModel(
+  async getBlockRenderType(blockName: string) {
+    const stateData = await this.blockDataStorage.getBlockDataByName(blockName)
+    if (!stateData || stateData.length == 0) return 'solid'
+    return stateData[0].render_type
+  }
+
+  async isBlockBlocksMotion(blockState: BlockState) {
+    return (await this.blockDataStorage.getBlockData(blockState)).blocks_motion
+  }
+
+  async getBlockSturdyFaces(blockState: BlockState) {
+    return (await this.blockDataStorage.getBlockData(blockState)).face_sturdy
+  }
+
+  async isBlockOcclude(blockState: BlockState) {
+    return (await this.blockDataStorage.getBlockData(blockState)).occlusion
+  }
+
+  async getBlockOcclusionFace(blockState: BlockState, face: Direction) {
+    return (await this.blockDataStorage.getBlockData(blockState)).occlusion_shape[face] ?? []
+  }
+
+  async getBlockModelProvider(blockState: BlockState) {
+    const name = blockState.toString()
+    const models = await this.modelsMapping
+    return models[name] ?? []
+  }
+
+  async getBlockModelProviderByKey(blockName: string) {
+    return this.getBlockModelProvider(this.nameMapping.toBlockState(blockName))
+  }
+
+  async getOrBakeModel(
     materialPicker: MaterialPicker,
     modelReferenceInt: number,
     rotation: Rotation,
@@ -513,18 +404,9 @@ export class BlockStateModelManager {
     const cacheKey = `${modelReferenceInt}:${rotation.toStringKey()}:${uvlock}`
     if (cacheKey in this.bakedModelCache) return this.bakedModelCache[cacheKey]
 
-    const model = this.blockModelMapping[modelReferenceInt]
-    if (!model) {
-      console.warn(`Model ${modelReferenceInt} not found`)
-      return (this.bakedModelCache[cacheKey] = createEmptyBakedModel())
-    }
-
-    return (this.bakedModelCache[cacheKey] = bakeModel(
-      materialPicker,
-      this.blockModelMapping[modelReferenceInt],
-      rotation,
-      uvlock,
-    ))
+    const model = await this.blockDataStorage.getModelByReference(modelReferenceInt)
+    if (!model) return (this.bakedModelCache[cacheKey] = createEmptyBakedModel())
+    return (this.bakedModelCache[cacheKey] = await bakeModel(materialPicker, model, rotation, uvlock))
   }
 }
 
@@ -542,12 +424,12 @@ function createEmptyBakedModel(): BakedModel {
   }
 }
 
-export function bakeModel(
+export async function bakeModel(
   materialPicker: MaterialPicker,
   model: BlockModel,
   rotation: Rotation,
   uvlock: boolean,
-): BakedModel {
+) {
   const bakedModel = createEmptyBakedModel()
 
   for (const element of model.elements ?? []) {
@@ -572,7 +454,7 @@ export function bakeModel(
         blockFaceUV = recomputeUVs(blockFaceUV, rotation, faceDirection)
       }
 
-      const spriteData = materialPicker.atlasMapping[face.texture]
+      const spriteData = await materialPicker.getTextureByReference(face.texture)
       let animated = false
       if (spriteData instanceof Array) {
         blockFaceUV.uvs[0] = (spriteData[0] + blockFaceUV.uvs[0]) / ATLAS_WIDTH
@@ -580,7 +462,7 @@ export function bakeModel(
         blockFaceUV.uvs[1] = 1 - (spriteData[1] + blockFaceUV.uvs[1]) / ATLAS_HEIGHT
         blockFaceUV.uvs[3] = 1 - (spriteData[1] + blockFaceUV.uvs[3]) / ATLAS_HEIGHT
       } else {
-        const firstFrame = materialPicker.atlasMapping[spriteData.frames[0]] as number[]
+        const firstFrame = await materialPicker.getTextureByReference(spriteData.frames[0]) as number[]
         const [x, y] = materialPicker.animatedTextureManager.putNewTexture(
           face.texture,
           spriteData,
@@ -661,16 +543,16 @@ export function bakeModel(
   return bakedModel
 }
 
-export function renderBakedFacesWithMS(
+export async function renderBakedFacesWithMS(
   faces: BakedFace[],
   block: BlockState,
-  materialSupplier: (animated: boolean, blockName: string) => THREE.MeshBasicMaterial,
+  materialSupplier: (animated: boolean, blockName: string) => Promise<THREE.MeshBasicMaterial>,
   scene: THREE.Scene,
   transform: THREE.Matrix4,
   recomputeFaceShade?: boolean,
 ) {
-  faces.forEach((face) => {
-    const material = materialSupplier(face.animated, block.blockName).clone()
+  for (const face of faces) {
+    const material = (await materialSupplier(face.animated, block.blockName)).clone()
     if (face.tintindex !== undefined) {
       material.color.set(new THREE.Color(parseInt(block.tintData[face.tintindex], 16)))
     }
@@ -701,10 +583,10 @@ export function renderBakedFacesWithMS(
     const geometry = face.planeGeometry.clone().applyMatrix4(transform)
     const mesh = new THREE.Mesh(geometry, material)
     scene.add(mesh)
-  })
+  }
 }
 
-export function renderBakedFaces(
+export async function renderBakedFaces(
   faces: BakedFace[],
   block: BlockState,
   materialPicker: MaterialPicker,
@@ -712,7 +594,7 @@ export function renderBakedFaces(
   transform: THREE.Matrix4,
   recomputeFaceShade?: boolean,
 ) {
-  renderBakedFacesWithMS(
+  await renderBakedFacesWithMS(
     faces,
     block,
     (animated, blockName) => materialPicker.pickMaterial(animated, blockName),
@@ -722,7 +604,7 @@ export function renderBakedFaces(
   )
 }
 
-export function renderModelNoCullFaces(
+export async function renderModelNoCullFaces(
   bakedModel: BakedModel,
   block: BlockState,
   materialPicker: MaterialPicker,
@@ -730,7 +612,7 @@ export function renderModelNoCullFaces(
   transform: THREE.Matrix4,
   recomputeFaceShade?: boolean,
 ) {
-  renderBakedFaces(
+  await renderBakedFaces(
     bakedModel.unculledFaces,
     block,
     materialPicker,
@@ -740,15 +622,15 @@ export function renderModelNoCullFaces(
   )
 }
 
-export function renderModelNoCullsWithMS(
+export async function renderModelNoCullsWithMS(
   bakedModel: BakedModel,
   block: BlockState,
-  materialSupplier: (animated: boolean, blockName: string) => THREE.MeshBasicMaterial,
+  materialSupplier: (animated: boolean, blockName: string) => Promise<THREE.MeshBasicMaterial>,
   scene: THREE.Scene,
   transform: THREE.Matrix4,
   recomputeFaceShade?: boolean,
 ) {
-  renderBakedFacesWithMS(
+  await renderBakedFacesWithMS(
     bakedModel.unculledFaces,
     block,
     materialSupplier,

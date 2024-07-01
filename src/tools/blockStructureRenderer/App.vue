@@ -21,7 +21,7 @@ import {
   BlockStructure,
   NameMapping,
 } from '@/tools/blockStructureRenderer/renderer.ts'
-import { makeMaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
+import { MaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
 import type { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
 import { saveAsLitematic, saveAsStructureFile } from '@/tools/blockStructureRenderer/structure.ts'
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
@@ -31,13 +31,6 @@ import BsrPopup from './BsrPopup.vue'
 const props = defineProps<{
   blocks: string[]
   structure: string
-  blockStates: string[]
-  models: string[]
-  textureAtlas: string[]
-  renderTypes: string[]
-  occlusionShapes: string[]
-  specialBlocksData: string[]
-  liquidComputationData: string[]
   marks: string[]
 
   cameraPosData: string[]
@@ -116,9 +109,7 @@ const animatedTexture = ref(props.animatedTextureDefault)
 const invisibleBlocks = ref(props.showInvisibleBlocksDefault)
 const displayMarks = ref(props.displayMarksDefault)
 const backgroundColor = ref(props.backgroundColorDefault)
-const backgroundAlpha = ref(
-  isNaN(props.backgroundAlphaDefault) ? 255 : props.backgroundAlphaDefault,
-)
+const backgroundAlpha = ref(props.backgroundAlphaDefault)
 
 const displayModeStr = [
   t('blockStructureRenderer.displayModes.all'),
@@ -147,6 +138,7 @@ const cameraY = ref(0)
 const cameraZ = ref(0)
 const cameraPitch = ref(0)
 const cameraYaw = ref(0)
+const requireReBake = ref(false)
 
 // Three.js setup
 const rendererAvailable = WebGL.isWebGLAvailable()
@@ -183,8 +175,7 @@ controls.addEventListener('unlock', () => {
 })
 
 renderer.domElement.addEventListener('click', () => {
-  if (cameraSettingModeStr.findIndex((str) => str === cameraSettingMode.value) === 0)
-    controls.lock()
+  if (isCameraPointerLockControl()) controls.lock()
 })
 
 // Action ------------------------------------------------------------------------------------------
@@ -197,6 +188,7 @@ const isDownMoving = ref(false)
 
 document.addEventListener('keydown', (event) => {
   if (!controls.isLocked) return
+  event.preventDefault()
   switch (event.key.toLowerCase()) {
     case 'w':
       isForwardMoving.value = true
@@ -259,24 +251,12 @@ const lineMaterialList = ref([] as LineMaterial[])
 
 const blockStructure = new BlockStructure(props.structure, props.marks)
 const nameMapping = new NameMapping(props.blocks)
-const modelManager = new BlockStateModelManager(
-  props.blockStates,
-  props.models,
-  props.occlusionShapes,
-  props.liquidComputationData,
-  props.specialBlocksData,
-  nameMapping,
-)
-const materialPicker = makeMaterialPicker(
-  props.textureAtlas,
-  props.renderTypes,
+const modelManager = new BlockStateModelManager(nameMapping)
+const materialPicker = new MaterialPicker(
+  modelManager,
   () => {
     loaded.value = true
-    bakeFluidRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
-    bakeBlockModelRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
-    if (displayMarks.value) bakeBlockMarkers(scene, blockStructure)
-    if (invisibleBlocks.value)
-      lineMaterialList.value = bakeInvisibleBlocks(renderer, scene, nameMapping, blockStructure)
+    requireReBake.value = true
   },
   () => animatedTexture.value,
 )
@@ -320,7 +300,7 @@ function onDisplayModeChanged() {
   } else {
     blockStructure.yRange = undefined
   }
-  reBakeRenderLayers()
+  requireReBake.value = true
 }
 
 // Camera settings ---------------------------------------------------------------------------------
@@ -367,8 +347,12 @@ function onCameraChanged() {
   }
 }
 
+function isCameraPointerLockControl() {
+  return cameraSettingModeStr.findIndex((str) => str === cameraSettingMode.value) === 0
+}
+
 function onCameraSettingModeChanged() {
-  if (cameraSettingModeStr.findIndex((str) => str === cameraSettingMode.value) !== 0) {
+  if (!isCameraPointerLockControl()) {
     const [x, y, z] = camera.value.position.toArray()
     cameraX.value = x
     cameraY.value = y
@@ -461,8 +445,6 @@ function saveLitematic() {
 }
 
 // Main render loop --------------------------------------------------------------------------------
-
-const hidden = ref(false)
 const lastTime = ref(Date.now())
 
 function animate() {
@@ -470,14 +452,14 @@ function animate() {
 
   // Check if the render target is visible
   if (renderTarget.value.offsetParent === null) {
-    if (hidden.value) return
-    hidden.value = true
+    if (requireReBake.value) return
+    requireReBake.value = true
     clearScene()
     return
   }
-  if (hidden.value) {
-    hidden.value = false
+  if (requireReBake.value) {
     reBakeRenderLayers()
+    requireReBake.value = false
   }
 
   const bounds = renderTarget.value.getBoundingClientRect()
@@ -559,10 +541,10 @@ onUpdated(() => {
         width: '100%',
         height: '100%',
         position: 'relative',
-        cursor: locked ? 'none' : 'pointer',
+        cursor: locked ? 'none' : isCameraPointerLockControl() ? 'pointer' : 'auto',
       }"
       ref="renderTarget"
-      @mouseenter="tooltipOpen = true"
+      @mouseenter="tooltipOpen = isCameraPointerLockControl()"
       @mouseleave="tooltipOpen = false"
     />
     <div
@@ -573,13 +555,13 @@ onUpdated(() => {
         <cdx-checkbox v-model="animatedTexture">
           {{ t('blockStructureRenderer.animatedTexture') }}
         </cdx-checkbox>
-        <cdx-checkbox v-model="invisibleBlocks" @change="reBakeRenderLayers">
+        <cdx-checkbox v-model="invisibleBlocks" @change="requireReBake = true">
           {{ t('blockStructureRenderer.renderInvisibleBlocks') }}
         </cdx-checkbox>
         <cdx-checkbox
           v-if="blockStructure.hasMarks()"
           v-model="displayMarks"
-          @change="reBakeRenderLayers"
+          @change="requireReBake = true"
         >
           {{ t('blockStructureRenderer.renderMarks') }}
         </cdx-checkbox>
@@ -776,7 +758,8 @@ onUpdated(() => {
           }"
         >
           <cdx-button @click="saveRenderedImage">
-            <cdx-icon :icon="cdxIconCut" /> {{ t('blockStructureRenderer.saveImage') }}
+            <cdx-icon :icon="cdxIconCut" />
+            {{ t('blockStructureRenderer.saveImage') }}
           </cdx-button>
           <cdx-button @click="saveStructureFile">
             {{ t('blockStructureRenderer.saveStructureFile') }}

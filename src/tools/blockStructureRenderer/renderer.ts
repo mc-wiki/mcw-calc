@@ -22,6 +22,17 @@ import { renderFluid } from '@/tools/blockStructureRenderer/fluid.ts'
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
 import { LineSegments2 } from 'three/examples/jsm/lines/LineSegments2.js'
 import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js'
+import {
+  type BSRApiResponse,
+  type BlockStateDefinition,
+  type StateData,
+  EMPTY_STATE_DATA,
+  type BlockModel,
+  type AnimatedTexture,
+  type ModelReference,
+  type ModelReferenceWithWeight,
+} from '@/tools/blockStructureRenderer/definitions.ts'
+import { fetchJigsawAPI } from '@/utils/jigsaw.ts'
 
 // Block Structure ---------------------------------------------------------------------------------
 
@@ -40,6 +51,10 @@ export class FluidState {
     if (this.fluid === 'air') return 0
     if (this.level === 0) return 8 / 9
     return this.level / 9
+  }
+
+  toString() {
+    return `${this.fluid}[level=${this.level},falling=${this.falling}]`
   }
 }
 
@@ -117,9 +132,101 @@ export class BlockState {
   }
 
   toString() {
+    if (Object.entries(this.blockProperties).length === 0) return this.blockName
     return `${this.blockName}[${Object.entries(this.blockProperties)
+      .sort(([key1], [key2]) => key1.localeCompare(key2))
       .map(([key, value]) => `${key}=${value}`)
       .join(',')}]`
+  }
+
+  toBlockStateDefinition(): BlockStateDefinition {
+    return {
+      name: this.blockName,
+      properties: this.blockProperties,
+    }
+  }
+}
+
+// Block Data Fetcher ------------------------------------------------------------------------------
+function blockStateDefinitionToString(blockState: BlockStateDefinition) {
+  if (blockState.properties && Object.entries(blockState.properties).length > 0) {
+    return `${blockState.name}[${Object.entries(blockState.properties)
+      .sort(([key1], [key2]) => key1.localeCompare(key2))
+      .map(([key, value]) => `${key}=${value}`)
+      .join(',')}]`
+  } else {
+    return blockState.name
+  }
+}
+
+export class BlockDataStorage {
+  private readonly jigsawApiResponse: Promise<BSRApiResponse>
+  private readonly blockStateInfos: Promise<Record<string, StateData>>
+
+  constructor(blockStates: BlockState[]) {
+    const blockDefinitions = blockStates.map((blockState) => blockState.toBlockStateDefinition())
+    this.jigsawApiResponse = fetchJigsawAPI('renderer', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(blockDefinitions),
+    }).then((res) => res.json())
+    this.blockStateInfos = this.jigsawApiResponse.then((data) => {
+      const blockStateInfos: Record<string, StateData> = {}
+      data.states.forEach((stateData) => {
+        blockStateInfos[blockStateDefinitionToString(stateData.state)] = stateData
+      })
+      return blockStateInfos
+    })
+  }
+
+  async getBlockDataByName(blockName: string): Promise<StateData[]> {
+    if (blockName === 'air' || blockName === 'structure_void') return [EMPTY_STATE_DATA]
+    const blockStateInfos = await this.blockStateInfos
+    return Object.values(blockStateInfos).filter((stateData) => stateData.state.name === blockName)
+  }
+
+  async getBlockData(blockState: BlockState): Promise<StateData> {
+    const blockStateString = blockState.toString()
+    if (blockStateString === 'air' || blockStateString === 'structure_void') return EMPTY_STATE_DATA
+    const blockStateInfos = await this.blockStateInfos
+    if (!blockStateInfos[blockStateString]) {
+      console.warn(`No block data for block state ${blockStateString}`)
+      return EMPTY_STATE_DATA
+    }
+    return blockStateInfos[blockStateString]
+  }
+
+  async getModelByReference(modelReference: number): Promise<BlockModel | null> {
+    const jigsawApiResponse = await this.jigsawApiResponse
+    const name = String(modelReference)
+    if (!jigsawApiResponse.models[name]) {
+      console.warn(`No model for model reference ${name}`)
+      return null
+    }
+    return jigsawApiResponse.models[name]
+  }
+
+  async getTextureByReference(
+    textureReference: number,
+  ): Promise<AnimatedTexture | number[] | null> {
+    const jigsawApiResponse = await this.jigsawApiResponse
+    const name = String(textureReference)
+    if (!jigsawApiResponse.textures[name]) {
+      console.warn(`No texture for texture reference ${name}, using missing texture`)
+      return null
+    }
+    return jigsawApiResponse.textures[name]
+  }
+
+  async getModelRefs(): Promise<Record<string, (ModelReference | ModelReferenceWithWeight[])[]>> {
+    const response = await this.jigsawApiResponse
+    const blockModelInfos: Record<string, (ModelReference | ModelReferenceWithWeight[])[]> = {}
+    response.states.forEach((modelData) => {
+      blockModelInfos[blockStateDefinitionToString(modelData.state)] = modelData.parts
+    })
+    return blockModelInfos
   }
 }
 
@@ -130,7 +237,6 @@ const STRUCTURE_VOID = new BlockState('structure_void')
 
 export class BlockStructure {
   readonly structures: string[][][] // yzx
-  readonly bakedModelReference: [number, boolean?, number?, number?][][][][]
   readonly marks: [number, number, number, THREE.Color][] = []
 
   readonly x: number
@@ -159,11 +265,6 @@ export class BlockStructure {
     this.structures = new Array(maxY)
       .fill(0)
       .map(() => new Array(maxZ).fill(0).map(() => new Array(maxX).fill(AIR_KEY)))
-    this.bakedModelReference = new Array(maxY)
-      .fill(0)
-      .map(() =>
-        new Array(maxZ).fill(0).map(() => new Array(maxX).fill([-1, false, undefined, undefined])),
-      )
 
     for (let y = 0; y < splitHeightLines.length; y++) {
       const splitLines = splitHeightLines[y].replace(/\s/, '').split(',')
@@ -272,6 +373,13 @@ export class NameMapping {
       console.warn(`No name mapping for block key '${blockKey}, using default air (+)`)
     return this.nameStateMapping[blockKey] ?? AIR_STATE
   }
+
+  getAllBlockStates(): BlockState[] {
+    const blockStates = Object.values(this.nameStateMapping)
+    if (blockStates.some(blockState => blockState.fluidState.fluid === 'water'))
+      blockStates.push(new BlockState('water[level=0]'))
+    return blockStates
+  }
 }
 
 export function bakeFluidRenderLayer(
@@ -284,14 +392,12 @@ export function bakeFluidRenderLayer(
   blockStructure.forEachBlock((x, y, z, blockKey) => {
     const thisFluid = nameMapping.toBlockState(blockKey).fluidState
     if (thisFluid.fluid === 'air') return
-    try {
-      renderFluid(scene, materialPicker, modelManager, x, y, z, (x, y, z) =>
-        nameMapping.toBlockState(blockStructure.getBlock(x, y, z)),
-      )
-    } catch (e) {
-      console.error(`Error in rendering fluid ${thisFluid} at [${x},${y},${z}]`)
-      console.error(e)
-    }
+    renderFluid(scene, materialPicker, modelManager, x, y, z, (x, y, z) =>
+      nameMapping.toBlockState(blockStructure.getBlock(x, y, z)),
+    ).catch((reason) => {
+      console.error(`Error in rendering fluid ${thisFluid.toString()} at [${x},${y},${z}]`)
+      console.error(reason)
+    })
   }, true)
 }
 
@@ -302,7 +408,7 @@ export function bakeBlockModelRenderLayer(
   nameMapping: NameMapping,
   modelManager: BlockStateModelManager,
 ) {
-  blockStructure.forEachBlock((x, y, z, blockKey) => {
+  blockStructure.forEachBlock(async (x, y, z, blockKey) => {
     const thisBlock = nameMapping.toBlockState(blockKey)
     const blockName = thisBlock.blockName
 
@@ -310,8 +416,9 @@ export function bakeBlockModelRenderLayer(
       value.block instanceof RegExp ? value.block.test(blockName) : value.block === blockName,
     )
     if (matchHardcodedRenderer.length > 0) {
-      try {
-        matchHardcodedRenderer[0].renderFunc(
+      console.log(`Using hard-coded renderer for block ${thisBlock} (${blockKey}) at [${x},${y},${z}]`)
+      matchHardcodedRenderer[0]
+        .renderFunc(
           scene,
           x,
           y,
@@ -322,25 +429,26 @@ export function bakeBlockModelRenderLayer(
           nameMapping,
           blockStructure,
         )
-      } catch (e) {
-        console.error(
-          `Error in hard-coded renderer for block ${thisBlock} (${blockKey}) at [${x},${y},${z}]`,
-        )
-        console.error(e)
-      }
+        .catch((reason) => {
+          console.error(
+            `Error in hard-coded renderer for block ${thisBlock} (${blockKey}) at [${x},${y},${z}]`,
+          )
+          console.error(reason)
+        })
       if (!matchHardcodedRenderer[0].needRenderModel) return
     }
 
-    if (!modelManager.modelsMapping[blockKey]) {
+    const modelMapping = await modelManager.getBlockModelProviderByKey(blockKey)
+    if (!modelMapping) {
       console.warn(`No model mapping for block ${thisBlock} (${blockKey}) at [${x},${y},${z}]`)
       return
     }
 
-    modelManager.modelsMapping[blockKey].forEach((provider) => {
+    for (const provider of modelMapping) {
       const [modelReference, uvlock, rotX, rotY] = provider.getModel(x, y, z)
       const rotation = new Rotation(rotX ?? 0, rotY ?? 0)
       const translate = new THREE.Matrix4().makeTranslation(x, y, z)
-      const baked = modelManager.getOrBakeModel(
+      const baked = await modelManager.getOrBakeModel(
         materialPicker,
         modelReference,
         rotation,
@@ -348,7 +456,7 @@ export function bakeBlockModelRenderLayer(
       )
 
       try {
-        renderModelNoCullFaces(baked, thisBlock, materialPicker, scene, translate)
+        await renderModelNoCullFaces(baked, thisBlock, materialPicker, scene, translate)
       } catch (e) {
         console.error(
           `Error in rendering noncull faces for block ${thisBlock} (${blockKey}) at [${x},${y},${z}]`,
@@ -357,7 +465,7 @@ export function bakeBlockModelRenderLayer(
       }
 
       try {
-        Object.entries(baked.cullfaces).forEach(([direction, value]) => {
+        for (const [direction, value] of Object.entries(baked.cullfaces)) {
           const directionFace = rotation.transformDirection(getDirectionFromName(direction))
           const oppositeFace = oppositeDirection(directionFace)
           const otherBlock = blockStructure.getBlock(
@@ -365,23 +473,26 @@ export function bakeBlockModelRenderLayer(
           )
           const otherBlockState = nameMapping.toBlockState(otherBlock)
 
-          if (hardCodedSkipRendering(thisBlock, otherBlockState, directionFace)) return
-          const otherOcclusion = modelManager.getOcclusionFaceData(otherBlockState)
-          if (otherOcclusion.can_occlude) {
-            const occlusionThis = modelManager.getOcclusionFaceData(thisBlock)[directionFace] ?? []
-            const occlusionOther = otherOcclusion[oppositeFace] ?? []
-            if (isOcclusion(occlusionThis, occlusionOther)) return
+          if (hardCodedSkipRendering(thisBlock, otherBlockState, directionFace)) continue
+          if (await modelManager.isBlockOcclude(otherBlockState)) {
+            if (
+              isOcclusion(
+                await modelManager.getBlockOcclusionFace(thisBlock, directionFace),
+                await modelManager.getBlockOcclusionFace(otherBlockState, oppositeFace),
+              )
+            )
+              continue
           }
 
-          renderBakedFaces(value, thisBlock, materialPicker, scene, translate)
-        })
+          await renderBakedFaces(value, thisBlock, materialPicker, scene, translate)
+        }
       } catch (e) {
         console.error(
           `Error in rendering cull faces for block ${thisBlock} (${blockKey}) at [${x},${y},${z}]`,
         )
         console.error(e)
       }
-    })
+    }
   }, true)
 }
 
