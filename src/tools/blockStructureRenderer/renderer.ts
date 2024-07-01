@@ -164,14 +164,10 @@ export class BlockDataStorage {
   private readonly blockStateInfos: Promise<Record<string, StateData>>
 
   constructor(blockStates: BlockState[]) {
-    const blockDefinitions = blockStates.map((blockState) => blockState.toBlockStateDefinition())
-    this.jigsawApiResponse = fetchJigsawAPI('renderer', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(blockDefinitions),
-    }).then((res) => res.json())
+    const blockDefinitions = blockStates.map((blockState) => blockState.toString()).join('|')
+    this.jigsawApiResponse = fetchJigsawAPI(
+      `renderer?states=${encodeURIComponent(blockDefinitions)}`,
+    ).then((res) => res.json())
     this.blockStateInfos = this.jigsawApiResponse.then((data) => {
       const blockStateInfos: Record<string, StateData> = {}
       data.states.forEach((stateData) => {
@@ -376,7 +372,7 @@ export class NameMapping {
 
   getAllBlockStates(): BlockState[] {
     const blockStates = Object.values(this.nameStateMapping)
-    if (blockStates.some(blockState => blockState.fluidState.fluid === 'water'))
+    if (blockStates.some((blockState) => blockState.fluidState.fluid === 'water'))
       blockStates.push(new BlockState('water[level=0]'))
     return blockStates
   }
@@ -416,7 +412,9 @@ export function bakeBlockModelRenderLayer(
       value.block instanceof RegExp ? value.block.test(blockName) : value.block === blockName,
     )
     if (matchHardcodedRenderer.length > 0) {
-      console.log(`Using hard-coded renderer for block ${thisBlock} (${blockKey}) at [${x},${y},${z}]`)
+      console.log(
+        `Using hard-coded renderer for block ${thisBlock} (${blockKey}) at [${x},${y},${z}]`,
+      )
       matchHardcodedRenderer[0]
         .renderFunc(
           scene,
