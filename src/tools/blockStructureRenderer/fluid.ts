@@ -25,32 +25,32 @@ function isSameFluid(thisFluidState: FluidState, neighborFluidState: FluidState)
   return thisFluidState.fluid === neighborFluidState.fluid
 }
 
-function isFaceOccludedByNeighbor(
+async function isFaceOccludedByNeighbor(
   modelManager: BlockStateModelManager,
   height: number,
   otherBlockState: BlockState,
   direction: Direction,
-): boolean {
-  const otherOcclusion = modelManager.getOcclusionFaceData(otherBlockState)
-  if (otherOcclusion.can_occlude) {
-    const shapeCheck = [[0, 0, 1, height]]
-    const occlusionShape = otherOcclusion[oppositeDirection(direction)] ?? []
-    return isOcclusion(shapeCheck, occlusionShape)
+) {
+  if (await modelManager.isBlockOcclude(otherBlockState)) {
+    return isOcclusion(
+      [[0, 0, 1, height]],
+      await modelManager.getBlockOcclusionFace(otherBlockState, oppositeDirection(direction)),
+    )
   }
   return false
 }
 
-function isFaceOccludedBySelf(
+async function isFaceOccludedBySelf(
   modelManager: BlockStateModelManager,
   thisBlockState: BlockState,
   direction: Direction,
 ) {
-  return isOcclusion(modelManager.getOcclusionFaceData(thisBlockState)[direction] ?? [], [
+  return isOcclusion(await modelManager.getBlockOcclusionFace(thisBlockState, direction), [
     [0, 0, 1, 1],
   ])
 }
 
-function shouldRenderFace(
+async function shouldRenderFace(
   modelManager: BlockStateModelManager,
   thisBlockState: BlockState,
   thisFluidState: FluidState,
@@ -58,20 +58,20 @@ function shouldRenderFace(
   otherFluidState: FluidState,
 ) {
   return (
-    isFaceOccludedBySelf(modelManager, thisBlockState, direction) &&
+    (await isFaceOccludedBySelf(modelManager, thisBlockState, direction)) &&
     !isSameFluid(thisFluidState, otherFluidState)
   )
 }
 
-function isSolidBlock(modelManager: BlockStateModelManager, blockState: BlockState) {
+async function isSolidBlock(modelManager: BlockStateModelManager, blockState: BlockState) {
   return (
-    modelManager.getFluidComputationData(blockState).blocks_motion ||
+    (await modelManager.isBlockBlocksMotion(blockState)) ||
     blockState.blockName === 'bamboo_sapling' ||
     blockState.blockName === 'cobweb'
   )
 }
 
-function getHeight(
+async function getHeight(
   modelManager: BlockStateModelManager,
   thisFluidState: FluidState,
   otherBlockState: BlockState,
@@ -81,10 +81,10 @@ function getHeight(
     if (isSameFluid(thisFluidState, otherUpBlockState.fluidState)) return 1
     return otherBlockState.fluidState.getHeight()
   }
-  return isSolidBlock(modelManager, otherBlockState) ? -1 : 0
+  return (await isSolidBlock(modelManager, otherBlockState)) ? -1 : 0
 }
 
-function getAverageHeight(
+async function getAverageHeight(
   modelManager: BlockStateModelManager,
   thisFluidState: FluidState,
   levelHeight: number,
@@ -96,7 +96,7 @@ function getAverageHeight(
   if (xAxisHeight >= 1 || zAxisHeight >= 1) return 1
   const weightedArray = [0, 0]
   if (xAxisHeight > 0 || zAxisHeight > 0) {
-    const cornerHeight = getHeight(modelManager, thisFluidState, xzBlockState, xzUpBlockState)
+    const cornerHeight = await getHeight(modelManager, thisFluidState, xzBlockState, xzUpBlockState)
     if (cornerHeight >= 1) return 1
     addWeightedHeight(weightedArray, cornerHeight)
   }
@@ -120,7 +120,7 @@ function affectsFlow(thisFluidState: FluidState, fluidState: FluidState) {
   return fluidState.fluid === 'air' || thisFluidState.fluid === fluidState.fluid
 }
 
-function isSolidFace(
+async function isSolidFace(
   modelManager: BlockStateModelManager,
   thisFluidState: FluidState,
   blockState: BlockState,
@@ -129,10 +129,10 @@ function isSolidFace(
   if (thisFluidState.fluid === blockState.fluidState.fluid) return false
   if (direction === Direction.UP) return true
   if (blockState.blockName === 'ice' || blockState.blockName === 'frosted_ice') return false
-  return modelManager.getFluidComputationData(blockState).face_sturdy.includes(direction)
+  return (await modelManager.getBlockSturdyFaces(blockState)).includes(direction)
 }
 
-function getFlow(
+async function getFlow(
   modelManager: BlockStateModelManager,
   thisFluidState: FluidState,
   neighbors: Record<Direction, BlockState | undefined>,
@@ -152,7 +152,7 @@ function getFlow(
     if (neighborHeight == 0) {
       const fluidStateBelow = neighborsBelow[direction]!.fluidState
       if (
-        !modelManager.getFluidComputationData(neighbor).blocks_motion &&
+        !(await modelManager.isBlockBlocksMotion(neighbor)) &&
         affectsFlow(thisFluidState, fluidStateBelow) &&
         fluidStateBelow.getHeight() > 0
       ) {
@@ -173,8 +173,8 @@ function getFlow(
       const neighbor = neighbors[direction]
       const neighborAbove = neighborsAbove[direction]
       if (
-        isSolidFace(modelManager, thisFluidState, neighbor!, direction) ||
-        isSolidFace(modelManager, thisFluidState, neighborAbove!, direction)
+        (await isSolidFace(modelManager, thisFluidState, neighbor!, direction)) ||
+        (await isSolidFace(modelManager, thisFluidState, neighborAbove!, direction))
       ) {
         vector.normalize().add(new THREE.Vector3(0, -6, 0))
         break
@@ -184,32 +184,33 @@ function getFlow(
   return vector.normalize()
 }
 
-function isSolidRender(modelManager: BlockStateModelManager, blockState: BlockState) {
-  const occlusion = modelManager.getOcclusionFaceData(blockState)
+async function isSolidRender(modelManager: BlockStateModelManager, blockState: BlockState) {
   for (const directionStr in Direction) {
     const direction = getDirectionFromName(directionStr)
-    if (!occlusion[direction]) return false
-    const occlusionFace = occlusion[direction]!
+    const occlusionFace = await modelManager.getBlockOcclusionFace(blockState, direction)
     if (occlusionFace.length === 0) return false
     if (!isOcclusion(occlusionFace, [[0, 0, 1, 1]])) return false
   }
   return true
 }
 
-function shouldRenderBackwardUpFace(
+async function shouldRenderBackwardUpFace(
   modelManager: BlockStateModelManager,
   thisFluidState: FluidState,
   up9Blocks: BlockState[],
 ) {
-  return up9Blocks.some(
-    (blockState) =>
-      !isSameFluid(thisFluidState, blockState.fluidState) &&
-      !isSolidRender(modelManager, blockState),
-  )
+  for (const blockState of up9Blocks) {
+    if (
+      !(await isSolidRender(modelManager, blockState)) &&
+      !isSameFluid(thisFluidState, blockState.fluidState)
+    )
+      return true
+  }
+  return false
 }
 
 // prettier-ignore
-export function renderFluid(
+export async function renderFluid(
   scene: THREE.Scene,
   materialPicker: MaterialPicker,
   modelManager: BlockStateModelManager,
@@ -223,7 +224,7 @@ export function renderFluid(
   const fluidColor = thisFluidState.fluid === 'water' ?
     parseInt(thisBlockState.tintData[thisBlockState.tintData.length - 1] ?? '3f76e4', 16) :
     0xffffff
-  const [resolvedMaterial, resolvedSprites] = resolveSpecialTextures(
+  const [resolvedMaterial, resolvedSprites] = await resolveSpecialTextures(
     thisFluidState.fluid,
     materialPicker,
     modelManager,
@@ -256,17 +257,17 @@ export function renderFluid(
   const southEastUpBlockState = blockStateGetter(x + 1, y + 1, z + 1)
 
   const upCanRender = !isSameFluid(thisFluidState, upFluidState)
-  const downCanRender = shouldRenderFace(modelManager, thisBlockState, thisFluidState, Direction.DOWN, downFluidState) &&
-    !isFaceOccludedByNeighbor(modelManager, 1, downBlockState, Direction.DOWN)
-  const northCanRender = shouldRenderFace(modelManager, thisBlockState, thisFluidState, Direction.NORTH, northFluidState)
-  const southCanRender = shouldRenderFace(modelManager, thisBlockState, thisFluidState, Direction.SOUTH, southFluidState)
-  const westCanRender = shouldRenderFace(modelManager, thisBlockState, thisFluidState, Direction.WEST, westFluidState)
-  const eastCanRender = shouldRenderFace(modelManager, thisBlockState, thisFluidState, Direction.EAST, eastFluidState)
+  const downCanRender = await shouldRenderFace(modelManager, thisBlockState, thisFluidState, Direction.DOWN, downFluidState) &&
+    !await isFaceOccludedByNeighbor(modelManager, 1, downBlockState, Direction.DOWN)
+  const northCanRender = await shouldRenderFace(modelManager, thisBlockState, thisFluidState, Direction.NORTH, northFluidState)
+  const southCanRender = await shouldRenderFace(modelManager, thisBlockState, thisFluidState, Direction.SOUTH, southFluidState)
+  const westCanRender = await shouldRenderFace(modelManager, thisBlockState, thisFluidState, Direction.WEST, westFluidState)
+  const eastCanRender = await shouldRenderFace(modelManager, thisBlockState, thisFluidState, Direction.EAST, eastFluidState)
   if (!upCanRender && !downCanRender && !northCanRender && !southCanRender && !westCanRender && !eastCanRender) {
     return
   }
 
-  const levelHeight = getHeight(modelManager, thisFluidState, thisBlockState, upBlockState)
+  const levelHeight = await getHeight(modelManager, thisFluidState, thisBlockState, upBlockState)
   let southWestHeight, southEastHeight, northWestHeight, northEastHeight
   if (levelHeight >= 1) {
     southWestHeight = 1
@@ -274,27 +275,27 @@ export function renderFluid(
     northWestHeight = 1
     northEastHeight = 1
   } else {
-    const northHeight = getHeight(modelManager, thisFluidState, northBlockState, northUpBlockState)
-    const southHeight = getHeight(modelManager, thisFluidState, southBlockState, southUpBlockState)
-    const westHeight = getHeight(modelManager, thisFluidState, westBlockState, westUpBlockState)
-    const eastHeight = getHeight(modelManager, thisFluidState, eastBlockState, eastUpBlockState)
-    northWestHeight = getAverageHeight(modelManager, thisFluidState, levelHeight, northHeight, westHeight, northWestBlockState, northWestUpBlockState)
-    northEastHeight = getAverageHeight(modelManager, thisFluidState, levelHeight, northHeight, eastHeight, northEastBlockState, northEastUpBlockState)
-    southWestHeight = getAverageHeight(modelManager, thisFluidState, levelHeight, southHeight, westHeight, southWestBlockState, southWestUpBlockState)
-    southEastHeight = getAverageHeight(modelManager, thisFluidState, levelHeight, southHeight, eastHeight, southEastBlockState, southEastUpBlockState)
+    const northHeight = await getHeight(modelManager, thisFluidState, northBlockState, northUpBlockState)
+    const southHeight = await getHeight(modelManager, thisFluidState, southBlockState, southUpBlockState)
+    const westHeight = await getHeight(modelManager, thisFluidState, westBlockState, westUpBlockState)
+    const eastHeight = await getHeight(modelManager, thisFluidState, eastBlockState, eastUpBlockState)
+    northWestHeight = await getAverageHeight(modelManager, thisFluidState, levelHeight, northHeight, westHeight, northWestBlockState, northWestUpBlockState)
+    northEastHeight = await getAverageHeight(modelManager, thisFluidState, levelHeight, northHeight, eastHeight, northEastBlockState, northEastUpBlockState)
+    southWestHeight = await getAverageHeight(modelManager, thisFluidState, levelHeight, southHeight, westHeight, southWestBlockState, southWestUpBlockState)
+    southEastHeight = await getAverageHeight(modelManager, thisFluidState, levelHeight, southHeight, eastHeight, southEastBlockState, southEastUpBlockState)
   }
 
   const renderMinY = downCanRender ? 0.001 : 0
 
   if (upCanRender &&
     (Math.min(southWestHeight, southEastHeight, northWestHeight, northEastHeight) < 1 ||
-      !isFaceOccludedByNeighbor(modelManager, 1, upBlockState, Direction.UP))
+      !await isFaceOccludedByNeighbor(modelManager, 1, upBlockState, Direction.UP))
   ) {
     southEastHeight -= 0.001
     southWestHeight -= 0.001
     northEastHeight -= 0.001
     northWestHeight -= 0.001
-    const flow = getFlow(
+    const flow = await getFlow(
       modelManager,
       thisFluidState,
       {
@@ -382,7 +383,7 @@ export function renderFluid(
     const mesh = new THREE.Mesh(geometry, material)
     scene.add(mesh)
 
-    if (shouldRenderBackwardUpFace(
+    if (await shouldRenderBackwardUpFace(
       modelManager, thisFluidState,
       [upBlockState, northWestUpBlockState, southWestUpBlockState,
         northEastUpBlockState, southEastUpBlockState, northUpBlockState,
@@ -448,91 +449,90 @@ export function renderFluid(
     scene.add(mesh)
   }
 
-  Object.entries({
+  for (const [directionStr, renderData] of Object.entries({
     'north': [northCanRender, [northWestHeight, northEastHeight, 0, 1, 0.001, 0.001]],
     'south': [southCanRender, [southEastHeight, southWestHeight, 1, 0, 0.999, 0.999]],
     'west': [westCanRender, [southWestHeight, northWestHeight, 0.001, 0.001, 1, 0]],
     'east': [eastCanRender, [northEastHeight, southEastHeight, 0.999, 0.999, 0, 1]],
-  } as Record<Direction, [boolean, number[]]>)
-    .forEach(([directionStr, renderData]) => {
-      if (!renderData[0]) return
-      const direction = getDirectionFromName(directionStr)
-      const blockStateOnDirection = blockStateGetter(...moveTowardsDirection(x, y, z, direction))
-      if (isFaceOccludedByNeighbor(
-        modelManager,
-        Math.max(renderData[1][0], renderData[1][1]),
-        blockStateOnDirection,
-        direction)
-      ) return
+  } as Record<Direction, [boolean, number[]]>)) {
+    if (!renderData[0]) continue
+    const direction = getDirectionFromName(directionStr)
+    const blockStateOnDirection = blockStateGetter(...moveTowardsDirection(x, y, z, direction))
+    if (await isFaceOccludedByNeighbor(
+      modelManager,
+      Math.max(renderData[1][0], renderData[1][1]),
+      blockStateOnDirection,
+      direction)
+    ) continue
 
-      let spriteData = new SpriteData(
-        resolvedSprites[1][0], resolvedSprites[1][1],
-        resolvedSprites[1][2], resolvedSprites[1][3],
-        resolvedSprites[1][4], resolvedSprites[1][5],
+    let spriteData = new SpriteData(
+      resolvedSprites[1][0], resolvedSprites[1][1],
+      resolvedSprites[1][2], resolvedSprites[1][3],
+      resolvedSprites[1][4], resolvedSprites[1][5],
+    )
+    let material = resolvedMaterial[1].clone()
+    let isWaterOverlay = false
+    if (thisFluidState.fluid === 'water' &&
+      (leavesBlocks.test(blockStateOnDirection.blockName) || checkNameInSet(blockStateOnDirection.blockName, halfTransparentBlocks))
+    ) {
+      spriteData = new SpriteData(
+        resolvedSprites[2][0], resolvedSprites[2][1],
+        resolvedSprites[2][2], resolvedSprites[2][3],
+        resolvedSprites[2][4], resolvedSprites[2][5],
       )
-      let material = resolvedMaterial[1].clone()
-      let isWaterOverlay = false
-      if (thisFluidState.fluid === 'water' &&
-        (leavesBlocks.test(blockStateOnDirection.blockName) || checkNameInSet(blockStateOnDirection.blockName, halfTransparentBlocks))
-      ) {
-        spriteData = new SpriteData(
-          resolvedSprites[2][0], resolvedSprites[2][1],
-          resolvedSprites[2][2], resolvedSprites[2][3],
-          resolvedSprites[2][4], resolvedSprites[2][5],
-        )
-        material = resolvedMaterial[2].clone()
-        isWaterOverlay = true
-      }
-      material.color.set(new THREE.Color(fluidColor).multiplyScalar(getShade(direction, true)))
+      material = resolvedMaterial[2].clone()
+      isWaterOverlay = true
+    }
+    material.color.set(new THREE.Color(fluidColor).multiplyScalar(getShade(direction, true)))
 
-      const geometry = new THREE.PlaneGeometry()
-      geometry.setAttribute('position', new THREE.Float32BufferAttribute([
+    const geometry = new THREE.PlaneGeometry()
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute([
+      renderData[1][2], renderData[1][0], renderData[1][4],
+      renderData[1][2], renderMinY, renderData[1][4],
+      renderData[1][3], renderData[1][1], renderData[1][5],
+      renderData[1][3], renderMinY, renderData[1][5],
+    ], 3))
+    geometry.setAttribute('uv', new THREE.Float32BufferAttribute([
+      spriteData.getU(0), spriteData.getV((1 - renderData[1][0]) * 0.5),
+      spriteData.getU(0), spriteData.getV(0.5),
+      spriteData.getU(0.5), spriteData.getV((1 - renderData[1][1]) * 0.5),
+      spriteData.getU(0.5), spriteData.getV(0.5),
+    ], 2))
+    geometry.setAttribute('normal', new THREE.Float32BufferAttribute([
+      0, 1, 0,
+      0, 1, 0,
+      0, 1, 0,
+      0, 1, 0,
+    ], 3))
+    geometry.translate(x, y, z)
+
+    const mesh = new THREE.Mesh(geometry, material)
+    scene.add(mesh)
+
+    if (!isWaterOverlay) {
+      const geometryBackward = new THREE.PlaneGeometry()
+      geometryBackward.setAttribute('position', new THREE.Float32BufferAttribute([
         renderData[1][2], renderData[1][0], renderData[1][4],
-        renderData[1][2], renderMinY, renderData[1][4],
         renderData[1][3], renderData[1][1], renderData[1][5],
+        renderData[1][2], renderMinY, renderData[1][4],
         renderData[1][3], renderMinY, renderData[1][5],
       ], 3))
-      geometry.setAttribute('uv', new THREE.Float32BufferAttribute([
+      geometryBackward.setAttribute('uv', new THREE.Float32BufferAttribute([
         spriteData.getU(0), spriteData.getV((1 - renderData[1][0]) * 0.5),
-        spriteData.getU(0), spriteData.getV(0.5),
         spriteData.getU(0.5), spriteData.getV((1 - renderData[1][1]) * 0.5),
+        spriteData.getU(0), spriteData.getV(0.5),
         spriteData.getU(0.5), spriteData.getV(0.5),
       ], 2))
-      geometry.setAttribute('normal', new THREE.Float32BufferAttribute([
+      geometryBackward.setAttribute('normal', new THREE.Float32BufferAttribute([
         0, 1, 0,
         0, 1, 0,
         0, 1, 0,
         0, 1, 0,
       ], 3))
-      geometry.translate(x, y, z)
+      geometryBackward.translate(x, y, z)
 
-      const mesh = new THREE.Mesh(geometry, material)
-      scene.add(mesh)
-
-      if (!isWaterOverlay) {
-        const geometryBackward = new THREE.PlaneGeometry()
-        geometryBackward.setAttribute('position', new THREE.Float32BufferAttribute([
-          renderData[1][2], renderData[1][0], renderData[1][4],
-          renderData[1][3], renderData[1][1], renderData[1][5],
-          renderData[1][2], renderMinY, renderData[1][4],
-          renderData[1][3], renderMinY, renderData[1][5],
-        ], 3))
-        geometryBackward.setAttribute('uv', new THREE.Float32BufferAttribute([
-          spriteData.getU(0), spriteData.getV((1 - renderData[1][0]) * 0.5),
-          spriteData.getU(0.5), spriteData.getV((1 - renderData[1][1]) * 0.5),
-          spriteData.getU(0), spriteData.getV(0.5),
-          spriteData.getU(0.5), spriteData.getV(0.5),
-        ], 2))
-        geometryBackward.setAttribute('normal', new THREE.Float32BufferAttribute([
-          0, 1, 0,
-          0, 1, 0,
-          0, 1, 0,
-          0, 1, 0,
-        ], 3))
-        geometryBackward.translate(x, y, z)
-
-        const meshBackward = new THREE.Mesh(geometryBackward, material)
-        scene.add(meshBackward)
-      }
-    })
+      const meshBackward = new THREE.Mesh(geometryBackward, material)
+      scene.add(meshBackward)
+    }
+  }
 }

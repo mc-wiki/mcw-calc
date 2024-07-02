@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUpdated, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import * as THREE from 'three'
 import WebGL from 'three/addons/capabilities/WebGL.js'
@@ -21,7 +21,7 @@ import {
   BlockStructure,
   NameMapping,
 } from '@/tools/blockStructureRenderer/renderer.ts'
-import { makeMaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
+import { MaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
 import type { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
 import { saveAsLitematic, saveAsStructureFile } from '@/tools/blockStructureRenderer/structure.ts'
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
@@ -31,13 +31,6 @@ import BsrPopup from './BsrPopup.vue'
 const props = defineProps<{
   blocks: string[]
   structure: string
-  blockStates: string[]
-  models: string[]
-  textureAtlas: string[]
-  renderTypes: string[]
-  occlusionShapes: string[]
-  specialBlocksData: string[]
-  liquidComputationData: string[]
   marks: string[]
 
   cameraPosData: string[]
@@ -116,9 +109,7 @@ const animatedTexture = ref(props.animatedTextureDefault)
 const invisibleBlocks = ref(props.showInvisibleBlocksDefault)
 const displayMarks = ref(props.displayMarksDefault)
 const backgroundColor = ref(props.backgroundColorDefault)
-const backgroundAlpha = ref(
-  isNaN(props.backgroundAlphaDefault) ? 255 : props.backgroundAlphaDefault,
-)
+const backgroundAlpha = ref(props.backgroundAlphaDefault)
 
 const displayModeStr = [
   t('blockStructureRenderer.displayModes.all'),
@@ -134,7 +125,7 @@ const yRangeMin = ref(0)
 const yRangeMax = ref(0)
 
 const cameraSettingModeStr = [
-  t('blockStructureRenderer.cameraSetting.drag'),
+  t('blockStructureRenderer.cameraSetting.wasd'),
   t('blockStructureRenderer.cameraSetting.manual'),
 ]
 const cameraSettingModes = cameraSettingModeStr.map((str) => ({
@@ -147,6 +138,10 @@ const cameraY = ref(0)
 const cameraZ = ref(0)
 const cameraPitch = ref(0)
 const cameraYaw = ref(0)
+const cameraFOV = ref(70)
+const cameraZoom = ref(1)
+
+const requireReBake = ref(false)
 
 // Three.js setup
 const rendererAvailable = WebGL.isWebGLAvailable()
@@ -183,8 +178,7 @@ controls.addEventListener('unlock', () => {
 })
 
 renderer.domElement.addEventListener('click', () => {
-  if (cameraSettingModeStr.findIndex((str) => str === cameraSettingMode.value) === 0)
-    controls.lock()
+  if (isCameraPointerLockControl()) controls.lock()
 })
 
 // Action ------------------------------------------------------------------------------------------
@@ -197,6 +191,7 @@ const isDownMoving = ref(false)
 
 document.addEventListener('keydown', (event) => {
   if (!controls.isLocked) return
+  event.preventDefault()
   switch (event.key.toLowerCase()) {
     case 'w':
       isForwardMoving.value = true
@@ -240,17 +235,12 @@ document.addEventListener('keyup', (event) => {
       break
   }
 })
+
 renderer.domElement.addEventListener('wheel', (event) => {
   event.preventDefault()
-  if (orthographic.value) {
-    orthographicCamera.zoom -= event.deltaY * 0.0001
-    orthographicCamera.zoom = Math.max(0.1, orthographicCamera.zoom)
-    orthographicCamera.updateProjectionMatrix()
-  } else {
-    perspectiveCamera.fov += event.deltaY * 0.01
-    perspectiveCamera.fov = Math.min(120, Math.max(10, perspectiveCamera.fov))
-    perspectiveCamera.updateProjectionMatrix()
-  }
+  if (orthographic.value) cameraZoom.value -= event.deltaY * 0.0001
+  else cameraFOV.value += event.deltaY * 0.01
+  updateFOVAndZoom()
 })
 
 // Material and model setup ------------------------------------------------------------------------
@@ -259,24 +249,12 @@ const lineMaterialList = ref([] as LineMaterial[])
 
 const blockStructure = new BlockStructure(props.structure, props.marks)
 const nameMapping = new NameMapping(props.blocks)
-const modelManager = new BlockStateModelManager(
-  props.blockStates,
-  props.models,
-  props.occlusionShapes,
-  props.liquidComputationData,
-  props.specialBlocksData,
-  nameMapping,
-)
-const materialPicker = makeMaterialPicker(
-  props.textureAtlas,
-  props.renderTypes,
+const modelManager = new BlockStateModelManager(nameMapping)
+const materialPicker = new MaterialPicker(
+  modelManager,
   () => {
     loaded.value = true
-    bakeFluidRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
-    bakeBlockModelRenderLayer(scene, materialPicker, blockStructure, nameMapping, modelManager)
-    if (displayMarks.value) bakeBlockMarkers(scene, blockStructure)
-    if (invisibleBlocks.value)
-      lineMaterialList.value = bakeInvisibleBlocks(renderer, scene, nameMapping, blockStructure)
+    requireReBake.value = true
   },
   () => animatedTexture.value,
 )
@@ -320,7 +298,7 @@ function onDisplayModeChanged() {
   } else {
     blockStructure.yRange = undefined
   }
-  reBakeRenderLayers()
+  requireReBake.value = true
 }
 
 // Camera settings ---------------------------------------------------------------------------------
@@ -353,6 +331,7 @@ const defaultCameraAngles = parseAngles(props.cameraPosData[1]) ?? [-45, 0]
 if (rendererAvailable) {
   yRangeMax.value = blockStructure.y - 1
   resetCamera()
+  updateFOVAndZoom()
 }
 
 function onCameraChanged() {
@@ -367,8 +346,12 @@ function onCameraChanged() {
   }
 }
 
+function isCameraPointerLockControl() {
+  return cameraSettingModeStr.findIndex((str) => str === cameraSettingMode.value) === 0
+}
+
 function onCameraSettingModeChanged() {
-  if (cameraSettingModeStr.findIndex((str) => str === cameraSettingMode.value) !== 0) {
+  if (!isCameraPointerLockControl()) {
     const [x, y, z] = camera.value.position.toArray()
     cameraX.value = x
     cameraY.value = y
@@ -398,6 +381,18 @@ function setCamera() {
       'YXZ',
     ),
   )
+}
+
+function updateFOVAndZoom() {
+  if (orthographic.value) {
+    cameraZoom.value = Math.max(0.1, cameraZoom.value)
+    orthographicCamera.zoom = cameraZoom.value
+    orthographicCamera.updateProjectionMatrix()
+  } else {
+    cameraFOV.value = Math.min(110, Math.max(30, cameraFOV.value))
+    perspectiveCamera.fov = cameraFOV.value
+    perspectiveCamera.updateProjectionMatrix()
+  }
 }
 
 function resetCamera() {
@@ -442,27 +437,25 @@ function saveRenderedImage() {
   })
 }
 
-function saveStructureFile() {
+async function saveStructureFile() {
   const downloadLink = document.createElement('a')
   downloadLink.setAttribute('download', 'block_structure.nbt')
-  const blob = new Blob([saveAsStructureFile(blockStructure, nameMapping)])
+  const blob = new Blob([await saveAsStructureFile(blockStructure, nameMapping)])
   let url = URL.createObjectURL(blob)
   downloadLink.setAttribute('href', url)
   downloadLink.click()
 }
 
-function saveLitematic() {
+async function saveLitematic() {
   const downloadLink = document.createElement('a')
   downloadLink.setAttribute('download', 'block_structure.litematic')
-  const blob = new Blob([saveAsLitematic(blockStructure, nameMapping)])
+  const blob = new Blob([await saveAsLitematic(blockStructure, nameMapping)])
   let url = URL.createObjectURL(blob)
   downloadLink.setAttribute('href', url)
   downloadLink.click()
 }
 
 // Main render loop --------------------------------------------------------------------------------
-
-const hidden = ref(false)
 const lastTime = ref(Date.now())
 
 function animate() {
@@ -470,14 +463,14 @@ function animate() {
 
   // Check if the render target is visible
   if (renderTarget.value.offsetParent === null) {
-    if (hidden.value) return
-    hidden.value = true
+    if (requireReBake.value) return
+    requireReBake.value = true
     clearScene()
     return
   }
-  if (hidden.value) {
-    hidden.value = false
+  if (requireReBake.value) {
     reBakeRenderLayers()
+    requireReBake.value = false
   }
 
   const bounds = renderTarget.value.getBoundingClientRect()
@@ -537,12 +530,6 @@ onMounted(() => {
     renderTarget.value.appendChild(WebGL.getWebGLErrorMessage())
   }
 })
-
-onUpdated(() => {
-  if (rendererAvailable) {
-    updateDisplay()
-  }
-})
 </script>
 
 <template>
@@ -559,10 +546,10 @@ onUpdated(() => {
         width: '100%',
         height: '100%',
         position: 'relative',
-        cursor: locked ? 'none' : 'pointer',
+        cursor: locked ? 'none' : isCameraPointerLockControl() ? 'pointer' : 'auto',
       }"
       ref="renderTarget"
-      @mouseenter="tooltipOpen = true"
+      @mouseenter="tooltipOpen = isCameraPointerLockControl()"
       @mouseleave="tooltipOpen = false"
     />
     <div
@@ -573,13 +560,13 @@ onUpdated(() => {
         <cdx-checkbox v-model="animatedTexture">
           {{ t('blockStructureRenderer.animatedTexture') }}
         </cdx-checkbox>
-        <cdx-checkbox v-model="invisibleBlocks" @change="reBakeRenderLayers">
+        <cdx-checkbox v-model="invisibleBlocks" @change="requireReBake = true">
           {{ t('blockStructureRenderer.renderInvisibleBlocks') }}
         </cdx-checkbox>
         <cdx-checkbox
           v-if="blockStructure.hasMarks()"
           v-model="displayMarks"
-          @change="reBakeRenderLayers"
+          @change="requireReBake = true"
         >
           {{ t('blockStructureRenderer.renderMarks') }}
         </cdx-checkbox>
@@ -676,7 +663,6 @@ onUpdated(() => {
             flexDirection: 'column',
             flexWrap: 'wrap',
             gap: '.5rem',
-            marginBottom: '0.5em',
             width: 'max-content',
           }"
         >
@@ -764,6 +750,30 @@ onUpdated(() => {
             </div>
           </div>
         </div>
+        <cdx-field v-if="orthographic" style="margin-bottom: 0.5em">
+          <cdx-text-input
+            id="cameraZoom"
+            v-model="cameraZoom"
+            inputType="number"
+            :min="0.1"
+            :max="100"
+            step="0.1"
+            @input="updateFOVAndZoom"
+          />
+          <template #label>{{ t('blockStructureRenderer.cameraZoom') }}</template>
+        </cdx-field>
+        <cdx-field v-else style="margin-bottom: 0.5em">
+          <cdx-text-input
+            id="cameraFOV"
+            v-model="cameraFOV"
+            inputType="number"
+            :min="10"
+            :max="120"
+            step="1"
+            @input="updateFOVAndZoom"
+          />
+          <template #label>{{ t('blockStructureRenderer.cameraFOV') }}</template>
+        </cdx-field>
         <cdx-button @click="resetCamera">{{ t('blockStructureRenderer.resetCamera') }}</cdx-button>
       </BsrPopup>
       <BsrPopup :name="t('blockStructureRenderer.optionsExport')" :icon="cdxIconShare">
@@ -776,7 +786,8 @@ onUpdated(() => {
           }"
         >
           <cdx-button @click="saveRenderedImage">
-            <cdx-icon :icon="cdxIconCut" /> {{ t('blockStructureRenderer.saveImage') }}
+            <cdx-icon :icon="cdxIconCut" />
+            {{ t('blockStructureRenderer.saveImage') }}
           </cdx-button>
           <cdx-button @click="saveStructureFile">
             {{ t('blockStructureRenderer.saveStructureFile') }}

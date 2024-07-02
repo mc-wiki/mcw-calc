@@ -170,39 +170,45 @@ export function getShade(direction: Direction, shade: boolean) {
   }
 }
 
-export function resolveSpecialTextures(
+export async function resolveSpecialTextures(
   blockName: string,
   materialPicker: MaterialPicker,
   modelManager: BlockStateModelManager,
   renderType: string,
-): [THREE.MeshBasicMaterial[], number[][]] {
-  const specialTextureIDs = modelManager.getSpecialBlocksData(blockName)
-  const resolvedMaterial = specialTextureIDs
-    .map((texture) => materialPicker.atlasMapping[texture])
-    .map(
-      (sprite) =>
-        (Array.isArray(sprite) ? materialPicker.staticTexture : materialPicker.animatedTexture)[
-          renderType
-        ],
+): Promise<[THREE.MeshBasicMaterial[], number[][]]> {
+  const specialTextureIDs = await modelManager.getSpecialBlocksData(blockName)
+  const resolvedMaterial = []
+  const resolvedSprites = []
+  for (const textureRef of specialTextureIDs) {
+    const sprite = await materialPicker.getTextureByReference(textureRef)
+    resolvedMaterial.push(
+      Array.isArray(sprite)
+        ? materialPicker.staticTexture[renderType]
+        : materialPicker.animatedTexture[renderType],
     )
-  const resolvedSprites = specialTextureIDs.map((texture) => {
-    const sprite = materialPicker.atlasMapping[texture]
     if (Array.isArray(sprite)) {
-      return [sprite[0], sprite[1], sprite[2], sprite[3], ATLAS_WIDTH, ATLAS_HEIGHT]
+      resolvedSprites.push([sprite[0], sprite[1], sprite[2], sprite[3], ATLAS_WIDTH, ATLAS_HEIGHT])
     } else {
-      const firstFrame = materialPicker.atlasMapping[sprite.frames[0]] as number[]
+      const firstFrame = (await materialPicker.getTextureByReference(sprite.frames[0])) as number[]
       const [x, y, width, height] = materialPicker.animatedTextureManager.putNewTexture(
-        texture,
+        textureRef,
         sprite,
         [firstFrame[2], firstFrame[3]],
       )
-      return [x, y, width, height, ANIMATED_TEXTURE_ATLAS_SIZE, ANIMATED_TEXTURE_ATLAS_SIZE]
+      resolvedSprites.push([
+        x,
+        y,
+        width,
+        height,
+        ANIMATED_TEXTURE_ATLAS_SIZE,
+        ANIMATED_TEXTURE_ATLAS_SIZE,
+      ])
     }
-  })
+  }
   return [resolvedMaterial, resolvedSprites]
 }
 
-const NOP = () => {}
+const NOP = async () => {}
 
 export const hardCodedRenderers = [
   {
@@ -313,7 +319,7 @@ export const hardCodedRenderers = [
     materialPicker: MaterialPicker,
     nameMapping: NameMapping,
     blockStructure: BlockStructure,
-  ) => void
+  ) => Promise<void>
   needRenderModel?: boolean
 }[]
 
@@ -457,7 +463,7 @@ function fromFacingToRotation(facing: string) {
 }
 
 // net.minecraft.client.renderer.blockentity.ChestRenderer
-function renderChest(
+async function renderChest(
   scene: THREE.Scene,
   x: number,
   y: number,
@@ -466,7 +472,7 @@ function renderChest(
   modelManager: BlockStateModelManager,
   materialPicker: MaterialPicker,
 ) {
-  const specials = modelManager.getSpecialBlocksData(blockState.blockName)
+  const specials = await modelManager.getSpecialBlocksData(blockState.blockName)
   const normalTexture = specials[0]
   const leftTexture = specials[1]
   const rightTexture = specials[2]
@@ -567,15 +573,14 @@ function renderChest(
   }
 
   const transform = new THREE.Matrix4().makeTranslation(x, y, z)
-  const material = (animated: boolean) =>
-    animated ? materialPicker.animatedTexture.cutout : materialPicker.staticTexture.cutout
-  renderModelNoCullsWithMS(modelBottom!, blockState, material, scene, transform)
-  renderModelNoCullsWithMS(modelLid!, blockState, material, scene, transform)
-  renderModelNoCullsWithMS(modelLock!, blockState, material, scene, transform)
+  const material = materialPicker.pickMaterialWithRenderType('cutout')
+  await renderModelNoCullsWithMS(await modelBottom, blockState, material, scene, transform)
+  await renderModelNoCullsWithMS(await modelLid, blockState, material, scene, transform)
+  await renderModelNoCullsWithMS(await modelLock, blockState, material, scene, transform)
 }
 
 // net.minecraft.client.renderer.blockentity.ShulkerBoxRenderer
-function renderShulkerBox(
+async function renderShulkerBox(
   scene: THREE.Scene,
   x: number,
   y: number,
@@ -584,7 +589,7 @@ function renderShulkerBox(
   modelManager: BlockStateModelManager,
   materialPicker: MaterialPicker,
 ) {
-  const texture = modelManager.getSpecialBlocksData(blockState.blockName)[0]
+  const texture = (await modelManager.getSpecialBlocksData(blockState.blockName))[0]
   const facing = blockState.getBlockProperty('facing')
   let rotation = IDENTITY_ROTATION
   let move = [0.5, -0.5, 0.5]
@@ -634,15 +639,14 @@ function renderShulkerBox(
   )
 
   const transform = new THREE.Matrix4().makeTranslation(x + move[0], y + move[1], z + move[2])
-  const material = (animated: boolean) =>
-    animated ? materialPicker.animatedTexture.cutout : materialPicker.staticTexture.cutout
-  renderModelNoCullsWithMS(modelLid!, blockState, material, scene, transform)
-  renderModelNoCullsWithMS(modelBase!, blockState, material, scene, transform)
+  const material = materialPicker.pickMaterialWithRenderType('cutout')
+  await renderModelNoCullsWithMS(await modelLid, blockState, material, scene, transform)
+  await renderModelNoCullsWithMS(await modelBase, blockState, material, scene, transform)
 }
 
 // net.minecraft.client.model.BookModel
 // prettier-ignore
-function renderBook(
+async function renderBook(
   scene: THREE.Scene,
   transform: THREE.Matrix4,
   block: BlockState,
@@ -678,19 +682,18 @@ function renderBook(
     .multiply(new THREE.Matrix4().makeRotationY(rot - rot * 2 * flipPage2Percent))
   const seamMatrix = new THREE.Matrix4().makeRotationY(Math.PI / 2)
 
-  const material = (animated: boolean) =>
-    animated ? materialPicker.animatedTexture.solid : materialPicker.staticTexture.solid
-  renderModelNoCullsWithMS(modelLeftLid, block, material, scene, transform.clone().multiply(leftLidMatrix), true)
-  renderModelNoCullsWithMS(modelRightLid, block, material, scene, transform.clone().multiply(rightLidMatrix), true)
-  renderModelNoCullsWithMS(modelSeam, block, material, scene, transform.clone().multiply(seamMatrix), true)
-  renderModelNoCullsWithMS(modelLeftPages, block, material, scene, transform.clone().multiply(leftPagesMatrix), true)
-  renderModelNoCullsWithMS(modelRightPages, block, material, scene, transform.clone().multiply(rightPagesMatrix), true)
-  renderModelNoCullsWithMS(modelFlipPage, block, material, scene, transform.clone().multiply(flipPage1Matrix), true)
-  renderModelNoCullsWithMS(modelFlipPage, block, material, scene, transform.clone().multiply(flipPage2Matrix), true)
+  const material = materialPicker.pickMaterialWithRenderType('solid')
+  await renderModelNoCullsWithMS(await modelLeftLid, block, material, scene, transform.clone().multiply(leftLidMatrix), true)
+  await renderModelNoCullsWithMS(await modelRightLid, block, material, scene, transform.clone().multiply(rightLidMatrix), true)
+  await renderModelNoCullsWithMS(await modelSeam, block, material, scene, transform.clone().multiply(seamMatrix), true)
+  await renderModelNoCullsWithMS(await modelLeftPages, block, material, scene, transform.clone().multiply(leftPagesMatrix), true)
+  await renderModelNoCullsWithMS(await modelRightPages, block, material, scene, transform.clone().multiply(rightPagesMatrix), true)
+  await renderModelNoCullsWithMS(await modelFlipPage, block, material, scene, transform.clone().multiply(flipPage1Matrix), true)
+  await renderModelNoCullsWithMS(await modelFlipPage, block, material, scene, transform.clone().multiply(flipPage2Matrix), true)
 }
 
 // net.minecraft.client.renderer.blockentity.LecternRenderer
-function renderLecternBlock(
+async function renderLecternBlock(
   scene: THREE.Scene,
   x: number,
   y: number,
@@ -700,7 +703,7 @@ function renderLecternBlock(
   materialPicker: MaterialPicker,
 ) {
   if (blockState.getBlockProperty('has_book') === 'false') return
-  const texture = modelManager.getSpecialBlocksData(blockState.blockName)[0]
+  const texture = (await modelManager.getSpecialBlocksData(blockState.blockName))[0]
   const rotation = fromFacingToRotation(blockState.getBlockProperty('facing'))
   const transform = new THREE.Matrix4()
     .multiply(new THREE.Matrix4().makeTranslation(x, y, z))
@@ -708,11 +711,11 @@ function renderLecternBlock(
     .multiply(new THREE.Matrix4().makeRotationY((-(rotation.y + 90) / 180) * Math.PI))
     .multiply(new THREE.Matrix4().makeRotationZ(Math.PI * 0.375))
     .multiply(new THREE.Matrix4().makeTranslation(0, -0.125, 0))
-  renderBook(scene, transform, blockState, texture, materialPicker, [0, 1.2, 0.1, 0.9])
+  await renderBook(scene, transform, blockState, texture, materialPicker, [0, 1.2, 0.1, 0.9])
 }
 
 // net.minecraft.client.renderer.blockentity.EnchantTableRenderer
-function renderEnchantTable(
+async function renderEnchantTable(
   scene: THREE.Scene,
   x: number,
   y: number,
@@ -721,7 +724,7 @@ function renderEnchantTable(
   modelManager: BlockStateModelManager,
   materialPicker: MaterialPicker,
 ) {
-  const texture = modelManager.getSpecialBlocksData(blockState.blockName)[0]
+  const texture = (await modelManager.getSpecialBlocksData(blockState.blockName))[0]
   const time = 0
   const rotation = 0
   const transform = new THREE.Matrix4()
@@ -730,11 +733,11 @@ function renderEnchantTable(
     .multiply(new THREE.Matrix4().makeTranslation(0, 0.1 + Math.sin(time * 0.1) * 0.01, 0))
     .multiply(new THREE.Matrix4().makeRotationY(-rotation))
     .multiply(new THREE.Matrix4().makeRotationZ((4 * Math.PI) / 9))
-  renderBook(scene, transform, blockState, texture, materialPicker, [0, 0, 0, 0])
+  await renderBook(scene, transform, blockState, texture, materialPicker, [0, 0, 0, 0])
 }
 
 // net.minecraft.client.renderer.blockentity.BellRenderer
-function renderBell(
+async function renderBell(
   scene: THREE.Scene,
   x: number,
   y: number,
@@ -743,7 +746,7 @@ function renderBell(
   modelManager: BlockStateModelManager,
   materialPicker: MaterialPicker,
 ) {
-  const texture = modelManager.getSpecialBlocksData(blockState.blockName)[0]
+  const texture = (await modelManager.getSpecialBlocksData(blockState.blockName))[0]
   const rotation = fromFacingToRotation(blockState.getBlockProperty('facing'))
 
   const modelBellBody = boxModel(
@@ -766,15 +769,14 @@ function renderBell(
   )
 
   const transform = new THREE.Matrix4().makeTranslation(x, y, z)
-  const material = (animated: boolean) =>
-    animated ? materialPicker.animatedTexture.solid : materialPicker.staticTexture.solid
-  renderModelNoCullsWithMS(modelBellBody, blockState, material, scene, transform)
-  renderModelNoCullsWithMS(modelBellBase, blockState, material, scene, transform)
+  const material = materialPicker.pickMaterialWithRenderType('solid')
+  await renderModelNoCullsWithMS(await modelBellBody, blockState, material, scene, transform)
+  await renderModelNoCullsWithMS(await modelBellBase, blockState, material, scene, transform)
 }
 
 // net.minecraft.client.renderer.blockentity.DecoratedPotRenderer
 // prettier-ignore
-function renderDecoratedPot(
+async function renderDecoratedPot(
   scene: THREE.Scene,
   x: number,
   y: number,
@@ -783,7 +785,7 @@ function renderDecoratedPot(
   modelManager: BlockStateModelManager,
   materialPicker: MaterialPicker,
 ) {
-  const [base, side] = modelManager.getSpecialBlocksData(blockState.blockName)
+  const [base, side] = await modelManager.getSpecialBlocksData(blockState.blockName)
   const rotation = fromFacingToRotation(blockState.getBlockProperty('facing'))
 
   const modelNeck1 = boxModel(base, materialPicker, [4, 17, 4], [8, 3, 8], [0, 0])
@@ -844,19 +846,18 @@ function renderDecoratedPot(
     .multiply(new THREE.Matrix4().makeTranslation(1 / 16, 16 / 16, 15 / 16))
     .multiply(new THREE.Matrix4().makeRotationX(Math.PI))
 
-  const material = (animated: boolean) =>
-    animated ? materialPicker.animatedTexture.solid : materialPicker.staticTexture.solid
-  renderModelNoCullsWithMS(modelNeck1, blockState, material, scene, neck1Matrix, true)
-  renderModelNoCullsWithMS(modelNeck2, blockState, material, scene, neck2Matrix, true)
-  renderModelNoCullsWithMS(modelTopBottom, blockState, material, scene, topMatrix, true)
-  renderModelNoCullsWithMS(modelTopBottom, blockState, material, scene, botMatrix, true)
-  renderModelNoCullsWithMS(modelSide, blockState, material, scene, backMatrix, true)
-  renderModelNoCullsWithMS(modelSide, blockState, material, scene, leftMatrix, true)
-  renderModelNoCullsWithMS(modelSide, blockState, material, scene, rightMatrix, true)
-  renderModelNoCullsWithMS(modelSide, blockState, material, scene, frontMatrix, true)
+  const material = materialPicker.pickMaterialWithRenderType('solid')
+  await renderModelNoCullsWithMS(await modelNeck1, blockState, material, scene, neck1Matrix, true)
+  await renderModelNoCullsWithMS(await modelNeck2, blockState, material, scene, neck2Matrix, true)
+  await renderModelNoCullsWithMS(await modelTopBottom, blockState, material, scene, topMatrix, true)
+  await renderModelNoCullsWithMS(await modelTopBottom, blockState, material, scene, botMatrix, true)
+  await renderModelNoCullsWithMS(await modelSide, blockState, material, scene, backMatrix, true)
+  await renderModelNoCullsWithMS(await modelSide, blockState, material, scene, leftMatrix, true)
+  await renderModelNoCullsWithMS(await modelSide, blockState, material, scene, rightMatrix, true)
+  await renderModelNoCullsWithMS(await modelSide, blockState, material, scene, frontMatrix, true)
 }
 
-function renderBed(
+async function renderBed(
   scene: THREE.Scene,
   x: number,
   y: number,
@@ -865,7 +866,7 @@ function renderBed(
   modelManager: BlockStateModelManager,
   materialPicker: MaterialPicker,
 ) {
-  const texture = modelManager.getSpecialBlocksData(blockState.blockName)[0]
+  const texture = (await modelManager.getSpecialBlocksData(blockState.blockName))[0]
   const rotation = fromFacingToRotation(blockState.getBlockProperty('facing'))
 
   let main
@@ -904,12 +905,10 @@ function renderBed(
     .multiply(new THREE.Matrix4().makeTranslation(-0.5, -0.5, -0.5))
   const leftMatrix = new THREE.Matrix4().multiply(matrix).multiply(leftMatrixRaw)
   const rightMatrix = new THREE.Matrix4().multiply(matrix).multiply(rightMatrixRaw)
-  const material = (animated: boolean) =>
-    animated ? materialPicker.animatedTexture.solid : materialPicker.staticTexture.solid
-
-  renderModelNoCullsWithMS(main, blockState, material, scene, matrix, true)
-  renderModelNoCullsWithMS(left, blockState, material, scene, leftMatrix, true)
-  renderModelNoCullsWithMS(right, blockState, material, scene, rightMatrix, true)
+  const material = materialPicker.pickMaterialWithRenderType('solid')
+  await renderModelNoCullsWithMS(await main, blockState, material, scene, matrix, true)
+  await renderModelNoCullsWithMS(await left, blockState, material, scene, leftMatrix, true)
+  await renderModelNoCullsWithMS(await right, blockState, material, scene, rightMatrix, true)
 }
 
 const dyeColorMapping = {
@@ -931,7 +930,7 @@ const dyeColorMapping = {
   black: 0x1d1d21,
 } as Record<string, number>
 
-function renderBanner(
+async function renderBanner(
   scene: THREE.Scene,
   x: number,
   y: number,
@@ -940,7 +939,7 @@ function renderBanner(
   modelManager: BlockStateModelManager,
   materialPicker: MaterialPicker,
 ) {
-  const texture = modelManager.getSpecialBlocksData(blockState.blockName)[0]
+  const texture = (await modelManager.getSpecialBlocksData(blockState.blockName))[0]
 
   const modelFlag = boxModel(texture, materialPicker, [-10, 0, -2], [20, 40, 1], [0, 0])
   const modelPole = boxModel(texture, materialPicker, [-1, -30, -1], [2, 42, 2], [44, 0])
@@ -966,11 +965,10 @@ function renderBanner(
   }
   matrixBase.multiply(new THREE.Matrix4().makeScale(2 / 3, -2 / 3, -2 / 3))
 
-  const material = (animated: boolean) =>
-    animated ? materialPicker.animatedTexture.solid : materialPicker.staticTexture.solid
+  const material = materialPicker.pickMaterialWithRenderType('solid')
   if (poleVisible)
-    renderModelNoCullsWithMS(modelPole, blockState, material, scene, matrixBase, true)
-  renderModelNoCullsWithMS(modelBar, blockState, material, scene, matrixBase, true)
+    await renderModelNoCullsWithMS(await modelPole, blockState, material, scene, matrixBase, true)
+  await renderModelNoCullsWithMS(await modelBar, blockState, material, scene, matrixBase, true)
 
   const wind = ((x * 7 + y * 9 + z * 13 + time) % 100) / 100
   const angle = Math.PI * (-0.0125 + 0.01 * Math.cos(Math.PI * 2 * wind))
@@ -979,24 +977,22 @@ function renderBanner(
     .multiply(new THREE.Matrix4().makeTranslation(0, -32 / 16, 0))
     .multiply(new THREE.Matrix4().makeRotationX(angle))
   const dyeColor = dyeColorMapping[blockName.substring(0, blockName.indexOf('_'))]
-  const flagMaterial = (animated: boolean) => {
-    const material = animated
-      ? materialPicker.animatedTexture.solid
-      : materialPicker.staticTexture.solid
+  const flagMaterial = async (animated: boolean) => {
+    const material = await materialPicker.pickMaterialWithRenderType('solid')(animated)
     const materialClone = material.clone()
     materialClone.color.set(dyeColor)
     materialClone.side = THREE.DoubleSide
     return materialClone
   }
-  renderModelNoCullsWithMS(modelFlag, blockState, flagMaterial, scene, flagMatrix, true)
+  await renderModelNoCullsWithMS(await modelFlag, blockState, flagMaterial, scene, flagMatrix, true)
 }
 
-function renderPlainSkull(
+async function renderPlainSkull(
   scene: THREE.Scene,
   blockState: BlockState,
   texture: number,
   materialPicker: MaterialPicker,
-  material: (animated: boolean) => THREE.MeshBasicMaterial,
+  material: (animated: boolean) => Promise<THREE.MeshBasicMaterial>,
   transform: THREE.Matrix4,
   rotation: number,
 ) {
@@ -1004,15 +1000,15 @@ function renderPlainSkull(
   const matrix = new THREE.Matrix4()
     .multiply(transform)
     .multiply(new THREE.Matrix4().makeRotationY(rotation))
-  renderModelNoCullsWithMS(modelHead, blockState, material, scene, matrix, true)
+  await renderModelNoCullsWithMS(await modelHead, blockState, material, scene, matrix, true)
 }
 
-function renderDragonHead(
+async function renderDragonHead(
   scene: THREE.Scene,
   blockState: BlockState,
   texture: number,
   materialPicker: MaterialPicker,
-  material: (animated: boolean) => THREE.MeshBasicMaterial,
+  material: (animated: boolean) => Promise<THREE.MeshBasicMaterial>,
   transform: THREE.Matrix4,
   rotation: number,
 ) {
@@ -1068,21 +1064,28 @@ function renderDragonHead(
     .multiply(new THREE.Matrix4().makeTranslation(0, 4 / 16, -8 / 16))
     .multiply(new THREE.Matrix4().makeRotationX(0.2))
 
-  renderModelNoCullsWithMS(modelUpperLip, blockState, material, scene, headMatrix, true)
-  renderModelNoCullsWithMS(modelUpperHead, blockState, material, scene, headMatrix, true)
-  renderModelNoCullsWithMS(modelScale, blockState, material, scene, headMatrix, true)
-  renderModelNoCullsWithMS(modelNoStril, blockState, material, scene, headMatrix, true)
-  renderModelNoCullsWithMS(modelScale2, blockState, material, scene, headMatrix, true)
-  renderModelNoCullsWithMS(modelNoStril2, blockState, material, scene, headMatrix, true)
-  renderModelNoCullsWithMS(modelJaw, blockState, material, scene, jawMatrix, true)
+  await renderModelNoCullsWithMS(await modelUpperLip, blockState, material, scene, headMatrix, true)
+  await renderModelNoCullsWithMS(
+    await modelUpperHead,
+    blockState,
+    material,
+    scene,
+    headMatrix,
+    true,
+  )
+  await renderModelNoCullsWithMS(await modelScale, blockState, material, scene, headMatrix, true)
+  await renderModelNoCullsWithMS(await modelNoStril, blockState, material, scene, headMatrix, true)
+  await renderModelNoCullsWithMS(await modelScale2, blockState, material, scene, headMatrix, true)
+  await renderModelNoCullsWithMS(await modelNoStril2, blockState, material, scene, headMatrix, true)
+  await renderModelNoCullsWithMS(await modelJaw, blockState, material, scene, jawMatrix, true)
 }
 
-function renderPiglinHead(
+async function renderPiglinHead(
   scene: THREE.Scene,
   blockState: BlockState,
   texture: number,
   materialPicker: MaterialPicker,
-  material: (animated: boolean) => THREE.MeshBasicMaterial,
+  material: (animated: boolean) => Promise<THREE.MeshBasicMaterial>,
   transform: THREE.Matrix4,
   rotation: number,
 ) {
@@ -1105,15 +1108,29 @@ function renderPiglinHead(
     .multiply(new THREE.Matrix4().makeTranslation(-4.5 / 16, -6 / 16, 0))
     .multiply(new THREE.Matrix4().makeRotationZ(0.5))
 
-  renderModelNoCullsWithMS(modelHead1, blockState, material, scene, headMatrix, true)
-  renderModelNoCullsWithMS(modelHead2, blockState, material, scene, headMatrix, true)
-  renderModelNoCullsWithMS(modelHead3, blockState, material, scene, headMatrix, true)
-  renderModelNoCullsWithMS(modelHead4, blockState, material, scene, headMatrix, true)
-  renderModelNoCullsWithMS(modelLeftEar, blockState, material, scene, leftEarMatrix, true)
-  renderModelNoCullsWithMS(modelRightEar, blockState, material, scene, rightEarMatrix, true)
+  await renderModelNoCullsWithMS(await modelHead1, blockState, material, scene, headMatrix, true)
+  await renderModelNoCullsWithMS(await modelHead2, blockState, material, scene, headMatrix, true)
+  await renderModelNoCullsWithMS(await modelHead3, blockState, material, scene, headMatrix, true)
+  await renderModelNoCullsWithMS(await modelHead4, blockState, material, scene, headMatrix, true)
+  await renderModelNoCullsWithMS(
+    await modelLeftEar,
+    blockState,
+    material,
+    scene,
+    leftEarMatrix,
+    true,
+  )
+  await renderModelNoCullsWithMS(
+    await modelRightEar,
+    blockState,
+    material,
+    scene,
+    rightEarMatrix,
+    true,
+  )
 }
 
-function renderSkull(
+async function renderSkull(
   scene: THREE.Scene,
   x: number,
   y: number,
@@ -1122,7 +1139,7 @@ function renderSkull(
   modelManager: BlockStateModelManager,
   materialPicker: MaterialPicker,
 ) {
-  const texture = modelManager.getSpecialBlocksData(blockState.blockName)[0]
+  const texture = (await modelManager.getSpecialBlocksData(blockState.blockName))[0]
 
   const matrix = new THREE.Matrix4().makeTranslation(x, y, z)
   let rot
@@ -1148,11 +1165,11 @@ function renderSkull(
   }
 
   const material = blockState.blockName.includes('player')
-    ? (animated: boolean) =>
+    ? async (animated: boolean) =>
         animated
           ? materialPicker.animatedTexture.translucent
           : materialPicker.staticTexture.translucent
-    : (animated: boolean) => {
+    : async (animated: boolean) => {
         const material = animated
           ? materialPicker.animatedTexture.cutout
           : materialPicker.staticTexture.cutout
@@ -1162,15 +1179,15 @@ function renderSkull(
       }
 
   if (blockState.blockName.includes('dragon')) {
-    renderDragonHead(scene, blockState, texture, materialPicker, material, matrix, rot)
+    await renderDragonHead(scene, blockState, texture, materialPicker, material, matrix, rot)
   } else if (blockState.blockName.includes('piglin')) {
-    renderPiglinHead(scene, blockState, texture, materialPicker, material, matrix, rot)
+    await renderPiglinHead(scene, blockState, texture, materialPicker, material, matrix, rot)
   } else {
-    renderPlainSkull(scene, blockState, texture, materialPicker, material, matrix, rot)
+    await renderPlainSkull(scene, blockState, texture, materialPicker, material, matrix, rot)
   }
 }
 
-function renderSign(
+async function renderSign(
   scene: THREE.Scene,
   x: number,
   y: number,
@@ -1179,7 +1196,7 @@ function renderSign(
   modelManager: BlockStateModelManager,
   materialPicker: MaterialPicker,
 ) {
-  const texture = modelManager.getSpecialBlocksData(blockState.blockName)[0]
+  const texture = (await modelManager.getSpecialBlocksData(blockState.blockName))[0]
 
   const modelSign = boxModel(texture, materialPicker, [-12, -14, -1], [24, 12, 2], [0, 0])
   const modelStick = boxModel(texture, materialPicker, [-1, -2, -1], [2, 14, 2], [0, 14])
@@ -1199,7 +1216,7 @@ function renderSign(
   }
   transform.multiply(new THREE.Matrix4().makeScale(2 / 3, -2 / 3, -2 / 3))
 
-  const material = (animated: boolean) => {
+  const material = async (animated: boolean) => {
     const material = animated
       ? materialPicker.animatedTexture.cutout
       : materialPicker.staticTexture.cutout
@@ -1207,12 +1224,12 @@ function renderSign(
     materialClone.side = THREE.DoubleSide
     return materialClone
   }
-  renderModelNoCullsWithMS(modelSign, blockState, material, scene, transform, true)
+  await renderModelNoCullsWithMS(await modelSign, blockState, material, scene, transform, true)
   if (!blockState.blockName.includes('wall'))
-    renderModelNoCullsWithMS(modelStick, blockState, material, scene, transform, true)
+    await renderModelNoCullsWithMS(await modelStick, blockState, material, scene, transform, true)
 }
 
-function renderHangingSign(
+async function renderHangingSign(
   scene: THREE.Scene,
   x: number,
   y: number,
@@ -1221,7 +1238,7 @@ function renderHangingSign(
   modelManager: BlockStateModelManager,
   materialPicker: MaterialPicker,
 ) {
-  const texture = modelManager.getSpecialBlocksData(blockState.blockName)[0]
+  const texture = (await modelManager.getSpecialBlocksData(blockState.blockName))[0]
 
   const modelBoard = boxModel(texture, materialPicker, [-7, 0, -1], [14, 10, 2], [0, 12])
   const modelPlank = boxModel(texture, materialPicker, [-8, -6, -2], [16, 2, 4], [0, 0])
@@ -1261,7 +1278,7 @@ function renderHangingSign(
     .multiply(new THREE.Matrix4().makeTranslation(5 / 16, -6 / 16, 0))
     .multiply(new THREE.Matrix4().makeRotationY(Math.PI / 4))
 
-  const material = (animated: boolean) => {
+  const material = async (animated: boolean) => {
     const material = animated
       ? materialPicker.animatedTexture.cutout
       : materialPicker.staticTexture.cutout
@@ -1270,21 +1287,21 @@ function renderHangingSign(
     return materialClone
   }
 
-  renderModelNoCullsWithMS(modelBoard, blockState, material, scene, transform, true)
+  await renderModelNoCullsWithMS(await modelBoard, blockState, material, scene, transform, true)
   if (blockState.blockName.includes('wall')) {
-    renderModelNoCullsWithMS(modelPlank, blockState, material, scene, transform, true)
-    renderModelNoCullsWithMS(modelChain1, blockState, material, scene, chainL1Matrix, true)
-    renderModelNoCullsWithMS(modelChain2, blockState, material, scene, chainL2Matrix, true)
-    renderModelNoCullsWithMS(modelChain1, blockState, material, scene, chainR1Matrix, true)
-    renderModelNoCullsWithMS(modelChain2, blockState, material, scene, chainR2Matrix, true)
+    await renderModelNoCullsWithMS(await modelPlank, blockState, material, scene, transform, true)
+    await renderModelNoCullsWithMS(await modelChain1, blockState, material, scene, chainL1Matrix, true)
+    await renderModelNoCullsWithMS(await modelChain2, blockState, material, scene, chainL2Matrix, true)
+    await renderModelNoCullsWithMS(await modelChain1, blockState, material, scene, chainR1Matrix, true)
+    await renderModelNoCullsWithMS(await modelChain2, blockState, material, scene, chainR2Matrix, true)
   } else {
     if (blockState.getBlockProperty('attached') === 'false') {
-      renderModelNoCullsWithMS(modelChain1, blockState, material, scene, chainL1Matrix, true)
-      renderModelNoCullsWithMS(modelChain2, blockState, material, scene, chainL2Matrix, true)
-      renderModelNoCullsWithMS(modelChain1, blockState, material, scene, chainR1Matrix, true)
-      renderModelNoCullsWithMS(modelChain2, blockState, material, scene, chainR2Matrix, true)
+      await renderModelNoCullsWithMS(await modelChain1, blockState, material, scene, chainL1Matrix, true)
+      await renderModelNoCullsWithMS(await modelChain2, blockState, material, scene, chainL2Matrix, true)
+      await renderModelNoCullsWithMS(await modelChain1, blockState, material, scene, chainR1Matrix, true)
+      await renderModelNoCullsWithMS(await modelChain2, blockState, material, scene, chainR2Matrix, true)
     } else {
-      renderModelNoCullsWithMS(modelVChains, blockState, material, scene, transform, true)
+      await renderModelNoCullsWithMS(await modelVChains, blockState, material, scene, transform, true)
     }
   }
 }
