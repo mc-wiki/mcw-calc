@@ -125,7 +125,7 @@ const yRangeMin = ref(0)
 const yRangeMax = ref(0)
 
 const cameraSettingModeStr = [
-  t('blockStructureRenderer.cameraSetting.drag'),
+  t('blockStructureRenderer.cameraSetting.wasd'),
   t('blockStructureRenderer.cameraSetting.manual'),
 ]
 const cameraSettingModes = cameraSettingModeStr.map((str) => ({
@@ -138,6 +138,9 @@ const cameraY = ref(0)
 const cameraZ = ref(0)
 const cameraPitch = ref(0)
 const cameraYaw = ref(0)
+const cameraFOV = ref(70)
+const cameraZoom = ref(1)
+
 const requireReBake = ref(false)
 
 // Three.js setup
@@ -232,17 +235,12 @@ document.addEventListener('keyup', (event) => {
       break
   }
 })
+
 renderer.domElement.addEventListener('wheel', (event) => {
   event.preventDefault()
-  if (orthographic.value) {
-    orthographicCamera.zoom -= event.deltaY * 0.0001
-    orthographicCamera.zoom = Math.max(0.1, orthographicCamera.zoom)
-    orthographicCamera.updateProjectionMatrix()
-  } else {
-    perspectiveCamera.fov += event.deltaY * 0.01
-    perspectiveCamera.fov = Math.min(120, Math.max(10, perspectiveCamera.fov))
-    perspectiveCamera.updateProjectionMatrix()
-  }
+  if (orthographic.value) cameraZoom.value -= event.deltaY * 0.0001
+  else cameraFOV.value += event.deltaY * 0.01
+  updateFOVAndZoom()
 })
 
 // Material and model setup ------------------------------------------------------------------------
@@ -333,6 +331,7 @@ const defaultCameraAngles = parseAngles(props.cameraPosData[1]) ?? [-45, 0]
 if (rendererAvailable) {
   yRangeMax.value = blockStructure.y - 1
   resetCamera()
+  updateFOVAndZoom()
 }
 
 function onCameraChanged() {
@@ -382,6 +381,18 @@ function setCamera() {
       'YXZ',
     ),
   )
+}
+
+function updateFOVAndZoom() {
+  if (orthographic.value) {
+    cameraZoom.value = Math.max(0.1, cameraZoom.value)
+    orthographicCamera.zoom = cameraZoom.value
+    orthographicCamera.updateProjectionMatrix()
+  } else {
+    cameraFOV.value = Math.min(110, Math.max(30, cameraFOV.value))
+    perspectiveCamera.fov = cameraFOV.value
+    perspectiveCamera.updateProjectionMatrix()
+  }
 }
 
 function resetCamera() {
@@ -658,7 +669,6 @@ onUpdated(() => {
             flexDirection: 'column',
             flexWrap: 'wrap',
             gap: '.5rem',
-            marginBottom: '0.5em',
             width: 'max-content',
           }"
         >
@@ -746,6 +756,30 @@ onUpdated(() => {
             </div>
           </div>
         </div>
+        <cdx-field v-if="orthographic" style="margin-bottom: 0.5em">
+          <cdx-text-input
+            id="cameraZoom"
+            v-model="cameraZoom"
+            inputType="number"
+            :min="0.1"
+            :max="100"
+            step="0.1"
+            @input="updateFOVAndZoom"
+          />
+          <template #label>{{ t('blockStructureRenderer.cameraZoom') }}</template>
+        </cdx-field>
+        <cdx-field v-else style="margin-bottom: 0.5em">
+          <cdx-text-input
+            id="cameraFOV"
+            v-model="cameraFOV"
+            inputType="number"
+            :min="10"
+            :max="120"
+            step="1"
+            @input="updateFOVAndZoom"
+          />
+          <template #label>{{ t('blockStructureRenderer.cameraFOV') }}</template>
+        </cdx-field>
         <cdx-button @click="resetCamera">{{ t('blockStructureRenderer.resetCamera') }}</cdx-button>
       </BsrPopup>
       <BsrPopup :name="t('blockStructureRenderer.optionsExport')" :icon="cdxIconShare">
