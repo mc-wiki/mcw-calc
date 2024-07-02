@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUpdated, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import * as THREE from 'three'
 import WebGL from 'three/addons/capabilities/WebGL.js'
@@ -528,12 +528,6 @@ onMounted(() => {
     animate()
   } else {
     renderTarget.value.appendChild(WebGL.getWebGLErrorMessage())
-  }
-})
-
-onUpdated(() => {
-  if (rendererAvailable) {
-    updateDisplay()
   }
 })
 </script>
