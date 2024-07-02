@@ -77,9 +77,6 @@ importers:
       d3:
         specifier: ^7.9.0
         version: 7.9.0
-      js-sha256:
-        specifier: ^0.11.0
-        version: 0.11.0
       three:
         specifier: ^0.162.0
         version: 0.162.0
@@ -2003,9 +2000,6 @@ packages:
   jackspeak@3.1.2:
     resolution: {integrity: sha512-kWmLKn2tRtfYMF/BakihVVRzBKOxz4gJMiL2Rj91WnAB5TPZumSH99R/Yf1qE1u4uRimvCSJfm6hnxohXeEXjQ==}
     engines: {node: '>=14'}
-
-  js-sha256@0.11.0:
-    resolution: {integrity: sha512-6xNlKayMZvds9h1Y1VWc0fQHQ82BxTXizWPEtEeGvmOUYpBRy4gbWroHLpzowe6xiQhHpelCQiE7HEdznyBL9Q==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -4763,8 +4757,6 @@ snapshots:
       '@isaacs/cliui': 8.0.2
     optionalDependencies:
       '@pkgjs/parseargs': 0.11.0
-
-  js-sha256@0.11.0: {}
 
   js-tokens@4.0.0: {}
 

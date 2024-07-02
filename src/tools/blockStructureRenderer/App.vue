@@ -426,19 +426,19 @@ function saveRenderedImage() {
   })
 }
 
-function saveStructureFile() {
+async function saveStructureFile() {
   const downloadLink = document.createElement('a')
   downloadLink.setAttribute('download', 'block_structure.nbt')
-  const blob = new Blob([saveAsStructureFile(blockStructure, nameMapping)])
+  const blob = new Blob([await saveAsStructureFile(blockStructure, nameMapping)])
   let url = URL.createObjectURL(blob)
   downloadLink.setAttribute('href', url)
   downloadLink.click()
 }
 
-function saveLitematic() {
+async function saveLitematic() {
   const downloadLink = document.createElement('a')
   downloadLink.setAttribute('download', 'block_structure.litematic')
-  const blob = new Blob([saveAsLitematic(blockStructure, nameMapping)])
+  const blob = new Blob([await saveAsLitematic(blockStructure, nameMapping)])
   let url = URL.createObjectURL(blob)
   downloadLink.setAttribute('href', url)
   downloadLink.click()

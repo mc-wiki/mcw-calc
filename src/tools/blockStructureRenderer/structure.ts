@@ -1,5 +1,4 @@
 import type { BlockStructure, NameMapping } from '@/tools/blockStructureRenderer/renderer.ts'
-import { Gzip } from 'zlibt2'
 import * as nbt from '@/utils/nbt.ts'
 
 function makePalette(structure: BlockStructure, nameMapping: NameMapping, ignoreAir: boolean) {
@@ -32,7 +31,7 @@ function makePalette(structure: BlockStructure, nameMapping: NameMapping, ignore
         return nbt.compound({ Name: nbt.string(blockState.blockName) })
       }
     }),
-    'compound'
+    'compound',
   )
 
   return { paletteMapping, paletteNbt }
@@ -52,7 +51,10 @@ export function saveAsStructureFile(structure: BlockStructure, nameMapping: Name
     false,
     true,
   )
-  const blocksNbt = nbt.list(blocks.map((block) => nbt.compound(block)), 'compound')
+  const blocksNbt = nbt.list(
+    blocks.map((block) => nbt.compound(block)),
+    'compound',
+  )
   const structureNbt = nbt.compound({
     size: nbt.list([nbt.int(structure.x), nbt.int(structure.y), nbt.int(structure.z)]),
     palette: paletteNbt,
@@ -61,7 +63,9 @@ export function saveAsStructureFile(structure: BlockStructure, nameMapping: Name
     DataVersion: nbt.int(3837),
   })
 
-  return new Gzip(nbt.writeUncompressedTag(structureNbt)).compress() as Uint8Array
+  const compress = new CompressionStream('gzip')
+
+  return gzip(nbt.writeUncompressedTag(structureNbt))
 }
 
 export function saveAsLitematic(structure: BlockStructure, nameMapping: NameMapping) {
@@ -135,5 +139,14 @@ export function saveAsLitematic(structure: BlockStructure, nameMapping: NameMapp
     }),
   })
 
-  return new Gzip(nbt.writeUncompressedTag(litematicNbt)).compress() as Uint8Array
+  return gzip(nbt.writeUncompressedTag(litematicNbt))
+}
+
+async function gzip(data: Uint8Array) {
+  if (!CompressionStream) {
+    const { Gzip } = await import('zlibt2')
+    return new Gzip(data).compress() as Uint8Array
+  }
+  const stream = new Response(data).body!.pipeThrough<Uint8Array>(new CompressionStream('gzip'))
+  return (await new Response(stream).arrayBuffer()) as Uint8Array
 }

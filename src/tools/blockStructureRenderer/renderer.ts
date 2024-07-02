@@ -33,7 +33,7 @@ import {
   type ModelReferenceWithWeight,
 } from '@/tools/blockStructureRenderer/definitions.ts'
 import { fetchJigsawAPI } from '@/utils/jigsaw.ts'
-import { sha256 } from 'js-sha256'
+import { digestMessage } from '@/utils/digest'
 
 // Block Structure ---------------------------------------------------------------------------------
 
@@ -162,7 +162,9 @@ function blockStateDefinitionToString(blockState: BlockStateDefinition) {
 }
 
 async function fetchBlockData(blockStates: BlockState[]) {
-  const blockHashStr = sha256(blockStates.map((blockState) => blockState.toString()).join('|'))
+  const blockHashStr = await digestMessage(
+    blockStates.map((blockState) => blockState.toString()).join('|'),
+  )
   const response = await fetchJigsawAPI(`renderer/${encodeURIComponent(blockHashStr)}`)
   const json = await response.json()
   if (json.processed) return json

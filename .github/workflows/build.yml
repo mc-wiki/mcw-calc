@@ -94,7 +94,7 @@ jobs:
         uses: chrnorm/deployment-status@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          environment-url: https://tools.minecraft.wiki/jigsaw/
+          environment-url: https://tools.minecraft.wiki/static/tools/
           state: 'success'
           deployment-id: ${{ steps.deployment.outputs.deployment_id }}
 
@@ -103,6 +103,6 @@ jobs:
         uses: chrnorm/deployment-status@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          environment-url: https://tools.minecraft.wiki/jigsaw/
+          environment-url: https://tools.minecraft.wiki/static/tools/
           state: 'failure'
           deployment-id: ${{ steps.deployment.outputs.deployment_id }}
