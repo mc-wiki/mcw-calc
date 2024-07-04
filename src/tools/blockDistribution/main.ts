@@ -14,7 +14,7 @@ const i18n = createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }))
     .object({
       blocks: sz.array(z.string()).default(['minecraft:diamond_ore']),
       blockNames: sz.array(z.string()).default(['Diamond Ore']),
-      pageName: z.string().default('Diamond Ore'),
+      pageName: z.string().optional(),
     })
     .safeParse(await getParams())
 
