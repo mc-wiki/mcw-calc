@@ -1,5 +1,3 @@
-import type { Direction } from '@/tools/blockStructureRenderer/math.ts'
-
 // Block Model Structure ---------------------------------------------------------------------------
 
 export interface BlockModel {
@@ -29,8 +27,6 @@ export interface ModelFace {
   cullface?: string
 }
 
-// Block State Structure ---------------------------------------------------------------------------
-
 export interface ModelRotation {
   origin: number[]
   axis: 'x' | 'y' | 'z'
@@ -38,10 +34,7 @@ export interface ModelRotation {
   rescale?: boolean
 }
 
-export interface BlockStateModelCollection {
-  variants?: Record<string, ModelReference | ModelReferenceWithWeight[]>
-  multipart?: ConditionalPart[]
-}
+// Block State Structure ---------------------------------------------------------------------------
 
 export interface ModelReference {
   model: number
@@ -58,19 +51,6 @@ export interface ModelReferenceWithWeight {
   weight?: number
 }
 
-export interface ConditionalPart {
-  apply: ModelReference | ModelReferenceWithWeight[]
-  when?: Record<string, any> | AndCondition | OrCondition
-}
-
-export interface AndCondition {
-  AND: (Record<string, any> | AndCondition | OrCondition)[]
-}
-
-export interface OrCondition {
-  OR: (Record<string, any> | AndCondition | OrCondition)[]
-}
-
 // Block Texture Structure -------------------------------------------------------------------------
 
 export interface AnimatedTexture {
@@ -79,21 +59,37 @@ export interface AnimatedTexture {
   interpolate?: boolean
 }
 
-// Occlusion Face Structure ------------------------------------------------------------------------
+// API Schema --------------------------------------------------------------------------------------
 
-export interface OcclusionFaceData {
-  down?: number[][]
-  up?: number[][]
-  north?: number[][]
-  south?: number[][]
-  west?: number[][]
-  east?: number[][]
-  can_occlude: boolean
+export interface BlockStateDefinition {
+  name: string
+  properties?: Record<string, string>
 }
 
-// Liquid Computation Data -------------------------------------------------------------------------
-
-export interface LiquidComputationData {
+export interface StateData {
+  state: BlockStateDefinition
+  parts: (ModelReference | ModelReferenceWithWeight[])[]
+  render_type: string
+  face_sturdy: string[]
   blocks_motion: boolean
-  face_sturdy: Direction[]
+  occlusion: boolean
+  occlusion_shape: Record<string, number[][]>
+  special_textures: number[]
+}
+
+export const EMPTY_STATE_DATA: StateData = {
+  state: { name: 'air' },
+  parts: [],
+  render_type: 'solid',
+  face_sturdy: [],
+  blocks_motion: false,
+  occlusion: false,
+  occlusion_shape: {},
+  special_textures: [],
+}
+
+export interface BSRApiResponse {
+  states: StateData[]
+  models: Record<string, BlockModel>
+  textures: Record<string, AnimatedTexture | number[]>
 }

@@ -1,6 +1,13 @@
 import * as THREE from 'three'
 import type { AnimatedTexture } from '@/tools/blockStructureRenderer/definitions.ts'
 import { ref } from 'vue'
+import type { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
+
+export const ATLAS_WIDTH = 1024
+export const ATLAS_HEIGHT = 1024
+export const ANIMATED_TEXTURE_ATLAS_SIZE = 256
+export const TEXTURE_ATLAS_LOCATION =
+  'https://zh.minecraft.wiki/images/Block_structure_rendering_atlas.png?format=original'
 
 interface AnimatedTextureTickerData {
   texture: AnimatedTexture
@@ -57,7 +64,7 @@ class TextureAtlasNode {
 }
 
 export class AnimatedTextureManager {
-  private readonly atlasMapping: Record<number, number[] | AnimatedTexture>
+  private readonly modelManager: BlockStateModelManager
   readonly atlas: THREE.Texture
   readonly canvas: HTMLCanvasElement
   readonly atlasMipped: THREE.Texture
@@ -67,11 +74,8 @@ export class AnimatedTextureManager {
 
   private readonly animatedTextureData: Record<number, AnimatedTextureTickerData>
 
-  constructor(
-    atlasMapping: Record<number, number[] | AnimatedTexture>,
-    animateOption: () => boolean,
-  ) {
-    this.atlasMapping = atlasMapping
+  constructor(modelManager: BlockStateModelManager, animateOption: () => boolean) {
+    this.modelManager = modelManager
     this.isAnimating = animateOption
     this.animatedTextureData = []
     this.rootNode = new TextureAtlasNode(
@@ -103,13 +107,15 @@ export class AnimatedTextureManager {
     context.clearRect(0, 0, ANIMATED_TEXTURE_ATLAS_SIZE, ANIMATED_TEXTURE_ATLAS_SIZE)
   }
 
-  updateAtlas(atlas: THREE.Texture) {
+  async updateAtlas(atlas: THREE.Texture) {
     this.atlasSource = atlas
 
     const context = this.canvas.getContext('2d')!
     for (const key in this.animatedTextureData) {
       const animatedTextureData = this.animatedTextureData[key]
-      const firstFrame = this.atlasMapping[animatedTextureData.texture.frames[0]] as number[]
+      const firstFrame = (await this.modelManager.blockDataStorage.getTextureByReference(
+        animatedTextureData.texture.frames[0],
+      )) as number[]
       context.drawImage(
         this.atlasSource!.image,
         firstFrame[0],
@@ -126,7 +132,7 @@ export class AnimatedTextureManager {
     setTimeout(() => this.animatedTextureTick(), 1000 / 20)
   }
 
-  private animatedTextureTick() {
+  private async animatedTextureTick() {
     if (this.isAnimating()) {
       const updateData = []
       for (const key in this.animatedTextureData) {
@@ -142,7 +148,9 @@ export class AnimatedTextureManager {
           animatedTextureData.lastFrameNowTime = 0
           animatedTextureData.lastFrameTime =
             animatedTextureData.texture.time[animatedTextureData.lastFrameIndex]
-          const textureFromAtlas = this.atlasMapping[nowTextureIndex] as number[]
+          const textureFromAtlas = (await this.modelManager.blockDataStorage.getTextureByReference(
+            nowTextureIndex,
+          )) as number[]
           if (lastTextureIndex !== nowTextureIndex) {
             updateData.push({
               targetX: animatedTextureData.x,
@@ -157,11 +165,17 @@ export class AnimatedTextureManager {
           const delta = 1 - animatedTextureData.lastFrameNowTime / animatedTextureData.lastFrameTime
           const lastTextureIndex =
             animatedTextureData.texture.frames[animatedTextureData.lastFrameIndex]
-          const lastTextureFromAtlas = this.atlasMapping[lastTextureIndex] as number[]
+          const lastTextureFromAtlas =
+            (await this.modelManager.blockDataStorage.getTextureByReference(
+              lastTextureIndex,
+            )) as number[]
           const nextFrameIndex =
             (animatedTextureData.lastFrameIndex + 1) % animatedTextureData.texture.frames.length
           const nextTextureIndex = animatedTextureData.texture.frames[nextFrameIndex]
-          const nextTextureFromAtlas = this.atlasMapping[nextTextureIndex] as number[]
+          const nextTextureFromAtlas =
+            (await this.modelManager.blockDataStorage.getTextureByReference(
+              nextTextureIndex,
+            )) as number[]
           updateData.push({
             targetX: animatedTextureData.x,
             targetY: animatedTextureData.y,
@@ -288,10 +302,6 @@ export class SpriteData {
   }
 }
 
-export const ATLAS_WIDTH = 1024
-export const ATLAS_HEIGHT = 1024
-export const ANIMATED_TEXTURE_ATLAS_SIZE = 256
-
 export function makeTextureAtlasMaterials(
   atlasTexture: THREE.Texture[],
 ): Record<string, THREE.MeshBasicMaterial> {
@@ -330,59 +340,25 @@ export function makeTextureAtlasMaterials(
   }
 }
 
-export function makeMaterialPicker(
-  textureAtlas: string[],
-  renderTypes: string[],
-  loadedCallback: () => void,
-  animateOption: () => boolean,
-): MaterialPicker {
-  const atlasMapping = {} as Record<number, number[]>
-  textureAtlas
-    .filter((s) => s.trim() !== '')
-    .forEach((atlasPair) => {
-      const [spriteName, atlasData] = atlasPair.split('=', 2)
-      atlasMapping[parseInt(spriteName, 10)] = JSON.parse(atlasData) as number[]
-    })
-
-  const renderTypesMapping = {} as Record<string, string>
-  renderTypes
-    .filter((s) => s.trim() !== '')
-    .forEach((renderTypePair) => {
-      const splitPoint = renderTypePair.indexOf('=')
-      const renderTypeName = renderTypePair.substring(0, splitPoint)
-      renderTypesMapping[renderTypeName] = renderTypePair.substring(splitPoint + 1)
-    })
-
-  return new MaterialPicker(atlasMapping, renderTypesMapping, loadedCallback, animateOption)
-}
-
 export class MaterialPicker {
   readonly staticTexture: Record<string, THREE.MeshBasicMaterial>
   readonly animatedTexture: Record<string, THREE.MeshBasicMaterial>
+  readonly modelManager: BlockStateModelManager
   readonly animatedTextureManager: AnimatedTextureManager
 
-  readonly atlasMapping: Record<number, number[] | AnimatedTexture>
-  readonly renderTypeMapping: Record<string, string>
-
   constructor(
-    atlasMapping: Record<number, number[] | AnimatedTexture>,
-    renderTypeMapping: Record<string, string>,
+    modelManager: BlockStateModelManager,
     loadedCallback: () => void,
     animateOption: () => boolean,
   ) {
-    this.atlasMapping = atlasMapping
-    this.renderTypeMapping = renderTypeMapping
-    this.animatedTextureManager = new AnimatedTextureManager(atlasMapping, animateOption)
+    this.modelManager = modelManager
+    this.animatedTextureManager = new AnimatedTextureManager(modelManager, animateOption)
 
     const refNoMipped = ref()
-    const textureAtlasMipped = new THREE.TextureLoader().load(
-      'https://zh.minecraft.wiki/images/Block_structure_rendering_atlas.png?format=original',
-      () => {
-        refNoMipped.value.needsUpdate = true
-        this.animatedTextureManager.updateAtlas(textureAtlasMipped)
-        loadedCallback()
-      },
-    )
+    const textureAtlasMipped = new THREE.TextureLoader().load(TEXTURE_ATLAS_LOCATION, () => {
+      refNoMipped.value.needsUpdate = true
+      this.animatedTextureManager.updateAtlas(textureAtlasMipped).then(loadedCallback)
+    })
     textureAtlasMipped.magFilter = THREE.NearestFilter
     textureAtlasMipped.minFilter = THREE.NearestMipmapLinearFilter
     textureAtlasMipped.wrapS = THREE.RepeatWrapping
@@ -400,8 +376,21 @@ export class MaterialPicker {
     ])
   }
 
-  pickMaterial(animated: boolean, blockState: string) {
-    const renderType = this.renderTypeMapping[blockState] ?? 'solid'
+  async getTextureByReference(reference: number) {
+    return (
+      (await this.modelManager.blockDataStorage.getTextureByReference(reference)) ?? [0, 0, 16, 16]
+    )
+  }
+
+  async pickMaterial(animated: boolean, blockState: string) {
+    const renderType = await this.modelManager.getBlockRenderType(blockState)
     return animated ? this.animatedTexture[renderType] : this.staticTexture[renderType]
+  }
+
+  pickMaterialWithRenderType(
+    renderType: string,
+  ): (animated: boolean) => Promise<THREE.MeshBasicMaterial> {
+    return async (animated: boolean) =>
+      animated ? this.animatedTexture[renderType] : this.staticTexture[renderType]
   }
 }

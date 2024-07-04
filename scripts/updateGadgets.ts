@@ -50,7 +50,7 @@ async function update(target: DeployTarget) {
     if (section !== null && section.length > 1) {
       const text = rev.content.replace(
         section[1],
-        `* mcw-calc-loader[ResourceLoader|targets=desktop,mobile|type=general|default|hidden]|mcw-calc-loader.js`,
+        `* mcw-calc-loader[ResourceLoader|type=general|default|hidden]|mcw-calc-loader.js`,
       )
       return {
         text: text,

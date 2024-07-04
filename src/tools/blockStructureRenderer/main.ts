@@ -16,15 +16,8 @@ const i18n = createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }))
       // Required parameters
       blocks: sz.array(sz.string(), ';'),
       structure: sz.string().default('+'),
-      blockStates: sz.array(sz.string(), ';'),
-      models: sz.array(sz.string(), ';'),
-      textureAtlas: sz.array(sz.string(), ';'),
-      renderTypes: sz.array(sz.string(), ';'),
-      occlusionShapes: sz.array(sz.string(), ';'),
-      specialBlocksData: sz.array(sz.string(), ';'),
-      liquidComputationData: sz.array(sz.string(), ';'),
       // Additional render object
-      marks: sz.array(sz.string(), ';'),
+      marks: sz.array(sz.string(), ';').default([]),
       // Default options
       cameraPosData: sz.array(sz.string(), ';').default([]),
       orthographic: sz.boolean().default(false),
