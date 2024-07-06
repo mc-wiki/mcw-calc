@@ -406,7 +406,12 @@ export class BlockStateModelManager {
 
     const model = await this.blockDataStorage.getModelByReference(modelReferenceInt)
     if (!model) return (this.bakedModelCache[cacheKey] = createEmptyBakedModel())
-    return (this.bakedModelCache[cacheKey] = await bakeModel(materialPicker, model, rotation, uvlock))
+    return (this.bakedModelCache[cacheKey] = await bakeModel(
+      materialPicker,
+      model,
+      rotation,
+      uvlock,
+    ))
   }
 }
 
@@ -462,7 +467,9 @@ export async function bakeModel(
         blockFaceUV.uvs[1] = 1 - (spriteData[1] + blockFaceUV.uvs[1]) / ATLAS_HEIGHT
         blockFaceUV.uvs[3] = 1 - (spriteData[1] + blockFaceUV.uvs[3]) / ATLAS_HEIGHT
       } else {
-        const firstFrame = await materialPicker.getTextureByReference(spriteData.frames[0]) as number[]
+        const firstFrame = (await materialPicker.getTextureByReference(
+          spriteData.frames[0],
+        )) as number[]
         const [x, y] = materialPicker.animatedTextureManager.putNewTexture(
           face.texture,
           spriteData,

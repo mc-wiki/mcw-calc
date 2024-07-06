@@ -1,6 +1,17 @@
 <script setup lang="ts">
 import CalcField from '@/components/CalcField.vue'
-import { CdxToggleButtonGroup, CdxTab, CdxTabs } from '@wikimedia/codex'
+import {
+  CdxToggleButtonGroup,
+  CdxTab,
+  CdxTabs,
+  type ButtonGroupItem,
+  CdxIcon,
+  CdxSelect,
+  type MenuItemData,
+  CdxField,
+  CdxTextArea,
+  CdxButton,
+} from '@wikimedia/codex'
 import { useEditor, EditorContent, type JSONContent } from '@tiptap/vue-3'
 import { Color } from '@tiptap/extension-color'
 import Document from '@tiptap/extension-document'
@@ -15,11 +26,22 @@ import DropCursor from '@tiptap/extension-dropcursor'
 import GapCursor from '@tiptap/extension-gapcursor'
 import TextStyle from '@tiptap/extension-text-style'
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import {
+  cdxIconBold,
+  cdxIconCopy,
+  cdxIconDie,
+  cdxIconItalic,
+  cdxIconPalette,
+  cdxIconStrikethrough,
+  cdxIconUnderline,
+} from '@wikimedia/codex-icons'
+
+const { t } = useI18n()
 
 interface Code {
   code: string
   name: string
-  display: string
 }
 
 interface CodeColor extends Code {
@@ -31,119 +53,103 @@ const javaColors: CodeColor[] = [
   {
     code: '0',
     name: 'black',
-    display: 'Black',
     foregroundHex: '#000000',
     backgroundHex: '#000000',
   },
   {
     code: '1',
     name: 'dark_blue',
-    display: 'Dark Blue',
     foregroundHex: '#0000AA',
     backgroundHex: '#00002A',
   },
   {
     code: '2',
     name: 'dark_green',
-    display: 'Dark Green',
     foregroundHex: '#00AA00',
     backgroundHex: '#002A00',
   },
   {
     code: '3',
     name: 'dark_aqua',
-    display: 'Dark Aqua',
     foregroundHex: '#00AAAA',
     backgroundHex: '#002A2A',
   },
   {
     code: '4',
     name: 'dark_red',
-    display: 'Dark Red',
     foregroundHex: '#AA0000',
     backgroundHex: '#2A0000',
   },
   {
     code: '5',
     name: 'dark_purple',
-    display: 'Dark Purple',
     foregroundHex: '#AA00AA',
     backgroundHex: '#2A002A',
   },
   {
     code: '6',
     name: 'gold',
-    display: 'Gold',
     foregroundHex: '#FFAA00',
     backgroundHex: '#2A2A00',
   },
   {
     code: '7',
     name: 'gray',
-    display: 'Gray',
     foregroundHex: '#AAAAAA',
     backgroundHex: '#2A2A2A',
   },
   {
     code: '8',
     name: 'dark_gray',
-    display: 'Dark Gray',
     foregroundHex: '#555555',
     backgroundHex: '#151515',
   },
   {
     code: '9',
     name: 'blue',
-    display: 'Blue',
     foregroundHex: '#5555FF',
     backgroundHex: '#15153F',
   },
   {
     code: 'a',
     name: 'green',
-    display: 'Green',
     foregroundHex: '#55FF55',
     backgroundHex: '#153F15',
   },
   {
     code: 'b',
     name: 'aqua',
-    display: 'Aqua',
     foregroundHex: '#55FFFF',
     backgroundHex: '#153F3F',
   },
   {
     code: 'c',
     name: 'red',
-    display: 'Red',
     foregroundHex: '#FF5555',
     backgroundHex: '#3F1515',
   },
   {
     code: 'd',
     name: 'light_purple',
-    display: 'Light Purple',
     foregroundHex: '#FF55FF',
     backgroundHex: '#3F153F',
   },
   {
     code: 'e',
     name: 'yellow',
-    display: 'Yellow',
     foregroundHex: '#FFFF55',
     backgroundHex: '#3F3F15',
   },
   {
     code: 'f',
     name: 'white',
-    display: 'White',
     foregroundHex: '#FFFFFF',
     backgroundHex: '#3F3F3F',
   },
 ]
 
 const bedrockColors: CodeColor[] = [
-  ...javaColors,
+  ...javaColors.filter((c) => c.name !== 'gold'),
   {
     ...javaColors.find((c) => c.name === 'gold')!,
     backgroundHex: '#402A00',
@@ -151,77 +157,66 @@ const bedrockColors: CodeColor[] = [
   {
     code: 'g',
     name: 'minecoin_gold',
-    display: 'Minecoin Gold',
     foregroundHex: '#DDD605',
     backgroundHex: '#373501',
   },
   {
     code: 'h',
     name: 'material_quartz',
-    display: 'Material Quartz',
     foregroundHex: '#E3D4D1',
     backgroundHex: '#383534',
   },
   {
     code: 'i',
     name: 'material_iron',
-    display: 'Material Iron',
     foregroundHex: '#CECACA',
     backgroundHex: '#333232',
   },
   {
     code: 'j',
     name: 'material_netherite',
-    display: 'Material Netherite',
     foregroundHex: '#443A3B',
     backgroundHex: '#110E0E',
   },
   {
     code: 'm',
     name: 'material_redstone',
-    display: 'Material Redstone',
     foregroundHex: '#971607',
     backgroundHex: '#250501',
   },
   {
     code: 'n',
     name: 'material_copper',
-    display: 'Material Copper',
     foregroundHex: '#B4684D',
     backgroundHex: '#2D1A13',
   },
   {
     code: 'p',
     name: 'material_gold',
-    display: 'Material Gold',
     foregroundHex: '#DEB12D',
     backgroundHex: '#372C0B',
   },
   {
     code: 'q',
     name: 'material_emerald',
-    display: 'Material Emerald',
     foregroundHex: '#47A036',
     backgroundHex: '#04280D',
   },
   {
     code: 's',
     name: 'material_diamond',
-    display: 'Material Diamond',
     foregroundHex: '#2CBAA8',
     backgroundHex: '#0B2E2A',
   },
   {
     code: 't',
     name: 'material_lapis',
-    display: 'Material Lapis',
     foregroundHex: '#21497B',
     backgroundHex: '#08121E',
   },
   {
     code: 'u',
     name: 'material_amethyst',
-    display: 'Material Amethyst',
     foregroundHex: '#9A5CC6',
     backgroundHex: '#261731',
   },
@@ -229,61 +224,83 @@ const bedrockColors: CodeColor[] = [
 
 const edition = ref<'java' | 'bedrock'>('java')
 const activeColors = computed(() => (edition.value === 'java' ? javaColors : bedrockColors))
-function hexColorToCode(hex: string) {
+function hexColorToCode(rgb: string) {
+  if (!rgb) {
+    return 'none'
+  }
+  let hex: string
+
+  if (rgb.startsWith('#')) {
+    hex = rgb.toUpperCase()
+  } else {
+    hex =
+      '#' +
+      rgb
+        .replace(/rgba?\(/, '')
+        .split(/\s*,\s*/)
+        .map((c) => parseInt(c).toString(16).padStart(2, '0').toUpperCase())
+        .join('')
+  }
+
   const color = activeColors.value.find((c) => c.foregroundHex === hex)
+
   return color ? color.code : 'none'
 }
 
-const colorButtons = computed(() => [
+const colorItems = computed<MenuItemData[]>(() => [
   ...activeColors.value.map((color) => ({
-    label: color.display,
+    label: t(`formattingCodeEditor.color.${color.name}`),
     value: color.code,
+    icon: `
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20" viewBox="0 0 20 20">
+        <rect width="20" height="20" fill="${color.foregroundHex}" stroke="${color.backgroundHex}" stroke-width="2" />
+      </svg>
+    `,
   })),
   {
-    label: 'None',
+    label: t(`formattingCodeEditor.color.none`),
     value: 'none',
+    icon: cdxIconPalette,
   },
 ])
 
-const formatButtons = computed(() =>
-  edition.value === 'java'
+const formatButtons = computed<ButtonGroupItem[]>(() => [
+  {
+    ariaLabel: t('formattingCodeEditor.format.bold'),
+    label: '',
+    value: 'l',
+    icon: cdxIconBold,
+  },
+  {
+    ariaLabel: t('formattingCodeEditor.format.italic'),
+    label: '',
+    value: 'o',
+    icon: cdxIconItalic,
+  },
+
+  {
+    ariaLabel: t('formattingCodeEditor.format.obfuscated'),
+    label: '',
+    value: 'k',
+    icon: cdxIconDie,
+  },
+  ...(edition.value === 'java'
     ? [
         {
-          label: 'Bold',
-          value: 'l',
-        },
-        {
-          label: 'Italic',
-          value: 'o',
-        },
-        {
-          label: 'Underline',
-          value: 'n',
-        },
-        {
-          label: 'Strikethrough',
+          ariaLabel: t('formattingCodeEditor.format.strikethrough'),
+          label: '',
           value: 'm',
+          icon: cdxIconStrikethrough,
         },
         {
-          label: 'Obfuscated',
-          value: 'k',
+          ariaLabel: t('formattingCodeEditor.format.underline'),
+          label: '',
+          value: 'n',
+          icon: cdxIconUnderline,
         },
       ]
-    : [
-        {
-          label: 'Bold',
-          value: 'l',
-        },
-        {
-          label: 'Italic',
-          value: 'o',
-        },
-        {
-          label: 'Obfuscated',
-          value: 'k',
-        },
-      ],
-)
+    : []),
+])
 
 const formatCode = computed(() => JSONToFormatCode(editor.value?.getJSON()))
 const activeFormatCodes = computed(() => {
@@ -418,36 +435,84 @@ function JSONToFormatCode(json: JSONContent | undefined) {
 </script>
 <template>
   <CalcField>
-    <template #heading>Formatting Code Text Editor</template>
+    <template #heading>{{ t('formattingCodeEditor.title') }}</template>
     <cdx-tabs v-model:active="edition" style="margin-bottom: 0.5rem">
-      <cdx-tab name="java" label="Java Edition" />
-      <cdx-tab name="bedrock" label="Bedrock Edition" />
+      <cdx-tab name="java" :label="t('formattingCodeEditor.java')" />
+      <cdx-tab name="bedrock" :label="t('formattingCodeEditor.bedrock')" />
     </cdx-tabs>
-    <CdxToggleButtonGroup
-      :model-value="hexColorToCode(editor?.getAttributes('textStyle').color)"
-      :buttons="colorButtons"
-      @update:modelValue="updateColor"
-      style="margin-bottom: 0.5rem"
-    />
-    <CdxToggleButtonGroup
-      :model-value="activeFormatCodes"
-      :buttons="formatButtons"
-      @update:modelValue="updateFormat"
-      style="margin-bottom: 0.5rem"
-    />
+    <div style="display: flex; gap: 5px">
+      <CdxSelect
+        :selected="hexColorToCode(editor?.getAttributes('textStyle').color)"
+        :menu-items="colorItems"
+        @update:selected="updateColor"
+        style="margin-bottom: 0.5rem"
+      ></CdxSelect>
+      <CdxToggleButtonGroup
+        :model-value="activeFormatCodes"
+        :buttons="formatButtons"
+        @update:modelValue="updateFormat"
+        style="margin-bottom: 0.5rem; overflow: visible"
+      >
+        <template #default="{ button }">
+          <CdxIcon
+            v-tooltip="button.ariaLabel"
+            :icon="button.icon"
+            :icon-label="button.ariaLabel"
+          ></CdxIcon>
+        </template>
+      </CdxToggleButtonGroup>
+    </div>
+
     <EditorContent class="fc-editor" style="margin-bottom: 0.5rem" :editor="editor" />
-    <label for="fc-output">Output</label>
-    <textarea ref="textarea" name="fc-output" :value="formatCode" disabled />
+
+    <CdxField>
+      <CdxTextArea v-model="formatCode" disabled />
+
+      <template #label>
+        <div style="display: flex; align-items: center">
+          {{ t('formattingCodeEditor.output') }}
+          <CdxButton style="margin-left: auto"
+            ><CdxIcon :icon="cdxIconCopy" /> {{ t('formattingCodeEditor.copy') }}</CdxButton
+          >
+        </div>
+      </template>
+    </CdxField>
   </CalcField>
 </template>
 <style>
 .fc-editor {
   font-family: 'Minecraft', monospace, sans-serif;
-  border: 1px solid #a2a9b1;
-  border-radius: 4px;
+  background-color: var(--background-color-base, #fff);
+  color: var(--color-base, #202122);
+}
+
+.fc-editor .tiptap {
+  outline: none;
+  padding: 4px 8px;
+  border-color: var(--border-color-base, #a2a9b1);
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 2px;
+  box-shadow: inset 0 0 0 1px var(--box-shadow-color-transparent, transparent);
+  transition-property: background-color, color, border-color, box-shadow;
+  transition-duration: 0.25s;
+}
+
+.fc-editor .tiptap:hover {
+  border-color: var(--border-color-interactive, #72777d);
+}
+
+.fc-editor .tiptap:focus {
+  border-color: var(--border-color-progressive--focus, #36c);
+  box-shadow: inset 0 0 0 1px var(--box-shadow-color-progressive--focus, #36c);
 }
 
 .fc-editor p {
   margin: 0;
+}
+
+.cdx-text-area__textarea {
+  font-family: monospace;
+  resize: none;
 }
 </style>

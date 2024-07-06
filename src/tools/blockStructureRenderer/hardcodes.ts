@@ -1290,18 +1290,81 @@ async function renderHangingSign(
   await renderModelNoCullsWithMS(await modelBoard, blockState, material, scene, transform, true)
   if (blockState.blockName.includes('wall')) {
     await renderModelNoCullsWithMS(await modelPlank, blockState, material, scene, transform, true)
-    await renderModelNoCullsWithMS(await modelChain1, blockState, material, scene, chainL1Matrix, true)
-    await renderModelNoCullsWithMS(await modelChain2, blockState, material, scene, chainL2Matrix, true)
-    await renderModelNoCullsWithMS(await modelChain1, blockState, material, scene, chainR1Matrix, true)
-    await renderModelNoCullsWithMS(await modelChain2, blockState, material, scene, chainR2Matrix, true)
+    await renderModelNoCullsWithMS(
+      await modelChain1,
+      blockState,
+      material,
+      scene,
+      chainL1Matrix,
+      true,
+    )
+    await renderModelNoCullsWithMS(
+      await modelChain2,
+      blockState,
+      material,
+      scene,
+      chainL2Matrix,
+      true,
+    )
+    await renderModelNoCullsWithMS(
+      await modelChain1,
+      blockState,
+      material,
+      scene,
+      chainR1Matrix,
+      true,
+    )
+    await renderModelNoCullsWithMS(
+      await modelChain2,
+      blockState,
+      material,
+      scene,
+      chainR2Matrix,
+      true,
+    )
   } else {
     if (blockState.getBlockProperty('attached') === 'false') {
-      await renderModelNoCullsWithMS(await modelChain1, blockState, material, scene, chainL1Matrix, true)
-      await renderModelNoCullsWithMS(await modelChain2, blockState, material, scene, chainL2Matrix, true)
-      await renderModelNoCullsWithMS(await modelChain1, blockState, material, scene, chainR1Matrix, true)
-      await renderModelNoCullsWithMS(await modelChain2, blockState, material, scene, chainR2Matrix, true)
+      await renderModelNoCullsWithMS(
+        await modelChain1,
+        blockState,
+        material,
+        scene,
+        chainL1Matrix,
+        true,
+      )
+      await renderModelNoCullsWithMS(
+        await modelChain2,
+        blockState,
+        material,
+        scene,
+        chainL2Matrix,
+        true,
+      )
+      await renderModelNoCullsWithMS(
+        await modelChain1,
+        blockState,
+        material,
+        scene,
+        chainR1Matrix,
+        true,
+      )
+      await renderModelNoCullsWithMS(
+        await modelChain2,
+        blockState,
+        material,
+        scene,
+        chainR2Matrix,
+        true,
+      )
     } else {
-      await renderModelNoCullsWithMS(await modelVChains, blockState, material, scene, transform, true)
+      await renderModelNoCullsWithMS(
+        await modelVChains,
+        blockState,
+        material,
+        scene,
+        transform,
+        true,
+      )
     }
   }
 }
