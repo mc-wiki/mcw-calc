@@ -37,11 +37,11 @@
   "formattingCodeEditor.format.underline": "Unterstrichen",
   "formattingCodeEditor.format.strikethrough": "Durchgestrichen",
   "formattingCodeEditor.format.obfuscated": "Verschleiert",
-  "formattingCodeEditor.default.1": "{underline} to {bold} {italic} {obfuscated}!",
-  "formattingCodeEditor.default.1.underline": "Try",
-  "formattingCodeEditor.default.1.bold": "format",
-  "formattingCodeEditor.default.1.italic": "this",
-  "formattingCodeEditor.default.1.obfuscated": "text",
-  "formattingCodeEditor.default.2": "This is a {color} text",
-  "formattingCodeEditor.default.2.color": "colored"
+  "formattingCodeEditor.default.1": "{underline} {italic} {obfuscated} zu {bold}!",
+  "formattingCodeEditor.default.1.underline": "Versuche",
+  "formattingCodeEditor.default.1.bold": "formatieren",
+  "formattingCodeEditor.default.1.italic": "diesen",
+  "formattingCodeEditor.default.1.obfuscated": "Text",
+  "formattingCodeEditor.default.2": "Dies ist ein {color} Text",
+  "formattingCodeEditor.default.2.color": "farbiger"
 }
