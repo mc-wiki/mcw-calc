@@ -184,6 +184,21 @@ const chunkbaseUrl = computed(() => {
     <template #heading>{{ t('chunkbase.title') }}</template>
 
     <div
+      v-if="props.promo"
+      :style="{
+        marginTop: '8px',
+      }"
+    >
+      <i18n-t keypath="chunkbase.promo" tag="p">
+        <template v-slot:link>
+          <a href="https://www.chunkbase.com/apps/" target="_blank" rel="noopener noreferrer">
+            {{ t('chunkbase.name') }}
+          </a>
+        </template>
+      </i18n-t>
+    </div>
+
+    <div
       :style="{
         width: '100%',
         maxWidth: '1024px',
@@ -202,25 +217,6 @@ const chunkbaseUrl = computed(() => {
           height: '100%',
         }"
       />
-    </div>
-
-    <div
-      v-if="props.promo"
-      :style="{
-        marginTop: '8px',
-      }"
-    >
-      <p v-text="t('chunkbase.promo')" />
-      <CdxButton
-        size="medium"
-        weight="primary"
-        action="progressive"
-        href="https://www.chunkbase.com/apps/"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        {{ t('chunkbase.button') }}
-      </CdxButton>
     </div>
   </CalcField>
 </template>
