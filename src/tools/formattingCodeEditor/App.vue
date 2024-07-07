@@ -364,9 +364,16 @@ const updateFormat = (value: string[]) => {
 }
 
 const editor = useEditor({
-  content: `<p>Edit <u>me</u>!</p>
-            <p>Try to <b>format</b> <i>this</i> <mark>text</mark>!</p>
-            <p>Set me a <span style="color: #FF5555;">color</span>!</p>`,
+  content: `<p>${t('formattingCodeEditor.default.1', {
+    underline: `<u>${t('formattingCodeEditor.default.1.underline')}</u>`,
+    bold: `<b>${t('formattingCodeEditor.default.1.bold')}</b>`,
+    italic: `<i>${t('formattingCodeEditor.default.1.italic')}</i>`,
+    obfuscated: `<mark>${t('formattingCodeEditor.default.1.obfuscated')}</mark>`,
+  })}</p>
+
+    <p>${t('formattingCodeEditor.default.2', {
+      color: `<span style="color: #FF5555">${t('formattingCodeEditor.default.2.color')}</span>`,
+    })}</p>`,
   extensions: [
     Document,
     Text,
@@ -471,9 +478,9 @@ function JSONToFormatCode(json: JSONContent | undefined) {
       <template #label>
         <div style="display: flex; align-items: center">
           {{ t('formattingCodeEditor.output') }}
-          <CdxButton style="margin-left: auto"
-            ><CdxIcon :icon="cdxIconCopy" /> {{ t('formattingCodeEditor.copy') }}</CdxButton
-          >
+          <CdxButton style="margin-left: auto">
+            <CdxIcon :icon="cdxIconCopy" /> {{ t('formattingCodeEditor.copy') }}
+          </CdxButton>
         </div>
       </template>
     </CdxField>

@@ -135,7 +135,7 @@ export function handleParseError<I, O>(returnValue: SafeParseReturnType<I, O>, t
   return returnValue.data
 }
 
-function sanitize(text: string) {
+export function sanitize(text: string) {
   const div = document.createElement('div')
   div.textContent = text
   return div.innerHTML
