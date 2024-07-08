@@ -78,7 +78,6 @@ export const ColorClass = Extension.create<ColorOptions>({
       setColor:
         (colorClass) =>
         ({ chain }) => {
-          console.log('color', colorClass)
           return chain().setMark('textClass', { colorClass }).run()
         },
       unsetColor:

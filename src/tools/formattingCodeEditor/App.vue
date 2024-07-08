@@ -308,11 +308,7 @@ const updateColor = (value: string) => {
     editor.value?.chain().focus().unsetColor().run()
     return
   }
-  editor.value
-    ?.chain()
-    .focus()
-    .setColor(activeColors.value.find((c) => c.code === value)!.name)
-    .run()
+  editor.value?.chain().focus().setColor(value).run()
 }
 
 const updateFormat = (value: string[]) => {
