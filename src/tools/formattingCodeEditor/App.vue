@@ -474,6 +474,8 @@ function JSONToFormatCode(json: JSONContent | undefined) {
 }
 
 .fc-editor .tiptap {
+  max-height: 300px;
+  overflow-y: auto;
   outline: none;
   padding: 4px 8px;
   border-color: var(--border-color-base, #a2a9b1);
