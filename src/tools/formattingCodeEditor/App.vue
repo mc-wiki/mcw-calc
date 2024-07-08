@@ -438,7 +438,7 @@ function JSONToFormatCode(json: JSONContent | undefined) {
       >
         <template #default="{ button }">
           <CdxIcon
-            v-tooltip="button.ariaLabel"
+            v-tooltip:top="button.ariaLabel"
             :icon="button.icon"
             :icon-label="button.ariaLabel"
           ></CdxIcon>
@@ -463,6 +463,17 @@ function JSONToFormatCode(json: JSONContent | undefined) {
   </CalcField>
 </template>
 <style lang="less">
+.cdx-toggle-button-group,
+.cdx-toggle-button {
+  overflow: visible;
+}
+
+.cdx-select-vue__handle {
+  min-width: 175px;
+  display: flex;
+  align-items: center;
+}
+
 .fc-editor {
   font-family: 'Minecraft', monospace, sans-serif;
   background-color: var(--background-color-base, #fff);
@@ -502,6 +513,22 @@ function JSONToFormatCode(json: JSONContent | undefined) {
 }
 
 .fc-editor {
+  strong {
+    font-weight: normal;
+    text-shadow: 1.75px 0px;
+    letter-spacing: 1px;
+  }
+
+  u,
+  s {
+    text-decoration-thickness: 2px;
+  }
+
+  em {
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: none;
+  }
+
   .color-black {
     color: #000000;
   }
