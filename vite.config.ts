@@ -1,7 +1,9 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import vueMacros from 'unplugin-vue-macros/vite'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { comlink } from 'vite-plugin-comlink'
+import vueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 import { globSync } from 'glob'
 import { fileURLToPath } from 'url'
 
@@ -35,7 +37,21 @@ export default defineConfig({
       },
     },
   },
-  plugins: [vue(), visualizer(), comlink()],
+  plugins: [
+    vueMacros({
+      plugins: {
+        vue: vue(),
+      },
+
+      shortBind: true,
+      booleanProp: true,
+    }),
+    visualizer(),
+    comlink(),
+    vueI18nPlugin({
+      include: fileURLToPath(new URL('./src/tools/*/locale/*.json', import.meta.url)),
+    }),
+  ],
   worker: {
     plugins: () => [comlink()],
   },

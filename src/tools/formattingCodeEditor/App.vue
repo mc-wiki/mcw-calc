@@ -13,7 +13,6 @@ import {
   CdxButton,
 } from '@wikimedia/codex'
 import { useEditor, EditorContent, type JSONContent } from '@tiptap/vue-3'
-import { Color } from '@tiptap/extension-color'
 import Document from '@tiptap/extension-document'
 import Text from '@tiptap/extension-text'
 import Paragraph from '@tiptap/extension-paragraph'
@@ -36,6 +35,8 @@ import {
   cdxIconStrikethrough,
   cdxIconUnderline,
 } from '@wikimedia/codex-icons'
+import { ColorClass } from './color-class'
+import { TextClass } from './text-class'
 
 const { t } = useI18n()
 
@@ -332,7 +333,7 @@ const updateColor = (value: string) => {
   editor.value
     ?.chain()
     .focus()
-    .setColor(activeColors.value.find((c) => c.code === value)!.foregroundHex)
+    .setColor(activeColors.value.find((c) => c.code === value)!.name)
     .run()
 }
 
@@ -372,14 +373,15 @@ const editor = useEditor({
   })}</p>
 
     <p>${t('formattingCodeEditor.default.2', {
-      color: `<span style="color: #FF5555">${t('formattingCodeEditor.default.2.color')}</span>`,
+      color: `<span class="color-red">${t('formattingCodeEditor.default.2.color')}</span>`,
     })}</p>`,
   extensions: [
     Document,
     Text,
     Paragraph,
     TextStyle,
-    Color,
+    TextClass,
+    ColorClass,
     Highlight,
     Underline,
     Strike,
@@ -409,18 +411,18 @@ function JSONToFormatCode(json: JSONContent | undefined) {
         if (mark.type === 'italic') {
           prefixes.push('o')
         }
-        if (mark.type === 'underline') {
+        if (mark.type === 'underline' && edition.value === 'java') {
           prefixes.push('n')
         }
-        if (mark.type === 'strike') {
+        if (mark.type === 'strike' && edition.value === 'java') {
           prefixes.push('m')
         }
         if (mark.type === 'highlight') {
           prefixes.push('k')
         }
-        if (mark.type === 'textStyle') {
+        if (mark.type === 'textClass') {
           const attrs = child.marks?.[0].attrs
-          const color = activeColors.value.find((c) => c.foregroundHex === attrs?.color)
+          const color = activeColors.value.find((c) => c.name === attrs?.colorClass)
 
           if (color) {
             prefixes.push(color.code)
@@ -449,7 +451,7 @@ function JSONToFormatCode(json: JSONContent | undefined) {
     </cdx-tabs>
     <div style="display: flex; gap: 5px">
       <CdxSelect
-        :selected="hexColorToCode(editor?.getAttributes('textStyle').color)"
+        :selected="hexColorToCode(editor?.getAttributes('textClass').colorClass)"
         :menu-items="colorItems"
         @update:selected="updateColor"
         style="margin-bottom: 0.5rem"
@@ -470,7 +472,7 @@ function JSONToFormatCode(json: JSONContent | undefined) {
       </CdxToggleButtonGroup>
     </div>
 
-    <EditorContent class="fc-editor" style="margin-bottom: 0.5rem" :editor="editor" />
+    <EditorContent :class="['fc-editor', edition]" style="margin-bottom: 0.5rem" :editor="editor" />
 
     <CdxField>
       <CdxTextArea v-model="formatCode" disabled />
@@ -486,7 +488,7 @@ function JSONToFormatCode(json: JSONContent | undefined) {
     </CdxField>
   </CalcField>
 </template>
-<style>
+<style lang="less">
 .fc-editor {
   font-family: 'Minecraft', monospace, sans-serif;
   background-color: var(--background-color-base, #fff);
@@ -521,5 +523,125 @@ function JSONToFormatCode(json: JSONContent | undefined) {
 .cdx-text-area__textarea {
   font-family: monospace;
   resize: none;
+}
+
+.fc-editor {
+  .color-black {
+    color: #000000;
+  }
+
+  .color-dark_blue {
+    color: #0000aa;
+  }
+
+  .color-dark_green {
+    color: #00aa00;
+  }
+
+  .color-dark_aqua {
+    color: #00aaaa;
+  }
+
+  .color-dark_red {
+    color: #aa0000;
+  }
+
+  .color-dark_purple {
+    color: #aa00aa;
+  }
+
+  .color-gold {
+    color: #ffaa00;
+  }
+
+  .color-gray {
+    color: #aaaaaa;
+  }
+
+  .color-dark_gray {
+    color: #555555;
+  }
+
+  .color-blue {
+    color: #5555ff;
+  }
+
+  .color-green {
+    color: #55ff55;
+  }
+
+  .color-aqua {
+    color: #55ffff;
+  }
+
+  .color-red {
+    color: #ff5555;
+  }
+
+  .color-light_purple {
+    color: #ff55ff;
+  }
+
+  .color-yellow {
+    color: #ffff55;
+  }
+
+  .color-white {
+    color: #ffffff;
+  }
+
+  &.bedrock {
+    .color-minecoin_gold {
+      color: #ddd605;
+    }
+
+    .color-material_quartz {
+      color: #e3d4d1;
+    }
+
+    .color-material_iron {
+      color: #cecaca;
+    }
+
+    .color-material_netherite {
+      color: #443a3b;
+    }
+
+    .color-material_redstone {
+      color: #971607;
+    }
+
+    .color-material_copper {
+      color: #b4684d;
+    }
+
+    .color-material_gold {
+      color: #deb12d;
+    }
+
+    .color-material_emerald {
+      color: #47a036;
+    }
+
+    .color-material_diamond {
+      color: #2cbaa8;
+    }
+
+    .color-material_lapis {
+      color: #21497b;
+    }
+
+    .color-material_amethyst {
+      color: #9a5cc6;
+    }
+
+    s {
+      text-decoration: none;
+    }
+
+    u {
+      text-decoration: none;
+    }
+  }
 }
 </style>
