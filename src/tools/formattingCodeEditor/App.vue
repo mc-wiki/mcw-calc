@@ -515,13 +515,13 @@ function JSONToFormatCode(json: JSONContent | undefined) {
 .fc-editor {
   strong {
     font-weight: normal;
-    text-shadow: 1.75px 0px;
-    letter-spacing: 1px;
+    text-shadow: 0.125rem 0px;
+    letter-spacing: 0.125rem;
   }
 
   u,
   s {
-    text-decoration-thickness: 2px;
+    text-decoration-thickness: 0.125rem;
   }
 
   em {
