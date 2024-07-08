@@ -225,33 +225,11 @@ const bedrockColors: CodeColor[] = [
 
 const edition = ref<'java' | 'bedrock'>('java')
 const activeColors = computed(() => (edition.value === 'java' ? javaColors : bedrockColors))
-function hexColorToCode(rgb: string) {
-  if (!rgb) {
-    return 'none'
-  }
-  let hex: string
-
-  if (rgb.startsWith('#')) {
-    hex = rgb.toUpperCase()
-  } else {
-    hex =
-      '#' +
-      rgb
-        .replace(/rgba?\(/, '')
-        .split(/\s*,\s*/)
-        .map((c) => parseInt(c).toString(16).padStart(2, '0').toUpperCase())
-        .join('')
-  }
-
-  const color = activeColors.value.find((c) => c.foregroundHex === hex)
-
-  return color ? color.code : 'none'
-}
 
 const colorItems = computed<MenuItemData[]>(() => [
   ...activeColors.value.map((color) => ({
     label: t(`formattingCodeEditor.color.${color.name}`),
-    value: color.code,
+    value: color.name,
     icon: `
       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20" viewBox="0 0 20 20">
         <rect width="20" height="20" fill="${color.foregroundHex}" stroke="${color.backgroundHex}" stroke-width="2" />
@@ -451,7 +429,7 @@ function JSONToFormatCode(json: JSONContent | undefined) {
     </cdx-tabs>
     <div style="display: flex; gap: 5px">
       <CdxSelect
-        :selected="hexColorToCode(editor?.getAttributes('textClass').colorClass)"
+        :selected="editor?.getAttributes('textClass').colorClass ?? 'none'"
         :menu-items="colorItems"
         @update:selected="updateColor"
         style="margin-bottom: 0.5rem"
