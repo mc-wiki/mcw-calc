@@ -37,11 +37,11 @@
   "formattingCodeEditor.format.underline": "Підкреслений",
   "formattingCodeEditor.format.strikethrough": "Закреслений",
   "formattingCodeEditor.format.obfuscated": "Обфускаційний",
-  "formattingCodeEditor.default.1": "{underline} to {bold} {italic} {obfuscated}!",
-  "formattingCodeEditor.default.1.underline": "Try",
-  "formattingCodeEditor.default.1.bold": "format",
-  "formattingCodeEditor.default.1.italic": "this",
-  "formattingCodeEditor.default.1.obfuscated": "text",
-  "formattingCodeEditor.default.2": "This is a {color} text",
-  "formattingCodeEditor.default.2.color": "colored"
+  "formattingCodeEditor.default.1": "{underline} {bold} {italic} {obfuscated}!",
+  "formattingCodeEditor.default.1.underline": "Спробуйте",
+  "formattingCodeEditor.default.1.bold": "відформатувати",
+  "formattingCodeEditor.default.1.italic": "цей",
+  "formattingCodeEditor.default.1.obfuscated": "текст",
+  "formattingCodeEditor.default.2": "Це {color} текст",
+  "formattingCodeEditor.default.2.color": "кольоровий"
 }
