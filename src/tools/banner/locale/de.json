@@ -12,7 +12,7 @@
   "banner.move_up": "Aufwärts bewegen",
   "banner.move_down": "Abwärts bewegen",
   "banner.warning": "Warnung",
-  "banner.limitWarning": "Die maximale Anzahl an Ebenen, die durch Handwerk oder durch Benutzen eines Webstuhls erreicht werden können, ist 6. Diese Ebene kann nur über Befehle erhalten werden.",
+  "banner.limitWarning": "Die maximale Anzahl an Ebenen, die durch Handwerk oder durch Benutzen eines Webstuhls erreicht werden können, beträgt 6. Diese Ebene kann nur über Befehle erhalten werden.",
   "banner.error": "Fehler",
   "banner.limitError": "Die maximale Anzahl an Ebenen, die über Befehle erhalten werden können, beträgt 16. Diese Ebene ist im Spiel unerreichbar und dient nur Demonstrationszwecken.",
   "banner.shareUrl": "https://minecraft.wiki/w/Calculators/Banner",
