@@ -157,11 +157,16 @@ const baseColor = ref<Color>('white')
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 
+const loadedImages: Record<string, HTMLImageElement> = {}
 function loadImage(src: string) {
+  if (loadedImages[src]) return Promise.resolve(loadedImages[src])
   return new Promise<HTMLImageElement>((resolve, reject) => {
     const img = new Image()
     img.crossOrigin = 'anonymous'
-    img.addEventListener('load', () => resolve(img))
+    img.addEventListener('load', () => {
+      loadedImages[src] = img
+      resolve(img)
+    })
     img.addEventListener('error', reject)
     img.src = src
   })
