@@ -16,7 +16,7 @@ import {
 } from '@wikimedia/codex-icons'
 import BannerPopup from './BannerPopup.vue'
 import { useLocalStorage } from '@vueuse/core'
-import { isEmbedded, parentUrl } from '@/utils/iframe'
+import { isEmbedded, parentUrl, postMessageParent } from '@/utils/iframe'
 
 const props = defineProps<{ icon: 'banner' | 'shield' }>()
 
@@ -260,13 +260,9 @@ function copyShareUrl() {
   searchParams.set('baseColor', baseColor.value)
   url.hash = '?' + searchParams.toString()
   if (isEmbedded()) {
-    window.parent.postMessage(
-      {
-        type: 'mcw-calc-clipboard',
-        data: { text: url.href },
-      },
-      '*',
-    )
+    postMessageParent('mcw-calc-clipboard', {
+      text: url.href,
+    })
   } else navigator.clipboard.writeText(url.href)
 }
 

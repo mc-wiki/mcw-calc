@@ -81,7 +81,7 @@ mw.hook('wikipage.content').add(() => {
 
     window.addEventListener('message', (event) => {
       if (event.origin !== new URL(iframe.src).origin) return
-      if (event.data.data.id !== id) return
+      if (event.data.id !== id) return
 
       if (event.data.type === 'mcw-calc-init-request-data') {
         event.source.postMessage(

@@ -5,18 +5,11 @@ import {
   type RawCreateParams,
   type SafeParseReturnType,
 } from 'zod'
+import { postMessageParent } from './iframe'
 
 export function getParams(): Promise<Record<string, string>> {
   return new Promise((resolve) => {
-    window.parent.postMessage(
-      {
-        type: 'mcw-calc-init-request-data',
-        data: {
-          id: new URLSearchParams(window.location.hash.substring(2)).get('id'),
-        },
-      },
-      '*',
-    )
+    postMessageParent('mcw-calc-init-request-data', {})
 
     const fromSearch = Object.fromEntries(new URLSearchParams(window.location.search))
     for (const [key, value] of Object.entries(fromSearch)) {

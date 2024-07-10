@@ -17,3 +17,8 @@ export function isEmbedded() {
     return true
   }
 }
+
+export function postMessageParent(type: string, data: any) {
+  const id = new URLSearchParams(window.location.hash.substring(2)).get('id')
+  window.parent.postMessage({ type, id, data }, '*')
+}
