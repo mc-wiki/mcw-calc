@@ -469,6 +469,6 @@ onMounted(() => {
   position: sticky;
   top: 0;
   background-color: @background-color-base;
-  z-index: @z-index-sticky;
+  z-index: @z-index-above-content;
 }
 </style>
