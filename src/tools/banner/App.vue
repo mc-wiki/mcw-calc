@@ -286,15 +286,15 @@ onMounted(() => {
 <template>
   <CalcField>
     <template #heading>{{ t('banner.title', { type: t(`banner.icon.${props.icon}`) }) }}</template>
-    <div class="flex flex-row flex-wrap items-stretch gap-3">
+    <div class="flex flex-col md:flex-row flex-wrap items-center md:items-stretch gap-3">
       <canvas
         ref="canvasRef"
         width="20"
         height="40"
-        class="w-[200px] h-[400px] pixel-image"
+        class="w-[100px] h-[200px] md:w-[200px] md:h-[400px] pixel-image"
       ></canvas>
 
-      <div class="overflow-auto flex-1 max-h-[400px]">
+      <div class="overflow-auto flex-1 max-h-[400px] max-w-full">
         <CdxTable
           class="min-h-full"
           :caption="t('banner.layers')"
@@ -444,6 +444,8 @@ onMounted(() => {
   </CalcField>
 </template>
 <style lang="less">
+@import (reference) '@wikimedia/codex-design-tokens/theme-wikimedia-ui.less';
+
 .cdx-select-vue__handle {
   min-width: 175px;
   display: flex;
@@ -455,7 +457,22 @@ onMounted(() => {
   }
 }
 
+.cdx-table {
+  display: flex;
+  flex-direction: column;
+  background-color: @background-color-base;
+}
+
 .cdx-table__table-wrapper {
+  flex: 1;
   overflow: visible;
+  overflow-x: auto;
+}
+
+.cdx-table__header {
+  position: sticky;
+  top: 0;
+  background-color: @background-color-base;
+  z-index: @z-index-sticky;
 }
 </style>
