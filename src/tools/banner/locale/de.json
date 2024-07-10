@@ -16,7 +16,7 @@
   "banner.error": "Fehler",
   "banner.limitError": "Die maximale Anzahl an Ebenen, die über Befehle erhalten werden können, beträgt 16. Diese Ebene ist im Spiel unerreichbar und dient nur Demonstrationszwecken.",
   "banner.shareUrl": "https://minecraft.wiki/w/Calculators/Banner",
-  "banner.copyShareUrl": "Copy shareable link",
+  "banner.copyShareUrl": "Teilbaren Link kopieren",
   "banner.color.white": "Weiß",
   "banner.color.lightGray": "Hellgrau",
   "banner.color.gray": "Grau",

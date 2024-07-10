@@ -6,7 +6,7 @@
   "maceDamage.densityLevel": "[[緻密]]附魔等級：",
   "maceDamage.critical": "暴擊",
   "maceDamage.critical.help": "重錘的下落攻擊通常會同時造成暴擊，但有些情況下可能因不滿足其他條件而未能觸發（例如仍在攻擊冷卻時間）。",
-  "maceDamage.cooldownReset": "Cooldown reset",
-  "maceDamage.cooldownReset.help": "Uncheck this box if the attack cooldown is not reset before the attack.",
+  "maceDamage.cooldownReset": "冷卻完成",
+  "maceDamage.cooldownReset.help": "若在攻擊冷卻時間攻擊，請取消選擇此項",
   "maceDamage.damage": "造成傷害："
 }

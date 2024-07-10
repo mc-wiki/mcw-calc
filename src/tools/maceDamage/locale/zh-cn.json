@@ -6,7 +6,7 @@
   "maceDamage.densityLevel": "[[致密]]魔咒等级：",
   "maceDamage.critical": "暴击",
   "maceDamage.critical.help": "重锤的下落攻击通常会同时造成暴击，但有些情况下可能因不满足其他条件而未能触发（例如仍在攻击冷却时间）。",
-  "maceDamage.cooldownReset": "Cooldown reset",
-  "maceDamage.cooldownReset.help": "Uncheck this box if the attack cooldown is not reset before the attack.",
+  "maceDamage.cooldownReset": "冷却完成",
+  "maceDamage.cooldownReset.help": "若在攻击冷却时间攻击，请取消选中此项",
   "maceDamage.damage": "造成伤害："
 }
