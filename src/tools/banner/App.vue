@@ -324,7 +324,7 @@ onMounted(() => {
                 {{ t('banner.limitWarning') }}
               </BannerPopup>
               <BannerPopup v-if="item + 1 > 16" :icon="cdxIconError" type="error">
-                {{ t('banner.limitWarning') }}
+                {{ t('banner.limitError') }}
               </BannerPopup>
 
               {{ item + 1 }}
