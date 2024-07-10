@@ -6,11 +6,14 @@ import { useI18n } from 'vue-i18n'
 import { colorMap, colorRgbMap } from '@/utils/color/java'
 import type { Color } from '@/utils/color'
 import {
+  cdxIconAlert,
   cdxIconDownTriangle,
+  cdxIconError,
   cdxIconTableAddRowAfter,
   cdxIconTrash,
   cdxIconUpTriangle,
 } from '@wikimedia/codex-icons'
+import BannerPopup from './BannerPopup.vue'
 
 const props = defineProps<{ icon: 'banner' | 'shield' }>()
 
@@ -128,11 +131,7 @@ function updatePatternIds() {
   })
 }
 function newLayer() {
-  activePatterns.push({
-    id: activePatterns.length,
-    name: 'mojang',
-    color: 'black',
-  })
+  activePatterns.push({ ...activePatterns[activePatterns.length - 1], id: activePatterns.length })
 }
 
 const patternMenuItems: MenuItemData[] = patternId.map((pattern) => ({
@@ -268,6 +267,23 @@ watch([activePatterns, baseColor, canvasRef], async ([patterns, color, canvas]) 
             </CdxButton>
           </template>
 
+          <template #item-id="{ item }: { item: number }">
+            <div class="flex items-center justify-end">
+              <BannerPopup
+                v-if="item + 1 > 6 && item + 1 <= 16"
+                :icon="cdxIconAlert"
+                type="warning"
+              >
+                {{ t('banner.limitWarning') }}
+              </BannerPopup>
+              <BannerPopup v-if="item + 1 > 16" :icon="cdxIconError" type="error">
+                {{ t('banner.limitWarning') }}
+              </BannerPopup>
+
+              {{ item + 1 }}
+            </div>
+          </template>
+
           <template #item-name="{ item, row }: { item: keyof typeof patternName; row: Pattern }">
             <CdxSelect
               class="long-handle"
@@ -312,7 +328,7 @@ watch([activePatterns, baseColor, canvasRef], async ([patterns, color, canvas]) 
             />
           </template>
 
-          <template #item-actions="{ item, row }: { item: Color; row: Pattern }">
+          <template #item-actions="{ row }: { row: Pattern }">
             <div class="flex">
               <div class="flex flex-col justify-evenly">
                 <CdxButton
