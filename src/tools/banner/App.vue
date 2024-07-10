@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import CalcField from '@/components/CalcField.vue'
-import { reactive, ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { CdxButton, CdxSelect, type MenuItemData, CdxTable, CdxIcon } from '@wikimedia/codex'
 import { useI18n } from 'vue-i18n'
 import { colorMap, colorRgbMap } from '@/utils/color/java'
@@ -9,11 +9,14 @@ import {
   cdxIconAlert,
   cdxIconDownTriangle,
   cdxIconError,
+  cdxIconLink,
   cdxIconTableAddRowAfter,
   cdxIconTrash,
   cdxIconUpTriangle,
 } from '@wikimedia/codex-icons'
 import BannerPopup from './BannerPopup.vue'
+import { useLocalStorage } from '@vueuse/core'
+import { isEmbedded, parentUrl } from '@/utils/iframe'
 
 const props = defineProps<{ icon: 'banner' | 'shield' }>()
 
@@ -115,7 +118,7 @@ const patternName = {
   guster: 'Guster',
 }
 
-const activePatterns = reactive<Pattern[]>([
+const activePatterns = useLocalStorage<Pattern[]>('mcwBannerActivePatterns', [
   {
     id: 0,
     name: 'mojang',
@@ -123,15 +126,18 @@ const activePatterns = reactive<Pattern[]>([
   },
 ])
 function updatePattern(index: number, pattern: keyof typeof patternName) {
-  activePatterns[index].name = pattern
+  activePatterns.value[index].name = pattern
 }
 function updatePatternIds() {
-  activePatterns.forEach((pattern, index) => {
+  activePatterns.value.forEach((pattern, index) => {
     pattern.id = index
   })
 }
 function newLayer() {
-  activePatterns.push({ ...activePatterns[activePatterns.length - 1], id: activePatterns.length })
+  activePatterns.value.push({
+    ...activePatterns.value[activePatterns.value.length - 1],
+    id: activePatterns.value.length,
+  })
 }
 
 const patternMenuItems: MenuItemData[] = patternId.map((pattern) => ({
@@ -150,10 +156,10 @@ const colorMenuItems: MenuItemData[] = Object.entries(colorMap).map((color) => (
   `,
 }))
 function updateColor(index: number, color: Color) {
-  activePatterns[index].color = color
+  activePatterns.value[index].color = color
 }
 
-const baseColor = ref<Color>('white')
+const baseColor = useLocalStorage<Color>('mcwBannerBaseColor', 'white')
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 
@@ -188,57 +194,93 @@ function imageToImageData(image: HTMLImageElement) {
   return context.getImageData(0, 0, 20, 40)
 }
 
-watch([activePatterns, baseColor, canvasRef], async ([patterns, color, canvas]) => {
-  const baseColor = colorRgbMap[color]
-  if (!canvas) return
-  const ctx = canvas.getContext('2d', {
-    willReadFrequently: true,
-  })
-  if (!ctx) return
+watch(
+  [activePatterns, baseColor, canvasRef],
+  async ([patterns, color, canvas]) => {
+    const baseColor = colorRgbMap[color]
+    if (!canvas) return
+    const ctx = canvas.getContext('2d', {
+      willReadFrequently: true,
+    })
+    if (!ctx) return
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-  const images = await promiseAllObject({
-    base: loadImage(
-      'https://minecraft.wiki/images/Banner_base_(texture)_JE1_BE1.png?format=original',
-    ),
-    ...Object.fromEntries(
-      patterns.map((pattern) => [
-        pattern.name,
-        loadImage(
-          `https://minecraft.wiki/images/Banner_${pattern.name}_(texture)_JE1_BE1.png?format=original`,
-        ),
-      ]),
-    ),
-  })
+    const images = await promiseAllObject({
+      base: loadImage(
+        'https://minecraft.wiki/images/Banner_base_(texture)_JE1_BE1.png?format=original',
+      ),
+      ...Object.fromEntries(
+        patterns.map((pattern) => [
+          pattern.name,
+          loadImage(
+            `https://minecraft.wiki/images/Banner_${pattern.name}_(texture)_JE1_BE1.png?format=original`,
+          ),
+        ]),
+      ),
+    })
 
-  ctx.drawImage(images.base, 1, 1, 20, 40, 0, 0, 20, 40)
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
-  const data = imageData.data
-  for (let i = 0; i < data.length; i += 4) {
-    data[i] = (data[i] * baseColor[0]) / 255
-    data[i + 1] = (data[i + 1] * baseColor[1]) / 255
-    data[i + 2] = (data[i + 2] * baseColor[2]) / 255
-  }
-
-  for (const pattern of patterns) {
-    const patternImage = images[pattern.name]
-    const patternData = imageToImageData(patternImage)
-    const patternColor = colorRgbMap[pattern.color]
-    const patternDataArray = patternData.data
-    for (let i = 0; i < patternDataArray.length; i += 4) {
-      const red2 = (patternColor[0] / 255) * (patternDataArray[i] / 255)
-      const green2 = (patternColor[1] / 255) * (patternDataArray[i + 1] / 255)
-      const blue2 = (patternColor[2] / 255) * (patternDataArray[i + 2] / 255)
-      const alpha2 = patternDataArray[i + 3] / 255
-
-      data[i] = (red2 * alpha2 + (data[i] / 255) * (1 - alpha2)) * 255
-      data[i + 1] = (green2 * alpha2 + (data[i + 1] / 255) * (1 - alpha2)) * 255
-      data[i + 2] = (blue2 * alpha2 + (data[i + 2] / 255) * (1 - alpha2)) * 255
+    ctx.drawImage(images.base, 1, 1, 20, 40, 0, 0, 20, 40)
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+    const data = imageData.data
+    for (let i = 0; i < data.length; i += 4) {
+      data[i] = (data[i] * baseColor[0]) / 255
+      data[i + 1] = (data[i + 1] * baseColor[1]) / 255
+      data[i + 2] = (data[i + 2] * baseColor[2]) / 255
     }
-  }
 
-  ctx.putImageData(imageData, 0, 0)
+    for (const pattern of patterns) {
+      const patternImage = images[pattern.name]
+      const patternData = imageToImageData(patternImage)
+      const patternColor = colorRgbMap[pattern.color]
+      const patternDataArray = patternData.data
+      for (let i = 0; i < patternDataArray.length; i += 4) {
+        const red2 = (patternColor[0] / 255) * (patternDataArray[i] / 255)
+        const green2 = (patternColor[1] / 255) * (patternDataArray[i + 1] / 255)
+        const blue2 = (patternColor[2] / 255) * (patternDataArray[i + 2] / 255)
+        const alpha2 = patternDataArray[i + 3] / 255
+
+        data[i] = (red2 * alpha2 + (data[i] / 255) * (1 - alpha2)) * 255
+        data[i + 1] = (green2 * alpha2 + (data[i + 1] / 255) * (1 - alpha2)) * 255
+        data[i + 2] = (blue2 * alpha2 + (data[i + 2] / 255) * (1 - alpha2)) * 255
+      }
+    }
+
+    ctx.putImageData(imageData, 0, 0)
+  },
+  {
+    deep: true,
+  },
+)
+
+function copyShareUrl() {
+  const url = new URL(t('banner.shareUrl'))
+  const searchParams = new URLSearchParams()
+  searchParams.set('activePatterns', JSON.stringify(activePatterns.value))
+  searchParams.set('baseColor', baseColor.value)
+  url.hash = '?' + searchParams.toString()
+  if (isEmbedded()) {
+    window.parent.postMessage(
+      {
+        type: 'mcw-calc-clipboard',
+        data: { text: url.href },
+      },
+      '*',
+    )
+  } else navigator.clipboard.writeText(url.href)
+}
+
+onMounted(() => {
+  const url = parentUrl()
+  const params = new URLSearchParams(url.hash.slice(2))
+  const activePatternsParam = params.get('activePatterns')
+  if (activePatternsParam) {
+    activePatterns.value = JSON.parse(activePatternsParam)
+  }
+  const baseColorParam = params.get('baseColor')
+  if (baseColorParam) {
+    baseColor.value = baseColorParam as Color
+  }
 })
 </script>
 <template>
@@ -391,7 +433,14 @@ watch([activePatterns, baseColor, canvasRef], async ([patterns, color, canvas]) 
       </div>
     </div>
 
-    <CdxSelect $selected="baseColor" class="w-[200px] mt-3" :menu-items="colorMenuItems" />
+    <div class="flex flex-row items-stretch gap-3 mt-3">
+      <CdxSelect $selected="baseColor" class="w-[200px]" :menu-items="colorMenuItems" />
+
+      <CdxButton @click="copyShareUrl">
+        <CdxIcon :icon="cdxIconLink" />
+        {{ t('banner.copyShareUrl') }}
+      </CdxButton>
+    </div>
   </CalcField>
 </template>
 <style lang="less">

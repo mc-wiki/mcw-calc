@@ -20,6 +20,9 @@
   "banner.error": "Error",
   "banner.limitError": "The maximum number of layer obtainable with a command is 16. This layer is unobtainable in the game and is for demonstration purposes only.",
 
+  "banner.shareUrl": "https://minecraft.wiki/w/Calculators/Banner",
+  "banner.copyShareUrl": "Copy shareable link",
+
   "banner.color.white": "White",
   "banner.color.lightGray": "Light Gray",
   "banner.color.gray": "Gray",

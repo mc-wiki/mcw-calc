@@ -96,6 +96,8 @@ mw.hook('wikipage.content').add(() => {
         )
       } else if (event.data.type === 'mcw-calc-height-change') {
         iframe.style.height = `${event.data.data.height}px`
+      } else if (event.data.type === 'mcw-calc-clipboard') {
+        navigator.clipboard.writeText(event.data.data.text)
       }
     })
   })
