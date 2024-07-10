@@ -14,7 +14,7 @@
   "banner.warning": "Попередження",
   "banner.limitWarning": "Максимальна кількість шарів, які можна отримати за допомогою майстрування або використання ткацького верстата, становить 6. Цей шар можна отримати лише за допомогою команд.",
   "banner.error": "Помилка",
-  "banner.limitError": "The maximum number of layer obtainable with a command is 16. This layer is unobtainable in the game and is for demonstration purposes only.",
+  "banner.limitError": "Максимальна кількість шарів, які можна отримати за допомогою команд, становить 16. Цей шар недоступний у грі та призначений лише для демонстрації.",
   "banner.shareUrl": "https://uk.minecraft.wiki/w/Калькулятори/Стяг",
   "banner.copyShareUrl": "Скопіювати поширюване посилання",
   "banner.color.white": "Білий",
