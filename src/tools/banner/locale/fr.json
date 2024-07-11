@@ -76,5 +76,7 @@
   "banner.pattern.globe": "Globe",
   "banner.pattern.piglin": "Groin",
   "banner.pattern.flow": "Tourbillon",
-  "banner.pattern.guster": "Rafaleur"
+  "banner.pattern.guster": "Rafaleur",
+  "banner.requiredPattern": "This pattern can only be applied with the use of banner pattern items on a loom.",
+  "banner.requiredPatternBedrock": "In Bedrock Edition, this pattern can only be applied with the use of banner pattern items on a loom."
 }

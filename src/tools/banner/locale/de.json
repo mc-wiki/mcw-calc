@@ -3,7 +3,7 @@
   "banner.icon.banner": "Banner",
   "banner.icon.shield": "Schild",
   "banner.icon.banner.capital": "Banner",
-  "banner.icon.shield.capital": "Shield",
+  "banner.icon.shield.capital": "Schild",
   "banner.layers": "Musterebenen",
   "banner.layer": "Ebene",
   "banner.pattern": "Muster",
@@ -76,5 +76,7 @@
   "banner.pattern.globe": "Globus",
   "banner.pattern.piglin": "Schnauze",
   "banner.pattern.flow": "Fluss",
-  "banner.pattern.guster": "Windstoßer"
+  "banner.pattern.guster": "Windstoßer",
+  "banner.requiredPattern": "This pattern can only be applied with the use of banner pattern items on a loom.",
+  "banner.requiredPatternBedrock": "In Bedrock Edition, this pattern can only be applied with the use of banner pattern items on a loom."
 }
