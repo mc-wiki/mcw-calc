@@ -24,6 +24,7 @@ import {
 import BannerPopup from './BannerPopup.vue'
 import { useLocalStorage } from '@vueuse/core'
 import { isEmbedded, parentUrl, postMessageParent } from '@/utils/iframe'
+import { theme } from '@/utils/theme'
 
 const props = defineProps<{ icon: 'banner' | 'shield' }>()
 
@@ -127,6 +128,19 @@ const patternName = {
   guster: 'Guster',
 }
 
+const patternItemRequired: Record<string, 'bedrock' | 'both'> = {
+  flower: 'both',
+  creeper: 'both',
+  skull: 'both',
+  mojang: 'both',
+  globe: 'both',
+  piglin: 'both',
+  flow: 'both',
+  guster: 'both',
+  bricks: 'bedrock',
+  curly_border: 'bedrock',
+}
+
 const activePatterns = useLocalStorage<Pattern[]>('mcwBannerActivePatterns', [
   {
     id: 0,
@@ -169,7 +183,7 @@ const colorMenuItems: MenuItemData[] = Object.entries(colorMap).map((color) => (
   value: color[0],
   label: t(`banner.color.${color[0]}`),
   icon: `
-    <rect width="20" height="20" fill="#${color[1].toString(16)}" stroke="#ffffff" stroke-width="2" />
+    <rect width="20" height="20" fill="#${color[1].toString(16)}" stroke="${theme.value === 'dark' ? '#ffffff' : '#000000'}" stroke-width="2" />
   `,
 }))
 function updateColor(index: number, color: Color) {
@@ -376,16 +390,43 @@ onMounted(() => {
                 "
                 :selected="item"
               >
-                <template #menu-item="{ menuItem }">
+                <template #menu-item="{ menuItem }: { menuItem: MenuItemData }">
                   <div class="flex items-center">
                     <img
                       class="pixel-image -m-2"
                       width="45"
                       height="45"
                       loading="lazy"
-                      :src="menuItem.thumbnail.url"
+                      :src="menuItem.thumbnail?.url"
                     />
                     <span>{{ menuItem.label }}</span>
+
+                    <div
+                      v-if="patternItemRequired[menuItem.value as string]"
+                      class="flex items-center relative"
+                      v-tooltip="
+                        patternItemRequired[menuItem.value as string] === 'bedrock'
+                          ? t('banner.requiredPatternBedrock')
+                          : t('banner.requiredPattern')
+                      "
+                    >
+                      <img
+                        class="pixel-image ml-2"
+                        width="24"
+                        height="24"
+                        loading="lazy"
+                        src="https://minecraft.wiki/images/ItemSprite_banner-pattern.png"
+                      />
+
+                      <img
+                        v-if="patternItemRequired[menuItem.value as string] === 'bedrock'"
+                        class="pixel-image absolute top-0 -right-1"
+                        width="15"
+                        height="15"
+                        loading="lazy"
+                        src="https://minecraft.wiki/images/Invicon_Bedrock.png"
+                      />
+                    </div>
                   </div>
                 </template>
                 <template #label="{ selectedMenuItem }">
@@ -398,6 +439,33 @@ onMounted(() => {
                       :src="selectedMenuItem.thumbnail.url"
                     />
                     <span>{{ selectedMenuItem.label }}</span>
+
+                    <div
+                      v-if="patternItemRequired[selectedMenuItem.value as string]"
+                      class="flex items-center relative"
+                      v-tooltip="
+                        patternItemRequired[selectedMenuItem.value as string] === 'bedrock'
+                          ? t('banner.requiredPatternBedrock')
+                          : t('banner.requiredPattern')
+                      "
+                    >
+                      <img
+                        class="pixel-image ml-2"
+                        width="24"
+                        height="24"
+                        loading="lazy"
+                        src="https://minecraft.wiki/images/ItemSprite_banner-pattern.png"
+                      />
+
+                      <img
+                        v-if="patternItemRequired[selectedMenuItem.value as string] === 'bedrock'"
+                        class="pixel-image absolute top-0 -right-1"
+                        width="15"
+                        height="15"
+                        loading="lazy"
+                        src="https://minecraft.wiki/images/Invicon_Bedrock.png"
+                      />
+                    </div>
                   </div>
                 </template>
               </CdxSelect>
