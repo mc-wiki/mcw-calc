@@ -134,10 +134,18 @@ function updatePatternIds() {
   })
 }
 function newLayer() {
-  activePatterns.value.push({
-    ...activePatterns.value[activePatterns.value.length - 1],
-    id: activePatterns.value.length,
-  })
+  if (activePatterns.value.length === 0) {
+    activePatterns.value.push({
+      id: 0,
+      name: 'mojang',
+      color: 'black',
+    })
+  } else {
+    activePatterns.value.push({
+      ...activePatterns.value[activePatterns.value.length - 1],
+      id: activePatterns.value.length,
+    })
+  }
 }
 
 const patternMenuItems: MenuItemData[] = patternId.map((pattern) => ({
@@ -296,15 +304,19 @@ onMounted(() => {
           :caption="t('banner.layers')"
           use-row-headers
           :data="activePatterns"
-          :columns="[
-            { id: 'id', label: t('banner.layer'), textAlign: 'number' },
-            { id: 'name', label: t('banner.pattern') },
-            { id: 'color', label: t('banner.color') },
-            { id: 'actions', label: t('banner.actions') },
-          ]"
+          :columns="
+            activePatterns.length === 0
+              ? []
+              : [
+                  { id: 'id', label: t('banner.layer'), textAlign: 'number' },
+                  { id: 'name', label: t('banner.pattern') },
+                  { id: 'color', label: t('banner.color') },
+                  { id: 'actions', label: t('banner.actions') },
+                ]
+          "
         >
           <template #header>
-            <CdxButton @click="newLayer" variant="primary">
+            <CdxButton @click="newLayer">
               <CdxIcon :icon="cdxIconTableAddRowAfter" />
               {{ t('banner.new') }}
             </CdxButton>
@@ -424,6 +436,13 @@ onMounted(() => {
                 <CdxIcon :icon="cdxIconTrash" />
               </CdxButton>
             </div>
+          </template>
+
+          <template #empty-state>
+            <CdxButton @click="newLayer" action="progressive" weight="primary" size="large">
+              <CdxIcon :icon="cdxIconTableAddRowAfter" />
+              {{ t('banner.new') }}
+            </CdxButton>
           </template>
         </CdxTable>
       </div>

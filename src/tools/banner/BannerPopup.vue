@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { CdxButton, CdxIcon } from '@wikimedia/codex'
-import { cdxIconClose } from '@wikimedia/codex-icons'
 import { flip, offset, shift, useFloating } from '@floating-ui/vue'
 import { onClickOutside } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
@@ -47,6 +46,7 @@ onClickOutside(popup, () => {
       max-width: 300px;
       text-align: left;
     "
+    class="popup"
     ref="popup"
     :style="{ ...popupStyles, display: popupOpen ? 'block' : 'none' }"
   >
@@ -62,5 +62,9 @@ onClickOutside(popup, () => {
 
 .cdx-icon.error-icon {
   color: @color-error;
+}
+
+.popup {
+  z-index: @z-index-tooltip;
 }
 </style>
