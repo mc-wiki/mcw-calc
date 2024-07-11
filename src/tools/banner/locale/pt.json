@@ -2,6 +2,8 @@
   "banner.title": "Prévia de {type}",
   "banner.icon.banner": "estandarte",
   "banner.icon.shield": "escudo",
+  "banner.icon.banner.capital": "Banner",
+  "banner.icon.shield.capital": "Shield",
   "banner.layers": "Camadas de figuras",
   "banner.layer": "Camada",
   "banner.pattern": "Figura",

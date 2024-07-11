@@ -2,6 +2,8 @@
   "banner.title": "Попередній перегляд {type}",
   "banner.icon.banner": "стяга",
   "banner.icon.shield": "щита",
+  "banner.icon.banner.capital": "Banner",
+  "banner.icon.shield.capital": "Shield",
   "banner.layers": "Шари візерунка",
   "banner.layer": "Шар",
   "banner.pattern": "Візерунок",

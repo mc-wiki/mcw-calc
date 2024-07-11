@@ -2,6 +2,8 @@
   "banner.title": "{type}vorschau",
   "banner.icon.banner": "Banner",
   "banner.icon.shield": "Schild",
+  "banner.icon.banner.capital": "Banner",
+  "banner.icon.shield.capital": "Shield",
   "banner.layers": "Musterebenen",
   "banner.layer": "Ebene",
   "banner.pattern": "Muster",

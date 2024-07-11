@@ -2,6 +2,8 @@
   "banner.title": "Aperçu {type}",
   "banner.icon.banner": "bannière",
   "banner.icon.shield": "bouclier",
+  "banner.icon.banner.capital": "Banner",
+  "banner.icon.shield.capital": "Shield",
   "banner.layers": "Couches de motif",
   "banner.layer": "Couche",
   "banner.pattern": "Motif",
