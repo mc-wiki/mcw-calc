@@ -66,12 +66,12 @@ mw.hook('wikipage.content').add(() => {
         new URL(iframe.src).origin
       )
 
-      document.querySelector('#pt-dm-toggle > a').addEventListener('click', () => {
+      mw.hook('wgl.themeChanged').add('click', (theme) => {
         iframe.contentWindow.postMessage(
           {
             type: 'mcw-calc-theme-change',
             data: {
-              theme: document.body.classList.contains('wgl-theme-light') ? 'dark' : 'light',
+              theme,
             },
           },
           new URL(iframe.src).origin
