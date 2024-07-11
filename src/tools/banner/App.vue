@@ -345,7 +345,7 @@ onMounted(() => {
         <CdxSelect $selected="baseColor" :menu-items="colorMenuItems" />
       </div>
 
-      <div class="flex flex-col flex-1 gap-3">
+      <div class="overflow-x-auto w-full flex flex-col flex-1 gap-3">
         <div class="overflow-auto flex-1 max-h-[400px] max-w-full">
           <CdxTable
             class="min-h-full"
