@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import CalcField from '@/components/CalcField.vue'
 import { onMounted, ref, watch } from 'vue'
-import { CdxButton, CdxSelect, type MenuItemData, CdxTable, CdxIcon } from '@wikimedia/codex'
+import {
+  CdxButton,
+  CdxSelect,
+  type MenuItemData,
+  CdxTable,
+  CdxIcon,
+  CdxToggleButtonGroup,
+} from '@wikimedia/codex'
 import { useI18n } from 'vue-i18n'
 import { colorMap, colorRgbMap } from '@/utils/color/java'
 import type { Color } from '@/utils/color'
@@ -21,6 +28,8 @@ import { isEmbedded, parentUrl, postMessageParent } from '@/utils/iframe'
 const props = defineProps<{ icon: 'banner' | 'shield' }>()
 
 const { t } = useI18n()
+
+const type = ref<'banner' | 'shield'>('banner')
 
 interface Pattern {
   id: number
@@ -160,7 +169,7 @@ const colorMenuItems: MenuItemData[] = Object.entries(colorMap).map((color) => (
   value: color[0],
   label: t(`banner.color.${color[0]}`),
   icon: `
-      <rect width="20" height="20" fill="#${color[1].toString(16)}" stroke="#ffffff" stroke-width="2" />
+    <rect width="20" height="20" fill="#${color[1].toString(16)}" stroke="#ffffff" stroke-width="2" />
   `,
 }))
 function updateColor(index: number, color: Color) {
@@ -191,20 +200,20 @@ async function promiseAllObject<T>(obj: Record<string, Promise<T>>) {
   return Object.fromEntries(Object.keys(obj).map((key, i) => [key, values[i]]))
 }
 
-function imageToImageData(image: HTMLImageElement) {
+function imageToImageData(image: HTMLImageElement, width: number, height: number) {
   const context = Object.assign(document.createElement('canvas'), {
-    width: 20,
-    height: 40,
+    width,
+    height,
   }).getContext('2d')
   if (!context) throw new Error('Could not create canvas context')
   context.imageSmoothingEnabled = false
-  context.drawImage(image, 1, 1, 20, 40, 0, 0, 20, 40)
-  return context.getImageData(0, 0, 20, 40)
+  context.drawImage(image, 1, 1, width, height, 0, 0, width, height)
+  return context.getImageData(0, 0, width, height)
 }
 
 watch(
-  [activePatterns, baseColor, canvasRef],
-  async ([patterns, color, canvas]) => {
+  [activePatterns, baseColor, type, canvasRef],
+  async ([patterns, color, type, canvas]) => {
     const baseColor = colorRgbMap[color]
     if (!canvas) return
     const ctx = canvas.getContext('2d', {
@@ -216,19 +225,22 @@ watch(
 
     const images = await promiseAllObject({
       base: loadImage(
-        'https://minecraft.wiki/images/Banner_base_(texture)_JE1_BE1.png?format=original',
+        type === 'banner'
+          ? 'https://minecraft.wiki/images/Banner_base_(texture)_JE1_BE1.png?format=original'
+          : 'https://minecraft.wiki/images/Shield_base_(texture)_JE2_BE1.png?format=original',
       ),
       ...Object.fromEntries(
         patterns.map((pattern) => [
           pattern.name,
           loadImage(
-            `https://minecraft.wiki/images/Banner_${pattern.name}_(texture)_JE1_BE1.png?format=original`,
+            `https://minecraft.wiki/images/${type === 'banner' ? 'Banner' : 'Shield'}_${pattern.name}_(texture)_JE1_BE1.png?format=original`,
           ),
         ]),
       ),
     })
 
-    ctx.drawImage(images.base, 1, 1, 20, 40, 0, 0, 20, 40)
+    if (type === 'banner') ctx.drawImage(images.base, 1, 1, 20, 40, 0, 0, 20, 40)
+    else ctx.drawImage(images.base, 1, 1, 12, 22, 0, 0, 12, 22)
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
     const data = imageData.data
     for (let i = 0; i < data.length; i += 4) {
@@ -239,7 +251,10 @@ watch(
 
     for (const pattern of patterns) {
       const patternImage = images[pattern.name]
-      const patternData = imageToImageData(patternImage)
+      const patternData =
+        type === 'banner'
+          ? imageToImageData(patternImage, 20, 40)
+          : imageToImageData(patternImage, 12, 22)
       const patternColor = colorRgbMap[pattern.color]
       const patternDataArray = patternData.data
       for (let i = 0; i < patternDataArray.length; i += 4) {
@@ -293,9 +308,9 @@ onMounted(() => {
     <div class="flex flex-col md:flex-row flex-wrap items-center md:items-stretch gap-3">
       <canvas
         ref="canvasRef"
-        width="20"
-        height="40"
-        class="w-[100px] h-[200px] md:w-[200px] md:h-[400px] pixel-image"
+        :width="type === 'banner' ? 20 : 12"
+        :height="type === 'banner' ? 40 : 22"
+        class="h-[200px] md:h-[400px] pixel-image"
       ></canvas>
 
       <div class="overflow-auto flex-1 max-h-[400px] max-w-full">
@@ -455,6 +470,15 @@ onMounted(() => {
         <CdxIcon :icon="cdxIconLink" />
         {{ t('banner.copyShareUrl') }}
       </CdxButton>
+
+      <CdxToggleButtonGroup
+        v-model="type"
+        class="flex"
+        :buttons="[
+          { value: 'banner', label: t('banner.icon.banner.capital') },
+          { value: 'shield', label: t('banner.icon.shield.capital') },
+        ]"
+      />
     </div>
   </CalcField>
 </template>

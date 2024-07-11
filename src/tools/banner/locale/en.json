@@ -4,6 +4,9 @@
   "banner.icon.banner": "banner",
   "banner.icon.shield": "shield",
 
+  "banner.icon.banner.capital": "Banner",
+  "banner.icon.shield.capital": "Shield",
+
   "banner.layers": "Pattern layers",
   "banner.layer": "Layer",
   "banner.pattern": "Pattern",
