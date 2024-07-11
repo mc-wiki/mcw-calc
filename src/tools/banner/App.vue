@@ -258,6 +258,10 @@ watch(
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
     const data = imageData.data
     for (let i = 0; i < data.length; i += 4) {
+      if (type === 'shield') {
+        // skip at first row and first column
+        if (i < 48 || i % 48 < 4) continue
+      }
       data[i] = (data[i] * baseColor[0]) / 255
       data[i + 1] = (data[i + 1] * baseColor[1]) / 255
       data[i + 2] = (data[i + 2] * baseColor[2]) / 255
