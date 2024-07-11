@@ -1,6 +1,6 @@
 {
   "blockDistribution.xAxis": "Уровень по оси Y",
-  "blockDistribution.yAxis": "↑ Number of X found among 100,000 blocks",
+  "blockDistribution.yAxis": "↑ Количество данных блоков из 100 000",
   "blockDistribution.xInTenThousand": "{num} из 100 000",
   "blockDistribution.title": "Распределение данных блоков в [[{version} (Java Edition)]]",
   "blockDistribution.total": "Итого",
