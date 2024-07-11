@@ -2,8 +2,8 @@
   "banner.title": "Prévia de {type}",
   "banner.icon.banner": "estandarte",
   "banner.icon.shield": "escudo",
-  "banner.icon.banner.capital": "Banner",
-  "banner.icon.shield.capital": "Shield",
+  "banner.icon.banner.capital": "Estandarte",
+  "banner.icon.shield.capital": "Escudo",
   "banner.layers": "Camadas de figuras",
   "banner.layer": "Camada",
   "banner.pattern": "Figura",
@@ -77,6 +77,6 @@
   "banner.pattern.piglin": "Focinho",
   "banner.pattern.flow": "Espiral",
   "banner.pattern.guster": "Vórtice",
-  "banner.requiredPattern": "This pattern can only be applied with the use of banner pattern items on a loom.",
-  "banner.requiredPatternBedrock": "In Bedrock Edition, this pattern can only be applied with the use of banner pattern items on a loom."
+  "banner.requiredPattern": "Esta figura só pode ser aplicada com uma figura para estandarte (item) num tear.",
+  "banner.requiredPatternBedrock": "Na Edição Bedrock, esta figura só pode ser aplicada com uma figura para estandarte (item) num tear."
 }

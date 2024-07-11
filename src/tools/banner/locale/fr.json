@@ -2,8 +2,8 @@
   "banner.title": "Aperçu {type}",
   "banner.icon.banner": "bannière",
   "banner.icon.shield": "bouclier",
-  "banner.icon.banner.capital": "Banner",
-  "banner.icon.shield.capital": "Shield",
+  "banner.icon.banner.capital": "Bannière",
+  "banner.icon.shield.capital": "Bouclier",
   "banner.layers": "Couches de motif",
   "banner.layer": "Couche",
   "banner.pattern": "Motif",
@@ -77,6 +77,6 @@
   "banner.pattern.piglin": "Groin",
   "banner.pattern.flow": "Tourbillon",
   "banner.pattern.guster": "Rafaleur",
-  "banner.requiredPattern": "This pattern can only be applied with the use of banner pattern items on a loom.",
-  "banner.requiredPatternBedrock": "In Bedrock Edition, this pattern can only be applied with the use of banner pattern items on a loom."
+  "banner.requiredPattern": "Ce motif ne peut être appliqué qu'avec l'utilisation d'un motif de bannière sur un métier à tisser.",
+  "banner.requiredPatternBedrock": "Dans l'édition Bedrock, ce motif ne peut être appliqué qu'avec l'utilisation d'un motif de bannière sur un métier à tisser."
 }

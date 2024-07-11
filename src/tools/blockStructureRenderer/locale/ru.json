@@ -22,7 +22,7 @@
   "blockStructureRenderer.cameraSetting.wasd": "Управление клавиатурой и мышью",
   "blockStructureRenderer.cameraSetting.manual": "Настроить вручную",
   "blockStructureRenderer.cameraSetting.position": "Положение камеры",
-  "blockStructureRenderer.cameraSetting.pose": "Camera pose",
+  "blockStructureRenderer.cameraSetting.pose": "Направление взгляда",
   "blockStructureRenderer.cameraSetting.confirm": "Подтвердить",
   "blockStructureRenderer.backgroundColor": "Цвет фона",
   "blockStructureRenderer.backgroundAlpha": "Непрозрачность",
