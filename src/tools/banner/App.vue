@@ -306,184 +306,191 @@ onMounted(() => {
   <CalcField>
     <template #heading>{{ t('banner.title', { type: t(`banner.icon.${props.icon}`) }) }}</template>
     <div class="flex flex-col md:flex-row flex-wrap items-center md:items-stretch gap-3">
-      <canvas
-        ref="canvasRef"
-        :width="type === 'banner' ? 20 : 12"
-        :height="type === 'banner' ? 40 : 22"
-        class="h-[200px] md:h-[400px] pixel-image"
-      ></canvas>
+      <div class="flex flex-col gap-3 items-center md:items-stretch">
+        <canvas
+          ref="canvasRef"
+          :width="type === 'banner' ? 20 : 12"
+          :height="type === 'banner' ? 40 : 22"
+          class="h-[200px] md:h-[400px] pixel-image"
+        ></canvas>
 
-      <div class="overflow-auto flex-1 max-h-[400px] max-w-full">
-        <CdxTable
-          class="min-h-full"
-          :caption="t('banner.layers')"
-          use-row-headers
-          :data="activePatterns"
-          :columns="
-            activePatterns.length === 0
-              ? []
-              : [
-                  { id: 'id', label: t('banner.layer'), textAlign: 'number' },
-                  { id: 'name', label: t('banner.pattern') },
-                  { id: 'color', label: t('banner.color') },
-                  { id: 'actions', label: t('banner.actions') },
-                ]
-          "
-        >
-          <template #header>
-            <CdxButton @click="newLayer">
-              <CdxIcon :icon="cdxIconTableAddRowAfter" />
-              {{ t('banner.new') }}
-            </CdxButton>
-          </template>
+        <CdxToggleButtonGroup
+          v-model="type"
+          class="flex grow-items w-full"
+          :buttons="[
+            { value: 'banner', label: t('banner.icon.banner.capital') },
+            { value: 'shield', label: t('banner.icon.shield.capital') },
+          ]"
+        />
+        <CdxSelect $selected="baseColor" :menu-items="colorMenuItems" />
+      </div>
 
-          <template #item-id="{ item }: { item: number }">
-            <div class="flex items-center justify-end">
-              <BannerPopup
-                v-if="item + 1 > 6 && item + 1 <= 16"
-                :icon="cdxIconAlert"
-                type="warning"
+      <div class="flex flex-col flex-1 gap-3">
+        <div class="overflow-auto flex-1 max-h-[400px] max-w-full">
+          <CdxTable
+            class="min-h-full"
+            :caption="t('banner.layers')"
+            use-row-headers
+            :data="activePatterns"
+            :columns="
+              activePatterns.length === 0
+                ? []
+                : [
+                    { id: 'id', label: t('banner.layer'), textAlign: 'number' },
+                    { id: 'name', label: t('banner.pattern') },
+                    { id: 'color', label: t('banner.color') },
+                    { id: 'actions', label: t('banner.actions') },
+                  ]
+            "
+          >
+            <template #header>
+              <CdxButton @click="newLayer">
+                <CdxIcon :icon="cdxIconTableAddRowAfter" />
+                {{ t('banner.new') }}
+              </CdxButton>
+            </template>
+
+            <template #item-id="{ item }: { item: number }">
+              <div class="flex items-center justify-end">
+                <BannerPopup
+                  v-if="item + 1 > 6 && item + 1 <= 16"
+                  :icon="cdxIconAlert"
+                  type="warning"
+                >
+                  {{ t('banner.limitWarning') }}
+                </BannerPopup>
+                <BannerPopup v-if="item + 1 > 16" :icon="cdxIconError" type="error">
+                  {{ t('banner.limitError') }}
+                </BannerPopup>
+
+                {{ item + 1 }}
+              </div>
+            </template>
+
+            <template #item-name="{ item, row }: { item: keyof typeof patternName; row: Pattern }">
+              <CdxSelect
+                class="long-handle"
+                :menu-items="patternMenuItems"
+                @update:selected="
+                  (selected: keyof typeof patternName) => updatePattern(row.id, selected)
+                "
+                :selected="item"
               >
-                {{ t('banner.limitWarning') }}
-              </BannerPopup>
-              <BannerPopup v-if="item + 1 > 16" :icon="cdxIconError" type="error">
-                {{ t('banner.limitError') }}
-              </BannerPopup>
+                <template #menu-item="{ menuItem }">
+                  <div class="flex items-center">
+                    <img
+                      class="pixel-image -m-2"
+                      width="45"
+                      height="45"
+                      loading="lazy"
+                      :src="menuItem.thumbnail.url"
+                    />
+                    <span>{{ menuItem.label }}</span>
+                  </div>
+                </template>
+                <template #label="{ selectedMenuItem }">
+                  <div class="flex items-center">
+                    <img
+                      class="pixel-image -m-2 -ml-3"
+                      width="40"
+                      height="40"
+                      loading="lazy"
+                      :src="selectedMenuItem.thumbnail.url"
+                    />
+                    <span>{{ selectedMenuItem.label }}</span>
+                  </div>
+                </template>
+              </CdxSelect>
+            </template>
 
-              {{ item + 1 }}
-            </div>
-          </template>
+            <template #item-color="{ item, row }: { item: Color; row: Pattern }">
+              <CdxSelect
+                :menu-items="colorMenuItems"
+                @update:selected="(selected: Color) => updateColor(row.id, selected)"
+                :selected="item"
+              />
+            </template>
 
-          <template #item-name="{ item, row }: { item: keyof typeof patternName; row: Pattern }">
-            <CdxSelect
-              class="long-handle"
-              :menu-items="patternMenuItems"
-              @update:selected="
-                (selected: keyof typeof patternName) => updatePattern(row.id, selected)
-              "
-              :selected="item"
-            >
-              <template #menu-item="{ menuItem }">
-                <div class="flex items-center">
-                  <img
-                    class="pixel-image -m-2"
-                    width="45"
-                    height="45"
-                    loading="lazy"
-                    :src="menuItem.thumbnail.url"
-                  />
-                  <span>{{ menuItem.label }}</span>
+            <template #item-actions="{ row }: { row: Pattern }">
+              <div class="flex">
+                <div class="flex flex-col justify-evenly">
+                  <CdxButton
+                    v-if="row.id !== 0"
+                    class="min-h-0"
+                    weight="quiet"
+                    :aria-label="t('banner.move_up')"
+                    @click="
+                      () => {
+                        const index = row.id
+                        const temp = activePatterns[index]
+                        activePatterns[index] = activePatterns[index - 1]
+                        activePatterns[index - 1] = temp
+                        updatePatternIds()
+                      }
+                    "
+                  >
+                    <CdxIcon size="x-small" :icon="cdxIconUpTriangle" />
+                  </CdxButton>
+                  <CdxButton
+                    v-if="row.id !== activePatterns.length - 1"
+                    class="min-h-0"
+                    weight="quiet"
+                    :aria-label="t('banner.move_down')"
+                    @click="
+                      () => {
+                        const index = row.id
+                        const temp = activePatterns[index]
+                        activePatterns[index] = activePatterns[index + 1]
+                        activePatterns[index + 1] = temp
+                        updatePatternIds()
+                      }
+                    "
+                  >
+                    <CdxIcon size="x-small" :icon="cdxIconDownTriangle" />
+                  </CdxButton>
                 </div>
-              </template>
-              <template #label="{ selectedMenuItem }">
-                <div class="flex items-center">
-                  <img
-                    class="pixel-image -m-2 -ml-3"
-                    width="40"
-                    height="40"
-                    loading="lazy"
-                    :src="selectedMenuItem.thumbnail.url"
-                  />
-                  <span>{{ selectedMenuItem.label }}</span>
-                </div>
-              </template>
-            </CdxSelect>
-          </template>
 
-          <template #item-color="{ item, row }: { item: Color; row: Pattern }">
-            <CdxSelect
-              :menu-items="colorMenuItems"
-              @update:selected="(selected: Color) => updateColor(row.id, selected)"
-              :selected="item"
-            />
-          </template>
-
-          <template #item-actions="{ row }: { row: Pattern }">
-            <div class="flex">
-              <div class="flex flex-col justify-evenly">
                 <CdxButton
-                  v-if="row.id !== 0"
-                  class="min-h-0"
                   weight="quiet"
-                  :aria-label="t('banner.move_up')"
+                  action="destructive"
+                  :aria-label="t('banner.remove')"
                   @click="
                     () => {
-                      const index = row.id
-                      const temp = activePatterns[index]
-                      activePatterns[index] = activePatterns[index - 1]
-                      activePatterns[index - 1] = temp
+                      activePatterns.splice(row.id, 1)
                       updatePatternIds()
                     }
                   "
                 >
-                  <CdxIcon size="x-small" :icon="cdxIconUpTriangle" />
-                </CdxButton>
-                <CdxButton
-                  v-if="row.id !== activePatterns.length - 1"
-                  class="min-h-0"
-                  weight="quiet"
-                  :aria-label="t('banner.move_down')"
-                  @click="
-                    () => {
-                      const index = row.id
-                      const temp = activePatterns[index]
-                      activePatterns[index] = activePatterns[index + 1]
-                      activePatterns[index + 1] = temp
-                      updatePatternIds()
-                    }
-                  "
-                >
-                  <CdxIcon size="x-small" :icon="cdxIconDownTriangle" />
+                  <CdxIcon :icon="cdxIconTrash" />
                 </CdxButton>
               </div>
+            </template>
 
-              <CdxButton
-                weight="quiet"
-                action="destructive"
-                :aria-label="t('banner.remove')"
-                @click="
-                  () => {
-                    activePatterns.splice(row.id, 1)
-                    updatePatternIds()
-                  }
-                "
-              >
-                <CdxIcon :icon="cdxIconTrash" />
+            <template #empty-state>
+              <CdxButton @click="newLayer" action="progressive" weight="primary" size="large">
+                <CdxIcon :icon="cdxIconTableAddRowAfter" />
+                {{ t('banner.new') }}
               </CdxButton>
-            </div>
-          </template>
+            </template>
+          </CdxTable>
+        </div>
 
-          <template #empty-state>
-            <CdxButton @click="newLayer" action="progressive" weight="primary" size="large">
-              <CdxIcon :icon="cdxIconTableAddRowAfter" />
-              {{ t('banner.new') }}
-            </CdxButton>
-          </template>
-        </CdxTable>
+        <div class="flex">
+          <CdxButton @click="copyShareUrl">
+            <CdxIcon :icon="cdxIconLink" />
+            {{ t('banner.copyShareUrl') }}
+          </CdxButton>
+        </div>
       </div>
-    </div>
-
-    <div class="flex flex-row items-stretch gap-3 mt-3">
-      <CdxSelect $selected="baseColor" class="w-[200px]" :menu-items="colorMenuItems" />
-
-      <CdxButton @click="copyShareUrl">
-        <CdxIcon :icon="cdxIconLink" />
-        {{ t('banner.copyShareUrl') }}
-      </CdxButton>
-
-      <CdxToggleButtonGroup
-        v-model="type"
-        class="flex"
-        :buttons="[
-          { value: 'banner', label: t('banner.icon.banner.capital') },
-          { value: 'shield', label: t('banner.icon.shield.capital') },
-        ]"
-      />
     </div>
   </CalcField>
 </template>
 <style lang="less">
 @import (reference) '@wikimedia/codex-design-tokens/theme-wikimedia-ui.less';
+
+.grow-items > * {
+  flex: 1;
+}
 
 .cdx-select-vue__handle {
   min-width: 175px;
