@@ -66,7 +66,8 @@ mw.hook('wikipage.content').add(() => {
         new URL(iframe.src).origin
       )
 
-      mw.hook('wgl.themeChanged').add('click', (theme) => {
+      // eslint-disable-next-line no-undef
+      mw.hook('wgl.themeChanged').add((theme) => {
         iframe.contentWindow.postMessage(
           {
             type: 'mcw-calc-theme-change',
