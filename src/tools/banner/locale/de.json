@@ -17,7 +17,7 @@
   "banner.limitWarning": "Die maximale Anzahl an Ebenen, die durch Handwerk oder durch Benutzen eines Webstuhls erreicht werden können, beträgt 6. Diese Ebene kann nur über Befehle erhalten werden.",
   "banner.error": "Fehler",
   "banner.limitError": "Die maximale Anzahl an Ebenen, die über Befehle erhalten werden können, beträgt 16. Diese Ebene ist im Spiel unerreichbar und dient nur Demonstrationszwecken.",
-  "banner.shareUrl": "https://minecraft.wiki/w/Calculators/Banner",
+  "banner.shareUrl": "https://de.minecraft.wiki/w/Banner/Vorschau",
   "banner.copyShareUrl": "Teilbaren Link kopieren",
   "banner.color.white": "Weiß",
   "banner.color.lightGray": "Hellgrau",
@@ -77,6 +77,6 @@
   "banner.pattern.piglin": "Schnauze",
   "banner.pattern.flow": "Fluss",
   "banner.pattern.guster": "Windstoßer",
-  "banner.requiredPattern": "This pattern can only be applied with the use of banner pattern items on a loom.",
-  "banner.requiredPatternBedrock": "In Bedrock Edition, this pattern can only be applied with the use of banner pattern items on a loom."
+  "banner.requiredPattern": "Dieses Muster kann nur unter Verwendung von Bannervorlagen in einem Webstuhl angewendet werden.",
+  "banner.requiredPatternBedrock": "Dieses Muster kann in der Bedrock Edition nur unter Verwendung von Bannervorlagen in einem Webstuhl angewendet werden."
 }
