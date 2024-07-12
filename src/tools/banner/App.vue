@@ -30,7 +30,7 @@ const props = defineProps<{ icon: 'banner' | 'shield' }>()
 
 const { t } = useI18n()
 
-const type = ref<'banner' | 'shield'>('banner')
+const type = ref<'banner' | 'shield'>(props.icon)
 
 interface Pattern {
   id: number
@@ -324,7 +324,7 @@ onMounted(() => {
 </script>
 <template>
   <CalcField>
-    <template #heading>{{ t('banner.title', { type: t(`banner.icon.${props.icon}`) }) }}</template>
+    <template #heading>{{ t('banner.title', { type: t(`banner.icon.${type}`) }) }}</template>
     <div class="flex flex-col md:flex-row flex-wrap items-center md:items-stretch gap-3">
       <div class="flex flex-col gap-3 items-center md:items-stretch">
         <canvas
