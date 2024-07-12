@@ -77,6 +77,6 @@
   "banner.pattern.piglin": "Рило",
   "banner.pattern.flow": "Плин",
   "banner.pattern.guster": "Порив",
-  "banner.requiredPattern": "This pattern can only be applied with the use of banner pattern items on a loom.",
-  "banner.requiredPatternBedrock": "In Bedrock Edition, this pattern can only be applied with the use of banner pattern items on a loom."
+  "banner.requiredPattern": "Цей візерунок можна застосовувати лише за допомогою предметів візерунка стяга на ткацькому верстаті.",
+  "banner.requiredPatternBedrock": "У Bedrock Edition цей візерунок можна застосовувати лише за допомогою предметів візерунка стяга на ткацькому верстаті."
 }
