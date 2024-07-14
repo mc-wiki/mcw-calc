@@ -1,5 +1,5 @@
 {
-  "seedHashcode.title": "Convert a string to actual seed",
-  "seedHashcode.actual": "Actual seed:",
-  "seedHashcode.emptyString": "This should be 0, but it is an empty string, so Minecraft actually generates a random number."
+  "seedHashcode.title": "将字符串转换为实际种子",
+  "seedHashcode.actual": "实际种子：",
+  "seedHashcode.emptyString": "计算结果应为 0，然而因其为空字符串，Minecraft实际上会生成一个随机数字。"
 }
