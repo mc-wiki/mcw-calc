@@ -1,0 +1,11 @@
+{
+  "tick.title": "Tick calculator",
+
+  "tick.gt": "Game tick",
+  "tick.rt": "Redstone tick",
+  "tick.millisecond": "Millisecond",
+  "tick.second": "Second",
+  "tick.minute": "Minute",
+  "tick.hour": "Hour",
+  "tick.day": "Day"
+}
