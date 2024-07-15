@@ -77,6 +77,6 @@
   "banner.pattern.piglin": "猪鼻",
   "banner.pattern.flow": "涡流",
   "banner.pattern.guster": "旋风",
-  "banner.requiredPattern": "该图案只能使用织布机叠加。",
-  "banner.requiredPatternBedrock": "在基岩版中，该图案只能使用织布机叠加。"
+  "banner.requiredPattern": "该图案只能在织布机使用旗帜图案叠加。",
+  "banner.requiredPatternBedrock": "在基岩版中，该图案只能在织布机使用旗帜图案叠加。"
 }

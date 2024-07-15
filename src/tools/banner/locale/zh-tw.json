@@ -5,7 +5,7 @@
   "banner.icon.banner.capital": "旗幟",
   "banner.icon.shield.capital": "盾牌",
   "banner.layers": "使用圖案",
-  "banner.layer": "層號",
+  "banner.layer": "層",
   "banner.pattern": "圖案",
   "banner.color": "顏色",
   "banner.actions": "操作",
@@ -77,6 +77,6 @@
   "banner.pattern.piglin": "豬鼻",
   "banner.pattern.flow": "渦流",
   "banner.pattern.guster": "狂風",
-  "banner.requiredPattern": "該圖案只能使用紡織機疊加。",
-  "banner.requiredPatternBedrock": "在基岩版中，該圖案只能使用紡織機疊加。"
+  "banner.requiredPattern": "該圖案只能在紡織機使用旗幟圖案物品疊加。",
+  "banner.requiredPatternBedrock": "在基岩版中，該圖案只能在紡織機使用旗幟圖案物品疊加。"
 }
