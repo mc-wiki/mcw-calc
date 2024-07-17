@@ -1,16 +1,88 @@
-name: Build
+name: CI
 on:
   push:
   workflow_dispatch:
 
-env:
-  SHOULD_DEPLOY: ${{ (!contains(github.event.head_commit.message , '[skip ci]') && github.repository == 'mc-wiki/mcw-calc' && github.ref == 'refs/heads/main') || github.event == 'workflow_dispatch' }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: ESLint
+        run: pnpm run lint
+
+  type-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Type Check
+        run: pnpm run type-check
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run tests
+        run: pnpm run cov
+
+      - name: Upload coverage reports to Codecov
+        if: always()
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
   build:
     runs-on: ubuntu-latest
     permissions:
-      deployments: write
       contents: write
     steps:
       - name: Checkout
@@ -56,17 +128,44 @@ jobs:
           name: dist
           path: dist/
 
+  deploy:
+    if: (!contains(github.event.head_commit.message , '[skip ci]') && github.repository == 'mc-wiki/mcw-calc' && github.ref == 'refs/heads/main') || github.event == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      deployments: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
       - name: Create GitHub deployment
         uses: chrnorm/deployment-action@v2
         id: deployment
-        if: env.SHOULD_DEPLOY == 'true'
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           environment-url: https://tools.minecraft.wiki/static/
           environment: production
 
       - name: Deploy to MW
-        if: env.SHOULD_DEPLOY == 'true'
         run: pnpm run deploy
         env:
           ACCESS_TOKEN_PROD: ${{ secrets.ACCESS_TOKEN_PROD }}
@@ -74,7 +173,6 @@ jobs:
 
       - name: rsync deployments
         uses: burnett01/rsync-deployments@7.0.1
-        if: env.SHOULD_DEPLOY == 'true'
         with:
           switches: -avzr --delete
           path: dist/
@@ -84,13 +182,12 @@ jobs:
           remote_key: ${{ secrets.TOOLS_SSH_PRIVATE_KEY }}
 
       - name: Purge Cloudflare cache
-        if: env.SHOULD_DEPLOY == 'true'
         run: pnpm run purge
         env:
           WG_API_TOKEN: ${{ secrets.WG_API_TOKEN }}
 
       - name: Update deployment status (success)
-        if: env.SHOULD_DEPLOY == 'true' && success()
+        if: success()
         uses: chrnorm/deployment-status@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -99,7 +196,7 @@ jobs:
           deployment-id: ${{ steps.deployment.outputs.deployment_id }}
 
       - name: Update deployment status (failure)
-        if: env.SHOULD_DEPLOY == 'true' && failure()
+        if: failure()
         uses: chrnorm/deployment-status@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
