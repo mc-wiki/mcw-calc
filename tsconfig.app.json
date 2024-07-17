@@ -15,7 +15,8 @@
       "vite/client",
       "vite-plugin-comlink/client",
       "unplugin-vue-macros/macros-global",
-      "vitest/globals"
+      "vitest/globals",
+      "@vitest/browser/providers/webdriverio"
     ],
     "allowImportingTsExtensions": true,
     "noEmit": true

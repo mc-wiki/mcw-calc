@@ -72,7 +72,7 @@ jobs:
         run: pnpm install
 
       - name: Run tests
-        run: pnpm run cov
+        run: pnpm run test:cov
 
       - name: Upload coverage reports to Codecov
         if: always()
