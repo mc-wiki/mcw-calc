@@ -14,7 +14,8 @@
       "node",
       "vite/client",
       "vite-plugin-comlink/client",
-      "unplugin-vue-macros/macros-global"
+      "unplugin-vue-macros/macros-global",
+      "vitest/globals"
     ],
     "allowImportingTsExtensions": true,
     "noEmit": true

@@ -27,3 +27,6 @@ dist-ssr
 
 # rollup-plugin-visualizer
 stats.html
+
+# vitest
+coverage

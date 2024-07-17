@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueMacros from 'unplugin-vue-macros/vite'
+import vueDevTools from 'vite-plugin-vue-devtools'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { comlink } from 'vite-plugin-comlink'
 import vueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
@@ -25,6 +26,13 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    coverage: {
+      reportsDirectory: '../coverage',
+    },
+  },
   build: {
     outDir: '../dist',
     emptyOutDir: true,
@@ -46,6 +54,7 @@ export default defineConfig({
       shortBind: true,
       booleanProp: true,
     }),
+    vueDevTools(),
     visualizer(),
     comlink(),
     vueI18nPlugin({
