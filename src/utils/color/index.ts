@@ -149,6 +149,23 @@ export function colorToSequence(
     }
   }
 
+  // slice colors from the end if deltaE can be improved or stays the same
+  for (let i = minSequence.length - 1; i >= 0; i--) {
+    const sequence = minSequence.slice(0, i)
+    const color = sequenceToColor(sequence, colorRgbMap)
+    const lab = rgb2lab(color)
+    const delta = deltaE(lab, targetLab)
+    if (delta <= minDeltaE) {
+      minDeltaE = delta
+      if (i === 1) {
+        minSequence = sequence
+        break
+      }
+    } else {
+      break
+    }
+  }
+
   return [minSequence, minDeltaE, sequenceToColor(minSequence, colorRgbMap)]
 }
 
