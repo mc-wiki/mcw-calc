@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { CdxButton } from '@wikimedia/codex'
+import { CdxButton, CdxField, CdxTextInput } from '@wikimedia/codex'
 import CalcField from '@/components/CalcField.vue'
 import { useI18n } from 'vue-i18n'
 import { parseWikitext } from '@/utils/i18n'
+import { isEmbedded, postMessageParent } from '@/utils/iframe'
 
 const props = defineProps<{ player: string }>()
 
@@ -13,13 +14,16 @@ const apiUrl = 'https://playerdb.co/api/player/minecraft/'
 const playerName = ref(props.player)
 const playerUuid = ref()
 const playerAvatar = ref()
+const isLoading = ref(false)
 
 const errorText = ref()
 const copyText = ref(t('playerUuid.copy'))
 
 async function getUuid(username: string) {
   if (isValid(username)) {
+    isLoading.value = true
     const response = await fetch(apiUrl + username)
+    isLoading.value = false
     if (response.status == 200) {
       const data = await response.json()
       playerUuid.value = data.data.player.id
@@ -41,7 +45,11 @@ function isValid(username: string) {
 }
 
 async function copyUuid(uuid: string) {
-  navigator.clipboard.writeText(uuid)
+  if (isEmbedded()) {
+    postMessageParent('mcw-calc-clipboard', {
+      text: uuid,
+    })
+  } else navigator.clipboard.writeText(uuid)
 
   copyText.value = t('playerUuid.copied')
   setTimeout(() => {
@@ -66,33 +74,46 @@ getUuid(playerName.value)
       }"
     >
       <div>
-        <div
-          :style="{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: '.5rem',
+        <CdxField>
+          <template #label>{{ t('playerUuid.name') }}</template>
+
+          <div
+            :style="{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: '.5rem',
+            }"
+          >
+            <CdxTextInput inputType="text" v-model="playerName" />
+            <CdxButton @click="getUuid(playerName)">
+              <template v-if="isLoading">{{ t('playerUuid.loading') }}</template>
+              <template v-else>{{ t('playerUuid.get') }}</template>
+            </CdxButton>
+          </div>
+        </CdxField>
+        <CdxField
+          :status="playerUuid !== '' ? 'default' : 'error'"
+          :messages="{
+            error: errorText,
           }"
         >
-          <label for="username-input">{{ t('playerUuid.name') }}</label>
-          <input type="text" v-model="playerName" id="username-input" />
-          <cdx-button @click="getUuid(playerName)">{{ t('playerUuid.get') }}</cdx-button>
-        </div>
-        <div
-          :style="{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: '.5rem',
-          }"
-        >
-          <p v-html="parseWikitext(t('playerUuid.uuid'))"></p>
-          <code v-if="playerUuid !== ''">{{ playerUuid }}</code>
-          <template v-else>{{ errorText }}</template>
-          <cdx-button v-if="playerUuid !== ''" @click="copyUuid(playerUuid)">{{
-            copyText
-          }}</cdx-button>
-        </div>
+          <template #label><span v-html="parseWikitext(t('playerUuid.uuid'))" /></template>
+
+          <div
+            :style="{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: '.5rem',
+            }"
+          >
+            <CdxTextInput inputType="text" v-model="playerUuid" :disabled="true" />
+            <CdxButton v-if="playerUuid !== ''" @click="copyUuid(playerUuid)">
+              {{ copyText }}
+            </CdxButton>
+          </div>
+        </CdxField>
       </div>
       <img v-if="playerUuid !== ''" width="64" height="64" :src="playerAvatar" />
     </div>
