@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { CdxTextInput, CdxCheckbox, CdxTab, CdxTabs } from '@wikimedia/codex'
+import { CdxTextInput, CdxCheckbox } from '@wikimedia/codex'
 import CalcField from '@/components/CalcField.vue'
 import { useI18n } from 'vue-i18n'
 import { parseWikitext } from '@/utils/i18n'

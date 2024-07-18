@@ -63,8 +63,6 @@ export function saveAsStructureFile(structure: BlockStructure, nameMapping: Name
     DataVersion: nbt.int(3837),
   })
 
-  const compress = new CompressionStream('gzip')
-
   return gzip(nbt.writeUncompressedTag(structureNbt))
 }
 

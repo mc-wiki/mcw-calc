@@ -6,8 +6,6 @@ import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
-const plot = ref<HTMLDivElement>()
-
 const distanceMeter = ref(0)
 const speedMeterPerSecond = ref(1)
 const timeSecond = computed(() => distanceMeter.value / speedMeterPerSecond.value)
@@ -42,6 +40,7 @@ const axis = computed(() => {
     case 'west':
       return 'x.negative'
   }
+  return 'z.negative'
 })
 
 watch(

@@ -11,7 +11,7 @@ const tps = ref(20)
 const mspt = computed({
   get: () => 1000 / tps.value,
   set: (value: number) => {
-    if (isNaN(value)) mspt.value = mspt.value
+    if (isNaN(value)) return
     tps.value = 1000 / value
   },
 })
@@ -24,7 +24,7 @@ const gt = ref(0)
 const rt = computed({
   get: () => gt.value / 2,
   set: (value: number) => {
-    if (isNaN(value)) rt.value = rt.value
+    if (isNaN(value)) return
     gt.value = value * 2
   },
 })
@@ -32,7 +32,7 @@ const rt = computed({
 const inGameDay = computed({
   get: () => gt.value / 24000,
   set: (value: number) => {
-    if (isNaN(value)) inGameDay.value = inGameDay.value
+    if (isNaN(value)) return
     gt.value = value * 24000
   },
 })
@@ -41,7 +41,7 @@ const inGameDay = computed({
 const millisecond = computed({
   get: () => Math.floor(((gt.value / tps.value) * 1000) % 1000),
   set: (value: number) => {
-    if (isNaN(value)) millisecond.value = millisecond.value
+    if (isNaN(value)) return
     gt.value = gt.value + ((value - millisecond.value) / 1000) * tps.value
   },
 })
@@ -49,7 +49,7 @@ const millisecond = computed({
 const second = computed({
   get: () => Math.floor((gt.value / tps.value) % 60),
   set: (value: number) => {
-    if (isNaN(value)) second.value = second.value
+    if (isNaN(value)) return
     gt.value = gt.value + (value - second.value) * tps.value
   },
 })
@@ -57,7 +57,7 @@ const second = computed({
 const minute = computed({
   get: () => Math.floor((gt.value / tps.value / 60) % 60),
   set: (value: number) => {
-    if (isNaN(value)) minute.value = minute.value
+    if (isNaN(value)) return
     gt.value = gt.value + (value - minute.value) * tps.value * 60
   },
 })
@@ -65,7 +65,7 @@ const minute = computed({
 const hour = computed({
   get: () => Math.floor((gt.value / tps.value / 60 / 60) % 24),
   set: (value: number) => {
-    if (isNaN(value)) hour.value = hour.value
+    if (isNaN(value)) return
     gt.value = gt.value + (value - hour.value) * tps.value * 60 * 60
   },
 })
@@ -73,7 +73,7 @@ const hour = computed({
 const day = computed({
   get: () => Math.floor(gt.value / tps.value / 60 / 60 / 24),
   set: (value: number) => {
-    if (isNaN(value)) day.value = day.value
+    if (isNaN(value)) return
     gt.value = gt.value + (value - day.value) * tps.value * 60 * 60 * 24
   },
 })

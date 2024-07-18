@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { CdxButton } from '@wikimedia/codex'
 import CalcField from '@/components/CalcField.vue'
 import { computed } from 'vue'
 import { theme } from '@/utils/theme'
