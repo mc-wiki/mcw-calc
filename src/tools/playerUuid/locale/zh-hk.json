@@ -1,8 +1,9 @@
 {
   "playerUuid.title": "將玩家名稱轉換為UUID",
-  "playerUuid.name": "玩家名稱：",
+  "playerUuid.name": "玩家名稱",
   "playerUuid.get": "取得UUID",
-  "playerUuid.uuid": "[[UUID]]：",
+  "playerUuid.loading": "載入中……",
+  "playerUuid.uuid": "[[UUID]]",
   "playerUuid.error.invalid": "該玩家名稱無效！",
   "playerUuid.error.notFound": "不存在指定名稱的玩家！",
   "playerUuid.copy": "複製",

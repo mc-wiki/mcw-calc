@@ -1,10 +1,10 @@
 {
-  "tick.title": "Tick calculator",
-  "tick.gt": "Game tick",
-  "tick.rt": "Redstone tick",
-  "tick.millisecond": "Millisecond",
-  "tick.second": "Second",
-  "tick.minute": "Minute",
-  "tick.hour": "Hour",
-  "tick.day": "Day"
+  "tick.title": "刻計算機",
+  "tick.gt": "遊戲刻（gt）",
+  "tick.rt": "紅石刻（rt）",
+  "tick.millisecond": "毫秒（ms）",
+  "tick.second": "秒（s）",
+  "tick.minute": "分鐘",
+  "tick.hour": "小時",
+  "tick.day": "日"
 }
