@@ -67,7 +67,7 @@ const day = computed({
     <div class="flex flex-wrap gap-2">
       <div class="flex items-center gap-1">
         <div class="input-item">
-          <div class="input-input">
+          <div id="gt" class="input-input">
             <CdxTextInput class="text-center min-w-16" v-model="gt" inputType="number" />
             {{ t('tick.gt') }}
           </div>
@@ -79,7 +79,7 @@ const day = computed({
         </div>
 
         <div class="input-item">
-          <div class="input-input">
+          <div id="rt" class="input-input">
             <CdxTextInput class="text-center min-w-16" v-model="rt" inputType="number" />
             {{ t('tick.rt') }}
           </div>
@@ -92,7 +92,7 @@ const day = computed({
         </div>
 
         <div class="input-item">
-          <div class="input-input">
+          <div id="day" class="input-input">
             <CdxTextInput class="text-center min-w-16" v-model="day" inputType="number" />
             {{ t('tick.day') }}
           </div>
@@ -100,7 +100,7 @@ const day = computed({
 
         <div class="input-item">
           <div class="input-symbol">:</div>
-          <div class="input-input">
+          <div id="hour" class="input-input">
             <CdxTextInput class="text-center min-w-16" v-model="hour" inputType="number" />
             {{ t('tick.hour') }}
           </div>
@@ -108,7 +108,7 @@ const day = computed({
 
         <div class="input-item">
           <div class="input-symbol">:</div>
-          <div class="input-input">
+          <div id="minute" class="input-input">
             <CdxTextInput class="text-center min-w-16" v-model="minute" inputType="number" />
             {{ t('tick.minute') }}
           </div>
@@ -116,7 +116,7 @@ const day = computed({
 
         <div class="input-item">
           <div class="input-symbol">:</div>
-          <div class="input-input">
+          <div id="second" class="input-input">
             <CdxTextInput class="text-center min-w-16" v-model="second" inputType="number" />
             {{ t('tick.second') }}
           </div>
@@ -124,7 +124,7 @@ const day = computed({
 
         <div class="input-item">
           <div class="input-symbol">.</div>
-          <div class="input-input">
+          <div id="millisecond" class="input-input">
             <CdxTextInput class="text-center min-w-16" v-model="millisecond" inputType="number" />
             {{ t('tick.millisecond') }}
           </div>

@@ -1,4 +1,3 @@
-import 'mock-local-storage'
 import { describe, it, expect, vi } from 'vitest'
 import { getJigsawAPI, fetchJigsawAPI } from './jigsaw'
 

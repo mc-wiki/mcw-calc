@@ -28,8 +28,10 @@ export default defineConfig({
   },
   test: {
     globals: true,
+    includeTaskLocation: true,
     environment: 'jsdom',
     coverage: {
+      provider: 'istanbul',
       reportsDirectory: '../coverage',
     },
   },

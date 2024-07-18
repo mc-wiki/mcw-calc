@@ -1,9 +1,6 @@
-import { Crypto } from '@peculiar/webcrypto'
 import { expect, it, describe } from 'vitest'
 import { digestMessage } from './digest'
 import { vi } from 'vitest'
-
-vi.stubGlobal('crypto', new Crypto())
 
 describe('digestMessage', () => {
   it('should work with SHA-256 as default', async () => {
