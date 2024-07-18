@@ -9,13 +9,6 @@ describe('App.vue', () => {
     expect(screen.getByText('tick.title')).toBeInTheDocument()
   })
 
-  it('have initial 0 tick', async () => {
-    const { container } = render(App)
-    container.querySelectorAll('input').forEach((input) => {
-      expect(input).toHaveValue(0)
-    })
-  })
-
   it('should compute correctly', async () => {
     const { container } = render(App)
 

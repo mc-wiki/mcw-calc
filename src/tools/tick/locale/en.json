@@ -8,5 +8,11 @@
   "tick.second": "Second",
   "tick.minute": "Minute",
   "tick.hour": "Hour",
-  "tick.day": "Day"
+  "tick.day": "Day",
+
+  "tick.runningAt": "running at",
+  "tick.tps": "TPS",
+  "tick.tps.explain": "Ticks per second, number of game ticks run per second",
+  "tick.mspt": "MSPT",
+  "tick.mspt.explain": "Milliseconds per tick, time taken in Milliseconds to process a single tick"
 }

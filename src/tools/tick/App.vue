@@ -6,6 +6,16 @@ import { CdxTextInput } from '@wikimedia/codex'
 
 const { t } = useI18n()
 
+const tps = ref(20)
+
+const mspt = computed({
+  get: () => 1000 / tps.value,
+  set: (value: number) => {
+    if (isNaN(value)) mspt.value = mspt.value
+    tps.value = 1000 / value
+  },
+})
+
 const gt = ref(0)
 
 // 1 gt = 1/20 second
@@ -14,7 +24,7 @@ const gt = ref(0)
 const rt = computed({
   get: () => gt.value / 2,
   set: (value: number) => {
-    if (isNaN(value)) return rt.value
+    if (isNaN(value)) rt.value = rt.value
     gt.value = value * 2
   },
 })
@@ -22,47 +32,49 @@ const rt = computed({
 const inGameDay = computed({
   get: () => gt.value / 24000,
   set: (value: number) => {
-    if (isNaN(value)) return inGameDay.value
+    if (isNaN(value)) inGameDay.value = inGameDay.value
     gt.value = value * 24000
   },
 })
 
 // 1 gt = 1/20 second
 const millisecond = computed({
-  get: () => ((gt.value / 20) * 1000) % 1000,
+  get: () => Math.floor(((gt.value / tps.value) * 1000) % 1000),
   set: (value: number) => {
-    if (isNaN(value)) return rt.value
-    gt.value = gt.value + Math.floor((value - millisecond.value) / 1000) * 20
+    if (isNaN(value)) millisecond.value = millisecond.value
+    gt.value = gt.value + ((value - millisecond.value) / 1000) * tps.value
   },
 })
 
 const second = computed({
-  get: () => Math.floor((gt.value / 20) % 60),
+  get: () => Math.floor((gt.value / tps.value) % 60),
   set: (value: number) => {
-    if (isNaN(value)) return rt.value
-    gt.value = gt.value + (value - second.value) * 20
+    if (isNaN(value)) second.value = second.value
+    gt.value = gt.value + (value - second.value) * tps.value
   },
 })
 
 const minute = computed({
-  get: () => Math.floor((gt.value / 20 / 60) % 60),
+  get: () => Math.floor((gt.value / tps.value / 60) % 60),
   set: (value: number) => {
-    if (isNaN(value)) return rt.value
-    gt.value = gt.value + (value - minute.value) * 20 * 60
+    if (isNaN(value)) minute.value = minute.value
+    gt.value = gt.value + (value - minute.value) * tps.value * 60
   },
 })
 
 const hour = computed({
-  get: () => Math.floor((gt.value / 20 / 60 / 60) % 24),
+  get: () => Math.floor((gt.value / tps.value / 60 / 60) % 24),
   set: (value: number) => {
-    gt.value = gt.value + (value - hour.value) * 20 * 60 * 60
+    if (isNaN(value)) hour.value = hour.value
+    gt.value = gt.value + (value - hour.value) * tps.value * 60 * 60
   },
 })
 
 const day = computed({
-  get: () => Math.floor(gt.value / 20 / 60 / 60 / 24),
+  get: () => Math.floor(gt.value / tps.value / 60 / 60 / 24),
   set: (value: number) => {
-    gt.value = gt.value + (value - day.value) * 20 * 60 * 60 * 24
+    if (isNaN(value)) day.value = day.value
+    gt.value = gt.value + (value - day.value) * tps.value * 60 * 60 * 24
   },
 })
 </script>
@@ -80,8 +92,7 @@ const day = computed({
             {{ t('tick.gt') }}
           </div>
         </div>
-      </div>
-      <div class="flex items-center gap-1">
+
         <div class="h-full">
           <div class="input-symbol text-xl mx-1">=</div>
         </div>
@@ -92,8 +103,7 @@ const day = computed({
             {{ t('tick.rt') }}
           </div>
         </div>
-      </div>
-      <div class="flex items-center gap-1">
+
         <div class="h-full">
           <div class="input-symbol text-xl mx-1">=</div>
         </div>
@@ -150,6 +160,30 @@ const day = computed({
           </div>
         </div>
       </div>
+
+      <div class="flex items-center gap-1">
+        <div class="h-full">
+          <div class="input-symbol mx-1">{{ t('tick.runningAt') }}</div>
+        </div>
+
+        <div class="input-item">
+          <div id="tps" class="input-input">
+            <CdxTextInput class="text-center min-w-16" v-model="tps" inputType="number" />
+            <span class="explain" :title="t('tick.tps.explain')">{{ t('tick.tps') }}</span>
+          </div>
+        </div>
+
+        <div class="h-full">
+          <div class="input-symbol text-xl mx-1">=</div>
+        </div>
+
+        <div class="input-item">
+          <div id="tps" class="input-input">
+            <CdxTextInput class="text-center min-w-16" v-model="mspt" inputType="number" />
+            <span class="explain" :title="t('tick.mspt.explain')">{{ t('tick.mspt') }}</span>
+          </div>
+        </div>
+      </div>
     </div>
   </CalcField>
 </template>
@@ -179,6 +213,7 @@ const day = computed({
 
 .cdx-text-input {
   font-family: monospace;
-  width: 72px;
+  width: 84px;
+  resize: horizontal;
 }
 </style>
