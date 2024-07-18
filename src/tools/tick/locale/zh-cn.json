@@ -2,6 +2,7 @@
   "tick.title": "刻计算器",
   "tick.gt": "游戏刻（gt）",
   "tick.rt": "红石刻（rt）",
+  "tick.inGameDay": "游戏日（d）",
   "tick.millisecond": "毫秒（ms）",
   "tick.second": "秒（s）",
   "tick.minute": "分钟",

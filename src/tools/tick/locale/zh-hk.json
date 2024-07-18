@@ -2,6 +2,7 @@
   "tick.title": "刻計數機",
   "tick.gt": "遊戲刻（gt）",
   "tick.rt": "紅石刻（rt）",
+  "tick.inGameDay": "遊戲日（d）",
   "tick.millisecond": "毫秒（ms）",
   "tick.second": "秒（s）",
   "tick.minute": "分鐘",
