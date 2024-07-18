@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @import '@wikimedia/codex-design-tokens/theme-wikimedia-ui.less';
+@import '@wikimedia/codex-design-tokens/theme-wikimedia-ui-reset.less';
 @import '@wikimedia/codex-design-tokens/theme-wikimedia-ui-mixin-dark.less';
 
 @font-face {
@@ -19,6 +20,7 @@ html {
   font-size: 0.875em;
   font-size: calc(1em * 0.875);
   line-height: 1.6;
+  .cdx-mode-reset();
 }
 
 body {

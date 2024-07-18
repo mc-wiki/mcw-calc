@@ -118,11 +118,7 @@ watch(
                 markerHeight="8"
                 orient="auto-start-reverse"
               >
-                <path
-                  d="M 0 0 L 10 5 L 0 10 z"
-                  fill="currentColor"
-                  style="color: var(--border-color-notice, #54595d)"
-                />
+                <path d="M 0 0 L 10 5 L 0 10 z" style="fill: var(--border-color-notice, #54595d)" />
               </marker>
 
               <marker
@@ -134,11 +130,7 @@ watch(
                 markerHeight="8"
                 orient="auto-start-reverse"
               >
-                <path
-                  d="M 0 0 L 10 5 L 0 10 z"
-                  fill="currentColor"
-                  style="color: var(--border-color-notice, #54595d)"
-                />
+                <path d="M 0 0 L 10 5 L 0 10 z" style="fill: var(--border-color-notice, #54595d)" />
               </marker>
             </defs>
 
@@ -162,22 +154,27 @@ watch(
 
             <!-- axes labels -->
             <g style="font-size: 12px">
-              <text x="100" y="20" text-anchor="middle" style="color: var(--color-subtle, #54595d)">
+              <text
+                x="100"
+                y="20"
+                text-anchor="middle"
+                style="stroke: var(--color-subtle, #54595d)"
+              >
                 {{ t('transport.plot.north') }}
               </text>
               <text
                 x="100"
                 y="190"
                 text-anchor="middle"
-                style="color: var(--color-subtle, #54595d)"
+                style="stroke: var(--color-subtle, #54595d)"
               >
                 {{ t('transport.plot.south') }}
               </text>
-              <text x="0" y="100" text-anchor="start" style="color: var(--color-subtle, #54595d)">
+              <text x="0" y="100" text-anchor="start" style="stroke: var(--color-subtle, #54595d)">
                 <tspan>{{ t('transport.plot.west.0') }}</tspan>
                 <tspan x="0" dy="1.2em">{{ t('transport.plot.west.1') }}</tspan>
               </text>
-              <text x="200" y="100" text-anchor="end" style="color: var(--color-subtle, #54595d)">
+              <text x="200" y="100" text-anchor="end" style="stroke: var(--color-subtle, #54595d)">
                 <tspan x="200">{{ t('transport.plot.east.0') }}</tspan>
                 <tspan x="200" dy="1.2em">{{ t('transport.plot.east.1') }}</tspan>
               </text>
@@ -189,8 +186,7 @@ watch(
               cy="100"
               r="75"
               fill="none"
-              stroke="currentColor"
-              style="color: var(--border-color-subtle, #c8ccd1)"
+              style="stroke: var(--border-color-subtle, #c8ccd1)"
             />
 
             <!-- draw the line between the two coordinates -->
@@ -199,19 +195,12 @@ watch(
               :y1="100"
               :x2="100 + 75 * Math.cos(((angleDegree + 90) * Math.PI) / 180)"
               :y2="100 + 75 * Math.sin(((angleDegree + 90) * Math.PI) / 180)"
-              stroke="currentColor"
               marker-end="url(#arrow)"
-              style="color: var(--border-color-notice, #54595d)"
+              style="stroke: var(--border-color-notice, #54595d)"
             />
 
             <!-- draw coordinate 1 as origin -->
-            <circle
-              cx="100"
-              cy="100"
-              r="5"
-              fill="currentColor"
-              style="color: var(--border-color-progressive, #36c)"
-            />
+            <circle cx="100" cy="100" r="5" style="fill: var(--border-color-progressive, #36c)" />
 
             <!-- coordinate 2 lies on the circle with radius 95 -->
             <!-- note that north: 180, east: -90, south: 0, west: 90 -->
@@ -219,8 +208,7 @@ watch(
               :cx="100 + 75 * Math.cos(((angleDegree + 90) * Math.PI) / 180)"
               :cy="100 + 75 * Math.sin(((angleDegree + 90) * Math.PI) / 180)"
               r="5"
-              fill="currentColor"
-              style="color: var(--border-color-destructive, #d73333)"
+              style="fill: var(--border-color-destructive, #d73333)"
             />
           </svg>
         </div>
@@ -256,6 +244,17 @@ watch(
   </CalcField>
 </template>
 <style lang="less">
+@import '@wikimedia/codex-design-tokens/theme-wikimedia-ui-reset.less';
+@import '@wikimedia/codex-design-tokens/theme-wikimedia-ui-mixin-dark.less';
+
+svg {
+  .cdx-mode-reset();
+}
+
+.dark svg {
+  .cdx-mode-dark();
+}
+
 .cdx-field {
   margin-top: 0;
 }
