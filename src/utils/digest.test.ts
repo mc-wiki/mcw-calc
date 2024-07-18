@@ -1,6 +1,5 @@
 import { expect, it, describe } from 'vitest'
 import { digestMessage } from './digest'
-import { vi } from 'vitest'
 
 describe('digestMessage', () => {
   it('should work with SHA-256 as default', async () => {

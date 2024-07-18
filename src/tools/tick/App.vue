@@ -19,6 +19,14 @@ const rt = computed({
   },
 })
 
+const inGameDay = computed({
+  get: () => gt.value / 24000,
+  set: (value: number) => {
+    if (isNaN(value)) return inGameDay.value
+    gt.value = value * 24000
+  },
+})
+
 // 1 gt = 1/20 second
 const millisecond = computed({
   get: () => ((gt.value / 20) * 1000) % 1000,
@@ -82,6 +90,18 @@ const day = computed({
           <div id="rt" class="input-input">
             <CdxTextInput class="text-center min-w-16" v-model="rt" inputType="number" />
             {{ t('tick.rt') }}
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center gap-1">
+        <div class="h-full">
+          <div class="input-symbol text-xl mx-1">=</div>
+        </div>
+
+        <div class="input-item">
+          <div id="inGameDay" class="input-input">
+            <CdxTextInput class="text-center min-w-16" v-model="inGameDay" inputType="number" />
+            {{ t('tick.inGameDay') }}
           </div>
         </div>
       </div>

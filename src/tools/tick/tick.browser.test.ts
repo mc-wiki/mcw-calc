@@ -21,6 +21,7 @@ describe('App.vue', () => {
 
     const gt = container.querySelector('#gt input')!
     const rt = container.querySelector('#rt input')!
+    const inGameDay = container.querySelector('#inGameDay input')!
     const day = container.querySelector('#day input')!
     const hour = container.querySelector('#hour input')!
     const minute = container.querySelector('#minute input')!
@@ -29,6 +30,7 @@ describe('App.vue', () => {
 
     await userEvent.type(gt, '1')
     expect(rt).toHaveValue(0.5)
+    expect(inGameDay).toHaveValue(1 / 24000)
     expect(day).toHaveValue(0)
     expect(hour).toHaveValue(0)
     expect(minute).toHaveValue(0)
@@ -38,6 +40,7 @@ describe('App.vue', () => {
     await userEvent.clear(gt)
     await userEvent.type(gt, '10000002')
     expect(rt).toHaveValue(5000001)
+    expect(inGameDay).toHaveValue(10000002 / 24000)
     expect(day).toHaveValue(5)
     expect(hour).toHaveValue(18)
     expect(minute).toHaveValue(53)
@@ -50,6 +53,7 @@ describe('App.vue', () => {
 
     const gt = container.querySelector('#gt input')!
     const rt = container.querySelector('#rt input')!
+    const inGameDay = container.querySelector('#inGameDay input')!
     const day = container.querySelector('#day input')!
     const hour = container.querySelector('#hour input')!
     const minute = container.querySelector('#minute input')!
@@ -58,6 +62,7 @@ describe('App.vue', () => {
 
     await userEvent.type(rt, '5000001')
     expect(gt).toHaveValue(10000002)
+    expect(inGameDay).toHaveValue(10000002 / 24000)
     expect(day).toHaveValue(5)
     expect(hour).toHaveValue(18)
     expect(minute).toHaveValue(53)
@@ -70,6 +75,7 @@ describe('App.vue', () => {
 
     const gt = container.querySelector('#gt input')!
     const rt = container.querySelector('#rt input')!
+    const inGameDay = container.querySelector('#inGameDay input')!
     const day = container.querySelector('#day input')!
     const hour = container.querySelector('#hour input')!
     const minute = container.querySelector('#minute input')!
@@ -79,6 +85,7 @@ describe('App.vue', () => {
     await userEvent.type(second, '60')
     expect(gt).toHaveValue(1200)
     expect(rt).toHaveValue(600)
+    expect(inGameDay).toHaveValue(0.05)
     expect(day).toHaveValue(0)
     expect(hour).toHaveValue(0)
     expect(minute).toHaveValue(1)

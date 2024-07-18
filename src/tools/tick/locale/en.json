@@ -3,6 +3,7 @@
 
   "tick.gt": "Game tick",
   "tick.rt": "Redstone tick",
+  "tick.inGameDay": "In-game day",
   "tick.millisecond": "Millisecond",
   "tick.second": "Second",
   "tick.minute": "Minute",
