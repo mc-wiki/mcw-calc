@@ -7,5 +7,10 @@
   "tick.second": "秒（s）",
   "tick.minute": "分钟",
   "tick.hour": "小时",
-  "tick.day": "日"
+  "tick.day": "日",
+  "tick.runningAt": "于刻速率为",
+  "tick.tps": "TPS",
+  "tick.tps.explain": "每秒刻数，每秒运行了多少次游戏刻",
+  "tick.mspt": "MSPT",
+  "tick.mspt.explain": "每刻毫秒数，每刻运行时所花的时间，以毫秒为单位"
 }
