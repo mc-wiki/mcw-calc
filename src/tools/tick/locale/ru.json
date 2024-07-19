@@ -1,10 +1,16 @@
 {
-  "tick.title": "Tick calculator",
-  "tick.gt": "Game tick",
-  "tick.rt": "Redstone tick",
-  "tick.millisecond": "Millisecond",
-  "tick.second": "Second",
-  "tick.minute": "Minute",
-  "tick.hour": "Hour",
-  "tick.day": "Day"
+  "tick.title": "Калькулятор тактов",
+  "tick.gt": "Игровых тактов",
+  "tick.rt": "Тактов красного камня",
+  "tick.inGameDay": "Внутриигровых дней",
+  "tick.millisecond": "Миллисекунд",
+  "tick.second": "Секунд",
+  "tick.minute": "Минут",
+  "tick.hour": "Часов",
+  "tick.day": "Дней",
+  "tick.runningAt": "при нагрузке",
+  "tick.tps": "TPS",
+  "tick.tps.explain": "Количество игровых тактов в секунду",
+  "tick.mspt": "MSPT",
+  "tick.mspt.explain": "Время в миллисекундах, необходимое для обработки одного такта"
 }

@@ -2,9 +2,15 @@
   "tick.title": "Tick-Rechner",
   "tick.gt": "Spieltick",
   "tick.rt": "Redstone-Tick",
+  "tick.inGameDay": "In-Game-Tag",
   "tick.millisecond": "Millisekunde",
   "tick.second": "Sekunde",
   "tick.minute": "Minute",
   "tick.hour": "Stunde",
-  "tick.day": "Tag"
+  "tick.day": "Tag",
+  "tick.runningAt": "läuft mit",
+  "tick.tps": "TPS",
+  "tick.tps.explain": "Ticks pro Sekunde, Anzahl der Spielticks, die pro Sekunde ausgeführt werden",
+  "tick.mspt": "MSPT",
+  "tick.mspt.explain": "Millisekunden pro Tick, Zeit in Millisekunden für die Verarbeitung eines einzelnen Ticks"
 }
