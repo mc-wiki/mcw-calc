@@ -23,7 +23,17 @@ const seed = ref('Minecraft Wiki')
         <code v-else>{{ hashCode(seed) }}</code>
       </div>
 
-      <CdxMessage v-if="/^[0-9]*$/.test(seed)" type="warning">
+      <CdxMessage
+        v-if="
+          /^[+-]?\d+$/.test(seed) &&
+          (BigInt(seed) > BigInt(2) ** BigInt(63) - BigInt(1) ||
+            BigInt(seed) < -(BigInt(2) ** BigInt(63)))
+        "
+        type="warning"
+      >
+        {{ t('seedHashcode.outOfRange') }}
+      </CdxMessage>
+      <CdxMessage v-else-if="/^[+-]?\d+$/.test(seed)" type="warning">
         {{ t('seedHashcode.number') }}
       </CdxMessage>
     </div>
