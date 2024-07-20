@@ -48,14 +48,15 @@ export default defineConfig({
     },
   },
   plugins: [
-    vueMacros({
-      plugins: {
-        vue: vue(),
-      },
+    // vueMacros({
+    //   plugins: {
+    //     vue: vue(),
+    //   },
 
-      shortBind: true,
-      booleanProp: true,
-    }),
+    //   shortBind: true,
+    //   booleanProp: true,
+    // }),
+    vue(),
     vueDevTools(),
     visualizer(),
     comlink(),

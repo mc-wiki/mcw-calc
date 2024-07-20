@@ -342,7 +342,7 @@ onMounted(() => {
             { value: 'shield', label: t('banner.icon.shield.capital') },
           ]"
         />
-        <CdxSelect $selected="baseColor" :menu-items="colorMenuItems" />
+        <CdxSelect v-model:selected="baseColor" :menu-items="colorMenuItems" />
       </div>
 
       <div class="overflow-x-auto w-full flex flex-col flex-1 gap-3">
@@ -350,7 +350,7 @@ onMounted(() => {
           <CdxTable
             class="min-h-full"
             :caption="t('banner.layers')"
-            use-row-headers
+            use-row-headers="true"
             :data="activePatterns"
             :columns="
               activePatterns.length === 0
