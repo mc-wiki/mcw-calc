@@ -1,5 +1,8 @@
 {
   "seedHashcode.title": "Wandle eine Zeichenkette in einen wirklichen Startwert um",
   "seedHashcode.actual": "Wirklicher Startwert:",
-  "seedHashcode.emptyString": "Dies sollte 0 sein, aber es ist eine leere Zeichenkette, so dass Minecraft tatsächlich eine Zufallszahl generiert."
+  "seedHashcode.emptyString": "Dies sollte 0 sein, aber es ist eine leere Zeichenkette, so dass Minecraft tatsächlich eine Zufallszahl generiert.",
+  "seedHashcode.number": "Eine Zahl wird direkt verwendet. Dies ist der Hashwert, der theoretisch von der Zahl abgeleitet werden würde.",
+  "seedHashcode.zero": "0 ist ein Sonderfall. Minecraft erzeugt in Wirklichkeit eine zufällige Zahl als Startwert.",
+  "seedHashcode.outOfRange": "Diese Zahl überschreitet die Grenze von vorzeichenbehafteten 64-Bit-Ganzzahlen. Der obige Startwert wird tatsächlich verwendet."
 }
