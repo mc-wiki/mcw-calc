@@ -28,8 +28,7 @@ mw.hook('wikipage.content').add(() => {
     if (localStorage.getItem('mcwCalcLocal') === 'true') {
       console.log('You are in development environment and tools are loaded from localhost.')
       iframe.src = `http://localhost:5173${url}`
-    }
-    else {
+    } else {
       iframe.src = `https://tools.minecraft.wiki/static${url}`
     }
 
@@ -64,7 +63,7 @@ mw.hook('wikipage.content').add(() => {
             theme: document.body.classList.contains('wgl-theme-light') ? 'light' : 'dark',
           },
         },
-        new URL(iframe.src).origin,
+        new URL(iframe.src).origin
       )
 
       // eslint-disable-next-line no-undef
@@ -76,16 +75,14 @@ mw.hook('wikipage.content').add(() => {
               theme,
             },
           },
-          new URL(iframe.src).origin,
+          new URL(iframe.src).origin
         )
       })
     })
 
     window.addEventListener('message', (event) => {
-      if (event.origin !== new URL(iframe.src).origin)
-        return
-      if (event.data.id !== id)
-        return
+      if (event.origin !== new URL(iframe.src).origin) return
+      if (event.data.id !== id) return
 
       if (event.data.type === 'mcw-calc-init-request-data') {
         event.source.postMessage(
@@ -96,13 +93,11 @@ mw.hook('wikipage.content').add(() => {
               innerHTML: calc.innerHTML,
             },
           },
-          new URL(iframe.src).origin,
+          new URL(iframe.src).origin
         )
-      }
-      else if (event.data.type === 'mcw-calc-height-change') {
+      } else if (event.data.type === 'mcw-calc-height-change') {
         iframe.style.height = `${event.data.data.height}px`
-      }
-      else if (event.data.type === 'mcw-calc-clipboard') {
+      } else if (event.data.type === 'mcw-calc-clipboard') {
         navigator.clipboard.writeText(event.data.data.text)
       }
     })
