@@ -3,7 +3,7 @@
   "maceDamage.java": "Java Edition",
   "maceDamage.bedrock": "Bedrock Edition",
   "maceDamage.fallHeight": "Висота падіння в блоках:",
-  "maceDamage.densityLevel": "Рівень чарів «[[Тяга]]»:",
+  "maceDamage.densityLevel": "Рівень чарів «[[Щільність]]»:",
   "maceDamage.critical": "Критична атака",
   "maceDamage.critical.help": "Удар булавою по сутности здебільшого призводить до критичних атак, якщо тільки не скинути відлік атаки.",
   "maceDamage.cooldownReset": "Скидання часу відновлення",

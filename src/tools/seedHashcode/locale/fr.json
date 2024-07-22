@@ -1,5 +1,8 @@
 {
   "seedHashcode.title": "Convertir du texte en graine de monde réelle",
   "seedHashcode.actual": "Graine de monde réelle :",
-  "seedHashcode.emptyString": "Cela devrait être 0, mais il s'agit d'un texte vide, donc Minecraft génère en fait un nombre aléatoire."
+  "seedHashcode.emptyString": "Cela devrait être 0, mais il s'agit d'un texte vide, donc Minecraft génère en réalité un nombre aléatoire.",
+  "seedHashcode.number": "Un nombre serait utilisé directement. Il s'agit du hachage théorique dérivé du nombre.",
+  "seedHashcode.zero": "0 est un cas spécial. Minecraft génère en réalité un nombre aléatoire en tant que graine.",
+  "seedHashcode.outOfRange": "Ce nombre dépasse la limite des entiers signés de 64 bits. La graine ci-dessus est en réalité utilisée."
 }
