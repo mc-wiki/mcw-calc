@@ -13,15 +13,15 @@ export enum Direction {
 
 export function isHorizontalDirection(direction: Direction): boolean {
   return (
-    direction == Direction.NORTH ||
-    direction == Direction.SOUTH ||
-    direction == Direction.WEST ||
-    direction == Direction.EAST
+    direction === Direction.NORTH ||
+    direction === Direction.SOUTH ||
+    direction === Direction.WEST ||
+    direction === Direction.EAST
   )
 }
 
 export function isVerticalDirection(direction: Direction): boolean {
-  return direction == Direction.UP || direction == Direction.DOWN
+  return direction === Direction.UP || direction === Direction.DOWN
 }
 
 export function oppositeDirection(direction: Direction): Direction {
@@ -171,7 +171,7 @@ export class Rotation {
   }
 
   isIdentity(): boolean {
-    return this.x == 0 && this.y == 0
+    return this.x === 0 && this.y === 0
   }
 }
 
@@ -184,13 +184,14 @@ function pointInsideAABB(point: number[], aabb: number[]) {
 }
 
 export function isOcclusion(thisFace: number[][], otherFace: number[][]): boolean {
-  if (otherFace.length == 0) return false
-  if (thisFace.length == 0) return true
+  if (otherFace.length === 0) return false
+  if (thisFace.length === 0) return true
   if (
-    thisFace.length == otherFace.length &&
-    thisFace.every((val, i) => val.every((v, j) => v == otherFace[i][j]))
-  )
+    thisFace.length === otherFace.length &&
+    thisFace.every((val, i) => val.every((v, j) => v === otherFace[i][j]))
+  ) {
     return true
+  }
   for (const thisFaceElement of thisFace) {
     let nonOccludedPart = [thisFaceElement]
     for (const otherFaceElement of otherFace) {
@@ -201,8 +202,9 @@ export function isOcclusion(thisFace: number[][], otherFace: number[][]): boolea
           otherFaceElement[1] <= part[1] &&
           otherFaceElement[2] >= part[2] &&
           otherFaceElement[3] >= part[3]
-        )
+        ) {
           continue
+        }
         if (
           part[0] < otherFaceElement[2] &&
           part[2] > otherFaceElement[0] &&

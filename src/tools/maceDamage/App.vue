@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { CdxTextInput, CdxCheckbox } from '@wikimedia/codex'
-import CalcField from '@/components/CalcField.vue'
+import { computed, ref } from 'vue'
+import { CdxCheckbox, CdxTextInput } from '@wikimedia/codex'
 import { useI18n } from 'vue-i18n'
+import CalcField from '@/components/CalcField.vue'
 import { parseWikitext } from '@/utils/i18n'
 
 const { t } = useI18n()
@@ -54,9 +54,12 @@ function validateDensity(value: number) {
   if (value !== density) densityLevel.value = density
 }
 </script>
+
 <template>
   <CalcField>
-    <template #heading>{{ t('maceDamage.title') }}</template>
+    <template #heading>
+      {{ t('maceDamage.title') }}
+    </template>
 
     <div
       :style="{
@@ -79,14 +82,14 @@ function validateDensity(value: number) {
         >
           <label for="fall-height-input">{{ t('maceDamage.fallHeight') }}</label>
           <CdxTextInput
-            inputType="number"
+            id="fall-height-input"
+            v-model="fallHeight"
+            input-type="number"
             min="1.5"
             step="0.5"
-            v-model="fallHeight"
-            id="fall-height-input"
           />
 
-          <CdxCheckbox v-model="critical" id="critical-checkbox" inline>
+          <CdxCheckbox id="critical-checkbox" v-model="critical" inline>
             <span class="explain" :title="t('maceDamage.critical.help')">{{
               t('maceDamage.critical')
             }}</span>
@@ -100,17 +103,14 @@ function validateDensity(value: number) {
             gap: '.5rem',
           }"
         >
-          <label
-            for="density-level-input"
-            v-html="parseWikitext(t('maceDamage.densityLevel'))"
-          ></label>
+          <label for="density-level-input" v-html="parseWikitext(t('maceDamage.densityLevel'))" />
           <CdxTextInput
-            inputType="number"
+            id="density-level-input"
+            v-model="densityLevel"
+            input-type="number"
             min="0"
             max="5"
-            v-model="densityLevel"
             @input="validateDensity"
-            id="density-level-input"
           />
         </div>
         <div
@@ -122,10 +122,10 @@ function validateDensity(value: number) {
           }"
         >
           <label for="damage-input">{{ t('maceDamage.damage') }}</label>
-          <CdxTextInput inputType="number" min="0" v-model="damage" id="damage-input" />
+          <CdxTextInput id="damage-input" v-model="damage" input-type="number" min="0" />
         </div>
       </div>
-      <img width="64" height="64" :src="maceImage" />
+      <img width="64" height="64" :src="maceImage">
     </div>
   </CalcField>
 </template>

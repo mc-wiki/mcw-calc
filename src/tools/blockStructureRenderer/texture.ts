@@ -1,6 +1,6 @@
 import * as THREE from 'three'
-import type { AnimatedTexture } from '@/tools/blockStructureRenderer/definitions.ts'
 import { ref } from 'vue'
+import type { AnimatedTexture } from '@/tools/blockStructureRenderer/definitions.ts'
 import type { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
 
 export const ATLAS_WIDTH = 1024
@@ -42,10 +42,12 @@ class TextureAtlasNode {
     if (this.left && this.right) {
       return this.left.insert(spriteData) || this.right.insert(spriteData)
     }
-    if (this.occupied) return null
+    if (this.occupied)
+      return null
     const spriteDataWidth = spriteData[0]
     const spriteDataHeight = spriteData[1]
-    if (this.width < spriteDataWidth || this.height < spriteDataHeight) return null
+    if (this.width < spriteDataWidth || this.height < spriteDataHeight)
+      return null
     if (this.width === spriteDataWidth && this.height === spriteDataHeight) {
       this.occupied = true
       return this
@@ -55,7 +57,8 @@ class TextureAtlasNode {
     if (dw > dh) {
       this.left = new TextureAtlasNode(this.x, this.y, spriteDataWidth, this.height)
       this.right = new TextureAtlasNode(this.x + spriteDataWidth + 1, this.y, dw - 1, this.height)
-    } else {
+    }
+    else {
       this.left = new TextureAtlasNode(this.x, this.y, this.width, spriteDataHeight)
       this.right = new TextureAtlasNode(this.x, this.y + spriteDataHeight + 1, this.width, dh - 1)
     }

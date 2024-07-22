@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest'
-import { getJigsawAPI, fetchJigsawAPI } from './jigsaw'
+import { describe, expect, it, vi } from 'vitest'
+import { fetchJigsawAPI, getJigsawAPI } from './jigsaw'
 
 describe('getJigsawAPI', () => {
   it('should return the local API URL if mcwJigsawLocal is true', () => {

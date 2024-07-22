@@ -1,18 +1,15 @@
-import {
-  z,
-  type ZodType,
-  type ZodRawShape,
-  type RawCreateParams,
-  type SafeParseReturnType,
-} from 'zod'
+import type { SafeParseReturnType } from 'zod'
 import { postMessageParent } from './iframe'
+
+import * as sz from './sz'
+export { sz }
 
 export function getParams(): Promise<Record<string, string>> {
   return new Promise((resolve) => {
     postMessageParent('mcw-calc-init-request-data', {})
 
     const fromSearch = Object.fromEntries(new URLSearchParams(window.location.search))
-    for (const [key, value] of Object.entries(fromSearch)) {
+    for (const [key, _value] of Object.entries(fromSearch)) {
       fromSearch[key] = kebabToCamel(key)
     }
 
@@ -43,62 +40,6 @@ export function getParams(): Promise<Record<string, string>> {
 
 function kebabToCamel(str: string) {
   return str.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
-}
-
-export namespace sz {
-  export const string = (param?: RawCreateParams) =>
-    z.preprocess((val) => {
-      if (val === 'null') return null
-      return val
-    }, z.string(param))
-  export const number = (param?: RawCreateParams) => z.coerce.number(param)
-  export const bigint = (param?: RawCreateParams) => z.coerce.bigint(param)
-  export const boolean = (param?: RawCreateParams) =>
-    z.preprocess((val, ctx) => {
-      if (val === undefined) return undefined
-      if (typeof val === 'boolean') return val
-      if (typeof val != 'string') {
-        ctx.addIssue({
-          code: z.ZodIssueCode.invalid_type,
-          expected: 'string',
-          received: typeof val,
-          message: 'Expected string, received' + typeof val,
-        })
-        return false
-      }
-      return val === 'true'
-    }, z.boolean(param))
-  export const date = (param?: RawCreateParams) => z.coerce.date()
-
-  export const array = <T extends ZodType>(
-    type: T,
-    separator: string | RegExp = ',',
-    param?: RawCreateParams,
-  ) =>
-    z.preprocess(
-      (val, ctx) => {
-        if (val === undefined) return undefined
-        if (val === null) return null
-        if (Array.isArray(val)) return val
-        if (typeof val !== 'string') {
-          ctx.addIssue({
-            code: z.ZodIssueCode.invalid_type,
-            expected: 'string',
-            received: typeof val,
-            message: 'Expected string, received' + typeof val,
-          })
-          return false
-        }
-        return val.split(separator)
-      },
-      z.array(type, param),
-    )
-
-  export const object = (type: ZodRawShape) =>
-    z
-      .string()
-      .transform((val) => JSON.parse(val))
-      .pipe(z.object(type))
 }
 
 export function handleParseError<I, O>(returnValue: SafeParseReturnType<I, O>, targetEl: Element) {

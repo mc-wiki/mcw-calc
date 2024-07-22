@@ -1,24 +1,24 @@
-// @ts-nocheck
+// @ts-nocheck smoothWheelScroll is not defined in the type
 // License MIT
 import L from 'leaflet'
 
 export default L.Handler.extend({
-  addHooks: function () {
+  addHooks() {
     L.DomEvent.on(this._map._container, 'wheel', this._onWheelScroll, this)
   },
 
-  removeHooks: function () {
+  removeHooks() {
     L.DomEvent.off(this._map._container, 'wheel', this._onWheelScroll, this)
   },
 
-  _onWheelScroll: function (e) {
+  _onWheelScroll(e) {
     if (!this._isWheeling) {
       this._onWheelStart(e)
     }
     this._onWheeling(e)
   },
 
-  _onWheelStart: function (e) {
+  _onWheelStart(e) {
     const map = this._map
     this._isWheeling = true
     this._wheelMousePosition = map.mouseEventToContainerPoint(e)
@@ -39,7 +39,7 @@ export default L.Handler.extend({
     this._zoomAnimationId = requestAnimationFrame(this._updateWheelZoom.bind(this))
   },
 
-  _onWheeling: function (e) {
+  _onWheeling(e) {
     const map = this._map
 
     this._goalZoom =
@@ -56,16 +56,16 @@ export default L.Handler.extend({
     L.DomEvent.stopPropagation(e)
   },
 
-  _onWheelEnd: function () {
+  _onWheelEnd() {
     this._isWheeling = false
     cancelAnimationFrame(this._zoomAnimationId)
     this._map._moveEnd(true)
   },
 
-  _updateWheelZoom: function () {
+  _updateWheelZoom() {
     const map = this._map
 
-    if (!map.getCenter().equals(this._prevCenter) || map.getZoom() != this._prevZoom) return
+    if (!map.getCenter().equals(this._prevCenter) || map.getZoom() !== this._prevZoom) return
 
     this._zoom = map.getZoom() + (this._goalZoom - map.getZoom()) * 0.3
     this._zoom = Math.floor(this._zoom * 100) / 100

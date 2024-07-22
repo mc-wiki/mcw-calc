@@ -4,29 +4,29 @@ import { useI18n } from 'vue-i18n'
 import * as THREE from 'three'
 import WebGL from 'three/addons/capabilities/WebGL.js'
 import {
-  CdxCheckbox,
-  CdxTextInput,
-  CdxSelect,
   CdxButton,
-  CdxIcon,
+  CdxCheckbox,
   CdxField,
+  CdxIcon,
+  CdxSelect,
+  CdxTextInput,
 } from '@wikimedia/codex'
-import { cdxIconImage, cdxIconCamera, cdxIconShare, cdxIconCut } from '@wikimedia/codex-icons'
+import { cdxIconCamera, cdxIconCut, cdxIconImage, cdxIconShare } from '@wikimedia/codex-icons'
+import type { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
+import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
+import { type VirtualElement, flip, offset, shift, useFloating } from '@floating-ui/vue'
+import BsrPopup from './BsrPopup.vue'
 import { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
 import {
+  BlockStructure,
+  NameMapping,
   bakeBlockMarkers,
   bakeBlockModelRenderLayer,
   bakeFluidRenderLayer,
   bakeInvisibleBlocks,
-  BlockStructure,
-  NameMapping,
 } from '@/tools/blockStructureRenderer/renderer.ts'
 import { MaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
-import type { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
 import { saveAsLitematic, saveAsStructureFile } from '@/tools/blockStructureRenderer/structure.ts'
-import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
-import { type VirtualElement, flip, offset, shift, useFloating } from '@floating-ui/vue'
-import BsrPopup from './BsrPopup.vue'
 
 const props = defineProps<{
   blocks: string[]
@@ -305,19 +305,19 @@ function onDisplayModeChanged() {
 function parsePosition(value?: string) {
   if (value) {
     const pos = value.split(',')
-    const x = parseFloat(pos[0].trim())
-    const y = parseFloat(pos[1].trim())
-    const z = parseFloat(pos[2].trim())
-    if (!isNaN(x) && !isNaN(y) && !isNaN(z)) return [x, y, z]
+    const x = Number.parseFloat(pos[0].trim())
+    const y = Number.parseFloat(pos[1].trim())
+    const z = Number.parseFloat(pos[2].trim())
+    if (!Number.isNaN(x) && !Number.isNaN(y) && !Number.isNaN(z)) return [x, y, z]
   }
 }
 
 function parseAngles(value?: string) {
   if (value) {
     const angles = value.split(',')
-    const pitch = parseFloat(angles[0].trim())
-    const yaw = parseFloat(angles[1].trim())
-    if (!isNaN(pitch) && !isNaN(yaw)) return [pitch, yaw]
+    const pitch = Number.parseFloat(angles[0].trim())
+    const yaw = Number.parseFloat(angles[1].trim())
+    if (!Number.isNaN(pitch) && !Number.isNaN(yaw)) return [pitch, yaw]
   }
 }
 
@@ -430,8 +430,8 @@ function changeBackgroundColor() {
 function saveRenderedImage() {
   const downloadLink = document.createElement('a')
   downloadLink.setAttribute('download', 'block_structure.png')
-  renderer.domElement.toBlob(function (blob) {
-    let url = URL.createObjectURL(blob!)
+  renderer.domElement.toBlob((blob) => {
+    const url = URL.createObjectURL(blob!)
     downloadLink.setAttribute('href', url)
     downloadLink.click()
   })
@@ -441,7 +441,7 @@ async function saveStructureFile() {
   const downloadLink = document.createElement('a')
   downloadLink.setAttribute('download', 'block_structure.nbt')
   const blob = new Blob([await saveAsStructureFile(blockStructure, nameMapping)])
-  let url = URL.createObjectURL(blob)
+  const url = URL.createObjectURL(blob)
   downloadLink.setAttribute('href', url)
   downloadLink.click()
 }
@@ -450,7 +450,7 @@ async function saveLitematic() {
   const downloadLink = document.createElement('a')
   downloadLink.setAttribute('download', 'block_structure.litematic')
   const blob = new Blob([await saveAsLitematic(blockStructure, nameMapping)])
-  let url = URL.createObjectURL(blob)
+  const url = URL.createObjectURL(blob)
   downloadLink.setAttribute('href', url)
   downloadLink.click()
 }
@@ -481,8 +481,9 @@ function animate() {
     (bounds.left <= 0 && bounds.right <= 0) ||
     (bounds.left >= document.documentElement.clientWidth &&
       bounds.right >= document.documentElement.clientWidth)
-  )
+  ) {
     return
+  }
 
   // Move Control
   const delta = (Date.now() - lastTime.value) / 1000
@@ -541,6 +542,7 @@ onMounted(() => {
     }"
   >
     <div
+      ref="renderTarget"
       class="renderer-component"
       :style="{
         width: '100%',
@@ -548,7 +550,6 @@ onMounted(() => {
         position: 'relative',
         cursor: locked ? 'none' : isCameraPointerLockControl() ? 'pointer' : 'auto',
       }"
-      ref="renderTarget"
       @mouseenter="tooltipOpen = isCameraPointerLockControl()"
       @mouseleave="tooltipOpen = false"
     />
@@ -557,45 +558,49 @@ onMounted(() => {
       style="position: absolute; bottom: 0; right: 0; padding: 0.5em; display: flex; gap: 5px"
     >
       <BsrPopup :name="t('blockStructureRenderer.optionsScene')" :icon="cdxIconImage">
-        <cdx-checkbox v-model="animatedTexture">
+        <CdxCheckbox v-model="animatedTexture">
           {{ t('blockStructureRenderer.animatedTexture') }}
-        </cdx-checkbox>
-        <cdx-checkbox v-model="invisibleBlocks" @change="requireReBake = true">
+        </CdxCheckbox>
+        <CdxCheckbox v-model="invisibleBlocks" @change="requireReBake = true">
           {{ t('blockStructureRenderer.renderInvisibleBlocks') }}
-        </cdx-checkbox>
-        <cdx-checkbox
+        </CdxCheckbox>
+        <CdxCheckbox
           v-if="blockStructure.hasMarks()"
           v-model="displayMarks"
           @change="requireReBake = true"
         >
           {{ t('blockStructureRenderer.renderMarks') }}
-        </cdx-checkbox>
+        </CdxCheckbox>
 
-        <cdx-field>
+        <CdxField>
           <input
-            type="color"
-            v-model="backgroundColor"
             id="colorPicker"
+            v-model="backgroundColor"
+            type="color"
             @change="changeBackgroundColor"
-          />
-          <template #label>{{ t('blockStructureRenderer.backgroundColor') }}</template>
-        </cdx-field>
-        <cdx-field>
-          <cdx-text-input
+          >
+          <template #label>
+            {{ t('blockStructureRenderer.backgroundColor') }}
+          </template>
+        </CdxField>
+        <CdxField>
+          <CdxTextInput
             id="backgroundAlpha"
             v-model="backgroundAlpha"
-            inputType="number"
+            input-type="number"
             :min="0"
             :max="255"
             step="1"
             @input="changeBackgroundColor"
           />
 
-          <template #label>{{ t('blockStructureRenderer.backgroundAlpha') }}</template>
-        </cdx-field>
+          <template #label>
+            {{ t('blockStructureRenderer.backgroundAlpha') }}
+          </template>
+        </CdxField>
 
-        <cdx-field>
-          <cdx-select
+        <CdxField>
+          <CdxSelect
             id="displayMode"
             v-model:selected="displayMode"
             :menu-items="displayModes"
@@ -605,10 +610,14 @@ onMounted(() => {
             @update:selected="onDisplayModeChanged"
           />
 
-          <template #label>{{ t('blockStructureRenderer.displayMode') }}</template>
-        </cdx-field>
-        <cdx-field v-if="displayMode !== displayModeStr[0]">
-          <template #label>{{ t('blockStructureRenderer.renderRange') }}</template>
+          <template #label>
+            {{ t('blockStructureRenderer.displayMode') }}
+          </template>
+        </CdxField>
+        <CdxField v-if="displayMode !== displayModeStr[0]">
+          <template #label>
+            {{ t('blockStructureRenderer.renderRange') }}
+          </template>
           <div
             :style="{
               display: 'flex',
@@ -619,44 +628,44 @@ onMounted(() => {
               width: 'max-content',
             }"
           >
-            <cdx-text-input
+            <CdxTextInput
               v-if="displayMode === displayModeStr[1]"
               v-model="yRangeMin"
               style="min-width: 100px"
-              inputType="number"
+              input-type="number"
               min="0"
               :max="Math.max(yRangeMax, 0)"
               step="1"
               @input="onDisplayModeChanged"
             />
             <span v-if="displayMode === displayModeStr[1]"> - </span>
-            <cdx-text-input
+            <CdxTextInput
               v-if="displayMode === displayModeStr[1]"
               v-model="yRangeMax"
               style="min-width: 100px"
-              inputType="number"
+              input-type="number"
               :min="Math.min(yRangeMin, blockStructure.y - 1)"
               :max="blockStructure.y - 1"
               step="1"
               @input="onDisplayModeChanged"
             />
-            <cdx-text-input
+            <CdxTextInput
               v-if="displayMode === displayModeStr[2]"
               v-model="ySelected"
               style="min-width: 100px"
-              inputType="number"
+              input-type="number"
               min="0"
               :max="blockStructure.y - 1"
               step="1"
               @input="onDisplayModeChanged"
             />
           </div>
-        </cdx-field>
+        </CdxField>
       </BsrPopup>
       <BsrPopup :name="t('blockStructureRenderer.optionsCamera')" :icon="cdxIconCamera">
-        <cdx-checkbox v-model="orthographic" @change="onCameraChanged">
+        <CdxCheckbox v-model="orthographic" @change="onCameraChanged">
           {{ t('blockStructureRenderer.orthographic') }}
-        </cdx-checkbox>
+        </CdxCheckbox>
         <div
           :style="{
             display: 'flex',
@@ -666,9 +675,9 @@ onMounted(() => {
             width: 'max-content',
           }"
         >
-          <cdx-field>
+          <CdxField>
             <div style="display: flex; gap: 5px">
-              <cdx-select
+              <CdxSelect
                 id="cameraSetting"
                 v-model:selected="cameraSettingMode"
                 :menu-items="cameraSettingModes"
@@ -678,13 +687,15 @@ onMounted(() => {
                 @update:selected="onCameraSettingModeChanged"
               />
 
-              <cdx-button v-if="cameraSettingMode === cameraSettingModeStr[1]" @click="setCamera">
+              <CdxButton v-if="cameraSettingMode === cameraSettingModeStr[1]" @click="setCamera">
                 {{ t('blockStructureRenderer.cameraSetting.confirm') }}
-              </cdx-button>
+              </CdxButton>
             </div>
 
-            <template #label>{{ t('blockStructureRenderer.cameraSetting') }}</template>
-          </cdx-field>
+            <template #label>
+              {{ t('blockStructureRenderer.cameraSetting') }}
+            </template>
+          </CdxField>
           <div
             v-if="cameraSettingMode === cameraSettingModeStr[1]"
             :style="{
@@ -702,23 +713,23 @@ onMounted(() => {
               }"
             >
               <span>{{ t('blockStructureRenderer.cameraSetting.position') }} (</span>
-              <cdx-text-input
+              <CdxTextInput
                 v-model="cameraX"
-                inputType="number"
+                input-type="number"
                 step="0.1"
                 style="min-width: 100px"
               />
               <span>, </span>
-              <cdx-text-input
+              <CdxTextInput
                 v-model="cameraY"
-                inputType="number"
+                input-type="number"
                 step="0.1"
                 style="min-width: 100px"
               />
               <span>, </span>
-              <cdx-text-input
+              <CdxTextInput
                 v-model="cameraZ"
-                inputType="number"
+                input-type="number"
                 step="0.1"
                 style="min-width: 100px"
               />
@@ -733,16 +744,16 @@ onMounted(() => {
               }"
             >
               <span>{{ t('blockStructureRenderer.cameraSetting.pose') }} (</span>
-              <cdx-text-input
+              <CdxTextInput
                 v-model="cameraPitch"
-                inputType="number"
+                input-type="number"
                 step="0.1"
                 style="min-width: 100px"
               />
               <span>, </span>
-              <cdx-text-input
+              <CdxTextInput
                 v-model="cameraYaw"
-                inputType="number"
+                input-type="number"
                 step="0.1"
                 style="min-width: 100px"
               />
@@ -750,31 +761,37 @@ onMounted(() => {
             </div>
           </div>
         </div>
-        <cdx-field v-if="orthographic" style="margin-bottom: 0.5em">
-          <cdx-text-input
+        <CdxField v-if="orthographic" style="margin-bottom: 0.5em">
+          <CdxTextInput
             id="cameraZoom"
             v-model="cameraZoom"
-            inputType="number"
+            input-type="number"
             :min="0.1"
             :max="100"
             step="0.1"
             @input="updateFOVAndZoom"
           />
-          <template #label>{{ t('blockStructureRenderer.cameraZoom') }}</template>
-        </cdx-field>
-        <cdx-field v-else style="margin-bottom: 0.5em">
-          <cdx-text-input
+          <template #label>
+            {{ t('blockStructureRenderer.cameraZoom') }}
+          </template>
+        </CdxField>
+        <CdxField v-else style="margin-bottom: 0.5em">
+          <CdxTextInput
             id="cameraFOV"
             v-model="cameraFOV"
-            inputType="number"
+            input-type="number"
             :min="10"
             :max="120"
             step="1"
             @input="updateFOVAndZoom"
           />
-          <template #label>{{ t('blockStructureRenderer.cameraFOV') }}</template>
-        </cdx-field>
-        <cdx-button @click="resetCamera">{{ t('blockStructureRenderer.resetCamera') }}</cdx-button>
+          <template #label>
+            {{ t('blockStructureRenderer.cameraFOV') }}
+          </template>
+        </CdxField>
+        <CdxButton @click="resetCamera">
+          {{ t('blockStructureRenderer.resetCamera') }}
+        </CdxButton>
       </BsrPopup>
       <BsrPopup :name="t('blockStructureRenderer.optionsExport')" :icon="cdxIconShare">
         <div
@@ -785,21 +802,22 @@ onMounted(() => {
             gap: '.5rem',
           }"
         >
-          <cdx-button @click="saveRenderedImage">
-            <cdx-icon :icon="cdxIconCut" />
+          <CdxButton @click="saveRenderedImage">
+            <CdxIcon :icon="cdxIconCut" />
             {{ t('blockStructureRenderer.saveImage') }}
-          </cdx-button>
-          <cdx-button @click="saveStructureFile">
+          </CdxButton>
+          <CdxButton @click="saveStructureFile">
             {{ t('blockStructureRenderer.saveStructureFile') }}
-          </cdx-button>
-          <cdx-button @click="saveLitematic">
+          </CdxButton>
+          <CdxButton @click="saveLitematic">
             {{ t('blockStructureRenderer.saveLitematic') }}
-          </cdx-button>
+          </CdxButton>
         </div>
       </BsrPopup>
     </div>
     <div
       v-if="loaded"
+      ref="lockTooltip"
       class="dark"
       style="
         background-color: var(--background-color-base, #fff);
@@ -807,7 +825,6 @@ onMounted(() => {
         border-radius: 4px;
         padding: 6px;
       "
-      ref="lockTooltip"
       :style="{ ...floatingStyles, display: tooltipOpen ? 'block' : 'none' }"
     >
       {{ t('blockStructureRenderer.lockTooltip') }}
@@ -831,6 +848,7 @@ onMounted(() => {
     </Transition>
   </div>
 </template>
+
 <style>
 .v-enter-active,
 .v-leave-active {

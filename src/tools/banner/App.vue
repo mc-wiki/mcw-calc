@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import CalcField from '@/components/CalcField.vue'
 import { onMounted, ref, watch } from 'vue'
 import {
   CdxButton,
-  CdxSelect,
-  type MenuItemData,
-  CdxTable,
   CdxIcon,
+  CdxSelect,
+  CdxTable,
   CdxToggleButtonGroup,
+  type MenuItemData,
 } from '@wikimedia/codex'
 import { useI18n } from 'vue-i18n'
-import { colorMap, colorRgbMap } from '@/utils/color/java'
-import type { Color } from '@/utils/color'
 import {
   cdxIconAlert,
   cdxIconDownTriangle,
@@ -21,8 +18,11 @@ import {
   cdxIconTrash,
   cdxIconUpTriangle,
 } from '@wikimedia/codex-icons'
-import BannerPopup from './BannerPopup.vue'
 import { useLocalStorage } from '@vueuse/core'
+import BannerPopup from './BannerPopup.vue'
+import { colorMap, colorRgbMap } from '@/utils/color/java'
+import type { Color } from '@/utils/color'
+import CalcField from '@/components/CalcField.vue'
 import { isEmbedded, parentUrl, postMessageParent } from '@/utils/iframe'
 import { theme } from '@/utils/theme'
 
@@ -301,12 +301,14 @@ function copyShareUrl() {
   const searchParams = new URLSearchParams()
   searchParams.set('activePatterns', JSON.stringify(activePatterns.value))
   searchParams.set('baseColor', baseColor.value)
-  url.hash = '?' + searchParams.toString()
+  url.hash = `?${searchParams.toString()}`
   if (isEmbedded()) {
     postMessageParent('mcw-calc-clipboard', {
       text: url.href,
     })
-  } else navigator.clipboard.writeText(url.href)
+  } else {
+    navigator.clipboard.writeText(url.href)
+  }
 }
 
 onMounted(() => {
@@ -322,9 +324,12 @@ onMounted(() => {
   }
 })
 </script>
+
 <template>
   <CalcField>
-    <template #heading>{{ t('banner.title', { type: t(`banner.icon.${type}`) }) }}</template>
+    <template #heading>
+      {{ t('banner.title', { type: t(`banner.icon.${type}`) }) }}
+    </template>
     <div class="flex flex-col md:flex-row flex-wrap items-center md:items-stretch gap-3">
       <div class="flex flex-col gap-3 items-center md:items-stretch">
         <canvas
@@ -332,7 +337,7 @@ onMounted(() => {
           :width="type === 'banner' ? 20 : 12"
           :height="type === 'banner' ? 40 : 22"
           class="h-[200px] md:h-[400px] pixel-image"
-        ></canvas>
+        />
 
         <CdxToggleButtonGroup
           v-model="type"
@@ -356,11 +361,11 @@ onMounted(() => {
               activePatterns.length === 0
                 ? []
                 : [
-                    { id: 'id', label: t('banner.layer'), textAlign: 'number' },
-                    { id: 'name', label: t('banner.pattern') },
-                    { id: 'color', label: t('banner.color') },
-                    { id: 'actions', label: t('banner.actions') },
-                  ]
+                  { id: 'id', label: t('banner.layer'), textAlign: 'number' },
+                  { id: 'name', label: t('banner.pattern') },
+                  { id: 'color', label: t('banner.color') },
+                  { id: 'actions', label: t('banner.actions') },
+                ]
             "
           >
             <template #header>
@@ -391,10 +396,10 @@ onMounted(() => {
               <CdxSelect
                 class="long-handle"
                 :menu-items="patternMenuItems"
+                :selected="item"
                 @update:selected="
                   (selected: keyof typeof patternName) => updatePattern(row.id, selected)
                 "
-                :selected="item"
               >
                 <template #menu-item="{ menuItem }: { menuItem: MenuItemData }">
                   <div class="flex items-center">
@@ -404,17 +409,17 @@ onMounted(() => {
                       height="45"
                       loading="lazy"
                       :src="menuItem.thumbnail?.url"
-                    />
+                    >
                     <span>{{ menuItem.label }}</span>
 
                     <div
                       v-if="patternItemRequired[menuItem.value as string]"
-                      class="flex items-center relative"
                       v-tooltip="
                         patternItemRequired[menuItem.value as string] === 'bedrock'
                           ? t('banner.requiredPatternBedrock')
                           : t('banner.requiredPattern')
                       "
+                      class="flex items-center relative"
                     >
                       <img
                         class="pixel-image ml-2"
@@ -422,7 +427,7 @@ onMounted(() => {
                         height="24"
                         loading="lazy"
                         src="https://minecraft.wiki/images/ItemSprite_banner-pattern.png"
-                      />
+                      >
 
                       <img
                         v-if="patternItemRequired[menuItem.value as string] === 'bedrock'"
@@ -431,7 +436,7 @@ onMounted(() => {
                         height="15"
                         loading="lazy"
                         src="https://minecraft.wiki/images/Invicon_Bedrock.png"
-                      />
+                      >
                     </div>
                   </div>
                 </template>
@@ -443,17 +448,17 @@ onMounted(() => {
                       height="40"
                       loading="lazy"
                       :src="selectedMenuItem.thumbnail.url"
-                    />
+                    >
                     <span>{{ selectedMenuItem.label }}</span>
 
                     <div
                       v-if="patternItemRequired[selectedMenuItem.value as string]"
-                      class="flex items-center relative"
                       v-tooltip="
                         patternItemRequired[selectedMenuItem.value as string] === 'bedrock'
                           ? t('banner.requiredPatternBedrock')
                           : t('banner.requiredPattern')
                       "
+                      class="flex items-center relative"
                     >
                       <img
                         class="pixel-image ml-2"
@@ -461,7 +466,7 @@ onMounted(() => {
                         height="24"
                         loading="lazy"
                         src="https://minecraft.wiki/images/ItemSprite_banner-pattern.png"
-                      />
+                      >
 
                       <img
                         v-if="patternItemRequired[selectedMenuItem.value as string] === 'bedrock'"
@@ -470,7 +475,7 @@ onMounted(() => {
                         height="15"
                         loading="lazy"
                         src="https://minecraft.wiki/images/Invicon_Bedrock.png"
-                      />
+                      >
                     </div>
                   </div>
                 </template>
@@ -480,8 +485,8 @@ onMounted(() => {
             <template #item-color="{ item, row }: { item: Color; row: Pattern }">
               <CdxSelect
                 :menu-items="colorMenuItems"
-                @update:selected="(selected: Color) => updateColor(row.id, selected)"
                 :selected="item"
+                @update:selected="(selected: Color) => updateColor(row.id, selected)"
               />
             </template>
 
@@ -541,7 +546,7 @@ onMounted(() => {
             </template>
 
             <template #empty-state>
-              <CdxButton @click="newLayer" action="progressive" weight="primary" size="large">
+              <CdxButton action="progressive" weight="primary" size="large" @click="newLayer">
                 <CdxIcon :icon="cdxIconTableAddRowAfter" />
                 {{ t('banner.new') }}
               </CdxButton>
@@ -559,6 +564,7 @@ onMounted(() => {
     </div>
   </CalcField>
 </template>
+
 <style lang="less">
 @import (reference) '@wikimedia/codex-design-tokens/theme-wikimedia-ui.less';
 

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import CalcField from '@/components/CalcField.vue'
 import { CdxField, CdxTextInput } from '@wikimedia/codex'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import CalcField from '@/components/CalcField.vue'
 
 const { t } = useI18n()
 
@@ -53,49 +53,58 @@ watch(
   { deep: true },
 )
 </script>
+
 <template>
   <CalcField>
-    <template #heading>{{ t('transport.title') }}</template>
+    <template #heading>
+      {{ t('transport.title') }}
+    </template>
 
     <div class="flex flex-wrap gap-4">
       <div class="flex flex-col gap-2">
         <CdxField>
-          <template #label>{{ t('transport.speed') }}</template>
+          <template #label>
+            {{ t('transport.speed') }}
+          </template>
           <div class="flex font-mono items-center gap-2">
             <I18nT keypath="transport.unit.metersPerSecond">
               <template #speed>
-                <CdxTextInput v-model="speedMeterPerSecond" class="flex-1" inputType="number" />
+                <CdxTextInput v-model="speedMeterPerSecond" class="flex-1" input-type="number" />
               </template>
             </I18nT>
           </div>
         </CdxField>
 
         <CdxField>
-          <template #label>{{ t('transport.coordinate1') }}</template>
+          <template #label>
+            {{ t('transport.coordinate1') }}
+          </template>
 
           <div class="flex gap-2">
             <CdxField>
-              <template #label>X</template>
-              <CdxTextInput v-model="coordinate1.x" inputType="number" />
+              <template #label> X </template>
+              <CdxTextInput v-model="coordinate1.x" input-type="number" />
             </CdxField>
             <CdxField>
-              <template #label>Z</template>
-              <CdxTextInput v-model="coordinate1.z" inputType="number" />
+              <template #label> Z </template>
+              <CdxTextInput v-model="coordinate1.z" input-type="number" />
             </CdxField>
           </div>
         </CdxField>
 
         <CdxField>
-          <template #label>{{ t('transport.coordinate2') }}</template>
+          <template #label>
+            {{ t('transport.coordinate2') }}
+          </template>
 
           <div class="flex gap-2">
             <CdxField>
-              <template #label>X</template>
-              <CdxTextInput v-model="coordinate2.x" inputType="number" />
+              <template #label> X </template>
+              <CdxTextInput v-model="coordinate2.x" input-type="number" />
             </CdxField>
             <CdxField>
-              <template #label>Z</template>
-              <CdxTextInput v-model="coordinate2.z" inputType="number" />
+              <template #label> Z </template>
+              <CdxTextInput v-model="coordinate2.z" input-type="number" />
             </CdxField>
           </div>
         </CdxField>
@@ -214,17 +223,23 @@ watch(
         </div>
         <div class="flex gap-4 flex-wrap">
           <CdxField>
-            <template #label>{{ t('transport.distance') }}</template>
+            <template #label>
+              {{ t('transport.distance') }}
+            </template>
             <samp>{{ t('transport.unit.meters', { distance: distanceMeter.toFixed(2) }) }}</samp>
           </CdxField>
 
           <CdxField>
-            <template #label>{{ t('transport.time') }}</template>
+            <template #label>
+              {{ t('transport.time') }}
+            </template>
             <samp>{{ t('transport.unit.seconds', { time: timeSecond.toFixed(2) }) }}</samp>
           </CdxField>
 
           <CdxField>
-            <template #label>{{ t('transport.angle') }}</template>
+            <template #label>
+              {{ t('transport.angle') }}
+            </template>
 
             <I18nT keypath="transport.facing">
               <template #direction>
@@ -243,6 +258,7 @@ watch(
     </div>
   </CalcField>
 </template>
+
 <style lang="less">
 @import '@wikimedia/codex-design-tokens/theme-wikimedia-ui-reset.less';
 @import '@wikimedia/codex-design-tokens/theme-wikimedia-ui-mixin-dark.less';

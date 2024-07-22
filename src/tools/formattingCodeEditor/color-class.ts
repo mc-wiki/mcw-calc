@@ -2,7 +2,7 @@ import './text-class'
 
 import { Extension } from '@tiptap/core'
 
-export type ColorOptions = {
+export interface ColorOptions {
   /**
    * The types where the color can be applied
    * @default ['textClass']

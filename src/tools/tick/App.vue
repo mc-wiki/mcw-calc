@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import CalcField from '@/components/CalcField.vue'
 import { computed, ref } from 'vue'
 import { CdxTextInput } from '@wikimedia/codex'
+import CalcField from '@/components/CalcField.vue'
 
 const { t } = useI18n()
 
@@ -11,7 +11,7 @@ const tps = ref(20)
 const mspt = computed({
   get: () => 1000 / tps.value,
   set: (value: number) => {
-    if (isNaN(value)) return
+    if (Number.isNaN(value)) return
     tps.value = 1000 / value
   },
 })
@@ -24,7 +24,7 @@ const gt = ref(0)
 const rt = computed({
   get: () => gt.value / 2,
   set: (value: number) => {
-    if (isNaN(value)) return
+    if (Number.isNaN(value)) return
     gt.value = value * 2
   },
 })
@@ -32,7 +32,7 @@ const rt = computed({
 const inGameDay = computed({
   get: () => gt.value / 24000,
   set: (value: number) => {
-    if (isNaN(value)) return
+    if (Number.isNaN(value)) return
     gt.value = value * 24000
   },
 })
@@ -41,7 +41,7 @@ const inGameDay = computed({
 const millisecond = computed({
   get: () => Math.floor(((gt.value / tps.value) * 1000) % 1000),
   set: (value: number) => {
-    if (isNaN(value)) return
+    if (Number.isNaN(value)) return
     gt.value = gt.value + ((value - millisecond.value) / 1000) * tps.value
   },
 })
@@ -49,7 +49,7 @@ const millisecond = computed({
 const second = computed({
   get: () => Math.floor((gt.value / tps.value) % 60),
   set: (value: number) => {
-    if (isNaN(value)) return
+    if (Number.isNaN(value)) return
     gt.value = gt.value + (value - second.value) * tps.value
   },
 })
@@ -57,7 +57,7 @@ const second = computed({
 const minute = computed({
   get: () => Math.floor((gt.value / tps.value / 60) % 60),
   set: (value: number) => {
-    if (isNaN(value)) return
+    if (Number.isNaN(value)) return
     gt.value = gt.value + (value - minute.value) * tps.value * 60
   },
 })
@@ -65,7 +65,7 @@ const minute = computed({
 const hour = computed({
   get: () => Math.floor((gt.value / tps.value / 60 / 60) % 24),
   set: (value: number) => {
-    if (isNaN(value)) return
+    if (Number.isNaN(value)) return
     gt.value = gt.value + (value - hour.value) * tps.value * 60 * 60
   },
 })
@@ -73,11 +73,12 @@ const hour = computed({
 const day = computed({
   get: () => Math.floor(gt.value / tps.value / 60 / 60 / 24),
   set: (value: number) => {
-    if (isNaN(value)) return
+    if (Number.isNaN(value)) return
     gt.value = gt.value + (value - day.value) * tps.value * 60 * 60 * 24
   },
 })
 </script>
+
 <template>
   <CalcField>
     <template #heading>
@@ -88,7 +89,7 @@ const day = computed({
       <div class="flex items-center gap-1">
         <div class="input-item">
           <div id="gt" class="input-input">
-            <CdxTextInput class="text-center min-w-16" v-model="gt" inputType="number" />
+            <CdxTextInput v-model="gt" class="text-center min-w-16" input-type="number" />
             {{ t('tick.gt') }}
           </div>
         </div>
@@ -99,7 +100,7 @@ const day = computed({
 
         <div class="input-item">
           <div id="rt" class="input-input">
-            <CdxTextInput class="text-center min-w-16" v-model="rt" inputType="number" />
+            <CdxTextInput v-model="rt" class="text-center min-w-16" input-type="number" />
             {{ t('tick.rt') }}
           </div>
         </div>
@@ -110,7 +111,7 @@ const day = computed({
 
         <div class="input-item">
           <div id="inGameDay" class="input-input">
-            <CdxTextInput class="text-center min-w-16" v-model="inGameDay" inputType="number" />
+            <CdxTextInput v-model="inGameDay" class="text-center min-w-16" input-type="number" />
             {{ t('tick.inGameDay') }}
           </div>
         </div>
@@ -123,7 +124,7 @@ const day = computed({
 
         <div class="input-item">
           <div id="day" class="input-input">
-            <CdxTextInput class="text-center min-w-16" v-model="day" inputType="number" />
+            <CdxTextInput v-model="day" class="text-center min-w-16" input-type="number" />
             {{ t('tick.day') }}
           </div>
         </div>
@@ -131,7 +132,7 @@ const day = computed({
         <div class="input-item">
           <div class="input-symbol">:</div>
           <div id="hour" class="input-input">
-            <CdxTextInput class="text-center min-w-16" v-model="hour" inputType="number" />
+            <CdxTextInput v-model="hour" class="text-center min-w-16" input-type="number" />
             {{ t('tick.hour') }}
           </div>
         </div>
@@ -139,7 +140,7 @@ const day = computed({
         <div class="input-item">
           <div class="input-symbol">:</div>
           <div id="minute" class="input-input">
-            <CdxTextInput class="text-center min-w-16" v-model="minute" inputType="number" />
+            <CdxTextInput v-model="minute" class="text-center min-w-16" input-type="number" />
             {{ t('tick.minute') }}
           </div>
         </div>
@@ -147,7 +148,7 @@ const day = computed({
         <div class="input-item">
           <div class="input-symbol">:</div>
           <div id="second" class="input-input">
-            <CdxTextInput class="text-center min-w-16" v-model="second" inputType="number" />
+            <CdxTextInput v-model="second" class="text-center min-w-16" input-type="number" />
             {{ t('tick.second') }}
           </div>
         </div>
@@ -155,7 +156,7 @@ const day = computed({
         <div class="input-item">
           <div class="input-symbol">.</div>
           <div id="millisecond" class="input-input">
-            <CdxTextInput class="text-center min-w-16" v-model="millisecond" inputType="number" />
+            <CdxTextInput v-model="millisecond" class="text-center min-w-16" input-type="number" />
             {{ t('tick.millisecond') }}
           </div>
         </div>
@@ -163,12 +164,14 @@ const day = computed({
 
       <div class="flex items-center gap-1">
         <div class="h-full">
-          <div class="input-symbol mx-1">{{ t('tick.runningAt') }}</div>
+          <div class="input-symbol mx-1">
+            {{ t('tick.runningAt') }}
+          </div>
         </div>
 
         <div class="input-item">
           <div id="tps" class="input-input">
-            <CdxTextInput class="text-center min-w-16" v-model="tps" inputType="number" />
+            <CdxTextInput v-model="tps" class="text-center min-w-16" input-type="number" />
             <span class="explain" :title="t('tick.tps.explain')">{{ t('tick.tps') }}</span>
           </div>
         </div>
@@ -179,7 +182,7 @@ const day = computed({
 
         <div class="input-item">
           <div id="tps" class="input-input">
-            <CdxTextInput class="text-center min-w-16" v-model="mspt" inputType="number" />
+            <CdxTextInput v-model="mspt" class="text-center min-w-16" input-type="number" />
             <span class="explain" :title="t('tick.mspt.explain')">{{ t('tick.mspt') }}</span>
           </div>
         </div>
@@ -187,6 +190,7 @@ const day = computed({
     </div>
   </CalcField>
 </template>
+
 <style lang="less">
 .cdx-field {
   margin-top: 0;

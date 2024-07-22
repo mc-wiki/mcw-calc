@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import * as d3 from 'd3'
-import { overworldBlockMap, netherBlockMap, endBlockMap, getColor, type Block } from './data'
-import { onMounted, ref, computed, onUpdated } from 'vue'
+import { computed, onMounted, onUpdated, ref } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
-import { CdxTab, CdxTabs, CdxCheckbox } from '@wikimedia/codex'
+import { CdxCheckbox, CdxTab, CdxTabs } from '@wikimedia/codex'
 import { useI18n } from 'vue-i18n'
+import { type Block, endBlockMap, getColor, netherBlockMap, overworldBlockMap } from './data'
 import { parseWikitext } from '@/utils/i18n'
 
 const props = defineProps<{
@@ -125,10 +125,8 @@ function plot(
         (d) => d.count,
       ) as number,
     )
-    yMin = Math.pow(
-      10,
-      logYMax - logYNonZeroMin > 9 ? Math.floor(logYMax - 9) : Math.floor(logYNonZeroMin),
-    )
+    yMin =
+      10 ** (logYMax - logYNonZeroMin > 9 ? Math.floor(logYMax - 9) : Math.floor(logYNonZeroMin))
   }
 
   // Declare the x (horizontal position) scale.
@@ -166,7 +164,7 @@ function plot(
   // Add the y-axis.
   const yAxis = d3.axisLeft(y).ticks(10, 'f')
   if (logarithmicScale && yContainsZero) {
-    const formatter = y.tickFormat.apply(y, [10, 'f'])
+    const formatter = y.tickFormat(10, 'f')
     yAxis.tickFormat((d) => (d === yMin ? '0' : formatter(d)))
   }
   svg
@@ -306,6 +304,7 @@ function update() {
   )
 }
 </script>
+
 <template>
   <h4
     v-html="
@@ -321,7 +320,7 @@ function update() {
         }),
       )
     "
-  ></h4>
+  />
   <div style="display: flex; flex-wrap: wrap; margin-bottom: 0.5rem">
     <div
       v-if="validBlocks.length > 1"
@@ -334,15 +333,15 @@ function update() {
       "
     >
       <input
-        type="checkbox"
-        v-model="selectAll"
         id="selectAll"
+        v-model="selectAll"
+        type="checkbox"
         :style="{
           width: '1rem',
           height: '1rem',
           marginRight: '0.3rem',
         }"
-      />
+      >
       <label for="selectAll">{{ t('blockDistribution.selectAll') }}</label>
     </div>
     <div
@@ -356,17 +355,17 @@ function update() {
       "
     >
       <input
+        id="total"
+        v-model="showTotal"
         type="checkbox"
         :disabled="enabledBlocks.length <= 1"
-        v-model="showTotal"
-        id="total"
         :style="{
           width: '1rem',
           height: '1rem',
           marginRight: '0.3rem',
           accentColor: getColor('Total'),
         }"
-      />
+      >
       <label for="total">{{ t('blockDistribution.total') }}</label>
     </div>
     <div
@@ -382,17 +381,17 @@ function update() {
     >
       <input
         v-if="validBlocks.length > 1"
+        :id="`blockLabel_${block}`"
         type="checkbox"
         :checked="enabledBlocks.includes(block)"
-        :id="`blockLabel_${block}`"
-        @change="() => onCheckboxChange(block)"
         :style="{
           width: '1rem',
           height: '1rem',
           marginRight: '0.3rem',
           accentColor: getColor(block),
         }"
-      />
+        @change="() => onCheckboxChange(block)"
+      >
       <div
         v-else
         :style="{
@@ -407,36 +406,37 @@ function update() {
       }}</label>
     </div>
   </div>
-  <cdx-tabs v-model:active="currentTab">
-    <cdx-tab
+  <CdxTabs v-model:active="currentTab">
+    <CdxTab
+      v-if="overworldBlockMapFiltered.length !== 0"
       name="overworld"
       :label="t('blockDistribution.overworld')"
-      v-if="overworldBlockMapFiltered.length !== 0"
     >
-      <div style="overflow: auto" ref="overworld" />
-    </cdx-tab>
-    <cdx-tab
+      <div ref="overworld" style="overflow: auto" />
+    </CdxTab>
+    <CdxTab
+      v-if="netherBlockMapFiltered.length !== 0"
       name="nether"
       :label="t('blockDistribution.theNether')"
-      v-if="netherBlockMapFiltered.length !== 0"
     >
-      <div style="overflow: auto" ref="nether" />
-    </cdx-tab>
-    <cdx-tab
+      <div ref="nether" style="overflow: auto" />
+    </CdxTab>
+    <CdxTab
+      v-if="endBlockMapFiltered.length !== 0"
       name="end"
       :label="t('blockDistribution.theEnd')"
-      v-if="endBlockMapFiltered.length !== 0"
     >
-      <div style="overflow: auto" ref="end" />
-    </cdx-tab>
-  </cdx-tabs>
-  <cdx-checkbox v-model="logarithmicScale">
+      <div ref="end" style="overflow: auto" />
+    </CdxTab>
+  </CdxTabs>
+  <CdxCheckbox v-model="logarithmicScale">
     {{ t('blockDistribution.logarithmicScale') }}
     <template #description>
       {{ t('blockDistribution.logarithmicScaleHelp') }}
     </template>
-  </cdx-checkbox>
+  </CdxCheckbox>
 </template>
+
 <style>
 #app {
   overflow-x: auto;

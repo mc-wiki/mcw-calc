@@ -60,7 +60,7 @@ export default function processJson({
         description: parseWikitext(marker.popup.description),
         link: {
           ...marker.popup.link,
-          url: parentOrigin() + '/w/' + marker.popup.link.url,
+          url: `${parentOrigin()}/w/${marker.popup.link.url}`,
         },
         image: marker.popup.image ? getImageLink(marker.popup.image) : undefined,
       },
@@ -72,7 +72,7 @@ export function convertCoordinate(
   coordinate: Coordinate,
   coordinateOrder: FandomMapConfig['coordinateOrder'],
 ): Coordinate {
-  return coordinateOrder == 'yx' ? coordinate : (coordinate.slice().reverse() as Coordinate)
+  return coordinateOrder === 'yx' ? coordinate : (coordinate.slice().reverse() as Coordinate)
 }
 
 export function getImageLink(image: string) {

@@ -1,8 +1,8 @@
-import type { BlockState } from '@/tools/blockStructureRenderer/renderer.ts'
-import { FluidState } from '@/tools/blockStructureRenderer/renderer.ts'
 import * as THREE from 'three'
-import { MaterialPicker, SpriteData } from '@/tools/blockStructureRenderer/texture.ts'
-import { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
+import type { BlockState, FluidState } from '@/tools/blockStructureRenderer/renderer.ts'
+import type { MaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
+import { SpriteData } from '@/tools/blockStructureRenderer/texture.ts'
+import type { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
 import {
   Direction,
   getDirectionFromName,
@@ -149,7 +149,7 @@ async function getFlow(
     if (!affectsFlow(thisFluidState, neighborFluidState)) continue
     const neighborHeight = neighborFluidState.getHeight()
     let calculatedHeight = 0
-    if (neighborHeight == 0) {
+    if (neighborHeight === 0) {
       const fluidStateBelow = neighborsBelow[direction]!.fluidState
       if (
         !(await modelManager.isBlockBlocksMotion(neighbor)) &&
@@ -161,7 +161,7 @@ async function getFlow(
     } else if (neighborHeight > 0) {
       calculatedHeight = thisFluidState.getHeight() - neighborHeight
     }
-    if (calculatedHeight == 0) continue
+    if (calculatedHeight === 0) continue
     xFlow += calculatedHeight * getStepX(direction)
     zFlow += calculatedHeight * getStepZ(direction)
   }
@@ -203,8 +203,9 @@ async function shouldRenderBackwardUpFace(
     if (
       !(await isSolidRender(modelManager, blockState)) &&
       !isSameFluid(thisFluidState, blockState.fluidState)
-    )
+    ) {
       return true
+    }
   }
   return false
 }
@@ -221,9 +222,9 @@ export async function renderFluid(
 ) {
   const thisBlockState = blockStateGetter(x, y, z)
   const thisFluidState = thisBlockState.fluidState
-  const fluidColor = thisFluidState.fluid === 'water' ?
-    parseInt(thisBlockState.tintData[thisBlockState.tintData.length - 1] ?? '3f76e4', 16) :
-    0xffffff
+  const fluidColor = thisFluidState.fluid === 'water'
+    ? Number.parseInt(thisBlockState.tintData[thisBlockState.tintData.length - 1] ?? '3f76e4', 16)
+    : 0xFFFFFF
   const [resolvedMaterial, resolvedSprites] = await resolveSpecialTextures(
     thisFluidState.fluid,
     materialPicker,
@@ -257,8 +258,8 @@ export async function renderFluid(
   const southEastUpBlockState = blockStateGetter(x + 1, y + 1, z + 1)
 
   const upCanRender = !isSameFluid(thisFluidState, upFluidState)
-  const downCanRender = await shouldRenderFace(modelManager, thisBlockState, thisFluidState, Direction.DOWN, downFluidState) &&
-    !await isFaceOccludedByNeighbor(modelManager, 1, downBlockState, Direction.DOWN)
+  const downCanRender = await shouldRenderFace(modelManager, thisBlockState, thisFluidState, Direction.DOWN, downFluidState)
+    && !await isFaceOccludedByNeighbor(modelManager, 1, downBlockState, Direction.DOWN)
   const northCanRender = await shouldRenderFace(modelManager, thisBlockState, thisFluidState, Direction.NORTH, northFluidState)
   const southCanRender = await shouldRenderFace(modelManager, thisBlockState, thisFluidState, Direction.SOUTH, southFluidState)
   const westCanRender = await shouldRenderFace(modelManager, thisBlockState, thisFluidState, Direction.WEST, westFluidState)
@@ -274,7 +275,8 @@ export async function renderFluid(
     southEastHeight = 1
     northWestHeight = 1
     northEastHeight = 1
-  } else {
+  }
+  else {
     const northHeight = await getHeight(modelManager, thisFluidState, northBlockState, northUpBlockState)
     const southHeight = await getHeight(modelManager, thisFluidState, southBlockState, southUpBlockState)
     const westHeight = await getHeight(modelManager, thisFluidState, westBlockState, westUpBlockState)
@@ -287,9 +289,9 @@ export async function renderFluid(
 
   const renderMinY = downCanRender ? 0.001 : 0
 
-  if (upCanRender &&
-    (Math.min(southWestHeight, southEastHeight, northWestHeight, northEastHeight) < 1 ||
-      !await isFaceOccludedByNeighbor(modelManager, 1, upBlockState, Direction.UP))
+  if (upCanRender
+    && (Math.min(southWestHeight, southEastHeight, northWestHeight, northEastHeight) < 1
+    || !await isFaceOccludedByNeighbor(modelManager, 1, upBlockState, Direction.UP))
   ) {
     southEastHeight -= 0.001
     southWestHeight -= 0.001
@@ -299,17 +301,24 @@ export async function renderFluid(
       modelManager,
       thisFluidState,
       {
-        down: undefined, up: undefined,
-        north: northBlockState, south: southBlockState,
-        west: westBlockState, east: eastBlockState,
+        down: undefined,
+        up: undefined,
+        north: northBlockState,
+        south: southBlockState,
+        west: westBlockState,
+        east: eastBlockState,
       },
       {
-        down: undefined, up: undefined,
-        north: northUpBlockState, south: southUpBlockState,
-        west: westUpBlockState, east: eastUpBlockState,
+        down: undefined,
+        up: undefined,
+        north: northUpBlockState,
+        south: southUpBlockState,
+        west: westUpBlockState,
+        east: eastUpBlockState,
       },
       {
-        down: undefined, up: undefined,
+        down: undefined,
+        up: undefined,
         north: blockStateGetter(x, y - 1, z - 1),
         south: blockStateGetter(x, y - 1, z + 1),
         west: blockStateGetter(x - 1, y - 1, z),
@@ -320,11 +329,14 @@ export async function renderFluid(
     let northWestU, northEastU, southWestU, southEastU
     let northWestV, northEastV, southWestV, southEastV
     let material
-    if (flow.x == 0 && flow.z == 0) {
+    if (flow.x === 0 && flow.z === 0) {
       const spriteData = new SpriteData(
-        resolvedSprites[0][0], resolvedSprites[0][1],
-        resolvedSprites[0][2], resolvedSprites[0][3],
-        resolvedSprites[0][4], resolvedSprites[0][5],
+        resolvedSprites[0][0],
+        resolvedSprites[0][1],
+        resolvedSprites[0][2],
+        resolvedSprites[0][3],
+        resolvedSprites[0][4],
+        resolvedSprites[0][5],
       )
       material = resolvedMaterial[0].clone()
 
@@ -336,11 +348,15 @@ export async function renderFluid(
       southEastV = southWestV
       northEastU = southEastU
       northEastV = northWestV
-    } else {
+    }
+    else {
       const spriteData = new SpriteData(
-        resolvedSprites[1][0], resolvedSprites[1][1],
-        resolvedSprites[1][2], resolvedSprites[1][3],
-        resolvedSprites[1][4], resolvedSprites[1][5],
+        resolvedSprites[1][0],
+        resolvedSprites[1][1],
+        resolvedSprites[1][2],
+        resolvedSprites[1][3],
+        resolvedSprites[1][4],
+        resolvedSprites[1][5],
       )
       material = resolvedMaterial[1].clone()
 
@@ -361,22 +377,42 @@ export async function renderFluid(
 
     const geometry = new THREE.PlaneGeometry()
     geometry.setAttribute('position', new THREE.Float32BufferAttribute([
-      1, northEastHeight, 0,
-      1, southEastHeight, 1,
-      0, northWestHeight, 0,
-      0, southWestHeight, 1,
+      1,
+      northEastHeight,
+      0,
+      1,
+      southEastHeight,
+      1,
+      0,
+      northWestHeight,
+      0,
+      0,
+      southWestHeight,
+      1,
     ], 3))
     geometry.setAttribute('uv', new THREE.Float32BufferAttribute([
-      northEastU, northEastV,
-      southEastU, southEastV,
-      northWestU, northWestV,
-      southWestU, southWestV,
+      northEastU,
+      northEastV,
+      southEastU,
+      southEastV,
+      northWestU,
+      northWestV,
+      southWestU,
+      southWestV,
     ], 2))
     geometry.setAttribute('normal', new THREE.Float32BufferAttribute([
-      0, 1, 0,
-      0, 1, 0,
-      0, 1, 0,
-      0, 1, 0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
     ], 3))
     geometry.translate(x, y, z)
 
@@ -384,29 +420,48 @@ export async function renderFluid(
     scene.add(mesh)
 
     if (await shouldRenderBackwardUpFace(
-      modelManager, thisFluidState,
-      [upBlockState, northWestUpBlockState, southWestUpBlockState,
-        northEastUpBlockState, southEastUpBlockState, northUpBlockState,
-        southBlockState, westUpBlockState, eastUpBlockState],
+      modelManager,
+      thisFluidState,
+      [upBlockState, northWestUpBlockState, southWestUpBlockState, northEastUpBlockState, southEastUpBlockState, northUpBlockState, southBlockState, westUpBlockState, eastUpBlockState],
     )) {
       const geometryBackward = new THREE.PlaneGeometry()
       geometryBackward.setAttribute('position', new THREE.Float32BufferAttribute([
-        0, southWestHeight, 1,
-        1, southEastHeight, 1,
-        0, northWestHeight, 0,
-        1, northEastHeight, 0,
+        0,
+        southWestHeight,
+        1,
+        1,
+        southEastHeight,
+        1,
+        0,
+        northWestHeight,
+        0,
+        1,
+        northEastHeight,
+        0,
       ], 3))
       geometryBackward.setAttribute('uv', new THREE.Float32BufferAttribute([
-        southWestU, southWestV,
-        southEastU, southEastV,
-        northWestU, northWestV,
-        northEastU, northEastV,
+        southWestU,
+        southWestV,
+        southEastU,
+        southEastV,
+        northWestU,
+        northWestV,
+        northEastU,
+        northEastV,
       ], 2))
       geometryBackward.setAttribute('normal', new THREE.Float32BufferAttribute([
-        0, 1, 0,
-        0, 1, 0,
-        0, 1, 0,
-        0, 1, 0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
       ], 3))
       geometryBackward.translate(x, y, z)
 
@@ -417,29 +472,52 @@ export async function renderFluid(
 
   if (downCanRender) {
     const spriteData = new SpriteData(
-      resolvedSprites[0][0], resolvedSprites[0][1],
-      resolvedSprites[0][2], resolvedSprites[0][3],
-      resolvedSprites[0][4], resolvedSprites[0][5],
+      resolvedSprites[0][0],
+      resolvedSprites[0][1],
+      resolvedSprites[0][2],
+      resolvedSprites[0][3],
+      resolvedSprites[0][4],
+      resolvedSprites[0][5],
     )
 
     const geometry = new THREE.PlaneGeometry()
     geometry.setAttribute('position', new THREE.Float32BufferAttribute([
-      0, renderMinY, 0,
-      0, renderMinY, 1,
-      1, renderMinY, 0,
-      1, renderMinY, 1,
+      0,
+      renderMinY,
+      0,
+      0,
+      renderMinY,
+      1,
+      1,
+      renderMinY,
+      0,
+      1,
+      renderMinY,
+      1,
     ], 3))
     geometry.setAttribute('uv', new THREE.Float32BufferAttribute([
-      spriteData.getU(0), spriteData.getV(0),
-      spriteData.getU(0), spriteData.getV(1),
-      spriteData.getU(1), spriteData.getV(0),
-      spriteData.getU(1), spriteData.getV(1),
+      spriteData.getU(0),
+      spriteData.getV(0),
+      spriteData.getU(0),
+      spriteData.getV(1),
+      spriteData.getU(1),
+      spriteData.getV(0),
+      spriteData.getU(1),
+      spriteData.getV(1),
     ], 2))
     geometry.setAttribute('normal', new THREE.Float32BufferAttribute([
-      0, 1, 0,
-      0, 1, 0,
-      0, 1, 0,
-      0, 1, 0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
     ], 3))
     geometry.translate(x, y, z)
 
@@ -450,35 +528,45 @@ export async function renderFluid(
   }
 
   for (const [directionStr, renderData] of Object.entries({
-    'north': [northCanRender, [northWestHeight, northEastHeight, 0, 1, 0.001, 0.001]],
-    'south': [southCanRender, [southEastHeight, southWestHeight, 1, 0, 0.999, 0.999]],
-    'west': [westCanRender, [southWestHeight, northWestHeight, 0.001, 0.001, 1, 0]],
-    'east': [eastCanRender, [northEastHeight, southEastHeight, 0.999, 0.999, 0, 1]],
+    north: [northCanRender, [northWestHeight, northEastHeight, 0, 1, 0.001, 0.001]],
+    south: [southCanRender, [southEastHeight, southWestHeight, 1, 0, 0.999, 0.999]],
+    west: [westCanRender, [southWestHeight, northWestHeight, 0.001, 0.001, 1, 0]],
+    east: [eastCanRender, [northEastHeight, southEastHeight, 0.999, 0.999, 0, 1]],
   } as Record<Direction, [boolean, number[]]>)) {
-    if (!renderData[0]) continue
+    if (!renderData[0])
+      continue
     const direction = getDirectionFromName(directionStr)
     const blockStateOnDirection = blockStateGetter(...moveTowardsDirection(x, y, z, direction))
     if (await isFaceOccludedByNeighbor(
       modelManager,
       Math.max(renderData[1][0], renderData[1][1]),
       blockStateOnDirection,
-      direction)
-    ) continue
+      direction,
+    )
+    ) {
+      continue
+    }
 
     let spriteData = new SpriteData(
-      resolvedSprites[1][0], resolvedSprites[1][1],
-      resolvedSprites[1][2], resolvedSprites[1][3],
-      resolvedSprites[1][4], resolvedSprites[1][5],
+      resolvedSprites[1][0],
+      resolvedSprites[1][1],
+      resolvedSprites[1][2],
+      resolvedSprites[1][3],
+      resolvedSprites[1][4],
+      resolvedSprites[1][5],
     )
     let material = resolvedMaterial[1].clone()
     let isWaterOverlay = false
-    if (thisFluidState.fluid === 'water' &&
-      (leavesBlocks.test(blockStateOnDirection.blockName) || checkNameInSet(blockStateOnDirection.blockName, halfTransparentBlocks))
+    if (thisFluidState.fluid === 'water'
+      && (leavesBlocks.test(blockStateOnDirection.blockName) || checkNameInSet(blockStateOnDirection.blockName, halfTransparentBlocks))
     ) {
       spriteData = new SpriteData(
-        resolvedSprites[2][0], resolvedSprites[2][1],
-        resolvedSprites[2][2], resolvedSprites[2][3],
-        resolvedSprites[2][4], resolvedSprites[2][5],
+        resolvedSprites[2][0],
+        resolvedSprites[2][1],
+        resolvedSprites[2][2],
+        resolvedSprites[2][3],
+        resolvedSprites[2][4],
+        resolvedSprites[2][5],
       )
       material = resolvedMaterial[2].clone()
       isWaterOverlay = true
@@ -487,22 +575,42 @@ export async function renderFluid(
 
     const geometry = new THREE.PlaneGeometry()
     geometry.setAttribute('position', new THREE.Float32BufferAttribute([
-      renderData[1][2], renderData[1][0], renderData[1][4],
-      renderData[1][2], renderMinY, renderData[1][4],
-      renderData[1][3], renderData[1][1], renderData[1][5],
-      renderData[1][3], renderMinY, renderData[1][5],
+      renderData[1][2],
+      renderData[1][0],
+      renderData[1][4],
+      renderData[1][2],
+      renderMinY,
+      renderData[1][4],
+      renderData[1][3],
+      renderData[1][1],
+      renderData[1][5],
+      renderData[1][3],
+      renderMinY,
+      renderData[1][5],
     ], 3))
     geometry.setAttribute('uv', new THREE.Float32BufferAttribute([
-      spriteData.getU(0), spriteData.getV((1 - renderData[1][0]) * 0.5),
-      spriteData.getU(0), spriteData.getV(0.5),
-      spriteData.getU(0.5), spriteData.getV((1 - renderData[1][1]) * 0.5),
-      spriteData.getU(0.5), spriteData.getV(0.5),
+      spriteData.getU(0),
+      spriteData.getV((1 - renderData[1][0]) * 0.5),
+      spriteData.getU(0),
+      spriteData.getV(0.5),
+      spriteData.getU(0.5),
+      spriteData.getV((1 - renderData[1][1]) * 0.5),
+      spriteData.getU(0.5),
+      spriteData.getV(0.5),
     ], 2))
     geometry.setAttribute('normal', new THREE.Float32BufferAttribute([
-      0, 1, 0,
-      0, 1, 0,
-      0, 1, 0,
-      0, 1, 0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
     ], 3))
     geometry.translate(x, y, z)
 
@@ -512,22 +620,42 @@ export async function renderFluid(
     if (!isWaterOverlay) {
       const geometryBackward = new THREE.PlaneGeometry()
       geometryBackward.setAttribute('position', new THREE.Float32BufferAttribute([
-        renderData[1][2], renderData[1][0], renderData[1][4],
-        renderData[1][3], renderData[1][1], renderData[1][5],
-        renderData[1][2], renderMinY, renderData[1][4],
-        renderData[1][3], renderMinY, renderData[1][5],
+        renderData[1][2],
+        renderData[1][0],
+        renderData[1][4],
+        renderData[1][3],
+        renderData[1][1],
+        renderData[1][5],
+        renderData[1][2],
+        renderMinY,
+        renderData[1][4],
+        renderData[1][3],
+        renderMinY,
+        renderData[1][5],
       ], 3))
       geometryBackward.setAttribute('uv', new THREE.Float32BufferAttribute([
-        spriteData.getU(0), spriteData.getV((1 - renderData[1][0]) * 0.5),
-        spriteData.getU(0.5), spriteData.getV((1 - renderData[1][1]) * 0.5),
-        spriteData.getU(0), spriteData.getV(0.5),
-        spriteData.getU(0.5), spriteData.getV(0.5),
+        spriteData.getU(0),
+        spriteData.getV((1 - renderData[1][0]) * 0.5),
+        spriteData.getU(0.5),
+        spriteData.getV((1 - renderData[1][1]) * 0.5),
+        spriteData.getU(0),
+        spriteData.getV(0.5),
+        spriteData.getU(0.5),
+        spriteData.getV(0.5),
       ], 2))
       geometryBackward.setAttribute('normal', new THREE.Float32BufferAttribute([
-        0, 1, 0,
-        0, 1, 0,
-        0, 1, 0,
-        0, 1, 0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
       ], 3))
       geometryBackward.translate(x, y, z)
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import { CdxTextInput } from '@wikimedia/codex'
 import { useI18n } from 'vue-i18n'
 
@@ -20,6 +20,7 @@ const netherZ = computed<number>({
   },
 })
 </script>
+
 <template>
   <table class="wikitable" style="margin: auto">
     <caption>
@@ -29,27 +30,34 @@ const netherZ = computed<number>({
     </caption>
     <tbody>
       <tr>
-        <th scope="col">{{ t('netherCoords.dimension') }}</th>
+        <th scope="col">
+          {{ t('netherCoords.dimension') }}
+        </th>
         <th scope="col">X</th>
         <th scope="col">Z</th>
       </tr>
       <tr>
-        <th scope="row">{{ t('netherCoords.overworld') }}</th>
-        <td><CdxTextInput v-model="overworldX" inputType="number" /></td>
-        <td><CdxTextInput v-model="overworldZ" inputType="number" /></td>
+        <th scope="row">
+          {{ t('netherCoords.overworld') }}
+        </th>
+        <td><CdxTextInput v-model="overworldX" input-type="number" /></td>
+        <td><CdxTextInput v-model="overworldZ" input-type="number" /></td>
       </tr>
       <tr>
-        <th scope="row">{{ t('netherCoords.nether') }}</th>
+        <th scope="row">
+          {{ t('netherCoords.nether') }}
+        </th>
         <td>
-          <CdxTextInput id="netherX" v-model="netherX" inputType="number" />
+          <CdxTextInput id="netherX" v-model="netherX" input-type="number" />
         </td>
         <td>
-          <CdxTextInput id="netherZ" v-model="netherZ" inputType="number" />
+          <CdxTextInput id="netherZ" v-model="netherZ" input-type="number" />
         </td>
       </tr>
     </tbody>
   </table>
 </template>
+
 <style scoped lang="less">
 .wikitable {
   background-color: #f8f9fa;

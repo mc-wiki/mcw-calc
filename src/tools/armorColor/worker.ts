@@ -1,6 +1,6 @@
 import { colorRgbMap as javaColorRgbMap } from '@/utils/color/java'
 import { colorRgbMap as bedrockColorRgbMap } from '@/utils/color/bedrock'
-import { colorToSequence as func, sequenceToColorFloatAverage, type Color } from '@/utils/color'
+import { type Color, colorToSequence as func, sequenceToColorFloatAverage } from '@/utils/color'
 
 function sequenceToColorJavaArmor(
   c: Color[],

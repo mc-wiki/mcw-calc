@@ -5,13 +5,13 @@ import { flip, offset, shift, useFloating } from '@floating-ui/vue'
 import { onClickOutside } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n()
-
 const props = defineProps<{
   icon: string
   name: string
   type: 'warning' | 'error'
 }>()
+
+const { t } = useI18n()
 
 const button = ref()
 const popup = ref()
@@ -38,6 +38,7 @@ onClickOutside(popup, () => {
   </CdxButton>
   <div
     v-if="popupOpen"
+    ref="popup"
     style="
       background-color: var(--background-color-base, #fff);
       border: 1px solid var(--border-color-base, #a2a9b1);
@@ -47,12 +48,12 @@ onClickOutside(popup, () => {
       text-align: left;
     "
     class="popup"
-    ref="popup"
     :style="{ ...popupStyles, display: popupOpen ? 'block' : 'none' }"
   >
     <slot />
   </div>
 </template>
+
 <style lang="less">
 @import (reference) '@wikimedia/codex-design-tokens/theme-wikimedia-ui.less';
 

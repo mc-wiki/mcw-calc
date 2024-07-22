@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { CdxButton, CdxField, CdxTextInput } from '@wikimedia/codex'
-import CalcField from '@/components/CalcField.vue'
 import { useI18n } from 'vue-i18n'
+import CalcField from '@/components/CalcField.vue'
 import { parseWikitext } from '@/utils/i18n'
 import { isEmbedded, postMessageParent } from '@/utils/iframe'
 
@@ -24,7 +24,7 @@ async function getUuid(username: string) {
     isLoading.value = true
     const response = await fetch(apiUrl + username)
     isLoading.value = false
-    if (response.status == 200) {
+    if (response.status === 200) {
       const data = await response.json()
       playerUuid.value = data.data.player.id
       playerAvatar.value = data.data.player.avatar
@@ -41,7 +41,7 @@ async function getUuid(username: string) {
 }
 
 function isValid(username: string) {
-  return username.match(/^[a-z0-9_]{1,16}$/i)
+  return username.match(/^\w{1,16}$/)
 }
 
 async function copyUuid(uuid: string) {
@@ -49,7 +49,9 @@ async function copyUuid(uuid: string) {
     postMessageParent('mcw-calc-clipboard', {
       text: uuid,
     })
-  } else navigator.clipboard.writeText(uuid)
+  } else {
+    navigator.clipboard.writeText(uuid)
+  }
 
   copyText.value = t('playerUuid.copied')
   setTimeout(() => {
@@ -59,9 +61,12 @@ async function copyUuid(uuid: string) {
 
 getUuid(playerName.value)
 </script>
+
 <template>
   <CalcField>
-    <template #heading>{{ t('playerUuid.title') }}</template>
+    <template #heading>
+      {{ t('playerUuid.title') }}
+    </template>
 
     <div
       :style="{
@@ -75,7 +80,9 @@ getUuid(playerName.value)
     >
       <div>
         <CdxField>
-          <template #label>{{ t('playerUuid.name') }}</template>
+          <template #label>
+            {{ t('playerUuid.name') }}
+          </template>
 
           <div
             :style="{
@@ -85,10 +92,14 @@ getUuid(playerName.value)
               gap: '.5rem',
             }"
           >
-            <CdxTextInput inputType="text" v-model="playerName" />
+            <CdxTextInput v-model="playerName" input-type="text" />
             <CdxButton @click="getUuid(playerName)">
-              <template v-if="isLoading">{{ t('playerUuid.loading') }}</template>
-              <template v-else>{{ t('playerUuid.get') }}</template>
+              <template v-if="isLoading">
+                {{ t('playerUuid.loading') }}
+              </template>
+              <template v-else>
+                {{ t('playerUuid.get') }}
+              </template>
             </CdxButton>
           </div>
         </CdxField>
@@ -98,7 +109,9 @@ getUuid(playerName.value)
             error: errorText,
           }"
         >
-          <template #label><span v-html="parseWikitext(t('playerUuid.uuid'))" /></template>
+          <template #label>
+            <span v-html="parseWikitext(t('playerUuid.uuid'))" />
+          </template>
 
           <div
             :style="{
@@ -108,14 +121,14 @@ getUuid(playerName.value)
               gap: '.5rem',
             }"
           >
-            <CdxTextInput inputType="text" v-model="playerUuid" :disabled="true" />
+            <CdxTextInput v-model="playerUuid" input-type="text" :disabled="true" />
             <CdxButton v-if="playerUuid !== ''" @click="copyUuid(playerUuid)">
               {{ copyText }}
             </CdxButton>
           </div>
         </CdxField>
       </div>
-      <img v-if="playerUuid !== ''" width="64" height="64" :src="playerAvatar" />
+      <img v-if="playerUuid !== ''" width="64" height="64" :src="playerAvatar">
     </div>
   </CalcField>
 </template>

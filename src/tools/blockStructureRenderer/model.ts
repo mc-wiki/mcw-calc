@@ -1,11 +1,11 @@
 import * as THREE from 'three'
+import type { Rotation } from '@/tools/blockStructureRenderer/math.ts'
 import {
   Direction,
   getDirectionFromName,
   getUVGlobalToLocalFromDirection,
   getUVLocalToGlobalFromDirection,
   getVectorFromDirection,
-  Rotation,
 } from '@/tools/blockStructureRenderer/math.ts'
 import type {
   BlockModel,
@@ -14,20 +14,23 @@ import type {
   ModelReferenceWithWeight,
   ModelRotation,
 } from '@/tools/blockStructureRenderer/definitions.ts'
+import type { MaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
 import {
   ANIMATED_TEXTURE_ATLAS_SIZE,
   ATLAS_HEIGHT,
   ATLAS_WIDTH,
-  MaterialPicker,
 } from '@/tools/blockStructureRenderer/texture.ts'
-import { BlockDataStorage, type NameMapping } from '@/tools/blockStructureRenderer/renderer.ts'
-import { BlockState } from '@/tools/blockStructureRenderer/renderer.ts'
+import {
+  BlockDataStorage,
+  BlockState,
+  type NameMapping,
+} from '@/tools/blockStructureRenderer/renderer.ts'
 import { getShade } from '@/tools/blockStructureRenderer/hardcodes.ts'
 
 // Model Reference Provider ------------------------------------------------------------------------
 
 export interface ModelReferenceProvider {
-  getModel(x: number, y: number, z: number): [number, boolean?, number?, number?]
+  getModel: (x: number, y: number, z: number) => [number, boolean?, number?, number?]
 }
 
 export class SingleModelReference implements ModelReferenceProvider {
@@ -58,9 +61,9 @@ export class ModelReferenceGroup implements ModelReferenceProvider {
     positionRelativeSeed = positionRelativeSeed >> 16
 
     // Java LCG algorithm
-    const seedParsed = (positionRelativeSeed ^ 0x5deece66d) & 0xffffffffffff
-    const first = (seedParsed * 25214903917 + 11) & 0xffffffffffff
-    const second = (first * 25214903917 + 11) & 0xffffffffffff
+    const seedParsed = (positionRelativeSeed ^ 0x5DEECE66D) & 0xFFFFFFFFFFFF
+    const first = (seedParsed * 25214903917 + 11) & 0xFFFFFFFFFFFF
+    const second = (first * 25214903917 + 11) & 0xFFFFFFFFFFFF
     const random = Math.abs(((first >> 16) << 16) + (second >> 16)) % this.totalWeight
 
     let acc = 0
@@ -304,7 +307,7 @@ function computeElementRotation(
     (elementRotation.angle / 180) * Math.PI,
   )
   if (elementRotation.rescale) {
-    if (Math.abs(elementRotation.angle) == 22.5) {
+    if (Math.abs(elementRotation.angle) === 22.5) {
       scaleVector.multiplyScalar(1.0 / Math.cos(Math.PI / 8) - 1)
     } else {
       scaleVector.multiplyScalar(1.0 / Math.cos(Math.PI / 4) - 1)
@@ -359,13 +362,13 @@ export class BlockStateModelManager {
 
   async getSpecialBlocksData(blockName: string) {
     const stateData = await this.blockDataStorage.getBlockDataByName(blockName)
-    if (!stateData || stateData.length == 0) return []
+    if (!stateData || stateData.length === 0) return []
     return stateData[0].special_textures
   }
 
   async getBlockRenderType(blockName: string) {
     const stateData = await this.blockDataStorage.getBlockDataByName(blockName)
-    if (!stateData || stateData.length == 0) return 'solid'
+    if (!stateData || stateData.length === 0) return 'solid'
     return stateData[0].render_type
   }
 
@@ -461,7 +464,7 @@ export async function bakeModel(
 
       const spriteData = await materialPicker.getTextureByReference(face.texture)
       let animated = false
-      if (spriteData instanceof Array) {
+      if (Array.isArray(spriteData)) {
         blockFaceUV.uvs[0] = (spriteData[0] + blockFaceUV.uvs[0]) / ATLAS_WIDTH
         blockFaceUV.uvs[2] = (spriteData[0] + blockFaceUV.uvs[2]) / ATLAS_WIDTH
         blockFaceUV.uvs[1] = 1 - (spriteData[1] + blockFaceUV.uvs[1]) / ATLAS_HEIGHT
@@ -513,8 +516,8 @@ export async function bakeModel(
       const normal = new THREE.Vector3()
         .crossVectors(v2.clone().sub(v1), v1.clone().sub(v3))
         .normalize()
-      let direction = undefined
-      if (isFinite(normal.x) && isFinite(normal.y) && isFinite(normal.z)) {
+      let direction
+      if (Number.isFinite(normal.x) && Number.isFinite(normal.y) && Number.isFinite(normal.z)) {
         let maxValue = 0
         for (const [, value] of Object.entries(Direction)) {
           const dirNormal = getVectorFromDirection(value)
@@ -561,18 +564,18 @@ export async function renderBakedFacesWithMS(
   for (const face of faces) {
     const material = (await materialSupplier(face.animated, block.blockName)).clone()
     if (face.tintindex !== undefined) {
-      material.color.set(new THREE.Color(parseInt(block.tintData[face.tintindex], 16)))
+      material.color.set(new THREE.Color(Number.parseInt(block.tintData[face.tintindex], 16)))
     }
     if (recomputeFaceShade) {
       const transformedNormal = face.directionVec
         .clone()
         .applyMatrix3(new THREE.Matrix3().setFromMatrix4(transform))
         .normalize()
-      let direction = undefined
+      let direction
       if (
-        isFinite(transformedNormal.x) &&
-        isFinite(transformedNormal.y) &&
-        isFinite(transformedNormal.z)
+        Number.isFinite(transformedNormal.x) &&
+        Number.isFinite(transformedNormal.y) &&
+        Number.isFinite(transformedNormal.z)
       ) {
         let maxValue = 0
         for (const [, value] of Object.entries(Direction)) {

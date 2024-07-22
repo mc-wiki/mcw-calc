@@ -1,6 +1,6 @@
 {
-  "private": true,
   "type": "module",
+  "private": true,
   "scripts": {
     "tsx": "tsx",
     "dev": "vite",
@@ -11,7 +11,7 @@
     "deploy": "pnpm run updateGadgets",
     "build-deploy": "pnpm run build && pnpm run deploy",
     "type-check": "vue-tsc --build --force",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "lint": "eslint . --fix",
     "format": "prettier --write src/",
     "test": "vitest",
     "test:ui": "vitest --ui",
@@ -20,7 +20,7 @@
     "test:cov:report": "serve ./coverage -L"
   },
   "dependencies": {
-    "@floating-ui/vue": "^1.1.1",
+    "@floating-ui/vue": "^1.1.2",
     "@intlify/unplugin-vue-i18n": "^4.0.0",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tiptap/core": "^2.5.4",
@@ -53,6 +53,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^2.23.1",
     "@peculiar/webcrypto": "^1.5.0",
     "@prettier/sync": "^0.5.2",
     "@rushstack/eslint-patch": "^1.10.3",
@@ -62,23 +63,19 @@
     "@types/leaflet": "^1.9.12",
     "@types/node": "^20.14.11",
     "@types/three": "^0.162.0",
-    "@typescript-eslint/eslint-plugin": "^7.16.1",
-    "@typescript-eslint/parser": "^7.16.1",
     "@vitejs/plugin-vue": "^5.0.5",
-    "@vitest/browser": "^2.0.3",
-    "@vitest/coverage-istanbul": "^2.0.3",
-    "@vitest/ui": "^2.0.3",
+    "@vitest/browser": "^2.0.4",
+    "@vitest/coverage-istanbul": "^2.0.4",
+    "@vitest/ui": "^2.0.4",
     "@vue-macros/volar": "^0.23.1",
-    "@vue/eslint-config-prettier": "^9.0.0",
-    "@vue/eslint-config-typescript": "^13.0.0",
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.5.1",
     "autoprefixer": "^10.4.19",
     "babel-preset-typescript-vue3": "^2.0.17",
     "dotenv": "^16.4.5",
-    "eslint": "^8.57.0",
+    "eslint": "^9.7.0",
     "glob": "^11.0.0",
-    "jsdom": "^24.1.0",
+    "jsdom": "^24.1.1",
     "leaflet": "^1.9.4",
     "less": "^4.2.0",
     "mock-local-storage": "^1.1.24",
@@ -95,8 +92,8 @@
     "vite": "^5.3.4",
     "vite-plugin-comlink": "^5.0.1",
     "vite-plugin-vue-devtools": "^7.3.6",
-    "vitest": "^2.0.3",
-    "vue-tsc": "^2.0.26",
+    "vitest": "^2.0.4",
+    "vue-tsc": "^2.0.28",
     "webdriverio": "^8.39.1"
   }
 }

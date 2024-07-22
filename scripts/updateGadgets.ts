@@ -1,9 +1,10 @@
 import 'dotenv/config'
-import { Mwn } from 'mwn'
 import { promises as fs } from 'node:fs'
 import { exec } from 'node:child_process'
 import { promisify } from 'node:util'
-import { DeployTarget, targets } from './deployConfig'
+import { Mwn } from 'mwn'
+import type { DeployTarget } from './deployConfig'
+import { targets } from './deployConfig'
 
 const { stdout: commitHash } = await promisify(exec)('git rev-parse HEAD')
 
@@ -53,7 +54,7 @@ async function update(target: DeployTarget) {
         `* mcw-calc-loader[ResourceLoader|type=general|default|hidden]|mcw-calc-loader.js`,
       )
       return {
-        text: text,
+        text,
         summary: `Bot: Upgrade to the new mcw-calc system (${commitHash.trim().substring(0, 6)})`,
       }
     }

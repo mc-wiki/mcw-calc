@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest'
-import { parentOrigin, parentUrl, isEmbedded, postMessageParent } from './iframe'
+import { describe, expect, it, vi } from 'vitest'
+import { isEmbedded, parentOrigin, parentUrl, postMessageParent } from './iframe'
 
 describe('parentOrigin', () => {
   it('should return the origin of the parent URL', () => {

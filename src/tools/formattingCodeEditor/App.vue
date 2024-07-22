@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import CalcField from '@/components/CalcField.vue'
 import {
-  CdxToggleButtonGroup,
-  CdxTab,
-  CdxTabs,
   type ButtonGroupItem,
+  CdxButton,
+  CdxField,
   CdxIcon,
   CdxSelect,
-  type MenuItemData,
-  CdxField,
+  CdxTab,
+  CdxTabs,
   CdxTextArea,
-  CdxButton,
+  CdxToggleButtonGroup,
+  type MenuItemData,
 } from '@wikimedia/codex'
-import { useEditor, EditorContent, type JSONContent } from '@tiptap/vue-3'
+import { EditorContent, type JSONContent, useEditor } from '@tiptap/vue-3'
 import Document from '@tiptap/extension-document'
 import Text from '@tiptap/extension-text'
 import Paragraph from '@tiptap/extension-paragraph'
@@ -37,8 +36,37 @@ import {
 } from '@wikimedia/codex-icons'
 import { ColorClass } from './color-class'
 import { TextClass } from './text-class'
+import CalcField from '@/components/CalcField.vue'
 
 const { t } = useI18n()
+
+const editor = useEditor({
+  content: `<p>${t('formattingCodeEditor.default.1', {
+    underline: `<u>${t('formattingCodeEditor.default.1.underline')}</u>`,
+    bold: `<b>${t('formattingCodeEditor.default.1.bold')}</b>`,
+    italic: `<i>${t('formattingCodeEditor.default.1.italic')}</i>`,
+    obfuscated: `<mark>${t('formattingCodeEditor.default.1.obfuscated')}</mark>`,
+  })}</p>
+
+    <p>${t('formattingCodeEditor.default.2', {
+      color: `<span class="color-red">${t('formattingCodeEditor.default.2.color')}</span>`,
+    })}</p>`,
+  extensions: [
+    Document,
+    Text,
+    Paragraph,
+    TextStyle,
+    TextClass,
+    ColorClass,
+    Highlight,
+    Underline,
+    Strike,
+    Bold,
+    Italic,
+    DropCursor,
+    GapCursor,
+  ],
+})
 
 interface Code {
   code: string
@@ -303,7 +331,7 @@ const activeFormatCodes = computed(() => {
   return formatCodes
 })
 
-const updateColor = (value: string) => {
+function updateColor(value: string) {
   if (value === 'none') {
     editor.value?.chain().focus().unsetColor().run()
     return
@@ -311,7 +339,7 @@ const updateColor = (value: string) => {
   editor.value?.chain().focus().setColor(value).run()
 }
 
-const updateFormat = (value: string[]) => {
+function updateFormat(value: string[]) {
   editor.value
     ?.chain()
     .focus()
@@ -338,42 +366,14 @@ const updateFormat = (value: string[]) => {
   }
 }
 
-const editor = useEditor({
-  content: `<p>${t('formattingCodeEditor.default.1', {
-    underline: `<u>${t('formattingCodeEditor.default.1.underline')}</u>`,
-    bold: `<b>${t('formattingCodeEditor.default.1.bold')}</b>`,
-    italic: `<i>${t('formattingCodeEditor.default.1.italic')}</i>`,
-    obfuscated: `<mark>${t('formattingCodeEditor.default.1.obfuscated')}</mark>`,
-  })}</p>
-
-    <p>${t('formattingCodeEditor.default.2', {
-      color: `<span class="color-red">${t('formattingCodeEditor.default.2.color')}</span>`,
-    })}</p>`,
-  extensions: [
-    Document,
-    Text,
-    Paragraph,
-    TextStyle,
-    TextClass,
-    ColorClass,
-    Highlight,
-    Underline,
-    Strike,
-    Bold,
-    Italic,
-    DropCursor,
-    GapCursor,
-  ],
-})
-
 const textarea = ref<HTMLTextAreaElement | null>(null)
 
 function JSONToFormatCode(json: JSONContent | undefined) {
   if (textarea.value) {
     const scrollHeight = textarea.value.scrollHeight - 4
-    textarea.value.style.height = (scrollHeight > 300 ? 300 : scrollHeight) + 'px'
+    textarea.value.style.height = `${scrollHeight > 300 ? 300 : scrollHeight}px`
   }
-  let code: string[] = []
+  const code: string[] = []
 
   for (const para of json?.content ?? []) {
     for (const child of para?.content ?? []) {
@@ -407,7 +407,7 @@ function JSONToFormatCode(json: JSONContent | undefined) {
         (prefixes.length === 0 ? '' : '§') +
           prefixes.join('§') +
           child.text +
-          new Array(prefixes.length).fill('§r').join(''),
+          Array.from({ length: prefixes.length }).fill('§r').join(''),
       )
     }
     code.push('\n')
@@ -416,37 +416,45 @@ function JSONToFormatCode(json: JSONContent | undefined) {
   return code.join('')
 }
 </script>
+
 <template>
   <CalcField>
-    <template #heading>{{ t('formattingCodeEditor.title') }}</template>
-    <cdx-tabs v-model:active="edition" style="margin-bottom: 0.5rem">
-      <cdx-tab name="java" :label="t('formattingCodeEditor.java')" />
-      <cdx-tab name="bedrock" :label="t('formattingCodeEditor.bedrock')" />
-    </cdx-tabs>
+    <template #heading>
+      {{ t('formattingCodeEditor.title') }}
+    </template>
+    <CdxTabs v-model:active="edition" style="margin-bottom: 0.5rem">
+      <CdxTab name="java" :label="t('formattingCodeEditor.java')" />
+      <CdxTab name="bedrock" :label="t('formattingCodeEditor.bedrock')" />
+    </CdxTabs>
     <div style="display: flex; gap: 5px">
       <CdxSelect
         :selected="editor?.getAttributes('textClass').colorClass ?? 'none'"
         :menu-items="colorItems"
-        @update:selected="updateColor"
         style="margin-bottom: 0.5rem"
-      ></CdxSelect>
+        @update:selected="updateColor"
+      />
       <CdxToggleButtonGroup
         :model-value="activeFormatCodes"
         :buttons="formatButtons"
-        @update:modelValue="updateFormat"
         style="margin-bottom: 0.5rem; overflow: visible"
+        @update:model-value="updateFormat"
       >
         <template #default="{ button }">
           <CdxIcon
             v-tooltip:top="button.ariaLabel"
             :icon="button.icon"
             :icon-label="button.ariaLabel"
-          ></CdxIcon>
+          />
         </template>
       </CdxToggleButtonGroup>
     </div>
 
-    <EditorContent :class="['fc-editor', edition]" style="margin-bottom: 0.5rem" :editor="editor" />
+    <EditorContent
+      class="fc-editor"
+      :class="[edition]"
+      style="margin-bottom: 0.5rem"
+      :editor="editor"
+    />
 
     <CdxField>
       <CdxTextArea v-model="formatCode" disabled />
@@ -462,6 +470,7 @@ function JSONToFormatCode(json: JSONContent | undefined) {
     </CdxField>
   </CalcField>
 </template>
+
 <style lang="less">
 .cdx-toggle-button-group,
 .cdx-toggle-button {

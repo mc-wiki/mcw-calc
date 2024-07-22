@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import CalcField from '@/components/CalcField.vue'
-import { ref, computed } from 'vue'
-import { colorStringToRgb } from '@/utils/color'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import CalcField from '@/components/CalcField.vue'
+import { colorStringToRgb } from '@/utils/color'
 
 const { t } = useI18n()
 
@@ -14,17 +14,18 @@ const result = computed({
   },
   set: (result) => {
     // reverse Red<<16 + Green<<8 + Blue
-    color.value =
-      '#' +
-      (result >> 16).toString(16).padStart(2, '0') +
-      ((result >> 8) & 0xff).toString(16).padStart(2, '0') +
-      (result & 0xff).toString(16).padStart(2, '0')
+    color.value = `#${(result >> 16).toString(16).padStart(2, '0')}${((result >> 8) & 0xFF)
+      .toString(16)
+      .padStart(2, '0')}${(result & 0xFF).toString(16).padStart(2, '0')}`
   },
 })
 </script>
+
 <template>
   <CalcField>
-    <template #heading>{{ t('decimalColor.title') }}</template>
+    <template #heading>
+      {{ t('decimalColor.title') }}
+    </template>
 
     <div
       :style="{
@@ -46,7 +47,7 @@ const result = computed({
           }"
         >
           <label for="decimalColor-color-picker">{{ t('decimalColor.color') }}</label>
-          <input type="color" v-model="color" id="decimalColor-color-picker" />
+          <input id="decimalColor-color-picker" v-model="color" type="color">
         </div>
         <div
           :style="{
@@ -57,7 +58,7 @@ const result = computed({
           }"
         >
           <label for="decimalColor-color-picker-output">{{ t('decimalColor.decimal') }}</label>
-          <input type="text" v-model="result" id="decimalColor-color-picker-output" />
+          <input id="decimalColor-color-picker-output" v-model="result" type="text">
         </div>
       </div>
     </div>

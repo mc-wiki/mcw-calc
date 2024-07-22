@@ -1,11 +1,11 @@
 import '@/init'
 import L from 'leaflet'
+import { z } from 'zod'
 import processJson from './processJson'
 import './main.css'
-import { getParams, sz, handleParseError } from '@/utils/params'
 import smoothWheelScroll from './smoothWheelScroll'
+import { getParams, handleParseError, sz } from '@/utils/params'
 import { parentOrigin } from '@/utils/iframe'
-import { z } from 'zod'
 
 L.Map.mergeOptions({
   // @section Mousewheel options
@@ -18,9 +18,9 @@ L.Map.mergeOptions({
   // setting zoom speed
   smoothSensitivity: 1,
 })
-// @ts-ignore
+// @ts-expect-error smoothWheelZoom is not defined in the type
 L.Map.SmoothWheelZoom = smoothWheelScroll
-// @ts-ignore
+// @ts-expect-error smoothWheelZoom is not defined in the type
 L.Map.addInitHook('addHandler', 'smoothWheelZoom', L.Map.SmoothWheelZoom)
 
 const targetEl = document.querySelector('#app')!
@@ -47,7 +47,7 @@ const targetEl = document.querySelector('#app')!
     attributionControl: false,
     crs: L.CRS.Simple,
     scrollWheelZoom: false, // disable original zoom function
-    // @ts-ignore
+    // @ts-expect-error smoothWheelZoom is not defined in the type
     smoothWheelZoom: true, // enable smooth zoom
     smoothSensitivity: 3, // zoom speed. default is 1
     minZoom: -5,

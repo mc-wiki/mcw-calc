@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { CdxSelect, CdxTextInput } from '@wikimedia/codex'
 
 type ArmorMaterial = 'empty' | 'leather' | 'golden' | 'chainmail' | 'iron' | 'diamond' | 'netherite'
@@ -118,7 +118,7 @@ const ePFMap: Record<BootsEnchantment, [number, number, number, number, number]>
   featherFalling: [0, 3, 6, 9, 12],
 }
 
-type Armor<M, E> = {
+interface Armor<M, E> {
   material: M
   enchantment: E
   enchantmentLevel: 0 | 1 | 2 | 3 | 4
@@ -187,6 +187,7 @@ const actualDamage = computed(() => {
   return materialFactor * ePF * damage.value
 })
 </script>
+
 <template>
   <table class="wikitable" style="margin: auto">
     <caption>

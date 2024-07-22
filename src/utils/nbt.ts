@@ -2,15 +2,15 @@ function encodeModifiedUTF8(str: string) {
   const array = []
   for (let i = 0; i < str.length; i++) {
     const c = str.charCodeAt(i)
-    if (c < 0x80 && c != 0) {
+    if (c < 0x80 && c !== 0) {
       array.push(c)
     } else if (c >= 0x800) {
-      array.push(0xe0 | ((c >> 12) & 0x0f))
-      array.push(0x80 | ((c >> 6) & 0x3f))
-      array.push(0x80 | (c & 0x3f))
+      array.push(0xE0 | ((c >> 12) & 0x0F))
+      array.push(0x80 | ((c >> 6) & 0x3F))
+      array.push(0x80 | (c & 0x3F))
     } else {
-      array.push(0xc0 | ((c >> 6) & 0x1f))
-      array.push(0x80 | (c & 0x3f))
+      array.push(0xC0 | ((c >> 6) & 0x1F))
+      array.push(0x80 | (c & 0x3F))
     }
   }
   return array

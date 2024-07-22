@@ -1,8 +1,8 @@
 import '@/init'
 import * as vue from 'vue'
+import { CdxTooltip } from '@wikimedia/codex'
 import App from './App.vue'
 import { createMcwI18n } from '@/utils/i18n'
-import { CdxTooltip } from '@wikimedia/codex'
 
 const targetEl = document.querySelector('#app')!
 

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import CalcField from '@/components/CalcField.vue'
-import { ref, nextTick, watch } from 'vue'
-import { CdxButton, CdxTabs, CdxTab } from '@wikimedia/codex'
-import { type Color, colorStringToRgb, imgNames } from '@/utils/color'
+import { nextTick, ref, watch } from 'vue'
+import { CdxButton, CdxTab, CdxTabs } from '@wikimedia/codex'
 import { useI18n } from 'vue-i18n'
+import { type Color, colorStringToRgb, imgNames } from '@/utils/color'
+import CalcField from '@/components/CalcField.vue'
 
 const { t } = useI18n()
 
@@ -57,14 +57,17 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
   img.crossOrigin = 'anonymous'
 })
 </script>
+
 <template>
   <CalcField>
-    <template #heading>{{ t('beaconColor.title') }}</template>
+    <template #heading>
+      {{ t('beaconColor.title') }}
+    </template>
 
-    <cdx-tabs v-model:active="edition">
-      <cdx-tab name="java" :label="t('beaconColor.java')" />
-      <cdx-tab name="bedrock" :label="t('beaconColor.bedrock')" />
-    </cdx-tabs>
+    <CdxTabs v-model:active="edition">
+      <CdxTab name="java" :label="t('beaconColor.java')" />
+      <CdxTab name="bedrock" :label="t('beaconColor.bedrock')" />
+    </CdxTabs>
     <div
       :style="{
         display: 'flex',
@@ -85,10 +88,10 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
           }"
         >
           <label for="color-picker">{{ t('beaconColor.color') }}</label>
-          <input type="color" v-model="color" id="color-picker" />
-          <cdx-button @click="updateSequence(colorStringToRgb(color))">{{
-            t('beaconColor.calculate')
-          }}</cdx-button>
+          <input id="color-picker" v-model="color" type="color">
+          <CdxButton @click="updateSequence(colorStringToRgb(color))">
+            {{ t('beaconColor.calculate') }}
+          </CdxButton>
         </div>
         <div
           :style="{
@@ -108,7 +111,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
               :data-minetip-title="generateGlassName(item)"
               style="height: 2em; width: 2em"
               class="explain minetip"
-            />
+            >
           </div>
           <span
             :style="{
@@ -119,7 +122,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
               backgroundColor: `rgb(${sequence[2][0]}, ${sequence[2][1]}, ${sequence[2][2]})`,
               border: '1px solid black',
             }"
-          ></span>
+          />
         </div>
         <div>
           <span class="explain" :title="t('beaconColor.dE.help')">
@@ -129,14 +132,14 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
         </div>
       </div>
       <canvas
+        ref="canvasRef"
         width="160"
         height="160"
-        ref="canvasRef"
         :style="{
           width: '80px',
           height: '80px',
         }"
-      ></canvas>
+      />
     </div>
   </CalcField>
 </template>

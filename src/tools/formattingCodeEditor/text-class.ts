@@ -1,4 +1,4 @@
-import { getMarkAttributes, Mark, mergeAttributes } from '@tiptap/core'
+import { Mark, getMarkAttributes, mergeAttributes } from '@tiptap/core'
 
 export interface TextClassOptions {
   /**

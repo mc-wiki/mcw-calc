@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CalcField from '@/components/CalcField.vue'
-import { computed } from 'vue'
 import { theme } from '@/utils/theme'
+
+const props = defineProps<AppEmbedProps>()
 
 const { t } = useI18n()
 
@@ -145,12 +146,10 @@ interface AppEmbedProps extends ChunkbaseEmbedParams {
   promo: boolean
 }
 
-const props = defineProps<AppEmbedProps>()
-
 const params = ref(props)
 
 const chunkbaseUrl = computed(() => {
-  let normalizedParams: Record<string, string> = {}
+  const normalizedParams: Record<string, string> = {}
   for (const [key, value] of Object.entries(params.value)) {
     if (typeof value === 'string') {
       normalizedParams[key] = value
@@ -180,7 +179,9 @@ const chunkbaseUrl = computed(() => {
 
 <template>
   <CalcField>
-    <template #heading>{{ t('chunkbase.title') }}</template>
+    <template #heading>
+      {{ t('chunkbase.title') }}
+    </template>
 
     <div
       v-if="props.promo"
@@ -189,7 +190,7 @@ const chunkbaseUrl = computed(() => {
       }"
     >
       <i18n-t keypath="chunkbase.promo" tag="p">
-        <template v-slot:link>
+        <template #link>
           <a href="https://www.chunkbase.com/apps/" target="_blank" rel="noopener noreferrer">
             {{ t('chunkbase.name') }}
           </a>

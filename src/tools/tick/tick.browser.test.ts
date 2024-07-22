@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/vue'
 import { userEvent } from '@vitest/browser/context'
 import App from '@/tools/tick/App.vue'
 
-describe('App.vue', () => {
+describe('app.vue', () => {
   it('renders the component', () => {
     render(App)
 

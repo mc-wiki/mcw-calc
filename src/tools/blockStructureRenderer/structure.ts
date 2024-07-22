@@ -24,7 +24,7 @@ function makePalette(structure: BlockStructure, nameMapping: NameMapping, ignore
           propertiesMap[key] = nbt.string(value)
         })
         return nbt.compound({
-          Name: nbt.string('minecraft:' + blockState.blockName),
+          Name: nbt.string(`minecraft:${blockState.blockName}`),
           Properties: nbt.compound(propertiesMap),
         })
       } else {

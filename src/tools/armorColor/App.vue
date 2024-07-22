@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import CalcField from '@/components/CalcField.vue'
-import { ref, nextTick, watch } from 'vue'
-import { CdxButton, CdxTabs, CdxTab } from '@wikimedia/codex'
-import { type Color, colorStringToRgb, imgNames } from '@/utils/color'
+import { nextTick, ref, watch } from 'vue'
+import { CdxButton, CdxTab, CdxTabs } from '@wikimedia/codex'
 import { useI18n } from 'vue-i18n'
+import { type Color, colorStringToRgb, imgNames } from '@/utils/color'
+import CalcField from '@/components/CalcField.vue'
 
 const props = defineProps<{ type: 'normal' | 'horse' | 'wolf' }>()
 
@@ -95,16 +95,17 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
   img.crossOrigin = 'anonymous'
 })
 </script>
+
 <template>
   <CalcField>
-    <template #heading>{{
-      t('armorColor.title', { type: t(`armorColor.type.${props.type}`) })
-    }}</template>
+    <template #heading>
+      {{ t('armorColor.title', { type: t(`armorColor.type.${props.type}`) }) }}
+    </template>
 
-    <cdx-tabs v-model:active="edition">
-      <cdx-tab name="java" :label="t('armorColor.java')" />
-      <cdx-tab name="bedrock" :label="t('armorColor.bedrock')" />
-    </cdx-tabs>
+    <CdxTabs v-model:active="edition">
+      <CdxTab name="java" :label="t('armorColor.java')" />
+      <CdxTab name="bedrock" :label="t('armorColor.bedrock')" />
+    </CdxTabs>
     <div
       :style="{
         display: 'flex',
@@ -125,10 +126,10 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
           }"
         >
           <label for="color-picker">{{ t('armorColor.color') }}</label>
-          <input type="color" v-model="color" id="color-picker" />
-          <cdx-button @click="updateSequence(colorStringToRgb(color))">{{
-            t('armorColor.calculate')
-          }}</cdx-button>
+          <input id="color-picker" v-model="color" type="color">
+          <CdxButton @click="updateSequence(colorStringToRgb(color))">
+            {{ t('armorColor.calculate') }}
+          </CdxButton>
         </div>
         <div
           :style="{
@@ -149,7 +150,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
               :data-minetip-title="generateDyeName(item)"
               style="height: 2em; width: 2em"
               class="explain minetip pixel-image"
-            />
+            >
           </div>
           <span
             :style="{
@@ -160,7 +161,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
               backgroundColor: `rgb(${sequence[2][0]}, ${sequence[2][1]}, ${sequence[2][2]})`,
               border: '1px solid black',
             }"
-          ></span>
+          />
         </div>
         <div>
           <span class="explain" :title="t('armorColor.dE.help')">
@@ -170,14 +171,14 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
         </div>
       </div>
       <canvas
+        ref="canvasRef"
         width="160"
         height="160"
-        ref="canvasRef"
         :style="{
           width: '80px',
           height: '80px',
         }"
-      ></canvas>
+      />
     </div>
   </CalcField>
 </template>

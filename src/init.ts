@@ -6,7 +6,6 @@ import { postMessageParent } from './utils/iframe'
 // use ResizeObserver to detect change of height and postMessage to parent
 
 const observer = new ResizeObserver(() => {
-  const id = new URLSearchParams(window.location.hash.substring(2)).get('id')
   postMessageParent('mcw-calc-height-change', { height: document.body.scrollHeight + 10 })
 })
 

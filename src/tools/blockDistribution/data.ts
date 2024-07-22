@@ -119,12 +119,14 @@ function hashCode(s: string) {
   let h = 0
   let i = 0
   const l = s.length
-  if (l > 0) while (i < l) h = ((h << 5) - h + s.charCodeAt(i++)) | 0
+  if (l > 0) {
+    while (i < l) h = ((h << 5) - h + s.charCodeAt(i++)) | 0
+  }
   return h
 }
 
 export function getColor(key: string) {
-  if (colorMap[key]) return '#' + colorMap[key]
+  if (colorMap[key]) return `#${colorMap[key]}`
   const hash = hashCode(key)
   const colorScheme = [
     // some colors that have nice contrast in both light and dark mode
@@ -167,7 +169,7 @@ export interface Block {
 }
 
 function getBlockCount(posProvider: string) {
-  return parseInt(posProvider.match(/count=(.*?),/)![1]) * 16 * 16
+  return Number.parseInt(posProvider.match(/count=(.*?),/)![1]) * 16 * 16
 }
 
 export const overworldBlockMap = generateBlockMap(

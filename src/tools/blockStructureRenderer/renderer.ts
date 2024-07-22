@@ -1,36 +1,33 @@
 import * as THREE from 'three'
-import { MaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
+import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
+import { LineSegments2 } from 'three/examples/jsm/lines/LineSegments2.js'
+import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js'
+import type { MaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
 import {
+  Rotation,
   getDirectionFromName,
   isOcclusion,
   moveTowardsDirection,
   oppositeDirection,
-  Rotation,
 } from '@/tools/blockStructureRenderer/math.ts'
+import type { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
+import { renderBakedFaces, renderModelNoCullFaces } from '@/tools/blockStructureRenderer/model.ts'
 import {
-  BlockStateModelManager,
-  renderBakedFaces,
-  renderModelNoCullFaces,
-} from '@/tools/blockStructureRenderer/model.ts'
-import {
-  hardcodedBlockTint,
   hardCodedRenderers,
   hardCodedSkipRendering,
+  hardcodedBlockTint,
   invisibleBlockColor,
 } from '@/tools/blockStructureRenderer/hardcodes.ts'
 import { renderFluid } from '@/tools/blockStructureRenderer/fluid.ts'
-import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
-import { LineSegments2 } from 'three/examples/jsm/lines/LineSegments2.js'
-import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js'
 import {
-  type BSRApiResponse,
-  type BlockStateDefinition,
-  type StateData,
-  EMPTY_STATE_DATA,
-  type BlockModel,
   type AnimatedTexture,
+  type BSRApiResponse,
+  type BlockModel,
+  type BlockStateDefinition,
+  EMPTY_STATE_DATA,
   type ModelReference,
   type ModelReferenceWithWeight,
+  type StateData,
 } from '@/tools/blockStructureRenderer/definitions.ts'
 import { fetchJigsawAPI } from '@/utils/jigsaw.ts'
 import { digestMessage } from '@/utils/digest'
@@ -106,8 +103,8 @@ export class BlockState {
         )
         this.fluidState = new FluidState('air', 0, false)
       } else {
-        const level = parseInt(this.blockProperties.level)
-        if (level == 0) this.fluidState = new FluidState(this.blockName, 0, false)
+        const level = Number.parseInt(this.blockProperties.level)
+        if (level === 0) this.fluidState = new FluidState(this.blockName, 0, false)
         else if (level >= 8) this.fluidState = new FluidState(this.blockName, 8, true)
         else this.fluidState = new FluidState(this.blockName, 8 - level, false)
       }
@@ -117,7 +114,7 @@ export class BlockState {
       this.blockName === 'bubble_column'
     ) {
       this.fluidState = new FluidState('water', 0, false)
-    } else if (this.blockProperties['waterlogged'] === 'true') {
+    } else if (this.blockProperties.waterlogged === 'true') {
       this.fluidState = new FluidState('water', 0, false)
     } else {
       this.fluidState = new FluidState('air', 0, false)
@@ -259,8 +256,8 @@ export class BlockStructure {
 
   constructor(structureStr: string, marks: string[]) {
     const splitHeightLines = structureStr.split(';')
-    let maxX = 0,
-      maxZ = 0
+    let maxX = 0
+    let maxZ = 0
     const maxY = splitHeightLines.length
     for (let y = 0; y < splitHeightLines.length; y++) {
       const splitLines = splitHeightLines[y].replace(/\s/, '').split(',')
@@ -274,9 +271,9 @@ export class BlockStructure {
     this.x = maxX
     this.y = maxY
     this.z = maxZ
-    this.structures = new Array(maxY)
-      .fill(0)
-      .map(() => new Array(maxZ).fill(0).map(() => new Array(maxX).fill(AIR_KEY)))
+    this.structures = Array.from({ length: maxY }, () =>
+      Array.from({ length: maxZ }, () => Array.from({ length: maxX }, () => AIR_KEY)),
+    )
 
     for (let y = 0; y < splitHeightLines.length; y++) {
       const splitLines = splitHeightLines[y].replace(/\s/, '').split(',')
@@ -296,11 +293,11 @@ export class BlockStructure {
         const splitPointMark = mark.indexOf('#')
         const markColor = mark.substring(splitPointMark + 1)
         const markData = mark.substring(0, splitPointMark).split(',')
-        const x = parseInt(markData[0])
-        const y = parseInt(markData[1])
-        const z = parseInt(markData[2])
-        const colorInt = parseInt(markColor, 16)
-        if (isNaN(x) || isNaN(y) || isNaN(z) || isNaN(colorInt))
+        const x = Number.parseInt(markData[0])
+        const y = Number.parseInt(markData[1])
+        const z = Number.parseInt(markData[2])
+        const colorInt = Number.parseInt(markColor, 16)
+        if (Number.isNaN(x) || Number.isNaN(y) || Number.isNaN(z) || Number.isNaN(colorInt))
           console.warn(`Invalid mark data: ${markData}`)
         else this.marks.push([x, y, z, new THREE.Color(colorInt)])
       })
@@ -372,10 +369,11 @@ export class NameMapping {
     })
     if (this.nameStateMapping[AIR_KEY])
       console.warn('Block key "+" is reserved for air, please do not use it in the block mapping')
-    if (this.nameStateMapping[STRUCTURE_VOID_KEY])
+    if (this.nameStateMapping[STRUCTURE_VOID_KEY]) {
       console.warn(
         'Block key "-" is reserved for structure void, please do not use it in the block mapping',
       )
+    }
   }
 
   toBlockState(blockKey: string): BlockState {
@@ -491,8 +489,9 @@ export function bakeBlockModelRenderLayer(
                 await modelManager.getBlockOcclusionFace(thisBlock, directionFace),
                 await modelManager.getBlockOcclusionFace(otherBlockState, oppositeFace),
               )
-            )
+            ) {
               continue
+            }
           }
 
           await renderBakedFaces(value, thisBlock, materialPicker, scene, translate)

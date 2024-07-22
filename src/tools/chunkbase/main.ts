@@ -1,10 +1,10 @@
 import '@/init'
 import * as vue from 'vue'
+import { z } from 'zod'
 import App from './App.vue'
-import { getParams, sz, handleParseError } from '@/utils/params'
+import { getParams, handleParseError, sz } from '@/utils/params'
 import { createMcwI18n } from '@/utils/i18n'
 import { hashCode } from '@/utils/seed'
-import { z } from 'zod'
 
 const targetEl = document.querySelector('#app')!
 
@@ -17,6 +17,7 @@ const i18n = createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }))
         .preprocess((val) => {
           try {
             return BigInt(val as string)
+            // eslint-disable-next-line unused-imports/no-unused-vars
           } catch (e) {
             return hashCode(val as string)
           }

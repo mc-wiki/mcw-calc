@@ -1,28 +1,31 @@
-import type { BlockState } from '@/tools/blockStructureRenderer/renderer.ts'
-import { BlockStructure, NameMapping } from '@/tools/blockStructureRenderer/renderer.ts'
+import * as THREE from 'three'
+import type {
+  BlockState,
+  BlockStructure,
+  NameMapping,
+} from '@/tools/blockStructureRenderer/renderer.ts'
 import {
   Direction,
+  IDENTITY_ROTATION,
+  Rotation,
   getDirectionFromName,
   getStepX,
   getStepZ,
-  IDENTITY_ROTATION,
   isHorizontalDirection,
   isVerticalDirection,
   oppositeDirection,
-  Rotation,
 } from '@/tools/blockStructureRenderer/math.ts'
 import {
-  bakeModel,
   type BlockStateModelManager,
+  bakeModel,
   renderModelNoCullsWithMS,
 } from '@/tools/blockStructureRenderer/model.ts'
+import type { MaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
 import {
   ANIMATED_TEXTURE_ATLAS_SIZE,
   ATLAS_HEIGHT,
   ATLAS_WIDTH,
-  MaterialPicker,
 } from '@/tools/blockStructureRenderer/texture.ts'
-import * as THREE from 'three'
 import type { ModelFace } from '@/tools/blockStructureRenderer/definitions.ts'
 
 export function checkNameInSet(name: string, nameSet: (string | RegExp)[]) {
@@ -69,14 +72,16 @@ export function hardCodedSkipRendering(
     isHorizontalDirection(direction) &&
     thisBlock.getBlockProperty(direction) === 'true' &&
     otherBlock.getBlockProperty(oppositeDirection(direction)) === 'true'
-  )
+  ) {
     return true
+  }
   if (
     thisBlock.blockName === 'mangrove_roots' &&
     otherBlock.blockName === 'mangrove_roots' &&
     isVerticalDirection(direction)
-  )
+  ) {
     return true
+  }
   return (
     checkNameInSet(thisBlock.blockName, halfTransparentBlocks) &&
     thisBlock.blockName === otherBlock.blockName
@@ -110,7 +115,7 @@ const FOLIAGE_BLOCK = [
 export function hardcodedBlockTint(blockState: BlockState) {
   if (blockState.blockName === 'redstone_wire') {
     const power = blockState.getBlockProperty('power')
-    const percent = parseInt(power) / 15
+    const percent = Number.parseInt(power) / 15
     const red = Math.floor((percent * 0.6 + (percent > 0 ? 0.4 : 0.3)) * 255)
     const green = Math.floor(clamp(percent * percent * 0.7 - 0.5, 0, 1) * 255)
     const blue = Math.floor(clamp(percent * percent * 0.6 - 0.7, 0, 1) * 255)
@@ -140,7 +145,7 @@ export function hardcodedBlockTint(blockState: BlockState) {
   ) {
     blockState.tintData[0] = 'e0c71c'
   } else if (blockState.blockName === 'melon_stem' || blockState.blockName === 'pumpkin_stem') {
-    const age = parseInt(blockState.getBlockProperty('age'))
+    const age = Number.parseInt(blockState.getBlockProperty('age'))
     const red = age * 32
     const green = 255 - age * 8
     const blue = age * 4
@@ -208,7 +213,7 @@ export async function resolveSpecialTextures(
   return [resolvedMaterial, resolvedSprites]
 }
 
-const NOP = async () => {}
+async function NOP() {}
 
 export const hardCodedRenderers = [
   {
@@ -346,28 +351,32 @@ function boxModel(
 ) {
   const directionFaces = {} as Record<Direction, ModelFace>
   if (mirror) {
-    if (visibleFaces.includes(Direction.DOWN))
+    if (visibleFaces.includes(Direction.DOWN)) {
       directionFaces[Direction.DOWN] = {
         texture,
         uv: [texOffX + depth + width, texOffY, texOffX + depth, texOffY + depth],
       }
-    if (visibleFaces.includes(Direction.UP))
+    }
+    if (visibleFaces.includes(Direction.UP)) {
       directionFaces[Direction.UP] = {
         texture,
         uv: [texOffX + depth + width, texOffY, texOffX + depth + width + width, texOffY + depth],
         rotation: 180,
       }
-    if (visibleFaces.includes(Direction.WEST))
+    }
+    if (visibleFaces.includes(Direction.WEST)) {
       directionFaces[Direction.WEST] = {
         texture,
         uv: [texOffX + depth, texOffY + depth + height, texOffX, texOffY + depth],
       }
-    if (visibleFaces.includes(Direction.NORTH))
+    }
+    if (visibleFaces.includes(Direction.NORTH)) {
       directionFaces[Direction.NORTH] = {
         texture,
         uv: [texOffX + depth, texOffY + depth + height, texOffX + depth + width, texOffY + depth],
       }
-    if (visibleFaces.includes(Direction.EAST))
+    }
+    if (visibleFaces.includes(Direction.EAST)) {
       directionFaces[Direction.EAST] = {
         texture,
         uv: [
@@ -377,7 +386,8 @@ function boxModel(
           texOffY + depth,
         ],
       }
-    if (visibleFaces.includes(Direction.SOUTH))
+    }
+    if (visibleFaces.includes(Direction.SOUTH)) {
       directionFaces[Direction.SOUTH] = {
         texture,
         uv: [
@@ -387,29 +397,35 @@ function boxModel(
           texOffY + depth,
         ],
       }
-  } else {
-    if (visibleFaces.includes(Direction.DOWN))
+    }
+  }
+  else {
+    if (visibleFaces.includes(Direction.DOWN)) {
       directionFaces[Direction.DOWN] = {
         texture,
         uv: [texOffX + depth, texOffY, texOffX + depth + width, texOffY + depth],
       }
-    if (visibleFaces.includes(Direction.UP))
+    }
+    if (visibleFaces.includes(Direction.UP)) {
       directionFaces[Direction.UP] = {
         texture,
         uv: [texOffX + depth + width + width, texOffY, texOffX + depth + width, texOffY + depth],
         rotation: 180,
       }
-    if (visibleFaces.includes(Direction.WEST))
+    }
+    if (visibleFaces.includes(Direction.WEST)) {
       directionFaces[Direction.WEST] = {
         texture,
         uv: [texOffX + depth, texOffY + depth + height, texOffX, texOffY + depth],
       }
-    if (visibleFaces.includes(Direction.NORTH))
+    }
+    if (visibleFaces.includes(Direction.NORTH)) {
       directionFaces[Direction.NORTH] = {
         texture,
         uv: [texOffX + depth + width, texOffY + depth + height, texOffX + depth, texOffY + depth],
       }
-    if (visibleFaces.includes(Direction.EAST))
+    }
+    if (visibleFaces.includes(Direction.EAST)) {
       directionFaces[Direction.EAST] = {
         texture,
         uv: [
@@ -419,7 +435,8 @@ function boxModel(
           texOffY + depth,
         ],
       }
-    if (visibleFaces.includes(Direction.SOUTH))
+    }
+    if (visibleFaces.includes(Direction.SOUTH)) {
       directionFaces[Direction.SOUTH] = {
         texture,
         uv: [
@@ -429,6 +446,7 @@ function boxModel(
           texOffY + depth,
         ],
       }
+    }
   }
 
   return bakeModel(
@@ -912,22 +930,22 @@ async function renderBed(
 }
 
 const dyeColorMapping = {
-  white: 0xf9fffe,
-  orange: 0xf9801d,
-  magenta: 0xc74ebd,
-  light_blue: 0x3ab3da,
-  yellow: 0xfed83d,
-  lime: 0x80c71f,
-  pink: 0xf38baa,
-  gray: 0x474f52,
-  light_gray: 0x9d9d97,
-  cyan: 0x169c9c,
-  purple: 0x8932b8,
-  blue: 0x3c44aa,
+  white: 0xF9FFFE,
+  orange: 0xF9801D,
+  magenta: 0xC74EBD,
+  light_blue: 0x3AB3DA,
+  yellow: 0xFED83D,
+  lime: 0x80C71F,
+  pink: 0xF38BAA,
+  gray: 0x474F52,
+  light_gray: 0x9D9D97,
+  cyan: 0x169C9C,
+  purple: 0x8932B8,
+  blue: 0x3C44AA,
   brown: 0x835432,
-  green: 0x5e7c16,
-  red: 0xb02e26,
-  black: 0x1d1d21,
+  green: 0x5E7C16,
+  red: 0xB02E26,
+  black: 0x1D1D21,
 } as Record<string, number>
 
 async function renderBanner(
@@ -958,7 +976,7 @@ async function renderBanner(
       .multiply(new THREE.Matrix4().makeTranslation(0, -0.3125, -0.4375))
   } else {
     poleVisible = true
-    const rotation = parseInt(blockState.getBlockProperty('rotation'))
+    const rotation = Number.parseInt(blockState.getBlockProperty('rotation'))
     matrixBase
       .multiply(new THREE.Matrix4().makeTranslation(0.5, 0.5, 0.5))
       .multiply(new THREE.Matrix4().makeRotationY((-rotation / 8) * Math.PI))
@@ -1157,7 +1175,7 @@ async function renderSkull(
       .multiply(new THREE.Matrix4().makeScale(-1, -1, 1))
     rot = (1 - rotation.y / 180) * Math.PI
   } else {
-    const rotation = parseInt(blockState.getBlockProperty('rotation'))
+    const rotation = Number.parseInt(blockState.getBlockProperty('rotation'))
     matrix
       .multiply(new THREE.Matrix4().makeTranslation(0.5, 0, 0.5))
       .multiply(new THREE.Matrix4().makeScale(-1, -1, 1))
@@ -1209,7 +1227,7 @@ async function renderSign(
       .multiply(new THREE.Matrix4().makeRotationY((-rotation.y / 180) * Math.PI))
       .multiply(new THREE.Matrix4().makeTranslation(0, -0.3125, -0.4375))
   } else {
-    const rotation = parseInt(blockState.getBlockProperty('rotation'))
+    const rotation = Number.parseInt(blockState.getBlockProperty('rotation'))
     transform
       .multiply(new THREE.Matrix4().makeTranslation(0.5, 0.5, 0.5))
       .multiply(new THREE.Matrix4().makeRotationY((-rotation / 8) * Math.PI))
@@ -1254,7 +1272,7 @@ async function renderHangingSign(
       .multiply(new THREE.Matrix4().makeRotationY((rotation.y / 180) * Math.PI))
       .multiply(new THREE.Matrix4().makeTranslation(0, -0.3125, 0))
   } else {
-    const rotation = parseInt(blockState.getBlockProperty('rotation'))
+    const rotation = Number.parseInt(blockState.getBlockProperty('rotation'))
     transform
       .multiply(new THREE.Matrix4().makeTranslation(0.5, 0.9375, 0.5))
       .multiply(new THREE.Matrix4().makeRotationY((-rotation / 8) * Math.PI))

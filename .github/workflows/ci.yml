@@ -22,7 +22,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-          cache: 'pnpm'
+          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install
@@ -44,7 +44,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-          cache: 'pnpm'
+          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install
@@ -66,7 +66,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-          cache: 'pnpm'
+          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install
@@ -114,7 +114,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-          cache: 'pnpm'
+          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install
@@ -147,7 +147,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-          cache: 'pnpm'
+          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install
@@ -193,7 +193,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           environment-url: https://tools.minecraft.wiki/static/tools/
-          state: 'success'
+          state: success
           deployment-id: ${{ steps.deployment.outputs.deployment_id }}
 
       - name: Update deployment status (failure)
@@ -202,5 +202,5 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           environment-url: https://tools.minecraft.wiki/static/tools/
-          state: 'failure'
+          state: failure
           deployment-id: ${{ steps.deployment.outputs.deployment_id }}

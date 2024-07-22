@@ -1,15 +1,15 @@
-import { expect, describe, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
+import { colorRgbMap } from './java'
 import {
   colorStringToRgb,
-  floatRgbToInteger,
-  separateRgb,
-  rgb2lab,
-  deltaE,
   colorToSequence,
+  deltaE,
+  floatRgbToInteger,
+  rgb2lab,
+  separateRgb,
   sequenceToColorFloatAverage,
   sequenceToColorFloatAverageRounded,
 } from './'
-import { colorRgbMap } from './java'
 
 describe('colorStringToRgb', () => {
   it('should convert color string to RGB', () => {
@@ -59,7 +59,7 @@ describe('sequenceToColorFloatAverage', () => {
     // const sequence = ['red', 'green', 'blue']
     const sequence = ['black', 'white']
     const expected = [127, 127, 127]
-    // @ts-ignore
+    // @ts-expect-error test
     expect(sequenceToColorFloatAverage(sequence, colorRgbMap)).toEqual(expected)
   })
 })
@@ -75,7 +75,7 @@ describe('sequenceToColorFloatAverageRounded', () => {
     }
     const sequence = ['red', 'green', 'blue']
     const expected = [255, 255, 255]
-    // @ts-ignore
+    // @ts-expect-error test
     expect(sequenceToColorFloatAverageRounded(sequence, colorRgbMap)).toEqual(expected)
   })
 })
