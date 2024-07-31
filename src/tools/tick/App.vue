@@ -171,7 +171,7 @@ const day = computed({
 
         <div class="input-item">
           <div id="tps" class="input-input">
-            <CdxTextInput v-model="tps" class="text-center min-w-16" input-type="number" />
+            <CdxTextInput v-model="tps" class="text-center min-w-16" input-type="number" min="0" />
             <span class="explain" :title="t('tick.tps.explain')">{{ t('tick.tps') }}</span>
           </div>
         </div>

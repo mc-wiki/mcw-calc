@@ -4,7 +4,14 @@
     "composite": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "types": ["node"],
+    "types": [
+      "node",
+      "vite/client",
+      "vite-plugin-comlink/client",
+      "unplugin-vue-macros/macros-global",
+      "vitest/globals",
+      "@vitest/browser/providers/webdriverio"
+    ],
     "noEmit": true
   },
   "include": [
