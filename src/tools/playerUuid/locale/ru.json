@@ -1,8 +1,9 @@
 {
   "playerUuid.title": "Конвертировать ник игрока в UUID",
-  "playerUuid.name": "Ник игрока:",
+  "playerUuid.name": "Ник игрока",
   "playerUuid.get": "Получить UUID",
-  "playerUuid.uuid": "[[UUID]]:",
+  "playerUuid.loading": "Загрузка...",
+  "playerUuid.uuid": "[[UUID]]",
   "playerUuid.error.invalid": "Недопустимый ник!",
   "playerUuid.error.notFound": "Этого ника не существует!",
   "playerUuid.copy": "Скопировать",
