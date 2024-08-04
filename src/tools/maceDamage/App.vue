@@ -108,8 +108,8 @@ function validateDensity(value: number) {
             id="density-level-input"
             v-model="densityLevel"
             input-type="number"
-            min="0"
-            max="5"
+            min="-32768"
+            max="32767"
             @input="validateDensity"
           />
         </div>
@@ -125,7 +125,7 @@ function validateDensity(value: number) {
           <CdxTextInput id="damage-input" v-model="damage" input-type="number" min="0" />
         </div>
       </div>
-      <img width="64" height="64" :src="maceImage">
+      <img width="64" height="64" :src="maceImage" />
     </div>
   </CalcField>
 </template>

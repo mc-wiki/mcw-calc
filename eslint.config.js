@@ -18,5 +18,6 @@ export default antfu({
     ],
     'unused-imports/no-unused-vars': 'warn',
     'node/prefer-global/process': 'off',
+    'vue/html-self-closing': 'off',
   },
 })
