@@ -1,8 +1,8 @@
 {
   "playerUuid.title": "Convertir un nom de joueur en UUID",
-  "playerUuid.name": "Nom du joueur :",
+  "playerUuid.name": "Nom du joueur",
   "playerUuid.get": "Obtenir l'UUID",
-  "playerUuid.uuid": "[[UUID]] :",
+  "playerUuid.uuid": "[[UUID]]",
   "playerUuid.error.invalid": "Ce nom d'utilisateur est invalide !",
   "playerUuid.error.notFound": "Ce nom d'utilisateur n'existe pas !",
   "playerUuid.copy": "Copier",
