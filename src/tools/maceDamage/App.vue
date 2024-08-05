@@ -50,7 +50,7 @@ const damage = computed({
 
 function validateDensity(value: number) {
   // density needs to be integer between 0 and 5
-  const density = Math.floor(Math.min(5, Math.max(0, densityLevel.value)))
+  const density = Math.floor(Math.min(32767, Math.max(-32768, densityLevel.value)))
   if (value !== density) densityLevel.value = density
 }
 </script>
