@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { CdxCheckbox, CdxTextInput } from '@wikimedia/codex'
+import { CdxCheckbox, CdxMessage, CdxTextInput } from '@wikimedia/codex'
 import { useI18n } from 'vue-i18n'
 import CalcField from '@/components/CalcField.vue'
 import { parseWikitext } from '@/utils/i18n'
@@ -124,6 +124,9 @@ function validateDensity(value: number) {
           <label for="damage-input">{{ t('maceDamage.damage') }}</label>
           <CdxTextInput id="damage-input" v-model="damage" input-type="number" min="0" />
         </div>
+        <CdxMessage v-if="densityLevel > 5 || densityLevel < 0" type="warning">
+          {{ t('maceDamage.densityLevelWarning') }}
+        </CdxMessage>
       </div>
       <img width="64" height="64" :src="maceImage" />
     </div>

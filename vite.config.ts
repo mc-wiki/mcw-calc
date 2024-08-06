@@ -52,11 +52,7 @@ export default defineConfig({
       plugins: {
         vue: vue(),
       },
-
-      shortBind: true,
-      booleanProp: true,
     }),
-    // vue(),
     vueDevTools(),
     visualizer(),
     comlink(),
