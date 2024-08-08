@@ -403,6 +403,12 @@ function sanitizeEnchantmentState() {
     densityLevel.value = 0
   }
 }
+
+function selectOutput() {
+  const selection = window.getSelection()
+  selection?.removeAllRanges()
+  selection?.selectAllChildren(document.getElementById('output')!)
+}
 </script>
 
 <template>
@@ -835,15 +841,9 @@ function sanitizeEnchantmentState() {
     <div class="mt-2 font-bold">
       <I18nT keypath="meleeDamage.finalDamage">
         <template #damage>
-          <output
-            class="text-lg font-mono"
-            @click="
-              () => {
-                const selection = window.getSelection()
-              }
-            "
-            >{{ totalAttackDamage.toFixed(2) }}
-          </output>
+          <output id="output" class="text-lg font-mono" @click="selectOutput">{{
+            totalAttackDamage.toFixed(2)
+          }}</output>
         </template>
       </I18nT>
     </div>
