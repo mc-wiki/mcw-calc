@@ -2,7 +2,7 @@
   "meleeDamage.title": "Melee Damage Calculator",
   "meleeDamage.java": "Java Edition",
   "meleeDamage.bedrock": "Bedrock Edition",
-  "meleeDamage.canObtainInSurvival": "Ensure all conditions can meet in survival mode",
+  "meleeDamage.canObtainInSurvival": "Ensure all conditions can be met in Survival",
   "meleeDamage.attacker.title": "Attacker state",
   "meleeDamage.attacker.mobBaseDamage": "Base damage",
   "meleeDamage.attacker.strengthLevel": "[[Strength]] level",
