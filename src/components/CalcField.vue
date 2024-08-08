@@ -3,12 +3,15 @@ import { CdxField } from '@wikimedia/codex'
 </script>
 
 <template>
-  <CdxField class="mcw-calc-field">
-    <template #label>
-      <slot name="heading"> Calculator </slot>
-    </template>
+  <div class="mcw-calc-field cdx-field">
+    <h2 class="cdx-label m-0 text-lg">
+      <span class="cdx-label__label__text">
+        <slot name="heading">Calculator</slot>
+      </span>
+    </h2>
+
     <slot />
-  </CdxField>
+  </div>
 </template>
 
 <style>
