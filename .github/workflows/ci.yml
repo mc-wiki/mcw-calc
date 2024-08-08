@@ -75,7 +75,7 @@ jobs:
         run: pnpm run test:cov
 
       - name: Upload coverage reports to Codecov
-        if: always()
+        if: always() && github.repository == 'mc-wiki/mcw-calc' && github.ref == 'refs/heads/main'
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -90,6 +90,7 @@ jobs:
 
       - name: Sync translations
         uses: crowdin/github-action@v2
+        if: github.repository == 'mc-wiki/mcw-calc' && github.ref == 'refs/heads/main'
         with:
           upload_sources: true
           upload_translations: true
