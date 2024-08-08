@@ -226,7 +226,7 @@ const enchantmentDamage = computed(() => {
   let enchantmentDamage = 0
 
   enchantmentDamage +=
-    (canObtainInSurvival.value || isGeneralWeapon.value) && !isHand.value
+    (!canObtainInSurvival.value || isGeneralWeapon.value) && !isHand.value
       ? isJavaEdition.value
         ? Math.floor(sharpnessLevel.value) > 0
           ? 0.5 * Math.floor(sharpnessLevel.value) + 0.5
@@ -234,15 +234,19 @@ const enchantmentDamage = computed(() => {
         : Math.floor(sharpnessLevel.value) * 1.25
       : 0
   enchantmentDamage +=
-    isUndead.value && (canObtainInSurvival.value || isGeneralWeapon.value) && !isHand.value
+    isUndead.value &&
+    (!canObtainInSurvival.value || isGeneralWeapon.value || isMaceItem.value) &&
+    !isHand.value
       ? 2.5 * Math.floor(smiteLevel.value)
       : 0
   enchantmentDamage +=
-    isArthropod.value && (canObtainInSurvival.value || isGeneralWeapon.value) && !isHand.value
+    isArthropod.value &&
+    (!canObtainInSurvival.value || isGeneralWeapon.value || isMaceItem.value) &&
+    !isHand.value
       ? 2.5 * Math.floor(baneOfArthropodsLevel.value)
       : 0
   enchantmentDamage +=
-    isWaterMob.value && (canObtainInSurvival.value || isTridentItem.value) && !isHand.value
+    isWaterMob.value && (!canObtainInSurvival.value || isTridentItem.value) && !isHand.value
       ? 2.5 * Math.floor(impalingLevel.value)
       : 0
 
@@ -838,8 +842,8 @@ function sanitizeEnchantmentState() {
                 const selection = window.getSelection()
               }
             "
-            >{{ totalAttackDamage.toFixed(2) }}</output
-          >
+            >{{ totalAttackDamage.toFixed(2) }}
+          </output>
         </template>
       </I18nT>
     </div>
