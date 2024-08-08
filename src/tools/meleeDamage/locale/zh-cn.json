@@ -5,7 +5,7 @@
   "meleeDamage.canObtainInSurvival": "保证在生存模式下能满足所有条件",
   "meleeDamage.attacker.title": "攻击者状态",
   "meleeDamage.attacker.mobBaseDamage": "基础伤害",
-  "meleeDamage.attacker.strengthLevel": "[[力量（状态效果）|力量]]状态效果等级",
+  "meleeDamage.attacker.strengthLevel": "[[力量（状态效果）]]状态效果等级",
   "meleeDamage.attacker.weaknessLevel": "[[虚弱]]状态效果等级",
   "meleeDamage.attacker.hasteLevel": "[[急迫]]状态效果等级",
   "meleeDamage.attacker.miningFatigueLevel": "[[挖掘疲劳]]状态效果等级",

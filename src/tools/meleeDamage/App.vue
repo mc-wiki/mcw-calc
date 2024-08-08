@@ -11,6 +11,7 @@ import {
   CdxTable,
   CdxTabs,
   CdxTextInput,
+  CdxToggleButtonGroup,
   type MenuItemData,
 } from '@wikimedia/codex'
 import { cdxIconTrash } from '@wikimedia/codex-icons'
@@ -416,427 +417,435 @@ function selectOutput() {
     <template #heading>
       {{ t('meleeDamage.title') }}
     </template>
-    <div class="mt-2">
-      <CdxTabs v-model:active="edition">
-        <CdxTab name="java" :label="t('meleeDamage.java')" />
-        <CdxTab name="bedrock" :label="t('meleeDamage.bedrock')" />
-      </CdxTabs>
 
-      <CdxCheckbox
-        id="can-obtain-in-survival-checkbox"
-        v-model="canObtainInSurvival"
-        class="mt-2"
-        @update:model-value="sanitizeCanObtainInSurvival"
-      >
-        {{ t('meleeDamage.canObtainInSurvival') }}
-      </CdxCheckbox>
+    <CdxTabs v-model:active="edition">
+      <CdxTab name="java" :label="t('meleeDamage.java')" />
+      <CdxTab name="bedrock" :label="t('meleeDamage.bedrock')" />
+    </CdxTabs>
 
-      <CalcField>
-        <!-- Attacker state panel -->
-        <template #heading>
-          {{ t('meleeDamage.attacker.title') }}
-        </template>
+    <CdxCheckbox
+      id="can-obtain-in-survival-checkbox"
+      v-model="canObtainInSurvival"
+      class="mt-2"
+      @update:model-value="sanitizeCanObtainInSurvival"
+    >
+      {{ t('meleeDamage.canObtainInSurvival') }}
+    </CdxCheckbox>
 
-        <div class="flex flex-row flex-wrap gap-4">
-          <CdxField class="mt-0">
-            <template #label>
-              {{ t('meleeDamage.attacker.mobBaseDamage') }}
-            </template>
+    <CalcField>
+      <!-- Attacker state panel -->
+      <template #heading>
+        {{ t('meleeDamage.attacker.title') }}
+      </template>
+
+      <div class="flex flex-row flex-wrap gap-4">
+        <CdxField class="mt-0">
+          <template #label>
+            {{ t('meleeDamage.attacker.mobBaseDamage') }}
+          </template>
+          <CdxTextInput
+            id="base-melee-damage-input"
+            v-model="baseMeleeDamage"
+            class="w-20 min-w-20 font-mono"
+            input-type="number"
+            min="0"
+            max="2048"
+            step="0.5"
+          />
+        </CdxField>
+
+        <CdxField class="mt-0">
+          <template #label>
+            <span v-html="parseWikitext(t('meleeDamage.attacker.strengthLevel'))" />
+          </template>
+
+          <CdxTextInput
+            id="strength-level-input"
+            v-model="strengthLevel"
+            class="w-20 min-w-20 font-mono"
+            input-type="number"
+            min="0"
+            :max="canObtainInSurvival ? 2 : 255"
+            step="1"
+          />
+        </CdxField>
+
+        <CdxField class="mt-0">
+          <template #label>
+            <span v-html="parseWikitext(t('meleeDamage.attacker.weaknessLevel'))" />
+          </template>
+
+          <CdxTextInput
+            id="weakness-level-input"
+            v-model="weaknessLevel"
+            class="w-20 min-w-20 font-mono"
+            input-type="number"
+            min="0"
+            :max="canObtainInSurvival ? 2 : 255"
+            step="1"
+          />
+        </CdxField>
+
+        <CdxField v-if="isJavaEdition" class="mt-0">
+          <template #label>
+            <span v-html="parseWikitext(t('meleeDamage.attacker.hasteLevel'))" />
+          </template>
+
+          <CdxTextInput
+            id="haste-level-input"
+            v-model="hasteLevel"
+            class="w-20 min-w-20 font-mono"
+            input-type="number"
+            min="0"
+            :max="canObtainInSurvival ? 2 : 255"
+            step="1"
+          />
+        </CdxField>
+
+        <CdxField v-if="isJavaEdition" class="mt-0">
+          <template #label>
+            <span v-html="parseWikitext(t('meleeDamage.attacker.miningFatigueLevel'))" />
+          </template>
+
+          <CdxTextInput
+            id="mining-fatigue-level-input"
+            v-model="miningFatigueLevel"
+            class="w-20 min-w-20 font-mono"
+            input-type="number"
+            min="0"
+            :max="canObtainInSurvival ? 3 : 255"
+            step="1"
+          />
+        </CdxField>
+
+        <CdxField v-if="isMaceItem" class="mt-0">
+          <template #label>
+            <span v-html="parseWikitext(t('meleeDamage.attacker.fallHeight'))" />
+          </template>
+
+          <CdxTextInput
+            id="fall-height-input"
+            v-model="fallHeight"
+            class="w-20 min-w-20 font-mono"
+            input-type="number"
+            min="0"
+            step="0.5"
+          />
+        </CdxField>
+      </div>
+
+      <div class="flex flex-row flex-wrap items-end gap-4 mt-2">
+        <CdxField v-if="isJavaEdition">
+          <template #label>
+            {{ t('meleeDamage.attackCondition.tickAfterLastAttack') }}
+          </template>
+
+          <div class="flex gap-2">
             <CdxTextInput
-              id="base-melee-damage-input"
-              v-model="baseMeleeDamage"
-              class="w-20 min-w-20 font-mono"
+              id="tick-after-last-attack-input"
+              v-model="tickAfterLastAttack"
+              class="w-24 min-w-24 font-mono"
               input-type="number"
               min="0"
-              max="2048"
-              step="0.5"
-            />
-          </CdxField>
-
-          <CdxField class="mt-0">
-            <template #label>
-              <span v-html="parseWikitext(t('meleeDamage.attacker.strengthLevel'))" />
-            </template>
-
-            <CdxTextInput
-              id="strength-level-input"
-              v-model="strengthLevel"
-              class="w-20 min-w-20 font-mono"
-              input-type="number"
-              min="0"
-              :max="canObtainInSurvival ? 2 : 255"
+              :max="fullCooldown"
               step="1"
             />
-          </CdxField>
+            <CdxButton @click="tickAfterLastAttack = fullCooldown">
+              {{ t('meleeDamage.attackCondition.setFullCooldown') }}
+            </CdxButton>
+          </div>
+        </CdxField>
 
-          <CdxField class="mt-0">
-            <template #label>
-              <span v-html="parseWikitext(t('meleeDamage.attacker.weaknessLevel'))" />
-            </template>
-
-            <CdxTextInput
-              id="weakness-level-input"
-              v-model="weaknessLevel"
-              class="w-20 min-w-20 font-mono"
-              input-type="number"
-              min="0"
-              :max="canObtainInSurvival ? 2 : 255"
-              step="1"
-            />
-          </CdxField>
-
-          <CdxField v-if="isJavaEdition" class="mt-0">
-            <template #label>
-              <span v-html="parseWikitext(t('meleeDamage.attacker.hasteLevel'))" />
-            </template>
-
-            <CdxTextInput
-              id="haste-level-input"
-              v-model="hasteLevel"
-              class="w-20 min-w-20 font-mono"
-              input-type="number"
-              min="0"
-              :max="canObtainInSurvival ? 2 : 255"
-              step="1"
-            />
-          </CdxField>
-
-          <CdxField v-if="isJavaEdition" class="mt-0">
-            <template #label>
-              <span v-html="parseWikitext(t('meleeDamage.attacker.miningFatigueLevel'))" />
-            </template>
-
-            <CdxTextInput
-              id="mining-fatigue-level-input"
-              v-model="miningFatigueLevel"
-              class="w-20 min-w-20 font-mono"
-              input-type="number"
-              min="0"
-              :max="canObtainInSurvival ? 3 : 255"
-              step="1"
-            />
-          </CdxField>
-
-          <CdxField v-if="isMaceItem" class="mt-0">
-            <template #label>
-              <span v-html="parseWikitext(t('meleeDamage.attacker.fallHeight'))" />
-            </template>
-
-            <CdxTextInput
-              id="fall-height-input"
-              v-model="fallHeight"
-              class="w-20 min-w-20 font-mono"
-              input-type="number"
-              min="0"
-              step="0.5"
-            />
-          </CdxField>
-        </div>
-      </CalcField>
-
-      <CalcField>
-        <!-- attack condition panel -->
-        <template #heading>
-          {{ t('meleeDamage.attackCondition.title') }}
-        </template>
-        <div class="flex flex-col mt-2">
-          <CdxCheckbox v-if="canCritical" id="critical-checkbox" v-model="critical" inline>
+        <CdxField v-if="canCritical" class="mt-0">
+          <CdxCheckbox id="critical-checkbox" v-model="critical" class="mt-auto mb-[6px]" inline>
             {{ t('meleeDamage.attackCondition.critical') }}
           </CdxCheckbox>
-          <CdxField v-if="isJavaEdition">
-            <template #label>
-              {{ t('meleeDamage.attackCondition.tickAfterLastAttack') }}
-            </template>
+        </CdxField>
+      </div>
+    </CalcField>
 
-            <div class="flex gap-2">
-              <CdxTextInput
-                id="tick-after-last-attack-input"
-                v-model="tickAfterLastAttack"
-                class="w-24 min-w-24 font-mono"
-                input-type="number"
-                min="0"
-                :max="fullCooldown"
-                step="1"
-              />
-              <CdxButton @click="tickAfterLastAttack = fullCooldown">
-                {{ t('meleeDamage.attackCondition.setFullCooldown') }}
-              </CdxButton>
-            </div>
-          </CdxField>
-        </div>
-      </CalcField>
+    <CalcField>
+      <!-- Tool state panel -->
+      <template #heading>
+        {{ t('meleeDamage.tool.title') }}
+      </template>
+      <div class="flex flex-col gap-2">
+        <CdxField class="mt-0">
+          <template #label>{{ t('meleeDamage.tool.select') }}</template>
 
-      <CalcField>
-        <!-- Tool state panel -->
-        <template #heading>
-          {{ t('meleeDamage.tool.title') }}
-        </template>
-        <div class="flex flex-col gap-2">
-          <CdxField class="mt-0">
-            <template #label>{{ t('meleeDamage.tool.select') }}</template>
-
-            <CdxSelect
-              v-model:selected="selectedTool"
-              :menu-items="getToolsMenuItems()"
-              @update:selected="sanitizeEnchantmentState"
-            >
-              <template #menu-item="{ menuItem }: { menuItem: MenuItemData }">
-                <div class="flex items-center">
-                  <img
-                    class="pixel-image mr-2"
-                    width="16"
-                    height="16"
-                    loading="lazy"
-                    :src="menuItem.thumbnail?.url"
-                    :alt="menuItem.label"
-                  />
-                  <span>{{ menuItem.label }}</span>
-                </div>
-              </template>
-              <template #label="{ selectedMenuItem }: { selectedMenuItem: MenuItemData }">
-                <div class="flex items-center">
-                  <img
-                    class="pixel-image mr-2"
-                    width="16"
-                    height="16"
-                    loading="lazy"
-                    :src="selectedMenuItem?.thumbnail?.url"
-                    :alt="selectedMenuItem?.label"
-                  />
-                  <span>{{ selectedMenuItem?.label }}</span>
-                </div>
-              </template>
-            </CdxSelect>
-          </CdxField>
-          <CdxTable
-            v-if="usingDirectAM"
-            :caption="t('meleeDamage.tool.modifier.title')"
-            :data="attributeModifiers"
-            :columns="attributeModifiers.length === 0 ? [] : attributeModifierColumns"
+          <CdxSelect
+            v-model:selected="selectedTool"
+            :menu-items="getToolsMenuItems()"
+            @update:selected="sanitizeEnchantmentState"
           >
-            <template #header>
-              <CdxButton
-                @click="
-                  attributeModifiers.push({
-                    uniqueID: Math.random().toString(36).substring(2, 9),
-                    attribute: 'generic.attack_damage',
-                    operation: 'add_value',
-                    amount: 1,
-                  })
-                "
-              >
-                {{ t('meleeDamage.tool.modifier.add') }}
-              </CdxButton>
+            <template #menu-item="{ menuItem }: { menuItem: MenuItemData }">
+              <div class="flex items-center">
+                <img
+                  class="pixel-image mr-2"
+                  width="16"
+                  height="16"
+                  loading="lazy"
+                  :src="menuItem.thumbnail?.url"
+                  :alt="menuItem.label"
+                />
+                <span>{{ menuItem.label }}</span>
+              </div>
             </template>
-
-            <template #item-attribute="{ item, row }">
-              <CdxSelect
-                :selected="item"
-                :menu-items="[
-                  {
-                    value: 'generic.attack_damage',
-                    label: t('meleeDamage.tool.modifier.attribute.damage'),
-                  },
-                  {
-                    value: 'generic.attack_speed',
-                    label: t('meleeDamage.tool.modifier.attribute.speed'),
-                  },
-                ]"
-                @update:selected="(value: string) => (row.attribute = value)"
-              />
+            <template #label="{ selectedMenuItem }: { selectedMenuItem: MenuItemData }">
+              <div class="flex items-center">
+                <img
+                  class="pixel-image mr-2"
+                  width="16"
+                  height="16"
+                  loading="lazy"
+                  :src="selectedMenuItem?.thumbnail?.url"
+                  :alt="selectedMenuItem?.label"
+                />
+                <span>{{ selectedMenuItem?.label }}</span>
+              </div>
             </template>
-
-            <template #item-operation="{ item, row }">
-              <CdxSelect
-                :selected="item"
-                :menu-items="[
-                  {
-                    value: 'add_value',
-                    label: t('meleeDamage.tool.modifier.operation.add'),
-                  },
-                  {
-                    value: 'add_multiplied_base',
-                    label: t('meleeDamage.tool.modifier.operation.multipliedBase'),
-                  },
-                  {
-                    value: 'add_multiplied_total',
-                    label: t('meleeDamage.tool.modifier.operation.multipliedTotal'),
-                  },
-                ]"
-                @update:selected="(value: string) => (row.operation = value)"
-              />
-            </template>
-
-            <template #item-amount="{ item, row }">
-              <CdxTextInput
-                :model-value="item"
-                class="min-w-32"
-                input-type="number"
-                step="0.5"
-                @update:model-value="
-                  (value: any) => {
-                    row.amount = parseFloat(value)
-                    if (Number.isNaN(row.amount)) row.amount = 0
-                  }
-                "
-              />
-            </template>
-
-            <template #item-action="{ row }">
-              <CdxButton
-                weight="quiet"
-                action="destructive"
-                :aria-label="t('meleeDamage.tool.modifier.remove')"
-                @click="
-                  () =>
-                    attributeModifiers.splice(
-                      attributeModifiers.findIndex((m) => m.uniqueID === row.uniqueID),
-                      1,
-                    )
-                "
-              >
-                <CdxIcon :icon="cdxIconTrash" />
-              </CdxButton>
-            </template>
-          </CdxTable>
-          <div class="flex flex-row flex-wrap gap-4">
-            <CdxField
-              v-if="
-                checkEnchantment(
-                  false,
-                  () => true,
-                  () => smiteLevel === 0 && baneOfArthropodsLevel === 0,
-                )
+          </CdxSelect>
+        </CdxField>
+        <CdxTable
+          v-if="usingDirectAM"
+          :caption="t('meleeDamage.tool.modifier.title')"
+          :data="attributeModifiers"
+          :columns="attributeModifiers.length === 0 ? [] : attributeModifierColumns"
+        >
+          <template #header>
+            <CdxButton
+              @click="
+                attributeModifiers.push({
+                  uniqueID: Math.random().toString(36).substring(2, 9),
+                  attribute: 'generic.attack_damage',
+                  operation: 'add_value',
+                  amount: 1,
+                })
               "
-              class="mt-0"
             >
-              <template #label>
-                <span v-html="parseWikitext(t('meleeDamage.tool.sharpnessLevel'))" />
-              </template>
+              {{ t('meleeDamage.tool.modifier.add') }}
+            </CdxButton>
+          </template>
 
-              <CdxTextInput
-                id="sharpness-level-input"
-                v-model="sharpnessLevel"
-                class="w-20 min-w-20 font-mono"
-                input-type="number"
-                min="0"
-                :max="canObtainInSurvival ? 5 : 255"
-                step="1"
-              />
-            </CdxField>
+          <template #item-attribute="{ item, row }">
+            <CdxSelect
+              :selected="item"
+              :menu-items="[
+                {
+                  value: 'generic.attack_damage',
+                  label: t('meleeDamage.tool.modifier.attribute.damage'),
+                },
+                {
+                  value: 'generic.attack_speed',
+                  label: t('meleeDamage.tool.modifier.attribute.speed'),
+                },
+              ]"
+              @update:selected="(value: string) => (row.attribute = value)"
+            />
+          </template>
 
-            <CdxField
-              v-if="
-                checkEnchantment(
-                  true,
-                  () => true,
-                  () => sharpnessLevel === 0 && baneOfArthropodsLevel === 0 && densityLevel === 0,
-                )
+          <template #item-operation="{ item, row }">
+            <CdxSelect
+              :selected="item"
+              :menu-items="[
+                {
+                  value: 'add_value',
+                  label: t('meleeDamage.tool.modifier.operation.add'),
+                },
+                {
+                  value: 'add_multiplied_base',
+                  label: t('meleeDamage.tool.modifier.operation.multipliedBase'),
+                },
+                {
+                  value: 'add_multiplied_total',
+                  label: t('meleeDamage.tool.modifier.operation.multipliedTotal'),
+                },
+              ]"
+              @update:selected="(value: string) => (row.operation = value)"
+            />
+          </template>
+
+          <template #item-amount="{ item, row }">
+            <CdxTextInput
+              :model-value="item"
+              class="min-w-32"
+              input-type="number"
+              step="0.5"
+              @update:model-value="
+                (value: any) => {
+                  row.amount = parseFloat(value)
+                  if (Number.isNaN(row.amount)) row.amount = 0
+                }
               "
-              class="mt-0"
-            >
-              <template #label>
-                <span v-html="parseWikitext(t('meleeDamage.tool.smiteLevel'))" />
-              </template>
+            />
+          </template>
 
-              <CdxTextInput
-                id="smite-level-input"
-                v-model="smiteLevel"
-                class="w-20 min-w-20 font-mono"
-                input-type="number"
-                min="0"
-                :max="canObtainInSurvival ? 5 : 255"
-                step="1"
-              />
-            </CdxField>
-            <CdxField
-              v-if="
-                checkEnchantment(
-                  true,
-                  () => true,
-                  () => smiteLevel === 0 && sharpnessLevel === 0 && densityLevel === 0,
-                )
+          <template #item-action="{ row }">
+            <CdxButton
+              weight="quiet"
+              action="destructive"
+              :aria-label="t('meleeDamage.tool.modifier.remove')"
+              @click="
+                () =>
+                  attributeModifiers.splice(
+                    attributeModifiers.findIndex((m) => m.uniqueID === row.uniqueID),
+                    1,
+                  )
               "
-              class="mt-0"
             >
-              <template #label>
-                <span v-html="parseWikitext(t('meleeDamage.tool.baneOfArthropodsLevel'))" />
-              </template>
+              <CdxIcon :icon="cdxIconTrash" />
+            </CdxButton>
+          </template>
+        </CdxTable>
+        <div class="flex flex-row flex-wrap gap-4">
+          <CdxField
+            v-if="
+              checkEnchantment(
+                false,
+                () => true,
+                () => smiteLevel === 0 && baneOfArthropodsLevel === 0,
+              )
+            "
+            class="mt-0"
+          >
+            <template #label>
+              <span v-html="parseWikitext(t('meleeDamage.tool.sharpnessLevel'))" />
+            </template>
 
-              <CdxTextInput
-                id="bane-of-arthropods-level-input"
-                v-model="baneOfArthropodsLevel"
-                class="w-20 min-w-20 font-mono"
-                input-type="number"
-                min="0"
-                :max="canObtainInSurvival ? 5 : 255"
-                step="1"
-              />
-            </CdxField>
+            <CdxTextInput
+              id="sharpness-level-input"
+              v-model="sharpnessLevel"
+              class="w-20 min-w-20 font-mono"
+              input-type="number"
+              min="0"
+              :max="canObtainInSurvival ? 5 : 255"
+              step="1"
+            />
+          </CdxField>
 
-            <CdxField v-if="(isTridentItem || !canObtainInSurvival) && !isHand" class="mt-0">
-              <template #label>
-                <span v-html="parseWikitext(t('meleeDamage.tool.impalingLevel'))" />
-              </template>
+          <CdxField
+            v-if="
+              checkEnchantment(
+                true,
+                () => true,
+                () => sharpnessLevel === 0 && baneOfArthropodsLevel === 0 && densityLevel === 0,
+              )
+            "
+            class="mt-0"
+          >
+            <template #label>
+              <span v-html="parseWikitext(t('meleeDamage.tool.smiteLevel'))" />
+            </template>
 
-              <CdxTextInput
-                id="impaling-level-input"
-                v-model="impalingLevel"
-                class="w-20 min-w-20 font-mono"
-                input-type="number"
-                min="0"
-                :max="canObtainInSurvival ? 5 : 255"
-                step="1"
-              />
-            </CdxField>
+            <CdxTextInput
+              id="smite-level-input"
+              v-model="smiteLevel"
+              class="w-20 min-w-20 font-mono"
+              input-type="number"
+              min="0"
+              :max="canObtainInSurvival ? 5 : 255"
+              step="1"
+            />
+          </CdxField>
+          <CdxField
+            v-if="
+              checkEnchantment(
+                true,
+                () => true,
+                () => smiteLevel === 0 && sharpnessLevel === 0 && densityLevel === 0,
+              )
+            "
+            class="mt-0"
+          >
+            <template #label>
+              <span v-html="parseWikitext(t('meleeDamage.tool.baneOfArthropodsLevel'))" />
+            </template>
 
-            <CdxField
-              v-if="
-                checkEnchantment(
-                  true,
-                  () => isMaceItem,
-                  () => smiteLevel === 0 && baneOfArthropodsLevel === 0,
-                )
-              "
-              class="mt-0"
-            >
-              <template #label>
-                <span v-html="parseWikitext(t('meleeDamage.tool.densityLevel'))" />
-              </template>
+            <CdxTextInput
+              id="bane-of-arthropods-level-input"
+              v-model="baneOfArthropodsLevel"
+              class="w-20 min-w-20 font-mono"
+              input-type="number"
+              min="0"
+              :max="canObtainInSurvival ? 5 : 255"
+              step="1"
+            />
+          </CdxField>
 
-              <CdxTextInput
-                id="density-level-input"
-                v-model="densityLevel"
-                class="w-20 min-w-20 font-mono"
-                input-type="number"
-                min="0"
-                :max="canObtainInSurvival ? 5 : 255"
-                step="1"
-              />
-            </CdxField>
-          </div>
+          <CdxField v-if="(isTridentItem || !canObtainInSurvival) && !isHand" class="mt-0">
+            <template #label>
+              <span v-html="parseWikitext(t('meleeDamage.tool.impalingLevel'))" />
+            </template>
+
+            <CdxTextInput
+              id="impaling-level-input"
+              v-model="impalingLevel"
+              class="w-20 min-w-20 font-mono"
+              input-type="number"
+              min="0"
+              :max="canObtainInSurvival ? 5 : 255"
+              step="1"
+            />
+          </CdxField>
+
+          <CdxField
+            v-if="
+              checkEnchantment(
+                true,
+                () => isMaceItem,
+                () => smiteLevel === 0 && baneOfArthropodsLevel === 0,
+              )
+            "
+            class="mt-0"
+          >
+            <template #label>
+              <span v-html="parseWikitext(t('meleeDamage.tool.densityLevel'))" />
+            </template>
+
+            <CdxTextInput
+              id="density-level-input"
+              v-model="densityLevel"
+              class="w-20 min-w-20 font-mono"
+              input-type="number"
+              min="0"
+              :max="canObtainInSurvival ? 5 : 255"
+              step="1"
+            />
+          </CdxField>
         </div>
-      </CalcField>
-      <CalcField>
-        <!-- Victim state panel -->
-        <template #heading>
-          {{ t('meleeDamage.victim.title') }}
-        </template>
-        <div class="flex flex-col gap-2 mt-2">
-          <CdxCheckbox id="is-undead-checkbox" v-model="isUndead">
-            {{ t('meleeDamage.victim.isUndead') }}
-          </CdxCheckbox>
-          <CdxCheckbox id="is-arthropod-checkbox" v-model="isArthropod">
-            {{ t('meleeDamage.victim.isArthropod') }}
-          </CdxCheckbox>
-          <CdxCheckbox id="is-water-mob-checkbox" v-model="isWaterMob">
-            {{
-              isJavaEdition ? t('meleeDamage.victim.isWaterMob') : t('meleeDamage.victim.isInWater')
-            }}
-          </CdxCheckbox>
-        </div>
-      </CalcField>
-    </div>
+      </div>
+    </CalcField>
+    <CalcField>
+      <!-- Victim state panel -->
+      <template #heading>
+        {{ t('meleeDamage.victim.title') }}
+      </template>
+
+      <CdxToggleButtonGroup
+        :buttons="[
+          { value: 'undead', label: t('meleeDamage.victim.isUndead') },
+          { value: 'arthropod', label: t('meleeDamage.victim.isArthropod') },
+          {
+            value: 'water-mob',
+            label: isJavaEdition
+              ? t('meleeDamage.victim.isWaterMob')
+              : t('meleeDamage.victim.isInWater'),
+          },
+        ]"
+        :model-value="
+          [isUndead && 'undead', isArthropod && 'arthropod', isWaterMob && 'water-mob'].filter(
+            (v) => v,
+          )
+        "
+        @update:model-value="
+          (selected: string[]) => {
+            isUndead = selected.includes('undead')
+            isArthropod = selected.includes('arthropod')
+            isWaterMob = selected.includes('water-mob')
+          }
+        "
+      />
+    </CalcField>
 
     <div class="mt-2 font-bold">
       <I18nT keypath="meleeDamage.finalDamage">
