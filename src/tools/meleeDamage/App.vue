@@ -583,7 +583,7 @@ function sanitizeEnchantmentState() {
                     label: t('meleeDamage.tool.modifier.attribute.speed'),
                   },
                 ]"
-                @update:selected="(value) => (row.attribute = value)"
+                @update:selected="(value: string) => (row.attribute = value)"
               />
             </template>
 
@@ -604,7 +604,7 @@ function sanitizeEnchantmentState() {
                     label: t('meleeDamage.tool.modifier.operation.multipliedTotal'),
                   },
                 ]"
-                @update:selected="(value) => (row.operation = value)"
+                @update:selected="(value: string) => (row.operation = value)"
               />
             </template>
 
