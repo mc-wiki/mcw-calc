@@ -3,6 +3,5 @@
   "seedHashcode.actual": "Actual seed:",
   "seedHashcode.emptyString": "Empty string should result in 0, but Minecraft actually generates a random number as the seed.",
   "seedHashcode.number": "A number would be used directly. This is the theoretical hash derived from the number.",
-  "seedHashcode.zero": "0 is a special case. Minecraft actually generates a random number as the seed.",
   "seedHashcode.outOfRange": "This number is exceeds the limit of 64-bit signed integer. The above seed is actually used."
 }
