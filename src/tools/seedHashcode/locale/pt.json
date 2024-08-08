@@ -3,6 +3,5 @@
   "seedHashcode.actual": "Semente real:",
   "seedHashcode.emptyString": "Um texto em branco deveria resultar em 0, mas o Minecraft gera um número aleatório como semente.",
   "seedHashcode.number": "Na prática, o número inserido é usado. Teoricamente, esse é o hash derivado do número.",
-  "seedHashcode.zero": "0 é um caso especial. O Minecraft gera um número aleatório como semente.",
   "seedHashcode.outOfRange": "O número atinge o limite de números inteiros em 64 bits. Na prática, a semente acima é usada."
 }
