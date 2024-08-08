@@ -18,7 +18,6 @@ const { t } = useI18n()
 
 interface ToolData {
   name: string
-  icon: string
   // Attribute Modifiers
   attackDamageJE: number
   attackDamageBE: number
@@ -34,56 +33,49 @@ interface AttributeModifier {
 
 // Base tools data ---------------------------------------------------------------------------------
 const definedToolsData: ToolData[] = [
-  { name: 'hand', icon: '', attackDamageJE: 0, attackDamageBE: 0, attackSpeed: 0 },
+  { name: 'hand', attackDamageJE: 0, attackDamageBE: 0, attackSpeed: 0 },
   // Sword
-  {
-    name: 'wooden_sword',
-    icon: 'https://minecraft.wiki/images/ItemSprite_wooden-sword.png?format=original',
-    attackDamageJE: 3,
-    attackDamageBE: 4,
-    attackSpeed: -2.4,
-  },
-  { name: 'golden_sword', icon: '', attackDamageJE: 3, attackDamageBE: 4, attackSpeed: -2.4 },
-  { name: 'stone_sword', icon: '', attackDamageJE: 4, attackDamageBE: 5, attackSpeed: -2.4 },
-  { name: 'iron_sword', icon: '', attackDamageJE: 5, attackDamageBE: 6, attackSpeed: -2.4 },
-  { name: 'diamond_sword', icon: '', attackDamageJE: 6, attackDamageBE: 7, attackSpeed: -2.4 },
-  { name: 'netherite_sword', icon: '', attackDamageJE: 7, attackDamageBE: 8, attackSpeed: -2.4 },
+  { name: 'wooden_sword', attackDamageJE: 3, attackDamageBE: 4, attackSpeed: -2.4 },
+  { name: 'golden_sword', attackDamageJE: 3, attackDamageBE: 4, attackSpeed: -2.4 },
+  { name: 'stone_sword', attackDamageJE: 4, attackDamageBE: 5, attackSpeed: -2.4 },
+  { name: 'iron_sword', attackDamageJE: 5, attackDamageBE: 6, attackSpeed: -2.4 },
+  { name: 'diamond_sword', attackDamageJE: 6, attackDamageBE: 7, attackSpeed: -2.4 },
+  { name: 'netherite_sword', attackDamageJE: 7, attackDamageBE: 8, attackSpeed: -2.4 },
   // Shovel
-  { name: 'wooden_shovel', icon: '', attackDamageJE: 1.5, attackDamageBE: 1, attackSpeed: -3 },
-  { name: 'golden_shovel', icon: '', attackDamageJE: 1.5, attackDamageBE: 1, attackSpeed: -3 },
-  { name: 'stone_shovel', icon: '', attackDamageJE: 2.5, attackDamageBE: 2, attackSpeed: -3 },
-  { name: 'iron_shovel', icon: '', attackDamageJE: 3.5, attackDamageBE: 3, attackSpeed: -3 },
-  { name: 'diamond_shovel', icon: '', attackDamageJE: 4.5, attackDamageBE: 4, attackSpeed: -3 },
-  { name: 'netherite_shovel', icon: '', attackDamageJE: 5.5, attackDamageBE: 5, attackSpeed: -3 },
+  { name: 'wooden_shovel', attackDamageJE: 1.5, attackDamageBE: 1, attackSpeed: -3 },
+  { name: 'golden_shovel', attackDamageJE: 1.5, attackDamageBE: 1, attackSpeed: -3 },
+  { name: 'stone_shovel', attackDamageJE: 2.5, attackDamageBE: 2, attackSpeed: -3 },
+  { name: 'iron_shovel', attackDamageJE: 3.5, attackDamageBE: 3, attackSpeed: -3 },
+  { name: 'diamond_shovel', attackDamageJE: 4.5, attackDamageBE: 4, attackSpeed: -3 },
+  { name: 'netherite_shovel', attackDamageJE: 5.5, attackDamageBE: 5, attackSpeed: -3 },
   // Pickaxe
-  { name: 'wooden_pickaxe', icon: '', attackDamageJE: 1, attackDamageBE: 1, attackSpeed: -2.8 },
-  { name: 'golden_pickaxe', icon: '', attackDamageJE: 1, attackDamageBE: 1, attackSpeed: -2.8 },
-  { name: 'stone_pickaxe', icon: '', attackDamageJE: 2, attackDamageBE: 2, attackSpeed: -2.8 },
-  { name: 'iron_pickaxe', icon: '', attackDamageJE: 3, attackDamageBE: 3, attackSpeed: -2.8 },
-  { name: 'diamond_pickaxe', icon: '', attackDamageJE: 4, attackDamageBE: 4, attackSpeed: -2.8 },
-  { name: 'netherite_pickaxe', icon: '', attackDamageJE: 5, attackDamageBE: 5, attackSpeed: -2.8 },
+  { name: 'wooden_pickaxe', attackDamageJE: 1, attackDamageBE: 1, attackSpeed: -2.8 },
+  { name: 'golden_pickaxe', attackDamageJE: 1, attackDamageBE: 1, attackSpeed: -2.8 },
+  { name: 'stone_pickaxe', attackDamageJE: 2, attackDamageBE: 2, attackSpeed: -2.8 },
+  { name: 'iron_pickaxe', attackDamageJE: 3, attackDamageBE: 3, attackSpeed: -2.8 },
+  { name: 'diamond_pickaxe', attackDamageJE: 4, attackDamageBE: 4, attackSpeed: -2.8 },
+  { name: 'netherite_pickaxe', attackDamageJE: 5, attackDamageBE: 5, attackSpeed: -2.8 },
   // Axe
-  { name: 'wooden_axe', icon: '', attackDamageJE: 6, attackDamageBE: 3, attackSpeed: -3.2 },
-  { name: 'golden_axe', icon: '', attackDamageJE: 6, attackDamageBE: 3, attackSpeed: -3 },
-  { name: 'stone_axe', icon: '', attackDamageJE: 8, attackDamageBE: 4, attackSpeed: -3.2 },
-  { name: 'iron_axe', icon: '', attackDamageJE: 8, attackDamageBE: 5, attackSpeed: -3.1 },
-  { name: 'diamond_axe', icon: '', attackDamageJE: 8, attackDamageBE: 6, attackSpeed: -3 },
-  { name: 'netherite_axe', icon: '', attackDamageJE: 9, attackDamageBE: 7, attackSpeed: -3 },
+  { name: 'wooden_axe', attackDamageJE: 6, attackDamageBE: 3, attackSpeed: -3.2 },
+  { name: 'golden_axe', attackDamageJE: 6, attackDamageBE: 3, attackSpeed: -3 },
+  { name: 'stone_axe', attackDamageJE: 8, attackDamageBE: 4, attackSpeed: -3.2 },
+  { name: 'iron_axe', attackDamageJE: 8, attackDamageBE: 5, attackSpeed: -3.1 },
+  { name: 'diamond_axe', attackDamageJE: 8, attackDamageBE: 6, attackSpeed: -3 },
+  { name: 'netherite_axe', attackDamageJE: 9, attackDamageBE: 7, attackSpeed: -3 },
   // Hoe
-  { name: 'wooden_hoe', icon: '', attackDamageJE: 0, attackDamageBE: 1, attackSpeed: -3 },
-  { name: 'golden_hoe', icon: '', attackDamageJE: 0, attackDamageBE: 1, attackSpeed: -3 },
-  { name: 'stone_hoe', icon: '', attackDamageJE: 0, attackDamageBE: 2, attackSpeed: -2 },
-  { name: 'iron_hoe', icon: '', attackDamageJE: 0, attackDamageBE: 3, attackSpeed: -1 },
-  { name: 'diamond_hoe', icon: '', attackDamageJE: 0, attackDamageBE: 4, attackSpeed: 0 },
-  { name: 'netherite_hoe', icon: '', attackDamageJE: 0, attackDamageBE: 5, attackSpeed: 0 },
+  { name: 'wooden_hoe', attackDamageJE: 0, attackDamageBE: 1, attackSpeed: -3 },
+  { name: 'golden_hoe', attackDamageJE: 0, attackDamageBE: 1, attackSpeed: -3 },
+  { name: 'stone_hoe', attackDamageJE: 0, attackDamageBE: 2, attackSpeed: -2 },
+  { name: 'iron_hoe', attackDamageJE: 0, attackDamageBE: 3, attackSpeed: -1 },
+  { name: 'diamond_hoe', attackDamageJE: 0, attackDamageBE: 4, attackSpeed: 0 },
+  { name: 'netherite_hoe', attackDamageJE: 0, attackDamageBE: 5, attackSpeed: 0 },
   // Others
-  { name: 'trident', icon: '', attackDamageJE: 8, attackDamageBE: 8, attackSpeed: -2.9 },
-  { name: 'mace', icon: '', attackDamageJE: 5, attackDamageBE: 5, attackSpeed: -3.4 },
+  { name: 'trident', attackDamageJE: 8, attackDamageBE: 8, attackSpeed: -2.9 },
+  { name: 'mace', attackDamageJE: 5, attackDamageBE: 5, attackSpeed: -3.4 },
 ]
 
 const directAMToolData: ToolData = {
   name: 'directAM',
-  icon: '',
   attackDamageJE: 0,
   attackDamageBE: 0,
   attackSpeed: 0,
@@ -91,7 +83,6 @@ const directAMToolData: ToolData = {
 
 const maceWithDirectAMToolData: ToolData = {
   name: 'maceAM',
-  icon: '',
   attackDamageJE: 0,
   attackDamageBE: 0,
   attackSpeed: 0,
@@ -304,6 +295,7 @@ const attackSpeed = computed(() => {
 
 const cooldownProgress = computed(() => {
   if (!isJavaEdition.value) return 1
+  if (attackSpeed.value === 0) return 0
   return Math.min((Math.floor(tickAfterLastAttack.value) + 0.5) / (20 / attackSpeed.value), 1)
 })
 
@@ -331,6 +323,7 @@ const totalAttackDamage = computed(() => {
 
 const fullCooldown = computed(() => {
   if (!isJavaEdition.value) return 0
+  if (attackSpeed.value === 0) return 0
   return Math.ceil(20 / attackSpeed.value - 0.5)
 })
 
@@ -620,7 +613,12 @@ function sanitizeEnchantmentState() {
                 :model-value="item"
                 input-type="number"
                 step="0.5"
-                @update:model-value="(value: any) => (row.amount = parseFloat(value))"
+                @update:model-value="
+                  (value: any) => {
+                    row.amount = parseFloat(value)
+                    if (Number.isNaN(row.amount)) row.amount = 0
+                  }
+                "
               />
             </template>
 
