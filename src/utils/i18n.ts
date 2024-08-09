@@ -43,9 +43,37 @@ export function parseWikitext(wikitext: string) {
 
   // convert [[wiki links]] or [[wiki links|with text]]
   // to <a href="/w/wiki links">with text</a>
-  return wikitext.replace(
+  wikitext = wikitext.replace(
     /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g,
     (_, link, text) =>
       `<a href="${parentOrigin()}/w/${encodeURIComponent(link)}">${text ?? link}</a>`,
   )
+
+  // Escape HTML tags except those in whitelist
+  const whitelisted = [
+    'a',
+    'b',
+    'i',
+    'br',
+    'div',
+    'span',
+    'strong',
+    'em',
+    'u',
+    's',
+    'sub',
+    'sup',
+    'del',
+    'ins',
+  ]
+  wikitext = wikitext.replace(/<([^>]+)>/g, (match, tag: string) => {
+    const [tagNameRaw] = tag.split(/\s+/)
+    const tagName = tagNameRaw.toLowerCase().replace(/^\//, '')
+    if (whitelisted.includes(tagName)) {
+      return match
+    }
+    return `&lt;${tag}&gt;`
+  })
+
+  return wikitext
 }

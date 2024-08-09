@@ -20,6 +20,19 @@ describe('parseWikitext', () => {
     const expected = '<b><i>italic and bold</i></b><i>italic</i>'
     expect(parseWikitext(wikitext)).toBe(expected)
   })
+
+  it('should escape HTML tags except those in whitelist', () => {
+    const wikitext = '<link href="http://example.com">Link</link> <script>alert("XSS")</script>'
+    const expected =
+      '&lt;link href="http://example.com"&gt;Link&lt;/link&gt; &lt;script&gt;alert("XSS")&lt;/script&gt;'
+    expect(parseWikitext(wikitext)).toBe(expected)
+  })
+
+  it('should not escape whitelisted tags', () => {
+    const wikitext = '<a href="http://example.com">Link</a> <b>Bold</b>'
+    const expected = '<a href="http://example.com">Link</a> <b>Bold</b>'
+    expect(parseWikitext(wikitext)).toBe(expected)
+  })
 })
 
 describe('createMcwI18n', () => {
