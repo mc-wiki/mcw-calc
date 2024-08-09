@@ -14,7 +14,7 @@ import {
   CdxToggleButtonGroup,
   type MenuItemData,
 } from '@wikimedia/codex'
-import { cdxIconTrash } from '@wikimedia/codex-icons'
+import { cdxIconAdd, cdxIconTrash } from '@wikimedia/codex-icons'
 import CalcField from '@/components/CalcField.vue'
 import { parseWikitext } from '@/utils/i18n.ts'
 
@@ -534,33 +534,59 @@ function selectOutput() {
         </CdxField>
       </div>
 
-      <div class="flex flex-row flex-wrap items-end gap-4 mt-2">
-        <CdxField v-if="isJavaEdition">
-          <template #label>
-            {{ t('meleeDamage.attackCondition.tickAfterLastAttack') }}
-          </template>
+      <div class="flex flex-col">
+        <div class="flex flex-row flex-wrap items-end gap-4 mt-2">
+          <CdxField v-if="isJavaEdition">
+            <template #label>
+              {{ t('meleeDamage.attackCondition.tickAfterLastAttack') }}
+            </template>
 
-          <div class="flex gap-2">
-            <CdxTextInput
-              id="tick-after-last-attack-input"
-              v-model="tickAfterLastAttack"
-              class="w-24 min-w-24 font-mono"
-              input-type="number"
-              min="0"
-              :max="fullCooldown"
-              step="1"
+            <div class="flex gap-2">
+              <CdxTextInput
+                id="tick-after-last-attack-input"
+                v-model="tickAfterLastAttack"
+                class="w-24 min-w-24 font-mono"
+                input-type="number"
+                min="0"
+                :max="fullCooldown"
+                step="1"
+              />
+              <CdxButton @click="tickAfterLastAttack = fullCooldown">
+                {{ t('meleeDamage.attackCondition.setFullCooldown') }}
+              </CdxButton>
+            </div>
+          </CdxField>
+
+          <CdxField v-if="canCritical" class="mt-0">
+            <CdxCheckbox id="critical-checkbox" v-model="critical" class="mt-auto mb-[6px]" inline>
+              {{ t('meleeDamage.attackCondition.critical') }}
+            </CdxCheckbox>
+          </CdxField>
+        </div>
+
+        <div v-if="isJavaEdition" class="flex gap-0.5 items-center h-[12px]">
+          <div
+            class="cdx-progress-bar cdx-progress-bar--inline flex-1 max-w-24"
+            style="background-color: var(--background-color-progressive-subtle, #eaf3ff)"
+            role="progressbar"
+          >
+            <div
+              :style="{
+                width: `${cooldownProgress * 100}%`,
+                height: '100%',
+                backgroundColor: 'var(--background-color-progressive, #36c)',
+              }"
             />
-            <CdxButton @click="tickAfterLastAttack = fullCooldown">
-              {{ t('meleeDamage.attackCondition.setFullCooldown') }}
-            </CdxButton>
           </div>
-        </CdxField>
-
-        <CdxField v-if="canCritical" class="mt-0">
-          <CdxCheckbox id="critical-checkbox" v-model="critical" class="mt-auto mb-[6px]" inline>
-            {{ t('meleeDamage.attackCondition.critical') }}
-          </CdxCheckbox>
-        </CdxField>
+          <CdxIcon
+            :style="{
+              visibility: cooldownProgress === 1 ? 'visible' : 'hidden',
+            }"
+            :icon="cdxIconAdd"
+            size="x-small"
+          />
+          <span class="text-xs font-mono">{{ `${Math.round(cooldownProgress * 100)}%` }}</span>
+        </div>
       </div>
     </CalcField>
 
