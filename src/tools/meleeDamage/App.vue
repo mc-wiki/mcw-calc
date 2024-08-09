@@ -146,7 +146,7 @@ const isWaterMob = ref(false) // For impaling damage
 
 // Attack arguments
 const critical = ref(false) // Critical hit
-const tickAfterLastAttack = ref(20) // For attack cooldown, only for JE
+const tickAfterLastAttack = ref(5) // For attack cooldown, only for JE
 
 function getToolsMenuItems() {
   const items: MenuItemData[] = definedToolsData.map((tool) => ({
