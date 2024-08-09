@@ -42,6 +42,6 @@
   "formattingCodeEditor.default.1.bold": "文本",
   "formattingCodeEditor.default.1.italic": "添加",
   "formattingCodeEditor.default.1.obfuscated": "格式",
-  "formattingCodeEditor.default.2": "这是一个{color}文本",
-  "formattingCodeEditor.default.2.color": "着色的"
+  "formattingCodeEditor.default.2": "这是一段{color}文本",
+  "formattingCodeEditor.default.2.color": "彩色"
 }
