@@ -38,7 +38,7 @@
   "meleeDamage.attackCondition.tickAfterLastAttack": "自上次攻击后经过的游戏刻数",
   "meleeDamage.attackCondition.setFullCooldown": "设置为完全冷却时间",
   "meleeDamage.finalDamage": "最终伤害：{damage}",
-  "meleeDamage.defaultTools.hand": "徒手攻击",
+  "meleeDamage.defaultTools.hand": "空手",
   "meleeDamage.defaultTools.wooden_sword": "木剑",
   "meleeDamage.defaultTools.stone_sword": "石剑",
   "meleeDamage.defaultTools.iron_sword": "铁剑",

@@ -14,7 +14,7 @@
   "banner.move_up": "上移",
   "banner.move_down": "下移",
   "banner.warning": "警告",
-  "banner.limitWarning": "通过合成或使用织布机最多只能叠加六层图案，该图案只能用命令达成。",
+  "banner.limitWarning": "通过合成或使用织布机最多只能叠加六层图案，该图案只能用命令获得。",
   "banner.error": "错误",
   "banner.limitError": "命令最多只能叠加十六层图案。此图案在游戏中不可获取，在此仅作展示。",
   "banner.shareUrl": "https://zh.minecraft.wiki/w/计算器/旗帜",
