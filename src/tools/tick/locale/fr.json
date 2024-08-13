@@ -12,5 +12,5 @@
   "tick.tps": "TPS",
   "tick.tps.explain": "Ticks par seconde, nombre de ticks de jeu par seconde",
   "tick.mspt": "MSPT",
-  "tick.mspt.explain": "Millisecondes par tick, temps nécessaire en millisecondes pour traiter une seule tick"
+  "tick.mspt.explain": "Millisecondes par tick, temps nécessaire en millisecondes pour traiter un seul tick"
 }

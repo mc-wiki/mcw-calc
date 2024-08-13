@@ -6,7 +6,7 @@
   "beaconColor.calculate": "Розрахувати",
   "beaconColor.sequence": "Послідовність:",
   "beaconColor.dE": "δE",
-  "beaconColor.dE.help": "Дельта Е — це міра близькості кольору. Чим менше значення, тим краще. Значення ≤1.0 означає, що різницю не видно неозброєним оком.",
+  "beaconColor.dE.help": "Дельта Е — це міра близькости кольору. Чим менше значення, тим краще. Значення ≤1.0 означає, що різницю не видно неозброєним оком.",
   "beaconColor.glass.white": "Біле скло",
   "beaconColor.glass.lightGray": "Світло-сіре скло",
   "beaconColor.glass.gray": "Сіре скло",
@@ -21,6 +21,6 @@
   "beaconColor.glass.lightBlue": "Блакитне скло",
   "beaconColor.glass.blue": "Синє скло",
   "beaconColor.glass.purple": "Фіолетове скло",
-  "beaconColor.glass.magenta": "Бірюзове скло",
+  "beaconColor.glass.magenta": "Пурпурове скло",
   "beaconColor.glass.pink": "Рожеве скло"
 }

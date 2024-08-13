@@ -18,7 +18,7 @@
   "banner.error": "Помилка",
   "banner.limitError": "Максимальна кількість шарів, які можна отримати за допомогою команд, становить 16. Цей шар недоступний у грі та призначений лише для демонстрації.",
   "banner.shareUrl": "https://uk.minecraft.wiki/w/Калькулятори/Стяг",
-  "banner.copyShareUrl": "Скопіювати поширюване посилання",
+  "banner.copyShareUrl": "Поділитися",
   "banner.color.white": "Білий",
   "banner.color.lightGray": "Світло-сірий",
   "banner.color.gray": "Сірий",
@@ -77,6 +77,6 @@
   "banner.pattern.piglin": "Рило",
   "banner.pattern.flow": "Плин",
   "banner.pattern.guster": "Порив",
-  "banner.requiredPattern": "Цей візерунок можна застосовувати лише за допомогою предметів візерунка стяга на ткацькому верстаті.",
-  "banner.requiredPatternBedrock": "У Bedrock Edition цей візерунок можна застосовувати лише за допомогою предметів візерунка стяга на ткацькому верстаті."
+  "banner.requiredPattern": "Цей візерунок можна застосовувати лише за допомогою візерунку стяга на ткацькому верстаті.",
+  "banner.requiredPatternBedrock": "У Bedrock Edition цей візерунок можна застосовувати лише за допомогою візерунку стяга на ткацькому верстаті."
 }

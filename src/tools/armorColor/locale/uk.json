@@ -1,10 +1,10 @@
 {
-  "armorColor.title": "Розрахувати послідовність фарбування для кольору {type}",
+  "armorColor.title": "Розрахувати послідовність барвників для кольору {type}",
   "armorColor.java": "Java Edition",
   "armorColor.bedrock": "Bedrock Edition",
   "armorColor.color": "Колір:",
-  "armorColor.calculate": "Обчислити",
-  "armorColor.sequence": "Послідовність",
+  "armorColor.calculate": "Розрахувати",
+  "armorColor.sequence": "Послідовність:",
   "armorColor.sequence.help": "Фарбувати обладунки слід одразу всіма барвниками.",
   "armorColor.dE": "δE",
   "armorColor.dE.help": "Дельта Е — це міра близькости кольорів. Чим нижче, тим краще. Значення ≤1.0 означає, що різниця не сприймається людським оком.",

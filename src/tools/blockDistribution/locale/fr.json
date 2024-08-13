@@ -2,7 +2,7 @@
   "blockDistribution.xAxis": "niveau Y →",
   "blockDistribution.yAxis": "↑ Nombre de X trouvés parmi 100 000 blocs",
   "blockDistribution.xInTenThousand": "{num} sur 100 000",
-  "blockDistribution.title": "Distribution de blocs pour \"{block}\" dans l'[[Édition Java {version}]]",
+  "blockDistribution.title": "Distribution de blocs pour \"{block}\" dans l'[[édition Java {version}]]",
   "blockDistribution.total": "Total",
   "blockDistribution.overworld": "Monde normal",
   "blockDistribution.theNether": "Le Nether",
