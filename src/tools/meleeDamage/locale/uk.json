@@ -20,7 +20,7 @@
   "meleeDamage.tool.modifier.attribute.speed": "Швидкість атаки",
   "meleeDamage.tool.modifier.operation": "Операція",
   "meleeDamage.tool.modifier.operation.add": "Додати",
-  "meleeDamage.tool.modifier.operation.multipliedBase": "Множинна база",
+  "meleeDamage.tool.modifier.operation.multipliedBase": "Множинна основа",
   "meleeDamage.tool.modifier.operation.multipliedTotal": "Множинна сума",
   "meleeDamage.tool.modifier.amount": "Кількість",
   "meleeDamage.tool.modifier.action": "Дія",

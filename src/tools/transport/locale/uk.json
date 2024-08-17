@@ -19,9 +19,9 @@
   "transport.unit.meters": "{distance} м",
   "transport.unit.seconds": "{time} с",
   "transport.unit.metersPerSecond": "{speed} м/с",
-  "transport.plot.north": "ПН ±180°",
-  "transport.plot.south": "ПД 0°",
-  "transport.plot.east.0": "СХ",
+  "transport.plot.north": "Пн ±180°",
+  "transport.plot.south": "Пд 0°",
+  "transport.plot.east.0": "Сх",
   "transport.plot.east.1": "-90°",
   "transport.plot.west.0": "ЗХ",
   "transport.plot.west.1": "90°"

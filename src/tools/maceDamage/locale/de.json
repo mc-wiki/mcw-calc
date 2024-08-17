@@ -8,5 +8,6 @@
   "maceDamage.critical.help": "Ein Treffer mit dem Streitkolben führt in den meisten Fällen zu kritischen Treffern, es sei denn, andere Bedingungen sind nicht erfüllt, z. B. wird die Abklingzeit des Angriffs nicht zurückgesetzt.",
   "maceDamage.cooldownReset": "Abklingzeit zurückgesetzt",
   "maceDamage.cooldownReset.help": "Deaktiviere dieses Kontrollkästchen, wenn die Abklingzeit vor dem Angriff nicht zurückgesetzt wurde.",
-  "maceDamage.damage": "Schaden angerichtet:"
+  "maceDamage.damage": "Schaden angerichtet:",
+  "maceDamage.densityLevelWarning": "Nur Dichte-Stufen zwischen 0 und 5 können im Überlebensmodus erhalten werden."
 }
