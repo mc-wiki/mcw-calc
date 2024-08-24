@@ -2,6 +2,6 @@
   "seedHashcode.title": "将字符串转换为实际种子",
   "seedHashcode.actual": "实际种子：",
   "seedHashcode.emptyString": "计算结果应为 0，然而因其为空字符串，Minecraft实际上会生成一个随机数字。",
-  "seedHashcode.number": "数字将直接使用，此为由数字得到的理论哈希值。",
+  "seedHashcode.number": "数字将直接使用，这是由数字得到的理论散列值。",
   "seedHashcode.outOfRange": "此数字超出64位有符号整数的上限，实际将使用上方的种子。"
 }

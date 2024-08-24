@@ -5,7 +5,7 @@
   "meleeDamage.canObtainInSurvival": "Stelle sicher, dass alle Bedingungen im Überlebensmodus erfüllt werden können",
   "meleeDamage.attacker.title": "Zustand des Angreifers",
   "meleeDamage.attacker.mobBaseDamage": "Grundschaden",
-  "meleeDamage.attacker.strengthLevel": "[[Stärke (Statuseffekt)|Stärke]]-Stufe",
+  "meleeDamage.attacker.strengthLevel": "[[Stärke (Statuseffekt){'|'}Stärke]]-Stufe",
   "meleeDamage.attacker.weaknessLevel": "[[Schwäche]]-Stufe",
   "meleeDamage.attacker.hasteLevel": "[[Eile]]-Stufe",
   "meleeDamage.attacker.miningFatigueLevel": "[[Abbaulähmung]]-Stufe",

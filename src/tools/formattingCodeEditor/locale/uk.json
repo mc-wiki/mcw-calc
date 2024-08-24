@@ -36,7 +36,7 @@
   "formattingCodeEditor.format.italic": "Курсив",
   "formattingCodeEditor.format.underline": "Підкреслений",
   "formattingCodeEditor.format.strikethrough": "Закреслений",
-  "formattingCodeEditor.format.obfuscated": "Виділений",
+  "formattingCodeEditor.format.obfuscated": "Заплутаний",
   "formattingCodeEditor.default.1": "{underline} {bold} {italic} {obfuscated}!",
   "formattingCodeEditor.default.1.underline": "Спробуйте",
   "formattingCodeEditor.default.1.bold": "відформатувати",
