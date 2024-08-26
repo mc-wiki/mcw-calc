@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { CdxButton, CdxField, CdxTextInput } from '@wikimedia/codex'
 import { useI18n } from 'vue-i18n'
+import SparkMD5 from 'spark-md5'
 import CalcField from '@/components/CalcField.vue'
 import { parseWikitext } from '@/utils/i18n'
 import { isEmbedded, postMessageParent } from '@/utils/iframe'
@@ -10,33 +11,76 @@ const props = defineProps<{ player: string }>()
 
 const { t } = useI18n()
 
-const apiUrl = 'https://playerdb.co/api/player/minecraft/'
+const API_URL = 'https://playerdb.co/api/player/minecraft/'
+const OFFLINE_PLAYER_PREFIX = 'OfflinePlayer:'
+const DEFAULT_SKIN_NAMES = [
+  'alex',
+  'ari',
+  'efe',
+  'kai',
+  'makena',
+  'noor',
+  'bearded-steve', // steve
+  'sunny',
+  'zuri',
+  'alex',
+  'ari',
+  'efe',
+  'kai',
+  'makena',
+  'noor',
+  'bearded-steve', // steve
+  'sunny',
+  'zuri',
+]
+
 const playerName = ref(props.player)
-const playerUuid = ref()
-const playerAvatar = ref()
+const playerOnlineUUID = ref()
+const playerOfflineUUID = ref()
+const playerOnlineAvatar = ref()
+const playerOfflineSkinName = ref(DEFAULT_SKIN_NAMES[0])
 const isLoading = ref(false)
 
 const errorText = ref()
-const copyText = ref(t('playerUuid.copy'))
 
-async function getUuid(username: string) {
-  if (isValid(username)) {
+const copyTextOnline = ref(t('playerUuid.copy'))
+const copyTextOffline = ref(t('playerUuid.copy'))
+
+async function updatePlayerInfo() {
+  const prefixedName = OFFLINE_PLAYER_PREFIX + playerName.value
+  const bytes = SparkMD5.hash(prefixedName, true)
+    .split('')
+    .map((byte) => byte.charCodeAt(0))
+  bytes[6] = (bytes[6] & 0x0F) | 0x30
+  bytes[8] = (bytes[8] & 0x3F) | 0x80
+  const uuid = Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('')
+  playerOfflineUUID.value = `${uuid.slice(0, 8)}-${uuid.slice(8, 12)}-${uuid.slice(12, 16)}-${uuid.slice(16, 20)}-${uuid.slice(20, 32)}`
+
+  const mostSigBits = BigInt(`0x${uuid.slice(0, 16)}`)
+  const leastSigBits = BigInt(`0x${uuid.slice(16, 32)}`)
+  const xorBits = mostSigBits ^ leastSigBits
+  const hashUUID = xorBits ^ ((xorBits >> 32n) & 0xFFFFFFFFn)
+  const r = hashUUID % 18n
+  const index = (r ^ 18n) < 0 && r !== 0n ? r + 18n : r
+  playerOfflineSkinName.value = DEFAULT_SKIN_NAMES[Number(index)]
+
+  if (isValid(playerName.value)) {
     isLoading.value = true
-    const response = await fetch(apiUrl + username)
+    const response = await fetch(API_URL + playerName.value)
     isLoading.value = false
     if (response.status === 200) {
       const data = await response.json()
-      playerUuid.value = data.data.player.id
-      playerAvatar.value = data.data.player.avatar
+      playerOnlineUUID.value = data.data.player.id
+      playerOnlineAvatar.value = data.data.player.avatar
     } else {
       errorText.value = t('playerUuid.error.notFound')
-      playerUuid.value = ''
-      playerAvatar.value = ''
+      playerOnlineUUID.value = ''
+      playerOnlineAvatar.value = ''
     }
   } else {
     errorText.value = t('playerUuid.error.invalid')
-    playerUuid.value = ''
-    playerAvatar.value = ''
+    playerOnlineUUID.value = ''
+    playerOnlineAvatar.value = ''
   }
 }
 
@@ -44,22 +88,24 @@ function isValid(username: string) {
   return username.match(/^\w{1,16}$/)
 }
 
-async function copyUuid(uuid: string) {
+const copyTextIndex = [copyTextOnline, copyTextOffline]
+
+async function copyUuid(uuid: string, index: number) {
   if (isEmbedded()) {
     postMessageParent('mcw-calc-clipboard', {
       text: uuid,
     })
   } else {
-    navigator.clipboard.writeText(uuid)
+    await navigator.clipboard.writeText(uuid)
   }
 
-  copyText.value = t('playerUuid.copied')
+  copyTextIndex[index].value = t('playerUuid.copied')
   setTimeout(() => {
-    copyText.value = t('playerUuid.copy')
-  }, 3000)
+    copyTextIndex[index].value = t('playerUuid.copy')
+  }, 1000)
 }
 
-getUuid(playerName.value)
+updatePlayerInfo()
 </script>
 
 <template>
@@ -67,44 +113,59 @@ getUuid(playerName.value)
     <template #heading>
       {{ t('playerUuid.title') }}
     </template>
+    <div class="flex flex-col justify-between">
+      <CdxField>
+        <template #label>
+          {{ t('playerUuid.name') }}
+        </template>
 
-    <div
-      :style="{
-        display: 'flex',
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: '1rem',
-      }"
-    >
-      <div>
+        <div class="flex flex-row align-center gap-2">
+          <CdxTextInput
+            v-model="playerName"
+            input-type="text"
+            @keydown="
+              (e: KeyboardEvent) => {
+                if (e.key === 'Enter') {
+                  updatePlayerInfo()
+                }
+              }
+            "
+          />
+          <CdxButton @click="updatePlayerInfo()">
+            <template v-if="isLoading">
+              {{ t('playerUuid.loading') }}
+            </template>
+            <template v-else>
+              {{ t('playerUuid.get') }}
+            </template>
+          </CdxButton>
+        </div>
+      </CdxField>
+
+      <div class="flex items-center gap-6">
         <CdxField>
           <template #label>
-            {{ t('playerUuid.name') }}
+            <span v-html="parseWikitext(t('playerUuid.uuidOffline'))" />
           </template>
 
-          <div
-            :style="{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: '.5rem',
-            }"
-          >
-            <CdxTextInput v-model="playerName" input-type="text" />
-            <CdxButton @click="getUuid(playerName)">
-              <template v-if="isLoading">
-                {{ t('playerUuid.loading') }}
-              </template>
-              <template v-else>
-                {{ t('playerUuid.get') }}
-              </template>
+          <div class="flex flex-row align-center gap-2">
+            <CdxTextInput v-model="playerOfflineUUID" input-type="text" :disabled="true" />
+            <CdxButton @click="copyUuid(playerOfflineUUID, 1)">
+              {{ copyTextOffline }}
             </CdxButton>
           </div>
         </CdxField>
+        <img
+          width="48"
+          height="48"
+          class="pixel-image"
+          :src="`https://minecraft.wiki/images/EntitySprite_${playerOfflineSkinName}.png?format=original`"
+        />
+      </div>
+
+      <div class="flex items-center gap-6">
         <CdxField
-          :status="playerUuid !== '' ? 'default' : 'error'"
+          :status="playerOnlineUUID !== '' ? 'default' : 'error'"
           :messages="{
             error: errorText,
           }"
@@ -113,22 +174,15 @@ getUuid(playerName.value)
             <span v-html="parseWikitext(t('playerUuid.uuid'))" />
           </template>
 
-          <div
-            :style="{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: '.5rem',
-            }"
-          >
-            <CdxTextInput v-model="playerUuid" input-type="text" :disabled="true" />
-            <CdxButton v-if="playerUuid !== ''" @click="copyUuid(playerUuid)">
-              {{ copyText }}
+          <div class="flex flex-row align-center gap-2">
+            <CdxTextInput v-model="playerOnlineUUID" input-type="text" :disabled="true" />
+            <CdxButton v-if="playerOnlineUUID !== ''" @click="copyUuid(playerOnlineUUID, 0)">
+              {{ copyTextOnline }}
             </CdxButton>
           </div>
         </CdxField>
+        <img v-if="playerOnlineUUID !== ''" width="48" height="48" :src="playerOnlineAvatar" />
       </div>
-      <img v-if="playerUuid !== ''" width="64" height="64" :src="playerAvatar" />
     </div>
   </CalcField>
 </template>
