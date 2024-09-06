@@ -14,9 +14,9 @@ const result = computed({
   },
   set: (result) => {
     // reverse Red<<16 + Green<<8 + Blue
-    color.value = `#${(result >> 16).toString(16).padStart(2, '0')}${((result >> 8) & 0xFF)
+    color.value = `#${(result >> 16).toString(16).padStart(2, '0')}${((result >> 8) & 0xff)
       .toString(16)
-      .padStart(2, '0')}${(result & 0xFF).toString(16).padStart(2, '0')}`
+      .padStart(2, '0')}${(result & 0xff).toString(16).padStart(2, '0')}`
   },
 })
 </script>
@@ -47,7 +47,7 @@ const result = computed({
           }"
         >
           <label for="decimalColor-color-picker">{{ t('decimalColor.color') }}</label>
-          <input id="decimalColor-color-picker" v-model="color" type="color">
+          <input id="decimalColor-color-picker" v-model="color" type="color" />
         </div>
         <div
           :style="{
@@ -58,7 +58,7 @@ const result = computed({
           }"
         >
           <label for="decimalColor-color-picker-output">{{ t('decimalColor.decimal') }}</label>
-          <input id="decimalColor-color-picker-output" v-model="result" type="text">
+          <input id="decimalColor-color-picker-output" v-model="result" type="text" />
         </div>
       </div>
     </div>

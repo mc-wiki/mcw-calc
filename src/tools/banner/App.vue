@@ -355,17 +355,17 @@ onMounted(() => {
           <CdxTable
             class="min-h-full"
             :caption="t('banner.layers')"
-            use-row-headers="true"
+            :use-row-headers="true"
             :data="activePatterns"
             :columns="
               activePatterns.length === 0
                 ? []
                 : [
-                  { id: 'id', label: t('banner.layer'), textAlign: 'number' },
-                  { id: 'name', label: t('banner.pattern') },
-                  { id: 'color', label: t('banner.color') },
-                  { id: 'actions', label: t('banner.actions') },
-                ]
+                    { id: 'id', label: t('banner.layer'), textAlign: 'number' },
+                    { id: 'name', label: t('banner.pattern') },
+                    { id: 'color', label: t('banner.color') },
+                    { id: 'actions', label: t('banner.actions') },
+                  ]
             "
           >
             <template #header>
@@ -409,7 +409,7 @@ onMounted(() => {
                       height="45"
                       loading="lazy"
                       :src="menuItem.thumbnail?.url"
-                    >
+                    />
                     <span>{{ menuItem.label }}</span>
 
                     <div
@@ -427,7 +427,7 @@ onMounted(() => {
                         height="24"
                         loading="lazy"
                         src="https://minecraft.wiki/images/ItemSprite_banner-pattern.png"
-                      >
+                      />
 
                       <img
                         v-if="patternItemRequired[menuItem.value as string] === 'bedrock'"
@@ -436,7 +436,7 @@ onMounted(() => {
                         height="15"
                         loading="lazy"
                         src="https://minecraft.wiki/images/Invicon_Bedrock.png"
-                      >
+                      />
                     </div>
                   </div>
                 </template>
@@ -448,7 +448,7 @@ onMounted(() => {
                       height="40"
                       loading="lazy"
                       :src="selectedMenuItem.thumbnail.url"
-                    >
+                    />
                     <span>{{ selectedMenuItem.label }}</span>
 
                     <div
@@ -466,7 +466,7 @@ onMounted(() => {
                         height="24"
                         loading="lazy"
                         src="https://minecraft.wiki/images/ItemSprite_banner-pattern.png"
-                      >
+                      />
 
                       <img
                         v-if="patternItemRequired[selectedMenuItem.value as string] === 'bedrock'"
@@ -475,7 +475,7 @@ onMounted(() => {
                         height="15"
                         loading="lazy"
                         src="https://minecraft.wiki/images/Invicon_Bedrock.png"
-                      >
+                      />
                     </div>
                   </div>
                 </template>

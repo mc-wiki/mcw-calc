@@ -1,6 +1,4 @@
-<script setup lang="ts">
-import { CdxField } from '@wikimedia/codex'
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <div class="mcw-calc-field cdx-field">

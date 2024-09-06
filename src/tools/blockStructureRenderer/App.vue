@@ -578,7 +578,7 @@ onMounted(() => {
             v-model="backgroundColor"
             type="color"
             @change="changeBackgroundColor"
-          >
+          />
           <template #label>
             {{ t('blockStructureRenderer.backgroundColor') }}
           </template>

@@ -88,7 +88,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
           }"
         >
           <label for="color-picker">{{ t('beaconColor.color') }}</label>
-          <input id="color-picker" v-model="color" type="color">
+          <input id="color-picker" v-model="color" type="color" />
           <CdxButton @click="updateSequence(colorStringToRgb(color))">
             {{ t('beaconColor.calculate') }}
           </CdxButton>
@@ -111,7 +111,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
               :data-minetip-title="generateGlassName(item)"
               style="height: 2em; width: 2em"
               class="explain minetip"
-            >
+            />
           </div>
           <span
             :style="{

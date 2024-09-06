@@ -861,7 +861,7 @@ function selectOutput() {
         :model-value="
           [isUndead && 'undead', isArthropod && 'arthropod', isWaterMob && 'water-mob'].filter(
             (v) => v,
-          )
+          ) as string[]
         "
         @update:model-value="
           (selected: string[]) => {

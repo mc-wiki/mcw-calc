@@ -341,7 +341,7 @@ function update() {
           height: '1rem',
           marginRight: '0.3rem',
         }"
-      >
+      />
       <label for="selectAll">{{ t('blockDistribution.selectAll') }}</label>
     </div>
     <div
@@ -365,7 +365,7 @@ function update() {
           marginRight: '0.3rem',
           accentColor: getColor('Total'),
         }"
-      >
+      />
       <label for="total">{{ t('blockDistribution.total') }}</label>
     </div>
     <div
@@ -391,7 +391,7 @@ function update() {
           accentColor: getColor(block),
         }"
         @change="() => onCheckboxChange(block)"
-      >
+      />
       <div
         v-else
         :style="{

@@ -128,7 +128,7 @@ getUuid(playerName.value)
           </div>
         </CdxField>
       </div>
-      <img v-if="playerUuid !== ''" width="64" height="64" :src="playerAvatar">
+      <img v-if="playerUuid !== ''" width="64" height="64" :src="playerAvatar" />
     </div>
   </CalcField>
 </template>
