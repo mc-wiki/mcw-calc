@@ -13,14 +13,14 @@ const { t } = useI18n()
 
 const API_URL = 'https://playerdb.co/api/player/minecraft/'
 const OFFLINE_PLAYER_PREFIX = 'OfflinePlayer:'
-const DEFAULT_SKIN_NAMES = [
+const SKIN_LOCATION = [
   'alex',
   'ari',
   'efe',
   'kai',
   'makena',
   'noor',
-  'bearded-steve', // steve
+  'steve',
   'sunny',
   'zuri',
   'alex',
@@ -29,16 +29,37 @@ const DEFAULT_SKIN_NAMES = [
   'kai',
   'makena',
   'noor',
-  'bearded-steve', // steve
+  'steve',
   'sunny',
   'zuri',
+]
+const SKIN_NAME = [
+  'Alex (Slim)',
+  'Ari (Slim)',
+  'Efe (Slim)',
+  'Kai (Slim)',
+  'Makena (Slim)',
+  'Noor (Slim)',
+  'Steve (Slim)',
+  'Sunny (Slim)',
+  'Zuri (Slim)',
+  'Alex (Wide)',
+  'Ari (Wide)',
+  'Efe (Wide)',
+  'Kai (Wide)',
+  'Makena (Wide)',
+  'Noor (Wide)',
+  'Steve (Wide)',
+  'Sunny (Wide)',
+  'Zuri (Wide)',
 ]
 
 const playerName = ref(props.player)
 const playerOnlineUUID = ref()
 const playerOfflineUUID = ref()
 const playerOnlineAvatar = ref()
-const playerOfflineSkinName = ref(DEFAULT_SKIN_NAMES[0])
+const playerOfflineSkinLocation = ref(SKIN_LOCATION[6])
+const playerOfflineSkinName = ref(SKIN_NAME[6])
 const isLoading = ref(false)
 
 const errorText = ref()
@@ -59,10 +80,11 @@ async function updatePlayerInfo() {
   const mostSigBits = BigInt(`0x${uuid.slice(0, 16)}`)
   const leastSigBits = BigInt(`0x${uuid.slice(16, 32)}`)
   const xorBits = mostSigBits ^ leastSigBits
-  const hashUUID = xorBits ^ ((xorBits >> 32n) & 0xFFFFFFFFn)
+  const hashUUID = BigInt.asIntN(32, (xorBits ^ ((xorBits >> 32n) & 0xFFFFFFFFn)) & 0xFFFFFFFFn)
   const r = hashUUID % 18n
   const index = (r ^ 18n) < 0 && r !== 0n ? r + 18n : r
-  playerOfflineSkinName.value = DEFAULT_SKIN_NAMES[Number(index)]
+  playerOfflineSkinLocation.value = SKIN_LOCATION[Number(index)]
+  playerOfflineSkinName.value = SKIN_NAME[Number(index)]
 
   if (isValid(playerName.value)) {
     isLoading.value = true
@@ -159,7 +181,8 @@ updatePlayerInfo()
           width="48"
           height="48"
           class="pixel-image"
-          :src="`https://minecraft.wiki/images/EntitySprite_${playerOfflineSkinName}.png?format=original`"
+          :src="`https://minecraft.wiki/images/EntitySprite_${playerOfflineSkinLocation}.png?format=original`"
+          :title="playerOfflineSkinName"
         />
       </div>
 
