@@ -86,6 +86,9 @@ importers:
       d3:
         specifier: ^7.9.0
         version: 7.9.0
+      spark-md5:
+        specifier: ^3.0.2
+        version: 3.0.2
       three:
         specifier: ^0.162.0
         version: 0.162.0
@@ -129,6 +132,9 @@ importers:
       '@types/node':
         specifier: ^22.5.4
         version: 22.5.4
+      '@types/spark-md5':
+        specifier: ^3.0.4
+        version: 3.0.4
       '@types/three':
         specifier: ^0.162.0
         version: 0.162.0
@@ -1560,6 +1566,9 @@ packages:
 
   '@types/sizzle@2.3.8':
     resolution: {integrity: sha512-0vWLNK2D5MT9dg0iOo8GlKguPAU02QjmZitPEsXRuJXU/OGIOt9vT9Fc26wtYuavLxtO45v9PGleoL9Z0k1LHg==}
+
+  '@types/spark-md5@3.0.4':
+    resolution: {integrity: sha512-qtOaDz+IXiNndPgYb6t1YoutnGvFRtWSNzpVjkAPCfB2UzTyybuD4Tjgs7VgRawum3JnJNRwNQd4N//SvrHg1Q==}
 
   '@types/stats.js@0.17.3':
     resolution: {integrity: sha512-pXNfAD3KHOdif9EQXZ9deK82HVNaXP5ZIF5RP2QG6OQFNTaY2YIetfrE9t528vEreGQvEPRDDc8muaoYeK0SxQ==}
@@ -4940,6 +4949,9 @@ packages:
   spacetrim@0.11.39:
     resolution: {integrity: sha512-S/baW29azJ7py5ausQRE2S6uEDQnlxgMHOEEq4V770ooBDD1/9kZnxRcco/tjZYuDuqYXblCk/r3N13ZmvHZ2g==}
 
+  spark-md5@3.0.2:
+    resolution: {integrity: sha512-wcFzz9cDfbuqe0FZzfi2or1sgyIrsDwmPwfZC4hiNidPdPINjeUwNfv5kldczoEAcjl9Y1L3SM7Uz2PUEQzxQw==}
+
   spdx-correct@3.2.0:
     resolution: {integrity: sha512-kN9dJbvnySHULIluDHy32WHRUu3Og7B9sbY7tsFLctQkIqnMh3hErYgdMjTYuqmcXX+lK5T1lnUt3G7zNswmZA==}
 
@@ -7058,6 +7070,8 @@ snapshots:
   '@types/oojs@7.0.6': {}
 
   '@types/sizzle@2.3.8': {}
+
+  '@types/spark-md5@3.0.4': {}
 
   '@types/stats.js@0.17.3': {}
 
@@ -10994,6 +11008,8 @@ snapshots:
   source-map@0.7.4: {}
 
   spacetrim@0.11.39: {}
+
+  spark-md5@3.0.2: {}
 
   spdx-correct@3.2.0:
     dependencies:
