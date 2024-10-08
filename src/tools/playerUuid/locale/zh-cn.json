@@ -4,6 +4,7 @@
   "playerUuid.get": "获取UUID",
   "playerUuid.loading": "加载中……",
   "playerUuid.uuid": "[[UUID]]",
+  "playerUuid.uuidOffline": "离线[[UUID]]",
   "playerUuid.error.invalid": "该玩家名称无效！",
   "playerUuid.error.notFound": "不存在指定名称的玩家！",
   "playerUuid.copy": "复制",
