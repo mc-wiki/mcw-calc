@@ -1,1 +1,16 @@
-{}
+{
+  "tick.title": "เครื่องคำนวณติ๊ก",
+  "tick.gt": "ติ๊กเกม",
+  "tick.rt": "ติ๊กเรดสโตน",
+  "tick.inGameDay": "วันในเกม",
+  "tick.millisecond": "มิลลิวินาที",
+  "tick.second": "วินาที",
+  "tick.minute": "นาที",
+  "tick.hour": "ชั่วโมง",
+  "tick.day": "วัน",
+  "tick.runningAt": "รันที่",
+  "tick.tps": "TPS",
+  "tick.tps.explain": "ติ๊กต่อวินาที คือ จำนวนของติ๊กเกมที่รันใน 1 วินาที",
+  "tick.mspt": "MSPT",
+  "tick.mspt.explain": "มิลลิวินาทีต่อติ๊ก คือ เวลาที่ใช้ในหน่วยมิลลิวินาทีในการประมวลผล 1 ติ๊ก"
+}

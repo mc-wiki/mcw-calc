@@ -1,1 +1,13 @@
-{}
+{
+  "blockDistribution.xAxis": "ระดับ Y →",
+  "blockDistribution.yAxis": "↑ จำนวนของ X ที่พบใน 100,000 บล็อก",
+  "blockDistribution.xInTenThousand": "{num} ใน 100,000",
+  "blockDistribution.title": "การกระจายบล็อกของ \"{block}\" ใน[[รุ่น Java {version}]]",
+  "blockDistribution.total": "ทั้งหมด",
+  "blockDistribution.overworld": "โลกปกติ",
+  "blockDistribution.theNether": "เนเธอร์",
+  "blockDistribution.theEnd": "ดิเอนด์",
+  "blockDistribution.logarithmicScale": "มาตราส่วนเชิงลอการิทึม",
+  "blockDistribution.logarithmicScaleHelp": "ทำให้ความเปลี่ยนแปลงเล็ก ๆ ของจำนวนบล็อกในแต่ละระดับ Y ชัดเจนยิ่งขึ้น เหมาะสำหรับการสังเกตการเปลี่ยนแปลงเล็ก ๆ เมื่อมีจุดสูงสุดขนาดใหญ่มากในกราฟ",
+  "blockDistribution.selectAll": "เลือกทั้งหมด"
+}

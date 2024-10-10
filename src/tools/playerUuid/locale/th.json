@@ -1,1 +1,12 @@
-{}
+{
+  "playerUuid.title": "แปลงชื่อผู้เล่นเป็น UUID",
+  "playerUuid.name": "ชื่อผู้เล่น",
+  "playerUuid.get": "รับ UUID",
+  "playerUuid.loading": "กำลังโหลด...",
+  "playerUuid.uuid": "[[UUID]]",
+  "playerUuid.uuidOffline": "[[UUID]] ออฟไลน์",
+  "playerUuid.error.invalid": "ชื่อผู้ใช้นี้ไม่ถูกต้อง!",
+  "playerUuid.error.notFound": "ไม่มีชื่อผู้ใช้นี้!",
+  "playerUuid.copy": "คัดลอก",
+  "playerUuid.copied": "คัดลอกแล้ว!"
+}

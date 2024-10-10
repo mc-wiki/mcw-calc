@@ -1,1 +1,13 @@
-{}
+{
+  "maceDamage.title": "คำนวณดาเมจคทา",
+  "maceDamage.java": "รุ่น Java",
+  "maceDamage.bedrock": "รุ่น Bedrock",
+  "maceDamage.fallHeight": "ความสูงที่ตกลงมาในหน่วยบล็อก:",
+  "maceDamage.densityLevel": "ระดับของมนตร์[[หนาแน่น]]:",
+  "maceDamage.critical": "โจมตีคริติคอล",
+  "maceDamage.critical.help": "การตีเอนทิตี้ด้วยคทาจะส่งผลให้เกิดโจมตีคริติคอลเป็นส่วนใหญ่ เว้นแต่จะไม่เป็นไปตามเงื่อนไขอื่น ๆ เช่น คูลดาวน์ของการโจมตียังไม่ถูกรีเซต",
+  "maceDamage.cooldownReset": "รีเซตคูลดาวน์",
+  "maceDamage.cooldownReset.help": "ยกเลิกการเลือกช่องนี้หากคูลดาวน์ของการโจมตีไม่ถูกรีเซตก่อนการโจมตี",
+  "maceDamage.damage": "ดาเมจที่กระทำ:",
+  "maceDamage.densityLevelWarning": "ในโหมดเอาชีวิตรอดจะหามนตร์หนาแน่นได้เพียงระดับ 0-5 เท่านั้น"
+}

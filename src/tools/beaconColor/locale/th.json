@@ -1,1 +1,26 @@
-{}
+{
+  "beaconColor.title": "คำนวณลำดับกระจกของสีลำแสงดวงประทีป",
+  "beaconColor.java": "รุ่น Java",
+  "beaconColor.bedrock": "รุ่น Bedrock",
+  "beaconColor.color": "สี:",
+  "beaconColor.calculate": "คำนวณ",
+  "beaconColor.sequence": "ลำดับ:",
+  "beaconColor.dE": "ΔE",
+  "beaconColor.dE.help": "เดลตา E คือ การวัดความใกล้ชิดของสี ยิ่งค่าน้อยสียิ่งใกล้เคียงกัน โดยสีที่มีค่า ≤1.0 สายตาของมนุษย์จะไม่สามารถรับรู้ถึงความแตกต่างได้",
+  "beaconColor.glass.white": "กระจกสีขาว",
+  "beaconColor.glass.lightGray": "กระจกสีเทาอ่อน",
+  "beaconColor.glass.gray": "กระจกสีเทา",
+  "beaconColor.glass.black": "กระจกสีดำ",
+  "beaconColor.glass.brown": "กระจกสีน้ำตาล",
+  "beaconColor.glass.red": "กระจกสีแดง",
+  "beaconColor.glass.orange": "กระจกสีส้ม",
+  "beaconColor.glass.yellow": "กระจกสีเหลือง",
+  "beaconColor.glass.lime": "กระจกสีเขียวอ่อน",
+  "beaconColor.glass.green": "กระจกสีเขียว",
+  "beaconColor.glass.cyan": "กระจกสีฟ้าคราม",
+  "beaconColor.glass.lightBlue": "กระจกสีฟ้า",
+  "beaconColor.glass.blue": "กระจกสีน้ำเงิน",
+  "beaconColor.glass.purple": "กระจกสีม่วง",
+  "beaconColor.glass.magenta": "กระจกสีบานเย็น",
+  "beaconColor.glass.pink": "กระจกสีชมพู"
+}
