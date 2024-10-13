@@ -2,7 +2,7 @@
 import antfu from '@antfu/eslint-config'
 
 export default antfu({
-  ignores: ['dist', '**/dist/**'],
+  ignores: ['dist', '**/dist/**', '**/locale/**'],
   vue: true,
   stylistic: false,
   rules: {
