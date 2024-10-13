@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { CdxTab, CdxTabs } from '@wikimedia/codex'
 import CalcField from '@/components/CalcField.vue'
 import { theme } from '@/utils/theme'
 
@@ -144,14 +145,22 @@ interface AppEmbedProps extends ChunkbaseEmbedParams {
    * Whether to lead reader to Chunkbase's apps page.
    */
   promo: boolean
+
+  /**
+   * Whether to enable a toggle between Java and Bedrock.
+   */
+  multiplatform: boolean
 }
 
 const params = ref(props)
+const edition = ref<'java' | 'bedrock'>('java')
 
 const chunkbaseUrl = computed(() => {
   const normalizedParams: Record<string, string> = {}
   for (const [key, value] of Object.entries(params.value)) {
-    if (typeof value === 'string') {
+    if (key === 'platform' && params.value.multiplatform === true) {
+      normalizedParams[key] = edition.value === 'java' ? 'java_1_21' : 'bedrock_1_21'
+    } else if (typeof value === 'string') {
       normalizedParams[key] = value
     } else if (typeof value === 'boolean') {
       if (value) normalizedParams[key] = 'true'
@@ -197,6 +206,11 @@ const chunkbaseUrl = computed(() => {
         </template>
       </i18n-t>
     </div>
+
+    <CdxTabs v-model:active="edition">
+      <CdxTab name="java" :label="t('chunkbase.java')" />
+      <CdxTab name="bedrock" :label="t('chunkbase.bedrock')" />
+    </CdxTabs>
 
     <div
       :style="{

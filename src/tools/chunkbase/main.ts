@@ -33,6 +33,7 @@ const i18n = createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }))
       z: sz.number().default(0),
       dimension: sz.string().default('overworld'),
       promo: sz.boolean().default(true),
+      multiplatform: sz.boolean().default(true),
     })
     .safeParse(await getParams())
 

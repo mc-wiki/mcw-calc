@@ -1,5 +1,7 @@
 {
   "chunkbase.title": "World generation preview powered by Chunkbase",
   "chunkbase.name": "Chunkbase",
-  "chunkbase.promo": "To view other worldgen visualizations and use your own seed, visit {link}."
+  "chunkbase.promo": "To view other worldgen visualizations and use your own seed, visit {link}.",
+  "chunkbase.java": "Java Edition",
+  "chunkbase.bedrock": "Bedrock Edition"
 }
