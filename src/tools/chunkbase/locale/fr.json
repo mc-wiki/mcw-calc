@@ -1,5 +1,7 @@
 {
   "chunkbase.title": "Prévisualisation de la génération du monde par Chunkbase",
   "chunkbase.name": "Chunkbase",
-  "chunkbase.promo": "Pour voir d'autres visualisations de génération de monde et utiliser vos propres graines de monde, visitez {link}."
+  "chunkbase.promo": "Pour voir d'autres visualisations de génération de monde et utiliser vos propres graines de monde, visitez {link}.",
+  "chunkbase.java": "Édition Java",
+  "chunkbase.bedrock": "Édition Bedrock"
 }

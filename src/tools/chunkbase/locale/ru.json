@@ -1,5 +1,7 @@
 {
   "chunkbase.title": "Предпросмотр генерации мира на базе Chunkbase",
   "chunkbase.name": "Chunkbase",
-  "chunkbase.promo": "Чтобы ввести свой ключ генератора и посмотреть иную генерацию мира, перейдите на сайт {link}."
+  "chunkbase.promo": "Чтобы ввести свой ключ генератора и посмотреть иную генерацию мира, перейдите на сайт {link}.",
+  "chunkbase.java": "Java Edition",
+  "chunkbase.bedrock": "Bedrock Edition"
 }

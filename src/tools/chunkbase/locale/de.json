@@ -1,5 +1,7 @@
 {
   "chunkbase.title": "Weltgenerationsvorschau unterstützt von Chunkbase",
   "chunkbase.name": "Chunkbase",
-  "chunkbase.promo": "Um andere Weltgenerationsvisualisierungen zu sehen und deinen eigenen Startwert zu verwenden, besuche {link}."
+  "chunkbase.promo": "Um andere Weltgenerationsvisualisierungen zu sehen und deinen eigenen Startwert zu verwenden, besuche {link}.",
+  "chunkbase.java": "Java Edition",
+  "chunkbase.bedrock": "Bedrock Edition"
 }

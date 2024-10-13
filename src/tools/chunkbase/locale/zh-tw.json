@@ -1,5 +1,7 @@
 {
   "chunkbase.title": "世界生成預覽（由 Chunkbase 驅動）",
   "chunkbase.name": "Chunkbase",
-  "chunkbase.promo": "欲查看其他視覺化世界生成及使用自己的種子碼，請至 {link}。"
+  "chunkbase.promo": "欲查看其他視覺化世界生成及使用自己的種子碼，請至 {link}。",
+  "chunkbase.java": "Java版",
+  "chunkbase.bedrock": "基岩版"
 }
