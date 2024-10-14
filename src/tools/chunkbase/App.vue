@@ -252,15 +252,16 @@ watch([iframeUrl], () => {
     <div
       :style="{
         width: '100%',
-        maxWidth: '1024px',
+        maxWidth: '900px',
         height: '0',
-        paddingBottom: 'min(50%, 500px)',
+        paddingBottom: 'min(90%, 500px)',
         position: 'relative',
         overflow: 'hidden',
       }"
     >
       <iframe
         ref="iframe"
+        loading="lazy"
         :src="iframeUrl"
         :style="{
           position: 'absolute',
