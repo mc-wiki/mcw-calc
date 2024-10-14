@@ -205,7 +205,10 @@ const iframeUrl = computed(() => {
 
 const directUrl = computed(() => {
   const searchParams = getSearchParams()
-  return new URL(`#${searchParams.toString()}`, 'https://www.chunkbase.com/seed-map').toString()
+  return new URL(
+    `#${searchParams.toString()}`,
+    'https://www.chunkbase.com/apps/seed-map',
+  ).toString()
 })
 
 watch([iframeUrl], () => {
