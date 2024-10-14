@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { computed, ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { CdxTab, CdxTabs } from '@wikimedia/codex'
+import { CdxButton, CdxField, CdxTab, CdxTabs, CdxTextInput } from '@wikimedia/codex'
 import CalcField from '@/components/CalcField.vue'
 import { theme } from '@/utils/theme'
+import { hashCode } from '@/utils/seed'
 
 const props = defineProps<AppEmbedProps>()
 
@@ -154,6 +155,15 @@ interface AppEmbedProps extends ChunkbaseEmbedParams {
 
 const params = ref(props)
 const edition = ref<'java' | 'bedrock'>('java')
+const seed = ref(props.seed)
+
+const onSeedInput = (event: Event) => {
+  try {
+    seed.value = BigInt((event.target as HTMLInputElement).value)
+  } catch {
+    seed.value = BigInt(hashCode((event.target as HTMLInputElement).value))
+  }
+}
 
 const iframe = useTemplateRef('iframe')
 
@@ -162,6 +172,8 @@ const chunkbaseUrl = computed(() => {
   for (const [key, value] of Object.entries(params.value)) {
     if (key === 'platform' && params.value.multiplatform === true) {
       normalizedParams[key] = edition.value === 'java' ? 'java_1_21' : 'bedrock_1_21'
+    } else if (key === 'seed') {
+      normalizedParams[key] = seed.value.toString()
     } else if (typeof value === 'string') {
       normalizedParams[key] = value
     } else if (typeof value === 'boolean') {
@@ -203,20 +215,22 @@ watch([chunkbaseUrl], () => {
       {{ t('chunkbase.title') }}
     </template>
 
-    <div
-      v-if="props.promo"
-      :style="{
-        marginTop: '8px',
-      }"
-    >
-      <i18n-t keypath="chunkbase.promo" tag="p">
-        <template #link>
-          <a href="https://www.chunkbase.com/apps/" target="_blank" rel="noopener noreferrer">
-            {{ t('chunkbase.name') }}
-          </a>
-        </template>
-      </i18n-t>
-    </div>
+    <CdxField class="mt-0 mb-4">
+      <template #label>{{ t('chunkbase.seed') }}</template>
+      <div class="flex">
+        <CdxTextInput class="rounded-r-none" :model-value="seed.toString()" @blur="onSeedInput" />
+        <CdxButton class="ml-[-1px] rounded-l-none">{{ t('chunkbase.submit') }}</CdxButton>
+      </div>
+      <template #help-text>
+        <i18n-t v-if="props.promo" keypath="chunkbase.promo">
+          <template #link>
+            <a href="https://www.chunkbase.com/apps/" target="_blank" rel="noopener noreferrer">
+              {{ t('chunkbase.name') }}
+            </a>
+          </template>
+        </i18n-t>
+      </template>
+    </CdxField>
 
     <CdxTabs v-model:active="edition">
       <CdxTab name="java" :label="t('chunkbase.java')" />
