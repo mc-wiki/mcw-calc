@@ -167,7 +167,7 @@ const onSeedInput = (event: Event) => {
 
 const iframe = useTemplateRef('iframe')
 
-const chunkbaseUrl = computed(() => {
+function getSearchParams() {
   const normalizedParams: Record<string, string> = {}
   for (const [key, value] of Object.entries(params.value)) {
     if (key === 'platform' && params.value.multiplatform === true) {
@@ -183,7 +183,11 @@ const chunkbaseUrl = computed(() => {
     }
   }
 
-  const searchParams = new URLSearchParams(normalizedParams)
+  return new URLSearchParams(normalizedParams)
+}
+
+const iframeUrl = computed(() => {
+  const searchParams = getSearchParams()
 
   if (theme.value === 'dark') {
     searchParams.set('bgColor', '#2b2f39')
@@ -199,12 +203,17 @@ const chunkbaseUrl = computed(() => {
   ).toString()
 })
 
-watch([chunkbaseUrl], () => {
+const directUrl = computed(() => {
+  const searchParams = getSearchParams()
+  return new URL(`#${searchParams.toString()}`, 'https://www.chunkbase.com/seed-map').toString()
+})
+
+watch([iframeUrl], () => {
   if (iframe.value === null) return
   iframe.value.src = ''
   setTimeout(() => {
     if (iframe.value === null) return
-    iframe.value.src = chunkbaseUrl.value
+    iframe.value.src = iframeUrl.value
   })
 })
 </script>
@@ -224,7 +233,7 @@ watch([chunkbaseUrl], () => {
       <template #help-text>
         <i18n-t v-if="props.promo" keypath="chunkbase.promo">
           <template #link>
-            <a href="https://www.chunkbase.com/apps/" target="_blank" rel="noopener noreferrer">
+            <a :href="directUrl" target="_blank" rel="noopener noreferrer">
               {{ t('chunkbase.name') }}
             </a>
           </template>
@@ -249,7 +258,7 @@ watch([chunkbaseUrl], () => {
     >
       <iframe
         ref="iframe"
-        :src="chunkbaseUrl"
+        :src="iframeUrl"
         :style="{
           position: 'absolute',
           border: 'none',
