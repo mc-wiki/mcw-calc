@@ -4,6 +4,7 @@
   "playerUuid.get": "UUID",
   "playerUuid.loading": "Carregando...",
   "playerUuid.uuid": "[[UUID]]",
+  "playerUuid.uuidOffline": "[[UUID]] off-line",
   "playerUuid.error.invalid": "Esse nome de usuário está inválido!",
   "playerUuid.error.notFound": "Esse nome de usuário não existe!",
   "playerUuid.copy": "Copiar",
