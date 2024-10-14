@@ -3,5 +3,7 @@
   "chunkbase.name": "Chunkbase",
   "chunkbase.promo": "Чтобы ввести свой ключ генератора и посмотреть иную генерацию мира, перейдите на сайт {link}.",
   "chunkbase.java": "Java Edition",
-  "chunkbase.bedrock": "Bedrock Edition"
+  "chunkbase.bedrock": "Bedrock Edition",
+  "chunkbase.seed": "Ключ генератора",
+  "chunkbase.submit": "Подтвердить"
 }

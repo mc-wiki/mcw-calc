@@ -4,6 +4,7 @@
   "playerUuid.get": "Получить UUID",
   "playerUuid.loading": "Загрузка...",
   "playerUuid.uuid": "[[UUID]]",
+  "playerUuid.uuidOffline": "Внесетевой [[UUID]]",
   "playerUuid.error.invalid": "Недопустимый ник!",
   "playerUuid.error.notFound": "Этого ника не существует!",
   "playerUuid.copy": "Скопировать",

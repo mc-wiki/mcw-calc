@@ -1,7 +1,9 @@
 {
-  "chunkbase.title": "Попередній перегляд генерації світу на основі Chunkbase",
+  "chunkbase.title": "Попередній перегляд генерації світу",
   "chunkbase.name": "Chunkbase",
-  "chunkbase.promo": "Щоб подивитися інші візуалізації генерації світу та використовувати своє власне зерно, відвідайте {link}.",
+  "chunkbase.promo": "Щоб подивитися інші візуалізації генерації світу, відвідайте {link}.",
   "chunkbase.java": "Java Edition",
-  "chunkbase.bedrock": "Bedrock Edition"
+  "chunkbase.bedrock": "Bedrock Edition",
+  "chunkbase.seed": "Зерно",
+  "chunkbase.submit": "Підтвердити"
 }
