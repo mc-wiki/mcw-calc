@@ -157,16 +157,6 @@ const edition = ref<'java' | 'bedrock'>('java')
 
 const iframe = useTemplateRef('iframe')
 
-watch([edition], () => {
-  if (iframe.value === null) return
-  const src = iframe.value.src
-  iframe.value.src = ''
-  setTimeout(() => {
-    if (iframe.value === null) return
-    iframe.value.src = src
-  })
-})
-
 const chunkbaseUrl = computed(() => {
   const normalizedParams: Record<string, string> = {}
   for (const [key, value] of Object.entries(params.value)) {
@@ -195,6 +185,15 @@ const chunkbaseUrl = computed(() => {
     `#${searchParams.toString()}`,
     'https://www.chunkbase.com/seed-map-embed',
   ).toString()
+})
+
+watch([chunkbaseUrl], () => {
+  if (iframe.value === null) return
+  iframe.value.src = ''
+  setTimeout(() => {
+    if (iframe.value === null) return
+    iframe.value.src = chunkbaseUrl.value
+  })
 })
 </script>
 
