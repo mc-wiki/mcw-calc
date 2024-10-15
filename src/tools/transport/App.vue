@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import CalcField from '@/components/CalcField.vue'
 import { CdxField, CdxTextInput } from '@wikimedia/codex'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import CalcField from '@/components/CalcField.vue'
 
 const { t } = useI18n()
 

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 import CalcField from '@/components/CalcField.vue'
 import { colorStringToRgb } from '@/utils/color'
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
@@ -14,9 +14,9 @@ const result = computed({
   },
   set: (result) => {
     // reverse Red<<16 + Green<<8 + Blue
-    color.value = `#${(result >> 16).toString(16).padStart(2, '0')}${((result >> 8) & 0xff)
+    color.value = `#${(result >> 16).toString(16).padStart(2, '0')}${((result >> 8) & 0xFF)
       .toString(16)
-      .padStart(2, '0')}${(result & 0xff).toString(16).padStart(2, '0')}`
+      .padStart(2, '0')}${(result & 0xFF).toString(16).padStart(2, '0')}`
   },
 })
 </script>

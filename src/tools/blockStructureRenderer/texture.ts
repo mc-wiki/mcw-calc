@@ -1,7 +1,7 @@
-import * as THREE from 'three'
-import { ref } from 'vue'
 import type { AnimatedTexture } from '@/tools/blockStructureRenderer/definitions.ts'
 import type { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
+import * as THREE from 'three'
+import { ref } from 'vue'
 
 export const ATLAS_WIDTH = 1024
 export const ATLAS_HEIGHT = 1024

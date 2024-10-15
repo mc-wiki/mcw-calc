@@ -1,6 +1,6 @@
 import overworldData from './overworld_block_count.json'
-import netherData from './the_nether_block_count.json'
 import endData from './the_end_block_count.json'
+import netherData from './the_nether_block_count.json'
 
 const colorMap = JSON.parse(`{
 "black_carpet":"141519",

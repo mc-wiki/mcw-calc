@@ -1,11 +1,11 @@
-import '@/init'
+import { parentOrigin } from '@/utils/iframe'
+import { getParams, handleParseError, sz } from '@/utils/params'
 import L from 'leaflet'
 import { z } from 'zod'
 import processJson from './processJson'
-import './main.css'
 import smoothWheelScroll from './smoothWheelScroll'
-import { getParams, handleParseError, sz } from '@/utils/params'
-import { parentOrigin } from '@/utils/iframe'
+import '@/init'
+import './main.css'
 
 L.Map.mergeOptions({
   // @section Mousewheel options

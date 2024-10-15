@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest'
-import { colorRgbMap } from './java'
 import {
   colorStringToRgb,
   colorToSequence,
@@ -10,6 +9,7 @@ import {
   sequenceToColorFloatAverage,
   sequenceToColorFloatAverageRounded,
 } from './'
+import { colorRgbMap } from './java'
 
 describe('colorStringToRgb', () => {
   it('should convert color string to RGB', () => {

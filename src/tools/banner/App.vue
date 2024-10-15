@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import type { Color } from '@/utils/color'
+import CalcField from '@/components/CalcField.vue'
+import { colorMap, colorRgbMap } from '@/utils/color/java'
+import { isEmbedded, parentUrl, postMessageParent } from '@/utils/iframe'
+import { theme } from '@/utils/theme'
+import { useLocalStorage } from '@vueuse/core'
 import {
   CdxButton,
   CdxIcon,
@@ -8,7 +13,6 @@ import {
   CdxToggleButtonGroup,
   type MenuItemData,
 } from '@wikimedia/codex'
-import { useI18n } from 'vue-i18n'
 import {
   cdxIconAlert,
   cdxIconDownTriangle,
@@ -18,13 +22,9 @@ import {
   cdxIconTrash,
   cdxIconUpTriangle,
 } from '@wikimedia/codex-icons'
-import { useLocalStorage } from '@vueuse/core'
+import { onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BannerPopup from './BannerPopup.vue'
-import { colorMap, colorRgbMap } from '@/utils/color/java'
-import type { Color } from '@/utils/color'
-import CalcField from '@/components/CalcField.vue'
-import { isEmbedded, parentUrl, postMessageParent } from '@/utils/iframe'
-import { theme } from '@/utils/theme'
 
 const props = defineProps<{ icon: 'banner' | 'shield' }>()
 

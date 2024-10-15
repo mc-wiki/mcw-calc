@@ -1,9 +1,9 @@
-import '@/init'
+import { createMcwI18n } from '@/utils/i18n'
+import { getParams, handleParseError } from '@/utils/params'
 import * as vue from 'vue'
 import { z } from 'zod'
 import App from './App.vue'
-import { getParams, handleParseError } from '@/utils/params'
-import { createMcwI18n } from '@/utils/i18n'
+import '@/init'
 
 const targetEl = document.querySelector('#app')!
 

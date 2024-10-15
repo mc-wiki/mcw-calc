@@ -1,6 +1,6 @@
-import './text-class'
-
 import { Extension } from '@tiptap/core'
+
+import './text-class'
 
 export interface ColorOptions {
   /**

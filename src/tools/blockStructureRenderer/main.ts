@@ -1,10 +1,10 @@
-import '@/init'
-import * as vue from 'vue'
+import { createMcwI18n } from '@/utils/i18n'
+import { getParams, handleParseError, sz } from '@/utils/params'
 import { CdxTooltip } from '@wikimedia/codex'
+import * as vue from 'vue'
 import { z } from 'zod'
 import App from './App.vue'
-import { getParams, handleParseError, sz } from '@/utils/params'
-import { createMcwI18n } from '@/utils/i18n'
+import '@/init'
 
 const targetEl = document.querySelector('#app')!
 

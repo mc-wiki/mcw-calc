@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
 import CalcField from '@/components/CalcField.vue'
+import { computed, ref } from 'vue'
 
 const edition = ref<'java' | 'bedrock'>('java')
 const targetUseCount = ref(0)

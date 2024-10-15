@@ -1,7 +1,7 @@
-import '@/init'
+import { createMcwI18n } from '@/utils/i18n'
 import * as vue from 'vue'
 import App from './App.vue'
-import { createMcwI18n } from '@/utils/i18n'
+import '@/init'
 
 const targetEl = document.querySelector('#app')!
 

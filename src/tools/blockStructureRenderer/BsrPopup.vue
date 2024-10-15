@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { CdxButton, CdxIcon } from '@wikimedia/codex'
-import { cdxIconClose } from '@wikimedia/codex-icons'
 import { flip, offset, shift, useFloating } from '@floating-ui/vue'
 import { onClickOutside } from '@vueuse/core'
+import { CdxButton, CdxIcon } from '@wikimedia/codex'
+import { cdxIconClose } from '@wikimedia/codex-icons'
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{

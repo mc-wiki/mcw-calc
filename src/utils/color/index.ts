@@ -57,7 +57,7 @@ export function floatRgbToInteger(rgb: [number, number, number]) {
 }
 
 export function separateRgb(rgb: number): [number, number, number] {
-  return [(rgb & 0xff0000) >> 16, (rgb & 0x00ff00) >> 8, (rgb & 0x0000ff) >> 0]
+  return [(rgb & 0xFF0000) >> 16, (rgb & 0x00FF00) >> 8, (rgb & 0x0000FF) >> 0]
 }
 
 export function rgb2lab(rgb: number[]) {

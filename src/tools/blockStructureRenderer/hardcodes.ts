@@ -1,32 +1,32 @@
-import * as THREE from 'three'
+import type { ModelFace } from '@/tools/blockStructureRenderer/definitions.ts'
 import type {
   BlockState,
   BlockStructure,
   NameMapping,
 } from '@/tools/blockStructureRenderer/renderer.ts'
+import type { MaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
 import {
   Direction,
-  IDENTITY_ROTATION,
-  Rotation,
   getDirectionFromName,
   getStepX,
   getStepZ,
+  IDENTITY_ROTATION,
   isHorizontalDirection,
   isVerticalDirection,
   oppositeDirection,
+  Rotation,
 } from '@/tools/blockStructureRenderer/math.ts'
 import {
-  type BlockStateModelManager,
   bakeModel,
+  type BlockStateModelManager,
   renderModelNoCullsWithMS,
 } from '@/tools/blockStructureRenderer/model.ts'
-import type { MaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
 import {
   ANIMATED_TEXTURE_ATLAS_SIZE,
   ATLAS_HEIGHT,
   ATLAS_WIDTH,
 } from '@/tools/blockStructureRenderer/texture.ts'
-import type { ModelFace } from '@/tools/blockStructureRenderer/definitions.ts'
+import * as THREE from 'three'
 
 export function checkNameInSet(name: string, nameSet: (string | RegExp)[]) {
   return nameSet.some((nameTest) =>
@@ -930,22 +930,22 @@ async function renderBed(
 }
 
 const dyeColorMapping = {
-  white: 0xf9fffe,
-  orange: 0xf9801d,
-  magenta: 0xc74ebd,
-  light_blue: 0x3ab3da,
-  yellow: 0xfed83d,
-  lime: 0x80c71f,
-  pink: 0xf38baa,
-  gray: 0x474f52,
-  light_gray: 0x9d9d97,
-  cyan: 0x169c9c,
-  purple: 0x8932b8,
-  blue: 0x3c44aa,
+  white: 0xF9FFFE,
+  orange: 0xF9801D,
+  magenta: 0xC74EBD,
+  light_blue: 0x3AB3DA,
+  yellow: 0xFED83D,
+  lime: 0x80C71F,
+  pink: 0xF38BAA,
+  gray: 0x474F52,
+  light_gray: 0x9D9D97,
+  cyan: 0x169C9C,
+  purple: 0x8932B8,
+  blue: 0x3C44AA,
   brown: 0x835432,
-  green: 0x5e7c16,
-  red: 0xb02e26,
-  black: 0x1d1d21,
+  green: 0x5E7C16,
+  red: 0xB02E26,
+  black: 0x1D1D21,
 } as Record<string, number>
 
 async function renderBanner(

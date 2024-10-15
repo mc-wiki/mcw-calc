@@ -1,4 +1,17 @@
 <script setup lang="ts">
+import CalcField from '@/components/CalcField.vue'
+import Bold from '@tiptap/extension-bold'
+import Document from '@tiptap/extension-document'
+import DropCursor from '@tiptap/extension-dropcursor'
+import GapCursor from '@tiptap/extension-gapcursor'
+import Highlight from '@tiptap/extension-highlight'
+import Italic from '@tiptap/extension-italic'
+import Paragraph from '@tiptap/extension-paragraph'
+import Strike from '@tiptap/extension-strike'
+import Text from '@tiptap/extension-text'
+import TextStyle from '@tiptap/extension-text-style'
+import Underline from '@tiptap/extension-underline'
+import { EditorContent, type JSONContent, useEditor } from '@tiptap/vue-3'
 import {
   type ButtonGroupItem,
   CdxButton,
@@ -11,20 +24,6 @@ import {
   CdxToggleButtonGroup,
   type MenuItemData,
 } from '@wikimedia/codex'
-import { EditorContent, type JSONContent, useEditor } from '@tiptap/vue-3'
-import Document from '@tiptap/extension-document'
-import Text from '@tiptap/extension-text'
-import Paragraph from '@tiptap/extension-paragraph'
-import Highlight from '@tiptap/extension-highlight'
-import Underline from '@tiptap/extension-underline'
-import Bold from '@tiptap/extension-bold'
-import Italic from '@tiptap/extension-italic'
-import Strike from '@tiptap/extension-strike'
-import DropCursor from '@tiptap/extension-dropcursor'
-import GapCursor from '@tiptap/extension-gapcursor'
-import TextStyle from '@tiptap/extension-text-style'
-import { computed, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 import {
   cdxIconBold,
   cdxIconCopy,
@@ -34,9 +33,10 @@ import {
   cdxIconStrikethrough,
   cdxIconUnderline,
 } from '@wikimedia/codex-icons'
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ColorClass } from './color-class'
 import { TextClass } from './text-class'
-import CalcField from '@/components/CalcField.vue'
 
 const { t } = useI18n()
 

@@ -1,10 +1,10 @@
-import '@/init'
+import { createMcwI18n } from '@/utils/i18n'
+import { getParams, handleParseError, sz } from '@/utils/params'
+import { hashCode } from '@/utils/seed'
 import * as vue from 'vue'
 import { z } from 'zod'
 import App from './App.vue'
-import { getParams, handleParseError, sz } from '@/utils/params'
-import { createMcwI18n } from '@/utils/i18n'
-import { hashCode } from '@/utils/seed'
+import '@/init'
 
 const targetEl = document.querySelector('#app')!
 

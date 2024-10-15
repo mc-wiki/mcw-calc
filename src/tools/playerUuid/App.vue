@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { CdxButton, CdxField, CdxTextInput } from '@wikimedia/codex'
-import { useI18n } from 'vue-i18n'
-import SparkMD5 from 'spark-md5'
 import CalcField from '@/components/CalcField.vue'
 import { parseWikitext } from '@/utils/i18n'
 import { isEmbedded, postMessageParent } from '@/utils/iframe'
+import { CdxButton, CdxField, CdxTextInput } from '@wikimedia/codex'
+import SparkMD5 from 'spark-md5'
+import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{ player: string }>()
 

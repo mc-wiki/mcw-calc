@@ -10,7 +10,7 @@
       "vite-plugin-comlink/client",
       "unplugin-vue-macros/macros-global",
       "vitest/globals",
-      "@vitest/browser/providers/webdriverio"
+      "@vitest/browser/providers/playwright"
     ],
     "noEmit": true
   },

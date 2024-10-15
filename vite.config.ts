@@ -1,12 +1,12 @@
 import { fileURLToPath } from 'node:url'
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import vueMacros from 'unplugin-vue-macros/vite'
-import vueDevTools from 'vite-plugin-vue-devtools'
-import { visualizer } from 'rollup-plugin-visualizer'
-import { comlink } from 'vite-plugin-comlink'
 import vueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
+import vue from '@vitejs/plugin-vue'
 import { globSync } from 'glob'
+import { visualizer } from 'rollup-plugin-visualizer'
+import vueMacros from 'unplugin-vue-macros/vite'
+import { defineConfig } from 'vite'
+import { comlink } from 'vite-plugin-comlink'
+import vueDevTools from 'vite-plugin-vue-devtools'
 
 const input = globSync('./src/tools/*/index.html', {
   posix: true,
@@ -55,6 +55,7 @@ export default defineConfig({
       },
     }),
     vueDevTools(),
+    // @ts-expect-error https://github.com/btd/rollup-plugin-visualizer/issues/176
     visualizer(),
     comlink(),
     vueI18nPlugin({

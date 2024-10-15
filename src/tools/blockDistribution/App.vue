@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import * as d3 from 'd3'
-import { computed, onMounted, onUpdated, ref } from 'vue'
+import { parseWikitext } from '@/utils/i18n'
 import { useLocalStorage } from '@vueuse/core'
 import { CdxCheckbox, CdxTab, CdxTabs } from '@wikimedia/codex'
+import * as d3 from 'd3'
+import { computed, onMounted, onUpdated, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { type Block, endBlockMap, getColor, netherBlockMap, overworldBlockMap } from './data'
-import { parseWikitext } from '@/utils/i18n'
 
 const props = defineProps<{
   blocks: string[]

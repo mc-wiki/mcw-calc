@@ -1,12 +1,3 @@
-import * as THREE from 'three'
-import type { Rotation } from '@/tools/blockStructureRenderer/math.ts'
-import {
-  Direction,
-  getDirectionFromName,
-  getUVGlobalToLocalFromDirection,
-  getUVLocalToGlobalFromDirection,
-  getVectorFromDirection,
-} from '@/tools/blockStructureRenderer/math.ts'
 import type {
   BlockModel,
   ModelElement,
@@ -14,18 +5,27 @@ import type {
   ModelReferenceWithWeight,
   ModelRotation,
 } from '@/tools/blockStructureRenderer/definitions.ts'
+import type { Rotation } from '@/tools/blockStructureRenderer/math.ts'
 import type { MaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
+import { getShade } from '@/tools/blockStructureRenderer/hardcodes.ts'
 import {
-  ANIMATED_TEXTURE_ATLAS_SIZE,
-  ATLAS_HEIGHT,
-  ATLAS_WIDTH,
-} from '@/tools/blockStructureRenderer/texture.ts'
+  Direction,
+  getDirectionFromName,
+  getUVGlobalToLocalFromDirection,
+  getUVLocalToGlobalFromDirection,
+  getVectorFromDirection,
+} from '@/tools/blockStructureRenderer/math.ts'
 import {
   BlockDataStorage,
   BlockState,
   type NameMapping,
 } from '@/tools/blockStructureRenderer/renderer.ts'
-import { getShade } from '@/tools/blockStructureRenderer/hardcodes.ts'
+import {
+  ANIMATED_TEXTURE_ATLAS_SIZE,
+  ATLAS_HEIGHT,
+  ATLAS_WIDTH,
+} from '@/tools/blockStructureRenderer/texture.ts'
+import * as THREE from 'three'
 
 // Model Reference Provider ------------------------------------------------------------------------
 
@@ -61,9 +61,9 @@ export class ModelReferenceGroup implements ModelReferenceProvider {
     positionRelativeSeed = positionRelativeSeed >> 16
 
     // Java LCG algorithm
-    const seedParsed = (positionRelativeSeed ^ 0x5deece66d) & 0xffffffffffff
-    const first = (seedParsed * 25214903917 + 11) & 0xffffffffffff
-    const second = (first * 25214903917 + 11) & 0xffffffffffff
+    const seedParsed = (positionRelativeSeed ^ 0x5DEECE66D) & 0xFFFFFFFFFFFF
+    const first = (seedParsed * 25214903917 + 11) & 0xFFFFFFFFFFFF
+    const second = (first * 25214903917 + 11) & 0xFFFFFFFFFFFF
     const random = Math.abs(((first >> 16) << 16) + (second >> 16)) % this.totalWeight
 
     let acc = 0

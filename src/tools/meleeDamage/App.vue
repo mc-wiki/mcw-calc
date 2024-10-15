@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-import { computed, ref } from 'vue'
+import CalcField from '@/components/CalcField.vue'
+import { parseWikitext } from '@/utils/i18n.ts'
 import {
   CdxButton,
   CdxCheckbox,
@@ -15,8 +15,8 @@ import {
   type MenuItemData,
 } from '@wikimedia/codex'
 import { cdxIconAdd, cdxIconTrash } from '@wikimedia/codex-icons'
-import CalcField from '@/components/CalcField.vue'
-import { parseWikitext } from '@/utils/i18n.ts'
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 

@@ -1,36 +1,36 @@
-import * as THREE from 'three'
-import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
-import { LineSegments2 } from 'three/examples/jsm/lines/LineSegments2.js'
-import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js'
+import type { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
 import type { MaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
 import {
-  Rotation,
-  getDirectionFromName,
-  isOcclusion,
-  moveTowardsDirection,
-  oppositeDirection,
-} from '@/tools/blockStructureRenderer/math.ts'
-import type { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
-import { renderBakedFaces, renderModelNoCullFaces } from '@/tools/blockStructureRenderer/model.ts'
-import {
-  hardCodedRenderers,
-  hardCodedSkipRendering,
-  hardcodedBlockTint,
-  invisibleBlockColor,
-} from '@/tools/blockStructureRenderer/hardcodes.ts'
-import { renderFluid } from '@/tools/blockStructureRenderer/fluid.ts'
-import {
   type AnimatedTexture,
-  type BSRApiResponse,
   type BlockModel,
   type BlockStateDefinition,
+  type BSRApiResponse,
   EMPTY_STATE_DATA,
   type ModelReference,
   type ModelReferenceWithWeight,
   type StateData,
 } from '@/tools/blockStructureRenderer/definitions.ts'
-import { fetchJigsawAPI } from '@/utils/jigsaw.ts'
+import { renderFluid } from '@/tools/blockStructureRenderer/fluid.ts'
+import {
+  hardcodedBlockTint,
+  hardCodedRenderers,
+  hardCodedSkipRendering,
+  invisibleBlockColor,
+} from '@/tools/blockStructureRenderer/hardcodes.ts'
+import {
+  getDirectionFromName,
+  isOcclusion,
+  moveTowardsDirection,
+  oppositeDirection,
+  Rotation,
+} from '@/tools/blockStructureRenderer/math.ts'
+import { renderBakedFaces, renderModelNoCullFaces } from '@/tools/blockStructureRenderer/model.ts'
 import { digestMessage } from '@/utils/digest'
+import { fetchJigsawAPI } from '@/utils/jigsaw.ts'
+import * as THREE from 'three'
+import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
+import { LineSegments2 } from 'three/examples/jsm/lines/LineSegments2.js'
+import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js'
 
 // Block Structure ---------------------------------------------------------------------------------
 

@@ -1,5 +1,5 @@
-import 'dotenv/config'
 import { glob } from 'glob'
+import 'dotenv/config'
 
 const env = process.env
 

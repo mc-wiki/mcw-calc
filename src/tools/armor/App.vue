@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
 import { CdxSelect, CdxTextInput } from '@wikimedia/codex'
+import { computed, reactive, ref } from 'vue'
 
 type ArmorMaterial = 'empty' | 'leather' | 'golden' | 'chainmail' | 'iron' | 'diamond' | 'netherite'
 type HelmetMaterial = 'turtle' | ArmorMaterial

@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import CalcField from '@/components/CalcField.vue'
+
+import { hashCode } from '@/utils/seed'
+import { theme } from '@/utils/theme'
+
+import { CdxButton, CdxField, CdxTab, CdxTabs, CdxTextInput } from '@wikimedia/codex'
 import { computed, ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { CdxButton, CdxField, CdxTab, CdxTabs, CdxTextInput } from '@wikimedia/codex'
-import CalcField from '@/components/CalcField.vue'
-import { theme } from '@/utils/theme'
-import { hashCode } from '@/utils/seed'
 
 const props = defineProps<AppEmbedProps>()
 

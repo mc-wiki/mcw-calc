@@ -1,10 +1,10 @@
-import 'dotenv/config'
-import { promises as fs } from 'node:fs'
+import type { DeployTarget } from './deployConfig'
 import { exec } from 'node:child_process'
+import { promises as fs } from 'node:fs'
 import { promisify } from 'node:util'
 import { Mwn } from 'mwn'
-import type { DeployTarget } from './deployConfig'
 import { targets } from './deployConfig'
+import 'dotenv/config'
 
 const { stdout: commitHash } = await promisify(exec)('git rev-parse HEAD')
 

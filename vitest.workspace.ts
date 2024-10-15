@@ -9,8 +9,8 @@ export default defineWorkspace([
       name: 'browser',
       browser: {
         enabled: true,
-        name: 'chrome',
-        provider: 'webdriverio',
+        name: 'chromium',
+        provider: 'playwright',
       },
     },
   },

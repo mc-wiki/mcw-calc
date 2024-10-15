@@ -1,8 +1,17 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import * as THREE from 'three'
-import WebGL from 'three/addons/capabilities/WebGL.js'
+import type { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
+import { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
+import {
+  bakeBlockMarkers,
+  bakeBlockModelRenderLayer,
+  bakeFluidRenderLayer,
+  bakeInvisibleBlocks,
+  BlockStructure,
+  NameMapping,
+} from '@/tools/blockStructureRenderer/renderer.ts'
+import { saveAsLitematic, saveAsStructureFile } from '@/tools/blockStructureRenderer/structure.ts'
+import { MaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
+import { flip, offset, shift, useFloating, type VirtualElement } from '@floating-ui/vue'
 import {
   CdxButton,
   CdxCheckbox,
@@ -12,21 +21,12 @@ import {
   CdxTextInput,
 } from '@wikimedia/codex'
 import { cdxIconCamera, cdxIconCut, cdxIconImage, cdxIconShare } from '@wikimedia/codex-icons'
-import type { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
+import * as THREE from 'three'
+import WebGL from 'three/addons/capabilities/WebGL.js'
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
-import { type VirtualElement, flip, offset, shift, useFloating } from '@floating-ui/vue'
+import { computed, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BsrPopup from './BsrPopup.vue'
-import { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
-import {
-  BlockStructure,
-  NameMapping,
-  bakeBlockMarkers,
-  bakeBlockModelRenderLayer,
-  bakeFluidRenderLayer,
-  bakeInvisibleBlocks,
-} from '@/tools/blockStructureRenderer/renderer.ts'
-import { MaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
-import { saveAsLitematic, saveAsStructureFile } from '@/tools/blockStructureRenderer/structure.ts'
 
 const props = defineProps<{
   blocks: string[]
