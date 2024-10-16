@@ -4,7 +4,7 @@
   "playerUuid.get": "Отримати UUID",
   "playerUuid.loading": "Завантаження...",
   "playerUuid.uuid": "[[UUID]]",
-  "playerUuid.uuidOffline": "[[UUID]], коли не в мережі",
+  "playerUuid.uuidOffline": "Позамережевий [[UUID]]",
   "playerUuid.error.invalid": "Це ім’я користувача є недійсним!",
   "playerUuid.error.notFound": "Такого імені користувача не існує!",
   "playerUuid.copy": "Скопіювати",
