@@ -1,6 +1,6 @@
 import { createMcwI18n } from '@/utils/i18n'
 import { getParams, handleParseError, sz } from '@/utils/params'
-import { CdxTooltip } from '@wikimedia/codex'
+import plugin from '@/utils/plugin'
 import * as vue from 'vue'
 import { z } from 'zod'
 import App from './App.vue'
@@ -42,6 +42,6 @@ const i18n = createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }))
       backgroundAlphaDefault: params.backgroundAlpha,
     })
     .use(i18n)
-    .directive('tooltip', CdxTooltip)
+    .use(plugin)
     .mount(targetEl)
 })()

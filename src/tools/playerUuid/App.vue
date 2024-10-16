@@ -72,15 +72,15 @@ async function updatePlayerInfo() {
   const bytes = SparkMD5.hash(prefixedName, true)
     .split('')
     .map((byte) => byte.charCodeAt(0))
-  bytes[6] = (bytes[6] & 0x0F) | 0x30
-  bytes[8] = (bytes[8] & 0x3F) | 0x80
+  bytes[6] = (bytes[6] & 0x0f) | 0x30
+  bytes[8] = (bytes[8] & 0x3f) | 0x80
   const uuid = Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('')
   playerOfflineUUID.value = `${uuid.slice(0, 8)}-${uuid.slice(8, 12)}-${uuid.slice(12, 16)}-${uuid.slice(16, 20)}-${uuid.slice(20, 32)}`
 
   const mostSigBits = BigInt(`0x${uuid.slice(0, 16)}`)
   const leastSigBits = BigInt(`0x${uuid.slice(16, 32)}`)
   const xorBits = mostSigBits ^ leastSigBits
-  const hashUUID = BigInt.asIntN(32, (xorBits ^ ((xorBits >> 32n) & 0xFFFFFFFFn)) & 0xFFFFFFFFn)
+  const hashUUID = BigInt.asIntN(32, (xorBits ^ ((xorBits >> 32n) & 0xffffffffn)) & 0xffffffffn)
   const r = hashUUID % 18n
   const index = (r ^ 18n) < 0 && r !== 0n ? r + 18n : r
   playerOfflineSkinLocation.value = SKIN_LOCATION[Number(index)]

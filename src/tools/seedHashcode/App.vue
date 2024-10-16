@@ -29,8 +29,7 @@ const seed = ref('Minecraft Wiki')
       <CdxMessage
         v-if="
           /^[+-]?\d+$/.test(seed.trim()) &&
-          (BigInt(seed.trim()) > BigInt(2) ** BigInt(63) - BigInt(1) ||
-            BigInt(seed.trim()) < -(BigInt(2) ** BigInt(63)))
+          (BigInt(seed.trim()) > 2n ** 63n - 1n || BigInt(seed.trim()) < -(2n ** 63n))
         "
         type="warning"
       >

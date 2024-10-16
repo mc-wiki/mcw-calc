@@ -1,6 +1,6 @@
 import { createMcwI18n } from '@/utils/i18n'
 import { getParams, handleParseError } from '@/utils/params'
-import { CdxTooltip } from '@wikimedia/codex'
+import plugin from '@/utils/plugin'
 import * as vue from 'vue'
 import { z } from 'zod'
 import App from './App.vue'
@@ -17,9 +17,5 @@ const i18n = createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }))
     .safeParse(await getParams())
   const params = handleParseError(parsed, targetEl)
 
-  vue
-    .createApp(App, { icon: params.icon })
-    .use(i18n)
-    .directive('tooltip', CdxTooltip)
-    .mount(targetEl)
+  vue.createApp(App, { icon: params.icon }).use(i18n).use(plugin).mount(targetEl)
 })()

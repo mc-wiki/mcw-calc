@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { createMcwI18n, parseWikitext } from './i18n'
+import { createMcwI18n, parseWikitext } from '.'
 
 describe('parseWikitext', () => {
   it('should convert italic and bold tags', () => {

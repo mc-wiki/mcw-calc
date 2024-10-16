@@ -1,5 +1,6 @@
 import { createMcwI18n } from '@/utils/i18n'
 import { getParams, handleParseError, sz } from '@/utils/params'
+import plugin from '@/utils/plugin'
 import * as vue from 'vue'
 import { z } from 'zod'
 import App from './App.vue'
@@ -20,5 +21,5 @@ const i18n = createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }))
 
   const params = handleParseError(parsed, targetEl)
 
-  vue.createApp(App, params).use(i18n).mount(targetEl)
+  vue.createApp(App, params).use(i18n).use(plugin).mount(targetEl)
 })()

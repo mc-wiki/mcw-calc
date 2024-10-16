@@ -1,5 +1,5 @@
 import { createI18n } from 'vue-i18n'
-import { parentOrigin } from './iframe'
+import { parentOrigin } from '../iframe'
 
 const FALLBACK_CHAIN = new Map(
   Object.entries({

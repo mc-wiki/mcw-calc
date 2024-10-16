@@ -20,5 +20,6 @@ export default antfu({
     'node/prefer-global/process': 'off',
     'vue/html-self-closing': 'off',
     'vue/html-indent': 'off',
+    'unicorn/number-literal-case': 'off',
   },
 })

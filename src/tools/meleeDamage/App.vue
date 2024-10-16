@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import CalcField from '@/components/CalcField.vue'
-import { parseWikitext } from '@/utils/i18n.ts'
+import { parseWikitext } from '@/utils/i18n'
 import {
   CdxButton,
   CdxCheckbox,
