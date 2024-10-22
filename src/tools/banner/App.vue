@@ -128,18 +128,18 @@ const patternName = {
   guster: 'Guster',
 }
 
-const patternItemRequired: Record<string, 'bedrock' | 'both'> = {
-  flower: 'both',
-  creeper: 'both',
-  skull: 'both',
-  mojang: 'both',
-  globe: 'both',
-  piglin: 'both',
-  flow: 'both',
-  guster: 'both',
-  bricks: 'bedrock',
-  curly_border: 'bedrock',
-}
+const patternItemRequired = [
+  'flower',
+  'creeper',
+  'skull',
+  'mojang',
+  'globe',
+  'piglin',
+  'flow',
+  'guster',
+  'bricks',
+  'curly_border',
+]
 
 const activePatterns = useLocalStorage<Pattern[]>('mcwBannerActivePatterns', [
   {
@@ -413,12 +413,8 @@ onMounted(() => {
                     <span>{{ menuItem.label }}</span>
 
                     <div
-                      v-if="patternItemRequired[menuItem.value as string]"
-                      v-tooltip="
-                        patternItemRequired[menuItem.value as string] === 'bedrock'
-                          ? t('banner.requiredPatternBedrock')
-                          : t('banner.requiredPattern')
-                      "
+                      v-if="patternItemRequired.includes(menuItem.value as string)"
+                      v-tooltip="t('banner.requiredPattern')"
                       class="flex items-center relative"
                     >
                       <img
@@ -427,15 +423,6 @@ onMounted(() => {
                         height="24"
                         loading="lazy"
                         src="https://minecraft.wiki/images/ItemSprite_banner-pattern.png"
-                      />
-
-                      <img
-                        v-if="patternItemRequired[menuItem.value as string] === 'bedrock'"
-                        class="pixel-image absolute top-0 -right-1"
-                        width="15"
-                        height="15"
-                        loading="lazy"
-                        src="https://minecraft.wiki/images/Invicon_Bedrock.png"
                       />
                     </div>
                   </div>
@@ -452,12 +439,8 @@ onMounted(() => {
                     <span>{{ selectedMenuItem.label }}</span>
 
                     <div
-                      v-if="patternItemRequired[selectedMenuItem.value as string]"
-                      v-tooltip="
-                        patternItemRequired[selectedMenuItem.value as string] === 'bedrock'
-                          ? t('banner.requiredPatternBedrock')
-                          : t('banner.requiredPattern')
-                      "
+                      v-if="patternItemRequired.includes(selectedMenuItem.value as string)"
+                      v-tooltip="t('banner.requiredPattern')"
                       class="flex items-center relative"
                     >
                       <img
@@ -466,15 +449,6 @@ onMounted(() => {
                         height="24"
                         loading="lazy"
                         src="https://minecraft.wiki/images/ItemSprite_banner-pattern.png"
-                      />
-
-                      <img
-                        v-if="patternItemRequired[selectedMenuItem.value as string] === 'bedrock'"
-                        class="pixel-image absolute top-0 -right-1"
-                        width="15"
-                        height="15"
-                        loading="lazy"
-                        src="https://minecraft.wiki/images/Invicon_Bedrock.png"
                       />
                     </div>
                   </div>

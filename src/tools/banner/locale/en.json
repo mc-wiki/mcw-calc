@@ -86,6 +86,5 @@
   "banner.pattern.flow": "Flow",
   "banner.pattern.guster": "Guster",
 
-  "banner.requiredPattern": "This pattern can only be applied with the use of banner pattern items on a loom.",
-  "banner.requiredPatternBedrock": "In Bedrock Edition, this pattern can only be applied with the use of banner pattern items on a loom."
+  "banner.requiredPattern": "This pattern can only be applied with the use of banner pattern items on a loom."
 }
