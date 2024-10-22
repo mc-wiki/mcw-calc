@@ -77,6 +77,5 @@
   "banner.pattern.piglin": "จมูกหมู",
   "banner.pattern.flow": "ไหลวน",
   "banner.pattern.guster": "ลมกระโชก",
-  "banner.requiredPattern": "แบบลายนี้สามารถใช้ได้โดยใช้ไอเทมแบบลายธงในเครื่องทอผ้าเท่านั้น",
-  "banner.requiredPatternBedrock": "ในรุ่น Bedrock แบบลายนี้สามารถใช้ได้โดยใช้ไอเทมแบบลายธงในเครื่องทอผ้าเท่านั้น"
+  "banner.requiredPattern": "แบบลายนี้สามารถใช้ได้โดยใช้ไอเทมแบบลายธงในเครื่องทอผ้าเท่านั้น"
 }

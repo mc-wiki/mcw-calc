@@ -77,6 +77,5 @@
   "banner.pattern.piglin": "Рило",
   "banner.pattern.flow": "Плин",
   "banner.pattern.guster": "Порив",
-  "banner.requiredPattern": "Цей візерунок можна застосовувати лише за допомогою візерунку стяга на ткацькому верстаті.",
-  "banner.requiredPatternBedrock": "У Bedrock Edition цей візерунок можна застосовувати лише за допомогою візерунку стяга на ткацькому верстаті."
+  "banner.requiredPattern": "Цей візерунок можна застосовувати лише за допомогою візерунку стяга на ткацькому верстаті."
 }

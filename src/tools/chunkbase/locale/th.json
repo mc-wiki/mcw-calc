@@ -1,7 +1,9 @@
 {
-  "chunkbase.title": "ตัวอย่างการสร้างโลกได้รับการสนับสนุนที่มาจาก Chunkbase",
+  "chunkbase.title": "ดูตัวอย่างการสร้างโลก",
   "chunkbase.name": "Chunkbase",
-  "chunkbase.promo": "หากต้องการดูภาพจำลองโลกอื่น ๆ โดยใช้ซีดของคุณเอง โปรดไปที่ {link}",
+  "chunkbase.promo": "หากต้องการดูภาพจำลองโลกอื่น ๆ โปรดไปที่ {link}",
   "chunkbase.java": "รุ่น Java",
-  "chunkbase.bedrock": "รุ่น Bedrock"
+  "chunkbase.bedrock": "รุ่น Bedrock",
+  "chunkbase.seed": "ซีด",
+  "chunkbase.submit": "ส่ง"
 }

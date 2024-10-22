@@ -77,6 +77,5 @@
   "banner.pattern.piglin": "Рыло",
   "banner.pattern.flow": "Поток",
   "banner.pattern.guster": "Вихрь",
-  "banner.requiredPattern": "Данный узор может быть нанесён только с помощью соответствующего предмета на ткацком станке.",
-  "banner.requiredPatternBedrock": "В Bedrock Edition данный узор может быть нанесён только с помощью соответствующего предмета на ткацком станке."
+  "banner.requiredPattern": "Данный узор может быть нанесён только с помощью соответствующего предмета на ткацком станке."
 }

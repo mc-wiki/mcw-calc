@@ -77,6 +77,5 @@
   "banner.pattern.piglin": "Groin",
   "banner.pattern.flow": "Tourbillon",
   "banner.pattern.guster": "Rafaleur",
-  "banner.requiredPattern": "Ce motif ne peut être appliqué qu'avec l'utilisation d'un motif de bannière sur un métier à tisser.",
-  "banner.requiredPatternBedrock": "Dans l'édition Bedrock, ce motif ne peut être appliqué qu'avec l'utilisation d'un motif de bannière sur un métier à tisser."
+  "banner.requiredPattern": "Ce motif ne peut être appliqué qu'avec l'utilisation d'un motif de bannière sur un métier à tisser."
 }

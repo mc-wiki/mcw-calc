@@ -77,6 +77,5 @@
   "banner.pattern.piglin": "Focinho",
   "banner.pattern.flow": "Espiral",
   "banner.pattern.guster": "Vórtice",
-  "banner.requiredPattern": "Esta figura só pode ser aplicada com uma figura para estandarte (item) num tear.",
-  "banner.requiredPatternBedrock": "Na Edição Bedrock, esta figura só pode ser aplicada com uma figura para estandarte (item) num tear."
+  "banner.requiredPattern": "Esta figura só pode ser aplicada com uma figura para estandarte (item) num tear."
 }
