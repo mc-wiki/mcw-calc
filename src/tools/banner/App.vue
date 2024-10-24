@@ -422,7 +422,11 @@ onMounted(() => {
                         width="24"
                         height="24"
                         loading="lazy"
-                        src="https://minecraft.wiki/images/ItemSprite_banner-pattern.png"
+                        :src="`https://minecraft.wiki/images/ItemSprite_${patternName[
+                          menuItem.value as keyof typeof patternName
+                        ]
+                          .toLowerCase()
+                          .replace(/ /, '-')}-banner-pattern.png`"
                       />
                     </div>
                   </div>
@@ -448,7 +452,11 @@ onMounted(() => {
                         width="24"
                         height="24"
                         loading="lazy"
-                        src="https://minecraft.wiki/images/ItemSprite_banner-pattern.png"
+                        :src="`https://minecraft.wiki/images/ItemSprite_${patternName[
+                          selectedMenuItem.value as keyof typeof patternName
+                        ]
+                          .toLowerCase()
+                          .replace(/ /, '-')}-banner-pattern.png`"
                       />
                     </div>
                   </div>
