@@ -2,14 +2,14 @@
 import CalcField from '@/components/CalcField.vue'
 import { type Color, colorStringToRgb, imgNames } from '@/utils/color'
 import { CdxButton, CdxTab, CdxTabs } from '@wikimedia/codex'
-import { nextTick, ref, watch } from 'vue'
+import { nextTick, ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
 const color = ref('#f9fffe')
 const edition = ref<'java' | 'bedrock'>('java')
-const canvasRef = ref<HTMLCanvasElement | null>(null)
+const canvasRef = useTemplateRef('canvasRef')
 const sequence = ref<[Color[], number, [number, number, number]]>([['white'], 0, [249, 255, 254]])
 
 const worker = new ComlinkWorker<typeof import('./worker')>(new URL('./worker', import.meta.url))

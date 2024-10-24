@@ -33,7 +33,7 @@ import {
   cdxIconStrikethrough,
   cdxIconUnderline,
 } from '@wikimedia/codex-icons'
-import { computed, ref } from 'vue'
+import { computed, ref, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ColorClass } from './color-class'
 import { TextClass } from './text-class'
@@ -366,7 +366,7 @@ function updateFormat(value: string[]) {
   }
 }
 
-const textarea = ref<HTMLTextAreaElement | null>(null)
+const textarea = useTemplateRef('textarea')
 
 function JSONToFormatCode(json: JSONContent | undefined) {
   if (textarea.value) {
@@ -457,7 +457,7 @@ function JSONToFormatCode(json: JSONContent | undefined) {
     />
 
     <CdxField>
-      <CdxTextArea v-model="formatCode" disabled />
+      <CdxTextArea ref="textarea" v-model="formatCode" disabled />
 
       <template #label>
         <div style="display: flex; align-items: center">

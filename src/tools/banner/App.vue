@@ -22,7 +22,7 @@ import {
   cdxIconTrash,
   cdxIconUpTriangle,
 } from '@wikimedia/codex-icons'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import BannerPopup from './BannerPopup.vue'
 
@@ -192,7 +192,7 @@ function updateColor(index: number, color: Color) {
 
 const baseColor = useLocalStorage<Color>('mcwBannerBaseColor', 'white')
 
-const canvasRef = ref<HTMLCanvasElement | null>(null)
+const canvasRef = useTemplateRef('canvasRef')
 
 const loadedImages: Record<string, HTMLImageElement> = {}
 function loadImage(src: string) {
@@ -331,7 +331,7 @@ onMounted(() => {
       {{ t('banner.title', { type: t(`banner.icon.${type}`) }) }}
     </template>
     <div class="flex flex-col md:flex-row flex-wrap items-center md:items-stretch gap-3">
-      <div class="flex flex-col gap-3 items-center md:items-stretch">
+      <div class="flex flex-col gap-3 items-center">
         <canvas
           ref="canvasRef"
           :width="type === 'banner' ? 20 : 12"

@@ -3,7 +3,7 @@ import { parseWikitext } from '@/utils/i18n'
 import { useLocalStorage } from '@vueuse/core'
 import { CdxCheckbox, CdxTab, CdxTabs } from '@wikimedia/codex'
 import * as d3 from 'd3'
-import { computed, onMounted, onUpdated, ref } from 'vue'
+import { computed, onMounted, onUpdated, ref, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { type Block, endBlockMap, getColor, netherBlockMap, overworldBlockMap } from './data'
 
@@ -267,9 +267,9 @@ function onCheckboxChange(block: string) {
   }
 }
 
-const overworld = ref<HTMLDivElement>()
-const nether = ref<HTMLDivElement>()
-const end = ref<HTMLDivElement>()
+const overworld = useTemplateRef('overworld')
+const nether = useTemplateRef('nether')
+const end = useTemplateRef('end')
 
 onUpdated(update)
 onMounted(update)

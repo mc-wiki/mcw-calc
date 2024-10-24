@@ -35,6 +35,9 @@ export default defineConfig({
       reportsDirectory: '../coverage',
     },
   },
+  server: {
+    port: process.env.VITEST ? 50179 : undefined,
+  },
   build: {
     outDir: '../dist',
     emptyOutDir: true,
@@ -55,7 +58,6 @@ export default defineConfig({
       },
     }),
     vueDevTools(),
-    // @ts-expect-error https://github.com/btd/rollup-plugin-visualizer/issues/176
     visualizer(),
     comlink(),
     vueI18nPlugin({
