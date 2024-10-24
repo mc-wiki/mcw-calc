@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="mcw-calc-field cdx-field">
+  <div class="mcw-calc-field">
     <h2 class="cdx-label m-0 text-lg">
       <span class="cdx-label__label__text">
         <slot name="heading">Calculator</slot>
