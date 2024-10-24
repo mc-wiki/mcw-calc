@@ -366,13 +366,13 @@ function updateFormat(value: string[]) {
   }
 }
 
-const textarea = useTemplateRef('textarea')
+// const textarea = useTemplateRef('textarea')
 
 function JSONToFormatCode(json: JSONContent | undefined) {
-  if (textarea.value) {
-    const scrollHeight = textarea.value.scrollHeight - 4
-    textarea.value.style.height = `${scrollHeight > 300 ? 300 : scrollHeight}px`
-  }
+  // if (textarea.value) {
+  //   const scrollHeight = textarea.value.scrollHeight - 4
+  //   textarea.value.style.height = `${scrollHeight > 300 ? 300 : scrollHeight}px`
+  // }
   const code: string[] = []
 
   for (const para of json?.content ?? []) {
@@ -457,7 +457,7 @@ function JSONToFormatCode(json: JSONContent | undefined) {
     />
 
     <CdxField>
-      <CdxTextArea ref="textarea" v-model="formatCode" disabled />
+      <CdxTextArea v-model="formatCode" disabled />
 
       <template #label>
         <div style="display: flex; align-items: center">
