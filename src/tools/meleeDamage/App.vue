@@ -618,7 +618,7 @@ function selectOutput() {
               </div>
             </template>
             <template #label="{ selectedMenuItem }: { selectedMenuItem: MenuItemData }">
-              <div class="flex items-center">
+              <div v-if="selectedMenuItem" class="flex items-center">
                 <img
                   class="pixel-image mr-2"
                   width="16"

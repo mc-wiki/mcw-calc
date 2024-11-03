@@ -432,7 +432,7 @@ onMounted(() => {
                   </div>
                 </template>
                 <template #label="{ selectedMenuItem }">
-                  <div class="flex items-center">
+                  <div v-if="selectedMenuItem" class="flex items-center">
                     <img
                       class="pixel-image -m-2 -ml-3"
                       width="40"
