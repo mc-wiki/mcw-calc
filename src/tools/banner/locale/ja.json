@@ -1,0 +1,19 @@
+{
+  "banner.title": "{type}のプレビュー",
+  "banner.icon.banner": "旗",
+  "banner.icon.shield": "盾",
+  "banner.icon.banner.capital": "旗",
+  "banner.icon.shield.capital": "盾",
+  "banner.layers": "模様のレイヤー",
+  "banner.layer": "レイヤー",
+  "banner.pattern": "模様",
+  "banner.color": "色",
+  "banner.actions": "操作",
+  "banner.new": "模様を追加",
+  "banner.remove": "模様を削除",
+  "banner.move_up": "上に移動",
+  "banner.move_down": "下に移動",
+  "banner.warning": "警告",
+  "banner.limitWarning": "機織り機・クラフトで追加できるレイヤーの数は6つまでです。この模様はコマンドでのみ取得できます。",
+  "banner.error": "エラー"
+}

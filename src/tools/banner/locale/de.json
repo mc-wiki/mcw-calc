@@ -77,5 +77,5 @@
   "banner.pattern.piglin": "Schnauze",
   "banner.pattern.flow": "Fluss",
   "banner.pattern.guster": "Windstoßer",
-  "banner.requiredPattern": "Dieses Muster kann nur unter Verwendung von Bannervorlagen in einem Webstuhl angewendet werden."
+  "banner.requiredPattern": "Dieses Muster kann nur mit einer Bannervorlage in einem Webstuhl angewendet werden."
 }
