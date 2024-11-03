@@ -1,1 +1,4 @@
-{}
+{
+  "exampleCounter.count": "カウント：",
+  "exampleCounter.increment": "加算"
+}

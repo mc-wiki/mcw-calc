@@ -1,1 +1,12 @@
-{}
+{
+  "playerUuid.title": "プレイヤー名をUUIDに変換",
+  "playerUuid.name": "プレイヤー名",
+  "playerUuid.get": "UUIDを取得",
+  "playerUuid.loading": "読み込み中...",
+  "playerUuid.uuid": "[[UUID]]",
+  "playerUuid.uuidOffline": "オフライン時の[[UUID]]",
+  "playerUuid.error.invalid": "無効なユーザー名です！",
+  "playerUuid.error.notFound": "このユーザー名は存在しません！",
+  "playerUuid.copy": "コピー",
+  "playerUuid.copied": "コピー完了！"
+}

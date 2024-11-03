@@ -1,5 +1,5 @@
 {
-  "armorColor.title": "{type}の色の染料配列を計算する",
+  "armorColor.title": "{type}の色の染料配列を計算",
   "armorColor.java": "Java Edition",
   "armorColor.bedrock": "Bedrock Edition",
   "armorColor.color": "色：",

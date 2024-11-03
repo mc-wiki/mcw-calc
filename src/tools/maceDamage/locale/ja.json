@@ -1,4 +1,13 @@
 {
+  "maceDamage.title": "メイスのダメージを計算",
   "maceDamage.java": "Java Edition",
-  "maceDamage.bedrock": "Bedrock Edition"
+  "maceDamage.bedrock": "Bedrock Edition",
+  "maceDamage.fallHeight": "落下高度（ブロック）：",
+  "maceDamage.densityLevel": "[[重撃]]のレベル：",
+  "maceDamage.critical": "クリティカル攻撃",
+  "maceDamage.critical.help": "メイスの落下攻撃は、ほとんどの場合クリティカル攻撃になります（例外：攻撃クールダウンが回復していないなど）。",
+  "maceDamage.cooldownReset": "クールダウンの回復",
+  "maceDamage.cooldownReset.help": "攻撃時クールダウンが回復していない場合のダメージ計算をする場合は、このチェックを外してください。",
+  "maceDamage.damage": "与ダメージ：",
+  "maceDamage.densityLevelWarning": "サバイバルで得られる重撃のレベルは0から5のみです。"
 }

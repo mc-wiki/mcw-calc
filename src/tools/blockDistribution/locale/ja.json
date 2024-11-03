@@ -1,1 +1,13 @@
-{}
+{
+  "blockDistribution.xAxis": "高度 →",
+  "blockDistribution.yAxis": "↑ 10万ブロックあたりのXの数",
+  "blockDistribution.xInTenThousand": "{num} / 100,000",
+  "blockDistribution.title": "[[Java Edition {version}]]での{block}の高度分布",
+  "blockDistribution.total": "総数",
+  "blockDistribution.overworld": "オーバーワールド",
+  "blockDistribution.theNether": "ネザー",
+  "blockDistribution.theEnd": "ジ・エンド",
+  "blockDistribution.logarithmicScale": "対数スケール",
+  "blockDistribution.logarithmicScaleHelp": "対数スケールでは、各高度での生成頻度の相対的な変化がより強調されます。グラフ上に急激な極大値がある場合、こちらの方がより見やすくなる可能性があります。",
+  "blockDistribution.selectAll": "すべて選択"
+}

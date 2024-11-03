@@ -1,9 +1,26 @@
 {
+  "beaconColor.title": "ビーコンのビームの色に対応するガラスの並べ順を計算",
   "beaconColor.java": "Java Edition",
   "beaconColor.bedrock": "Bedrock Edition",
   "beaconColor.color": "色：",
   "beaconColor.calculate": "計算",
   "beaconColor.sequence": "配列：",
   "beaconColor.dE": "ΔE",
-  "beaconColor.dE.help": "ΔEは、完成品と指定の色の差異の程度を示す値です。この値が小さいほど近い色に染色できます。1.0以下であれば、肉眼では違いが分からない程度であるといえます。"
+  "beaconColor.dE.help": "ΔEは、完成品と指定の色の差異の程度を示す値です。この値が小さいほど近い色に染色できます。1.0以下であれば、肉眼では違いが分からない程度であるといえます。",
+  "beaconColor.glass.white": "白色の色付きガラス",
+  "beaconColor.glass.lightGray": "薄灰色の色付きガラス",
+  "beaconColor.glass.gray": "灰色の色付きガラス",
+  "beaconColor.glass.black": "黒色の色付きガラス",
+  "beaconColor.glass.brown": "茶色の色付きガラス",
+  "beaconColor.glass.red": "赤色の色付きガラス",
+  "beaconColor.glass.orange": "橙色の色付きガラス",
+  "beaconColor.glass.yellow": "黄色の色付きガラス",
+  "beaconColor.glass.lime": "黄緑色の色付きガラス",
+  "beaconColor.glass.green": "緑色の色付きガラス",
+  "beaconColor.glass.cyan": "青緑色の色付きガラス",
+  "beaconColor.glass.lightBlue": "空色の色付きガラス",
+  "beaconColor.glass.blue": "青色の色付きガラス",
+  "beaconColor.glass.purple": "紫色の色付きガラス",
+  "beaconColor.glass.magenta": "赤紫色の色付きガラス",
+  "beaconColor.glass.pink": "桃色の色付きガラス"
 }

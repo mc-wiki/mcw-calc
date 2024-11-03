@@ -1,1 +1,16 @@
-{}
+{
+  "tick.title": "ティック計算器",
+  "tick.gt": "ゲームティック",
+  "tick.rt": "レッドストーンティック",
+  "tick.inGameDay": "ゲーム内日",
+  "tick.millisecond": "ミリ秒",
+  "tick.second": "秒",
+  "tick.minute": "分",
+  "tick.hour": "時間",
+  "tick.day": "日",
+  "tick.runningAt": "実行環境",
+  "tick.tps": "TPS",
+  "tick.tps.explain": "ティック毎秒、1秒間に実行されるゲームティックの数",
+  "tick.mspt": "MSPT",
+  "tick.mspt.explain": "ミリ秒毎ティック、1ティックの処理にかかる時間（ミリ秒）"
+}

@@ -1,3 +1,5 @@
 {
-  "decimalColor.color": "色："
+  "decimalColor.title": "カラーコードの10進表記を計算",
+  "decimalColor.color": "色：",
+  "decimalColor.decimal": "10進表記："
 }

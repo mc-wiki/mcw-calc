@@ -1,1 +1,7 @@
-{}
+{
+  "seedHashcode.title": "文字列を対応するシード値に変換",
+  "seedHashcode.actual": "対応するシード値：",
+  "seedHashcode.emptyString": "空文字列の計算結果は0ですが、この場合Minecraftはランダムな数値を生成して使用します。",
+  "seedHashcode.number": "数値文字列はそのまま数値としてシード値に使用されます。これは数値文字列から計算される理論上のハッシュ値です。",
+  "seedHashcode.outOfRange": "この値は64bit符号付き整数の上限を超えています。上に表示の値は実際に使用されるシード値です。"
+}

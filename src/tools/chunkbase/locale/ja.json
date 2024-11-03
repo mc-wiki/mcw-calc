@@ -1,4 +1,9 @@
 {
+  "chunkbase.title": "ワールド生成のプレビュー（Chunkbaseより）",
+  "chunkbase.name": "Chunkbase",
+  "chunkbase.promo": "その他のワールド生成可視化アプリは、{link}でご利用いただけます。",
   "chunkbase.java": "Java Edition",
-  "chunkbase.bedrock": "Bedrock Edition"
+  "chunkbase.bedrock": "Bedrock Edition",
+  "chunkbase.seed": "シード値",
+  "chunkbase.submit": "決定"
 }
