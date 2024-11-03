@@ -27,3 +27,8 @@ window.addEventListener('message', (event) => {
     }
   }
 })
+
+const locale =
+  new URLSearchParams(window.location.hash.substring(2)).get('locale') ??
+  window.navigator.language.split('-')[0]
+document.body.lang = locale
