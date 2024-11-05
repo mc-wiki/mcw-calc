@@ -1,7 +1,9 @@
 {
   "chunkbase.title": "世界生成预览（由Chunkbase驱动）",
   "chunkbase.name": "Chunkbase",
-  "chunkbase.promo": "欲查看其他可视化世界生成及使用自己的种子，请至 {link}。",
+  "chunkbase.promo": "欲查看其他可视化世界生成，请至{link}。",
   "chunkbase.java": "Java版",
-  "chunkbase.bedrock": "基岩版"
+  "chunkbase.bedrock": "基岩版",
+  "chunkbase.seed": "种子",
+  "chunkbase.submit": "提交"
 }
