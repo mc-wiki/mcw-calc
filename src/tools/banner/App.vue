@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import type { Color } from '@/utils/color'
 import CalcField from '@/components/CalcField.vue'
-import { colorCode } from '@/utils/color/bedrock'
 import { colorMap, colorRgbMap } from '@/utils/color/java'
-import { copyToClipboard, isEmbedded, parentUrl, postMessageParent } from '@/utils/iframe'
+import { copyToClipboard, parentUrl } from '@/utils/iframe'
 import { theme } from '@/utils/theme'
 import { useLocalStorage } from '@vueuse/core'
 import {
@@ -18,6 +17,7 @@ import {
   cdxIconAlert,
   cdxIconDownTriangle,
   cdxIconError,
+  cdxIconHelpNotice,
   cdxIconLink,
   cdxIconTableAddRowAfter,
   cdxIconTrash,
@@ -620,6 +620,10 @@ onMounted(() => {
           <!-- <CdxButton @click="copyBedrockCommand">
             {{ t('banner.copyBedrockCommand') }}
           </CdxButton> -->
+          <CdxButton v-tooltip="t('banner.bedrockCommandHelpTooltip')" weight="quiet">
+            <CdxIcon :icon="cdxIconHelpNotice" />
+            {{ t('banner.bedrockCommandHelpButton') }}
+          </CdxButton>
         </div>
       </div>
     </div>

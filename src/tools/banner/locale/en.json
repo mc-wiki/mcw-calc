@@ -28,6 +28,9 @@
   "banner.copyJavaCommand": "Copy Java command",
   "banner.copyBedrockCommand": "Copy Bedrock command",
 
+  "banner.bedrockCommandHelpButton": "Bedrock?",
+  "banner.bedrockCommandHelpTooltip": "Bedrock Edition does not support adding patterns to banners using commands.",
+
   "banner.color.white": "White",
   "banner.color.lightGray": "Light Gray",
   "banner.color.gray": "Gray",
