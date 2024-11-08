@@ -57,7 +57,7 @@ export default defineConfig({
         vue: vue(),
       },
     }),
-    vueDevTools(),
+    process.env.VITEST ? undefined : vueDevTools(),
     visualizer(),
     comlink(),
     vueI18nPlugin({

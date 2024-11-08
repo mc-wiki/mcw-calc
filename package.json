@@ -44,7 +44,7 @@
     "@wikimedia/codex": "^1.15.0",
     "@wikimedia/codex-design-tokens": "^1.15.0",
     "@wikimedia/codex-icons": "^1.15.0",
-    "comlink": "^4.4.1",
+    "comlink": "^4.4.2",
     "d3": "^7.9.0",
     "spark-md5": "^3.0.2",
     "three": "^0.162.0",
@@ -62,7 +62,7 @@
     "@tsconfig/node20": "^20.1.4",
     "@types/d3": "^7.4.3",
     "@types/leaflet": "^1.9.14",
-    "@types/node": "^22.8.7",
+    "@types/node": "^22.9.0",
     "@types/spark-md5": "^3.0.5",
     "@types/three": "^0.162.0",
     "@vitejs/plugin-vue": "^5.1.4",
@@ -94,8 +94,9 @@
     "unplugin-vue-macros": "^2.13.3",
     "vite": "^5.4.10",
     "vite-plugin-comlink": "^5.1.0",
-    "vite-plugin-vue-devtools": "^7.6.2",
+    "vite-plugin-vue-devtools": "^7.6.3",
     "vitest": "^2.1.4",
+    "vitest-browser-vue": "^0.0.1",
     "vue-tsc": "^2.1.10"
   }
 }

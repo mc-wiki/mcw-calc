@@ -1,12 +1,13 @@
 import App from '@/tools/tick/App.vue'
 import { createMcwI18n } from '@/utils/i18n'
-import { render, screen } from '@testing-library/vue'
 import { userEvent } from '@vitest/browser/context'
+import { expect } from 'vitest'
+import { render } from 'vitest-browser-vue'
 import { createI18n } from 'vue-i18n'
 
 describe('app.vue', () => {
   it('renders the component', () => {
-    render(App, {
+    const screen = render(App, {
       global: {
         plugins: [
           createI18n({
@@ -17,7 +18,7 @@ describe('app.vue', () => {
       },
     })
 
-    expect(screen.getByText('tick.title')).toBeInTheDocument()
+    expect.element(screen.getByText('tick.title')).toBeInTheDocument()
   })
 
   it('should compute correctly', async () => {
