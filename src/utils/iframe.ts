@@ -23,3 +23,13 @@ export function postMessageParent(type: string, data: any) {
   const id = new URLSearchParams(window.location.hash.substring(2)).get('id')
   window.parent.postMessage({ type, id, data }, '*')
 }
+
+export function copyToClipboard(text: string) {
+  if (isEmbedded()) {
+    postMessageParent('mcw-calc-clipboard', {
+      text,
+    })
+  } else {
+    navigator.clipboard.writeText(text)
+  }
+}

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import CalcField from '@/components/CalcField.vue'
 import { parseWikitext } from '@/utils/i18n'
-import { isEmbedded, postMessageParent } from '@/utils/iframe'
+import { copyToClipboard, isEmbedded, postMessageParent } from '@/utils/iframe'
 import { CdxButton, CdxField, CdxTextInput } from '@wikimedia/codex'
 import SparkMD5 from 'spark-md5'
 import { ref } from 'vue'
@@ -113,13 +113,7 @@ function isValid(username: string) {
 const copyTextIndex = [copyTextOnline, copyTextOffline]
 
 async function copyUuid(uuid: string, index: number) {
-  if (isEmbedded()) {
-    postMessageParent('mcw-calc-clipboard', {
-      text: uuid,
-    })
-  } else {
-    await navigator.clipboard.writeText(uuid)
-  }
+  copyToClipboard(uuid)
 
   copyTextIndex[index].value = t('playerUuid.copied')
   setTimeout(() => {

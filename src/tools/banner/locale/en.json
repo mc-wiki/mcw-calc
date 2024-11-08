@@ -25,6 +25,8 @@
 
   "banner.shareUrl": "https://minecraft.wiki/w/Calculators/Banner",
   "banner.copyShareUrl": "Copy shareable link",
+  "banner.copyJavaCommand": "Copy Java command",
+  "banner.copyBedrockCommand": "Copy Bedrock command",
 
   "banner.color.white": "White",
   "banner.color.lightGray": "Light Gray",

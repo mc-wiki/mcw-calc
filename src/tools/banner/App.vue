@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { Color } from '@/utils/color'
 import CalcField from '@/components/CalcField.vue'
+import { colorCode } from '@/utils/color/bedrock'
 import { colorMap, colorRgbMap } from '@/utils/color/java'
-import { isEmbedded, parentUrl, postMessageParent } from '@/utils/iframe'
+import { copyToClipboard, isEmbedded, parentUrl, postMessageParent } from '@/utils/iframe'
 import { theme } from '@/utils/theme'
 import { useLocalStorage } from '@vueuse/core'
 import {
@@ -302,14 +303,86 @@ function copyShareUrl() {
   searchParams.set('activePatterns', JSON.stringify(activePatterns.value))
   searchParams.set('baseColor', baseColor.value)
   url.hash = `?${searchParams.toString()}`
-  if (isEmbedded()) {
-    postMessageParent('mcw-calc-clipboard', {
-      text: url.href,
-    })
-  } else {
-    navigator.clipboard.writeText(url.href)
-  }
+  copyToClipboard(url.href)
 }
+
+function copyJavaCommand() {
+  const camelToSnake = (str: string) =>
+    str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`)
+  copyToClipboard(
+    type.value === 'shield'
+      ? `/give @s minecraft:shield` +
+          `[minecraft:banner_patterns=[${activePatterns.value
+            .map(
+              (pattern) => `{color: "${camelToSnake(pattern.color)}", pattern: "${pattern.name}"}`,
+            )
+            .join(',')}], minecraft:base_color="${camelToSnake(baseColor.value)}"]`
+      : `/give @s minecraft:${camelToSnake(baseColor.value)}_banner` +
+          `[minecraft:banner_patterns=[${activePatterns.value
+            .map(
+              (pattern) => `{color: "${camelToSnake(pattern.color)}", pattern: "${pattern.name}"}`,
+            )
+            .join(',')}]]`,
+  )
+}
+
+// const patternBedrockId = {
+//   stripe_bottom: 'bs',
+//   stripe_top: 'ts',
+//   stripe_left: 'ls',
+//   stripe_right: 'rs',
+//   stripe_center: 'cs',
+//   stripe_middle: 'ms',
+//   stripe_downright: 'drs',
+//   stripe_downleft: 'dls',
+//   small_stripes: 'ss',
+//   cross: 'cr',
+//   straight_cross: 'sc',
+//   diagonal_left: 'ld',
+//   diagonal_right: 'rud',
+//   diagonal_up_left: 'lud',
+//   diagonal_up_right: 'rd',
+//   half_vertical: 'vh',
+//   half_vertical_right: 'vhr',
+//   half_horizontal: 'hh',
+//   half_horizontal_bottom: 'hhb',
+//   square_bottom_left: 'bl',
+//   square_bottom_right: 'br',
+//   square_top_left: 'tl',
+//   square_top_right: 'tr',
+//   triangle_bottom: 'bt',
+//   triangle_top: 'tt',
+//   triangles_bottom: 'bts',
+//   triangles_top: 'tts',
+//   circle: 'mc',
+//   rhombus: 'mr',
+//   border: 'bo',
+//   curly_border: 'cbo',
+//   bricks: 'bri',
+//   gradient: 'gra',
+//   gradient_up: 'gru',
+//   creeper: 'cre',
+//   skull: 'sku',
+//   flower: 'flo',
+//   mojang: 'moj',
+//   globe: 'glb',
+//   piglin: 'pig',
+//   flow: 'flw',
+//   guster: 'gus',
+// }
+
+// function copyBedrockCommand() {
+//   copyToClipboard(
+//     `${
+//       type.value === 'shield' ? '/give @s minecraft:shield' : '/give @s minecraft:banner'
+//     }{Base: ${colorCode[baseColor.value]}, Patterns: [${activePatterns.value
+//       .map(
+//         (pattern) =>
+//           `{Pattern: "${patternBedrockId[pattern.name]}", Color: ${colorCode[pattern.color]}}`,
+//       )
+//       .join(',')}]}`,
+//   )
+// }
 
 onMounted(() => {
   const url = parentUrl()
@@ -536,11 +609,17 @@ onMounted(() => {
           </CdxTable>
         </div>
 
-        <div class="flex">
+        <div class="flex gap-2">
           <CdxButton @click="copyShareUrl">
             <CdxIcon :icon="cdxIconLink" />
             {{ t('banner.copyShareUrl') }}
           </CdxButton>
+          <CdxButton @click="copyJavaCommand">
+            {{ t('banner.copyJavaCommand') }}
+          </CdxButton>
+          <!-- <CdxButton @click="copyBedrockCommand">
+            {{ t('banner.copyBedrockCommand') }}
+          </CdxButton> -->
         </div>
       </div>
     </div>
