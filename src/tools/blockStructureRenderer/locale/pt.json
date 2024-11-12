@@ -10,7 +10,7 @@
   "blockStructureRenderer.displayModes.all": "Exibir todos os blocos",
   "blockStructureRenderer.displayModes.yRange": "Apenas exibir blocos entre alturas específicas",
   "blockStructureRenderer.displayModes.selectedY": "Apenas exibir blocos numa altura específica",
-  "blockStructureRenderer.renderRange": "Intervalo de exibição:",
+  "blockStructureRenderer.renderRange": "Raio de exibição:",
   "blockStructureRenderer.resetCamera": "Redefinir a câmera",
   "blockStructureRenderer.saveImage": "Salvar como imagem",
   "blockStructureRenderer.saveStructureFile": "Exportar como arquivo de estrutura",
