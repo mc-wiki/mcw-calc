@@ -47,6 +47,9 @@ mw.hook('wikipage.content').add(() => {
     iframe.style.display = 'block'
     iframe.style.width = '100%'
     iframe.style.colorScheme = 'auto'
+    if (type === 'blockDistribution') {
+        iframe.style.maxWidth = '640px'
+    }
 
     const dataset = {}
     Object.entries(calc.dataset).forEach((entry) => {
