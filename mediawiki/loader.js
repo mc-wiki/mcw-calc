@@ -48,7 +48,7 @@ mw.hook('wikipage.content').add(() => {
     iframe.style.width = '100%'
     iframe.style.colorScheme = 'auto'
     if (type === 'blockDistribution') {
-        iframe.style.maxWidth = '640px'
+      iframe.style.maxWidth = '640px'
     }
 
     const dataset = {}

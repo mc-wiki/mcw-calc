@@ -6,7 +6,7 @@ import { render } from 'vitest-browser-vue'
 import { createI18n } from 'vue-i18n'
 
 describe('app.vue', () => {
-  it('renders the component', () => {
+  it('renders the component', async () => {
     const screen = render(App, {
       global: {
         plugins: [
@@ -18,7 +18,7 @@ describe('app.vue', () => {
       },
     })
 
-    expect.element(screen.getByText('tick.title')).toBeInTheDocument()
+    await expect.element(screen.getByText('tick.title')).toBeInTheDocument()
   })
 
   it('should compute correctly', async () => {

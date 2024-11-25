@@ -1,3 +1,4 @@
+import { theme } from '@/utils/theme'
 import overworldData from './overworld_block_count.json'
 import endData from './the_end_block_count.json'
 import netherData from './the_nether_block_count.json'
@@ -128,36 +129,62 @@ function hashCode(s: string) {
 export function getColor(key: string) {
   if (colorMap[key]) return `#${colorMap[key]}`
   const hash = hashCode(key)
-  const colorScheme = [
-    // some colors that have nice contrast in both light and dark mode
-    '#ee0000',
-    '#aa6600',
-    '#008800',
-    '#777744',
-    '#cc4455',
-    '#777766',
-    '#bb5566',
-    '#dd2277',
-    '#667788',
-    '#8866aa',
-    '#aa55aa',
-    '#667799',
-    '#7766cc',
-    '#0077cc',
-    '#7755ff',
-    '#cc00dd',
-    '#9B5FC0',
-    '#BE03FD',
-    '#5170D7',
-    '#826D8C',
-    '#B16002',
-    '#6F7C00',
-    '#8F7303',
-    '#866F85',
-    '#507B9C',
-    '#C45508',
-    '#3778BF',
+  const colorSchemeLight = [
+    '#C62828',
+    '#C2185B',
+    '#512DA8',
+    '#AA00FF',
+    '#5E35B1',
+    '#3949AB',
+    '#304FFE',
+    '#1565C0',
+    '#01579B',
+    '#006064',
+    '#00796B',
+    '#1B5E20',
+    '#33691E',
+    '#F57F17',
+    '#E65100',
+    '#BF360C',
+    '#6D4C41',
+    '#424242',
+    '#546E7A',
   ]
+
+  const colorSchemeDark = [
+    '#F44336',
+    '#FF5252',
+    '#EC407A',
+    '#BA68C8',
+    '#E040FB',
+    '#9575CD',
+    '#7986CB',
+    '#B388FF',
+    '#42A5F5',
+    '#8C9EFF',
+    '#81D4FA',
+    '#448AFF',
+    '#4DD0E1',
+    '#40C4FF',
+    '#18FFFF',
+    '#80CBC4',
+    '#64FFDA',
+    '#81C784',
+    '#69F0AE',
+    '#AED581',
+    '#B2FF59',
+    '#DCE775',
+    '#EEFF41',
+    '#FFF59D',
+    '#FFEE58',
+    '#FFCC80',
+    '#FF8A65',
+    '#BCAAA4',
+    '#E0E0E0',
+    '#B0BEC5',
+  ]
+
+  const colorScheme = theme.value === 'light' ? colorSchemeLight : colorSchemeDark
   return colorScheme[Math.abs(hash) % colorScheme.length]
 }
 
@@ -176,7 +203,7 @@ export const overworldBlockMap = generateBlockMap(
   overworldData.block,
   getBlockCount(overworldData.posProvider),
   -64,
-  Infinity,
+  255,
 )
 export const netherBlockMap = generateBlockMap(
   netherData.block,
@@ -188,7 +215,7 @@ export const endBlockMap = generateBlockMap(
   endData.block,
   getBlockCount(endData.posProvider),
   0,
-  Infinity,
+  255,
 )
 
 function generateBlockMap(
