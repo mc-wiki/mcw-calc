@@ -98,5 +98,10 @@
     "vitest": "^2.1.5",
     "vitest-browser-vue": "^0.0.1",
     "vue-tsc": "^2.1.10"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "vue-tsc@2.1.10": "patches/vue-tsc@2.1.10.patch"
+    }
   }
 }
