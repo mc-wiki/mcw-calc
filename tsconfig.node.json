@@ -23,6 +23,7 @@
     "playwright.config.*",
     "tailwind.config.js",
     "postcss.config.js",
-    "scripts/*"
+    "scripts/*",
+    "mediawiki/ui.js"
   ]
 }
