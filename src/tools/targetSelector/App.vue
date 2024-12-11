@@ -14,7 +14,7 @@ import {
   CdxTextInput,
   type MenuItemData,
 } from '@wikimedia/codex'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -62,8 +62,6 @@ const gameMode = ref('')
 const gameModeNegated = ref<boolean>(false)
 const advancements = ref('')
 const haspermission = ref('')
-
-const finalSelector = ref<string>()
 
 const isPlayer = () => {
   return (
@@ -178,11 +176,8 @@ function addRangeParam(range: RangeParam, params: string[]) {
   }
 }
 
-function generateSelector() {
-  finalSelector.value = type.value
-  if (edition.value === 'bedrock' && type.value === '@n') {
-    type.value = '@s'
-  }
+const finalSelector = computed(() => {
+  let finalSelector = type.value
 
   const params: string[] = []
 
@@ -295,12 +290,20 @@ function generateSelector() {
   }
 
   if (params.length > 0) {
-    finalSelector.value += '['
+    finalSelector += '['
     params.forEach((param, index) => {
-      finalSelector.value += param
-      if (index !== params.length - 1) finalSelector.value += ','
+      finalSelector += param
+      if (index !== params.length - 1) finalSelector += ','
     })
-    finalSelector.value += ']'
+    finalSelector += ']'
+  }
+
+  return finalSelector
+})
+
+function onEditionChange(edition: 'java' | 'bedrock') {
+  if (edition === 'bedrock') {
+    if (type.value === '@n') type.value = '@s'
   }
 }
 
@@ -314,8 +317,6 @@ async function copySelector() {
     copyText.value = t('targetSelector.copy')
   }, 1000)
 }
-
-generateSelector()
 </script>
 
 <template>
@@ -324,7 +325,7 @@ generateSelector()
       {{ t('targetSelector.title') }}
     </template>
 
-    <CdxTabs v-model:active="edition" @update:active="generateSelector">
+    <CdxTabs v-model:active="edition" @update:active="onEditionChange">
       <CdxTab name="java" :label="t('targetSelector.java')" />
       <CdxTab name="bedrock" :label="t('targetSelector.bedrock')" />
     </CdxTabs>
@@ -333,16 +334,12 @@ generateSelector()
     <div class="flex flex-row flex-wrap gap-x-6 items-baseline">
       <CdxField style="margin-top: 16px">
         <template #label>{{ t('targetSelector.type') }}</template>
-        <CdxSelect
-          v-model:selected="type"
-          :menu-items="getTargetTypes()"
-          @update:selected="generateSelector"
-        />
+        <CdxSelect v-model:selected="type" :menu-items="getTargetTypes()" />
       </CdxField>
 
       <CdxField>
         <template #label>{{ t('targetSelector.limit') }}</template>
-        <CdxTextInput v-model="limit" input-type="number" min="1" @input="generateSelector" />
+        <CdxTextInput v-model="limit" input-type="number" min="1" />
       </CdxField>
 
       <CdxField v-if="edition === 'java'">
@@ -356,7 +353,6 @@ generateSelector()
             { label: t('targetSelector.sort.random'), value: 'random' },
             { label: t('targetSelector.sort.arbitrary'), value: 'arbitrary' },
           ]"
-          @update:selected="generateSelector"
         />
       </CdxField>
     </div>
@@ -367,26 +363,11 @@ generateSelector()
         <template #label>{{ t('targetSelector.pos') }}</template>
         <div class="flex flex-row gap-2">
           <p>{{ t('targetSelector.pos.x') }}</p>
-          <CdxTextInput
-            v-model="posX"
-            class="min-w-24"
-            input-type="number"
-            @input="generateSelector"
-          />
+          <CdxTextInput v-model="posX" class="min-w-24" input-type="number" />
           <p>{{ t('targetSelector.pos.y') }}</p>
-          <CdxTextInput
-            v-model="posY"
-            class="min-w-24"
-            input-type="number"
-            @input="generateSelector"
-          />
+          <CdxTextInput v-model="posY" class="min-w-24" input-type="number" />
           <p>{{ t('targetSelector.pos.z') }}</p>
-          <CdxTextInput
-            v-model="posZ"
-            class="min-w-24"
-            input-type="number"
-            @input="generateSelector"
-          />
+          <CdxTextInput v-model="posZ" class="min-w-24" input-type="number" />
         </div>
       </CdxField>
     </div>
@@ -403,7 +384,6 @@ generateSelector()
             input-type="number"
             min="0"
             :max="distance.max"
-            @input="generateSelector"
           />
           <p>{{ t('targetSelector.max') }}</p>
           <CdxTextInput
@@ -411,7 +391,6 @@ generateSelector()
             class="min-w-24"
             input-type="number"
             :min="distance.min"
-            @input="generateSelector"
           />
         </div>
       </CdxField>
@@ -420,26 +399,11 @@ generateSelector()
         <template #label>{{ t('targetSelector.volume') }}</template>
         <div class="flex flex-row gap-2">
           <p>{{ t('targetSelector.dx') }}</p>
-          <CdxTextInput
-            v-model="dx"
-            class="min-w-24"
-            input-type="number"
-            @input="generateSelector"
-          />
+          <CdxTextInput v-model="dx" class="min-w-24" input-type="number" />
           <p>{{ t('targetSelector.dy') }}</p>
-          <CdxTextInput
-            v-model="dy"
-            class="min-w-24"
-            input-type="number"
-            @input="generateSelector"
-          />
+          <CdxTextInput v-model="dy" class="min-w-24" input-type="number" />
           <p>{{ t('targetSelector.dz') }}</p>
-          <CdxTextInput
-            v-model="dz"
-            class="min-w-24"
-            input-type="number"
-            @input="generateSelector"
-          />
+          <CdxTextInput v-model="dz" class="min-w-24" input-type="number" />
         </div>
       </CdxField>
     </div>
@@ -456,7 +420,6 @@ generateSelector()
             input-type="number"
             min="-90"
             :max="xRotation.max"
-            @input="generateSelector"
           />
           <p>{{ t('targetSelector.max') }}</p>
           <CdxTextInput
@@ -465,7 +428,6 @@ generateSelector()
             input-type="number"
             :min="xRotation.min"
             max="90"
-            @input="generateSelector"
           />
         </div>
       </CdxField>
@@ -480,7 +442,6 @@ generateSelector()
             input-type="number"
             min="-180"
             :max="yRotation.max"
-            @input="generateSelector"
           />
           <p>{{ t('targetSelector.max') }}</p>
           <CdxTextInput
@@ -489,7 +450,6 @@ generateSelector()
             input-type="number"
             :min="yRotation.min"
             max="180"
-            @input="generateSelector"
           />
         </div>
       </CdxField>
@@ -499,11 +459,7 @@ generateSelector()
     <div class="flex flex-row flex-wrap gap-x-6">
       <CdxField v-if="isNotPlayer()" style="margin-top: 16px">
         <template #label>{{ t('targetSelector.entityType') }}</template>
-        <CdxSelect
-          v-model:selected="entityType"
-          :menu-items="getEntityTypes()"
-          @update:selected="generateSelector"
-        >
+        <CdxSelect v-model:selected="entityType" :menu-items="getEntityTypes()">
           <template #menu-item="{ menuItem }: { menuItem: MenuItemData }">
             <div class="flex items-center">
               <img
@@ -518,39 +474,23 @@ generateSelector()
             </div>
           </template>
         </CdxSelect>
-        <CdxCheckbox
-          v-model:model-value="entityTypeNegated"
-          class="mt-2"
-          @update:model-value="generateSelector"
-        >
+        <CdxCheckbox v-model="entityTypeNegated" class="mt-2">
           {{ t('targetSelector.negated') }}
         </CdxCheckbox>
       </CdxField>
 
       <CdxField style="margin-top: 16px">
         <template #label>{{ t('targetSelector.name') }}</template>
-        <CdxTextInput v-model="entityName" input-type="text" @input="generateSelector" />
-        <CdxCheckbox
-          v-model:model-value="entityNameNegated"
-          class="mt-2"
-          @update:model-value="generateSelector"
-        >
+        <CdxTextInput v-model="entityName" input-type="text" />
+        <CdxCheckbox v-model="entityNameNegated" class="mt-2">
           {{ t('targetSelector.negated') }}
         </CdxCheckbox>
       </CdxField>
 
       <CdxField v-if="edition === 'bedrock'" style="margin-top: 16px">
         <template #label><span v-html="parseWikitext(t('targetSelector.family'))" /></template>
-        <CdxSelect
-          v-model:selected="entityFamily"
-          :menu-items="getEntityFamilies()"
-          @update:selected="generateSelector"
-        />
-        <CdxCheckbox
-          v-model:model-value="entityFamilyNegated"
-          class="mt-2"
-          @update:model-value="generateSelector"
-        >
+        <CdxSelect v-model:selected="entityFamily" :menu-items="getEntityFamilies()" />
+        <CdxCheckbox v-model="entityFamilyNegated" class="mt-2">
           {{ t('targetSelector.negated') }}
         </CdxCheckbox>
       </CdxField>
@@ -560,31 +500,23 @@ generateSelector()
     <div class="flex flex-row flex-wrap gap-x-6">
       <CdxField v-if="edition === 'java'" style="margin-top: 16px">
         <template #label><span v-html="parseWikitext(t('targetSelector.predicate'))" /></template>
-        <CdxTextInput v-model="predicate" input-type="text" @input="generateSelector" />
-        <CdxCheckbox
-          v-model:model-value="predicateNegated"
-          class="mt-2"
-          @update:model-value="generateSelector"
-        >
+        <CdxTextInput v-model="predicate" input-type="text" />
+        <CdxCheckbox v-model="predicateNegated" class="mt-2">
           {{ t('targetSelector.negated') }}
         </CdxCheckbox>
       </CdxField>
 
       <CdxField v-if="edition === 'java'">
         <template #label><span v-html="parseWikitext(t('targetSelector.nbt'))" /></template>
-        <CdxTextInput v-model="nbt" input-type="text" @input="generateSelector" />
-        <CdxCheckbox
-          v-model:model-value="nbtNegated"
-          class="mt-2"
-          @update:model-value="generateSelector"
-        >
+        <CdxTextInput v-model="nbt" input-type="text" />
+        <CdxCheckbox v-model="nbtNegated" class="mt-2">
           {{ t('targetSelector.negated') }}
         </CdxCheckbox>
       </CdxField>
 
       <CdxField v-if="edition === 'bedrock'" style="margin-top: 16px">
         <template #label>{{ t('targetSelector.hasitem') }}</template>
-        <CdxTextInput v-model="hasitem" input-type="text" @input="generateSelector" />
+        <CdxTextInput v-model="hasitem" input-type="text" />
       </CdxField>
     </div>
 
@@ -592,29 +524,21 @@ generateSelector()
     <div class="flex flex-row flex-wrap gap-x-6">
       <CdxField style="margin-top: 16px">
         <template #label>{{ t('targetSelector.scores') }}</template>
-        <CdxTextInput v-model="scores" input-type="text" @input="generateSelector" />
+        <CdxTextInput v-model="scores" input-type="text" />
       </CdxField>
 
       <CdxField style="max-width: min-content">
         <template #label>{{ t('targetSelector.tag') }}</template>
-        <CdxTextInput v-model="tag" input-type="text" @input="generateSelector" />
-        <CdxCheckbox
-          v-model:model-value="tagNegated"
-          class="mt-2"
-          @update:model-value="generateSelector"
-        >
+        <CdxTextInput v-model="tag" input-type="text" />
+        <CdxCheckbox v-model="tagNegated" class="mt-2">
           {{ t('targetSelector.negated') }}
         </CdxCheckbox>
       </CdxField>
 
       <CdxField v-if="edition === 'java'">
         <template #label>{{ t('targetSelector.team') }}</template>
-        <CdxTextInput v-model="team" input-type="text" @input="generateSelector" />
-        <CdxCheckbox
-          v-model:model-value="teamNegated"
-          class="mt-2"
-          @update:model-value="generateSelector"
-        >
+        <CdxTextInput v-model="team" input-type="text" />
+        <CdxCheckbox v-model="teamNegated" class="mt-2">
           {{ t('targetSelector.negated') }}
         </CdxCheckbox>
       </CdxField>
@@ -632,26 +556,15 @@ generateSelector()
             input-type="number"
             min="0"
             :max="level.max"
-            @input="generateSelector"
           />
           <p>{{ t('targetSelector.max') }}</p>
-          <CdxTextInput
-            v-model="level.max"
-            class="min-w-24"
-            input-type="number"
-            :min="level.min"
-            @input="generateSelector"
-          />
+          <CdxTextInput v-model="level.max" class="min-w-24" input-type="number" :min="level.min" />
         </div>
       </CdxField>
 
       <CdxField>
         <template #label>{{ t('targetSelector.gamemode') }}</template>
-        <CdxSelect
-          v-model:selected="gameMode"
-          :menu-items="getGameModes()"
-          @update:selected="generateSelector"
-        >
+        <CdxSelect v-model:selected="gameMode" :menu-items="getGameModes()">
           <template #menu-item="{ menuItem }: { menuItem: MenuItemData }">
             <div class="flex items-center">
               <img
@@ -666,23 +579,19 @@ generateSelector()
             </div>
           </template>
         </CdxSelect>
-        <CdxCheckbox
-          v-model:model-value="gameModeNegated"
-          class="mt-2"
-          @update:model-value="generateSelector"
-        >
+        <CdxCheckbox v-model="gameModeNegated" class="mt-2">
           {{ t('targetSelector.negated') }}
         </CdxCheckbox>
       </CdxField>
 
       <CdxField v-if="edition === 'java'">
         <template #label>{{ t('targetSelector.advancements') }}</template>
-        <CdxTextInput v-model="advancements" input-type="text" @input="generateSelector" />
+        <CdxTextInput v-model="advancements" input-type="text" />
       </CdxField>
 
       <CdxField v-if="edition === 'bedrock'">
         <template #label>{{ t('targetSelector.haspermission') }}</template>
-        <CdxTextInput v-model="haspermission" input-type="text" @input="generateSelector" />
+        <CdxTextInput v-model="haspermission" input-type="text" />
       </CdxField>
     </div>
 
