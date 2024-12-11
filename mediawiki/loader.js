@@ -47,7 +47,7 @@ mw.hook('wikipage.content').add(() => {
     iframe.style.display = 'block'
     iframe.style.width = '100%'
     iframe.style.colorScheme = 'auto'
-    if (type === 'blockDistribution') {
+    if (type === 'blockDistribution' || type === 'interactiveMap') {
       iframe.style.maxWidth = '640px'
     }
 

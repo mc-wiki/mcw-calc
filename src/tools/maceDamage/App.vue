@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import CalcField from '@/components/CalcField.vue'
 import { parseWikitext } from '@/utils/i18n'
-import { CdxCheckbox, CdxMessage, CdxTextInput } from '@wikimedia/codex'
+import { CdxCheckbox, CdxField, CdxMessage, CdxTextInput } from '@wikimedia/codex'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -71,13 +71,13 @@ function validateDensity(value: number) {
         gap: '1rem',
       }"
     >
-      <div>
+      <div class="flex flex-col gap-1">
         <div
           :style="{
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
-            gap: '.5rem',
+            gap: '1rem',
           }"
         >
           <label for="fall-height-input">{{ t('maceDamage.fallHeight') }}</label>

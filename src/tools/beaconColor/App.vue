@@ -64,10 +64,11 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
       {{ t('beaconColor.title') }}
     </template>
 
-    <CdxTabs v-model:active="edition">
+    <CdxTabs v-model:active="edition" class="mb-2">
       <CdxTab name="java" :label="t('beaconColor.java')" />
       <CdxTab name="bedrock" :label="t('beaconColor.bedrock')" />
     </CdxTabs>
+
     <div
       :style="{
         display: 'flex',

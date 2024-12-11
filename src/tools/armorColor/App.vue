@@ -102,7 +102,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
       {{ t('armorColor.title', { type: t(`armorColor.type.${props.type}`) }) }}
     </template>
 
-    <CdxTabs v-model:active="edition">
+    <CdxTabs v-model:active="edition" class="mb-2">
       <CdxTab name="java" :label="t('armorColor.java')" />
       <CdxTab name="bedrock" :label="t('armorColor.bedrock')" />
     </CdxTabs>
