@@ -6,7 +6,7 @@
   "beaconColor.calculate": "計算",
   "beaconColor.sequence": "配列：",
   "beaconColor.dE": "ΔE",
-  "beaconColor.dE.help": "ΔEは、完成品と指定の色の差異の程度を示す値です。この値が小さいほど近い色に染色できます。1.0以下であれば、肉眼では違いが分からない程度であるといえます。",
+  "beaconColor.dE.help": "ΔEは、指定の色との差異の程度を示す値です。この値が小さいほど近い色に染色できます。1.0以下であれば、肉眼では違いが分からない程度であるといえます。",
   "beaconColor.glass.white": "白色の色付きガラス",
   "beaconColor.glass.lightGray": "薄灰色の色付きガラス",
   "beaconColor.glass.gray": "灰色の色付きガラス",
