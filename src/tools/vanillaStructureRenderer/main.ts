@@ -52,6 +52,12 @@ const i18n = createMcwI18n(
         structure,
         marks: [],
         ...params,
+        orthographicDefault: params.orthographic,
+        animatedTextureDefault: params.animatedTexture,
+        showInvisibleBlocksDefault: params.showInvisibleBlocks,
+        displayMarksDefault: params.displayMarks,
+        backgroundColorDefault: params.backgroundColor,
+        backgroundAlphaDefault: params.backgroundAlpha,
       })
       .use(i18n)
       .mount(targetEl)
