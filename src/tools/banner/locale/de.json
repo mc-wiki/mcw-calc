@@ -21,7 +21,7 @@
   "banner.copyShareUrl": "Teilbaren Link kopieren",
   "banner.copyJavaCommand": "Java-Befehl kopieren",
   "banner.copyBedrockCommand": "Bedrock-Befehl kopieren",
-  "banner.bedrockCommandHelpButton": "Bedrock ?",
+  "banner.bedrockCommandHelpButton": "Bedrock?",
   "banner.bedrockCommandHelpTooltip": "Die Bedrock Edition unterstützt nicht das Hinzufügen von Mustern zu Bannern über Befehle.",
   "banner.color.white": "Weiß",
   "banner.color.lightGray": "Hellgrau",
