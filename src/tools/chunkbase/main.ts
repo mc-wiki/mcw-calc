@@ -26,7 +26,7 @@ const i18n = createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }))
         .default(crypto.getRandomValues(new BigInt64Array(1))[0]),
       showBiomes: sz.boolean().default(true),
       terrain: sz.boolean().default(true),
-      platform: sz.string().default('java_1_21'),
+      platform: sz.string().default('java_1_21_4'),
       pois: sz.string().nullable().default(null),
       biomeHeight: sz.string().default('depth0'),
       zoom: sz.number().default(0),

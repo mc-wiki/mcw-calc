@@ -33,6 +33,10 @@ interface ChunkbaseEmbedParams {
    * Platform can be `java` or `bedrock`, version can be `1_XX`, and type can be `lb` (large biomes).
    */
   platform:
+    | 'java_1_21_4_lb'
+    | 'java_1_21_4'
+    | 'java_1_21_2_lb'
+    | 'java_1_21_2'
     | 'java_1_21_lb'
     | 'java_1_21'
     | 'java_1_20_lb'
@@ -65,6 +69,7 @@ interface ChunkbaseEmbedParams {
     | 'java_1_8'
     | 'java_1_7_lb'
     | 'java_1_7'
+    | 'bedrock_1_21_50'
     | 'bedrock_1_21'
     | 'bedrock_1_20_60'
     | 'bedrock_1_20'
@@ -173,7 +178,7 @@ function getSearchParams() {
   const normalizedParams: Record<string, string> = {}
   for (const [key, value] of Object.entries(params.value)) {
     if (key === 'platform' && params.value.multiplatform === true) {
-      normalizedParams[key] = edition.value === 'java' ? 'java_1_21' : 'bedrock_1_21'
+      normalizedParams[key] = edition.value === 'java' ? 'java_1_21_4' : 'bedrock_1_21_50'
     } else if (key === 'seed') {
       normalizedParams[key] = seed.value.toString()
     } else if (typeof value === 'string') {
