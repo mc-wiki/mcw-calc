@@ -195,25 +195,21 @@ export interface Block {
   color: string
 }
 
-function getBlockCount(posProvider: string) {
-  return Number.parseInt(posProvider.match(/count=(.*?),/)![1]) * 16 * 16
-}
-
 export const overworldBlockMap = generateBlockMap(
   overworldData.block,
-  getBlockCount(overworldData.posProvider),
+  overworldData.chunkCount * 256,
   -64,
   255,
 )
 export const netherBlockMap = generateBlockMap(
   netherData.block,
-  getBlockCount(netherData.posProvider),
+  netherData.chunkCount * 256,
   0,
   130,
 )
 export const endBlockMap = generateBlockMap(
   endData.block,
-  getBlockCount(endData.posProvider),
+  endData.chunkCount * 256,
   0,
   255,
 )
