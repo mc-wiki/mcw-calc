@@ -1,6 +1,7 @@
 {
   "type": "module",
   "private": true,
+  "packageManager": "pnpm@9.15.0+sha512.76e2379760a4328ec4415815bcd6628dee727af3779aaa4c914e3944156c4299921a89f976381ee107d41f12cfa4b66681ca9c718f0668fa0831ed4c6d8ba56c",
   "scripts": {
     "tsx": "tsx",
     "dev": "vite",
@@ -22,7 +23,6 @@
   "dependencies": {
     "@floating-ui/vue": "^1.1.5",
     "@intlify/unplugin-vue-i18n": "^6.0.1",
-    "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tiptap/core": "^2.10.3",
     "@tiptap/extension-bold": "^2.10.3",
     "@tiptap/extension-color": "^2.10.3",
@@ -51,7 +51,7 @@
     "vue": "^3.5.13",
     "vue-i18n": "^10.0.5",
     "zlibt2": "^0.6.1",
-    "zod": "^3.23.8"
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^3.11.2",
@@ -87,7 +87,7 @@
     "prettier": "^3.4.2",
     "rollup-plugin-visualizer": "^5.12.0",
     "serve": "^14.2.4",
-    "tailwindcss": "^3.4.16",
+    "tailwindcss": "^3.4.17",
     "tsx": "^4.19.2",
     "types-mediawiki": "^1.9.0",
     "typescript": "^5.7.2",

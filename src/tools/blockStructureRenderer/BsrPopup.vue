@@ -28,7 +28,12 @@ onClickOutside(popup, () => {
 </script>
 
 <template>
-  <CdxButton ref="button" v-tooltip="props.name" @click="popupOpen = !popupOpen">
+  <CdxButton
+    ref="button"
+    v-tooltip="props.name"
+    :aria-label="props.name"
+    @click="popupOpen = !popupOpen"
+  >
     <CdxIcon :icon="props.icon" :icon-label="props.name" />
   </CdxButton>
   <div
