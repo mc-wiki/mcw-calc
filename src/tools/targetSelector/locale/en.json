@@ -13,6 +13,7 @@
   "targetSelector.type.a": "All players",
   "targetSelector.type.n": "Nearest entity",
   "targetSelector.type.e": "All entities",
+  "targetSelector.type.initiator": "Button initiator",
   "targetSelector.limit": "Maximum number of targets",
   "targetSelector.sort": "Sorting",
   "targetSelector.sort.default": "Default",
@@ -47,7 +48,9 @@
   "targetSelector.gamemode.adventure": "Adventure",
   "targetSelector.gamemode.spectator": "Spectator",
   "targetSelector.advancements": "Advancements",
-  "targetSelector.haspermission": "Permissions",
+  "targetSelector.haspermission": "Filter permissions",
+  "targetSelector.filterCamera": "Require camera permission",
+  "targetSelector.filterMovement": "Require movement permission",
   "targetSelector.selector": "Target selector",
   "targetSelector.copy": "Copy",
   "targetSelector.copied": "Copied!"

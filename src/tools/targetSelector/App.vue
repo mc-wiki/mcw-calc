@@ -61,7 +61,10 @@ const level = ref<RangeParam>({ jeName: 'level', beMinName: 'lm', beMaxName: 'l'
 const gameMode = ref('')
 const gameModeNegated = ref<boolean>(false)
 const advancements = ref('')
-const haspermission = ref('')
+const filterCamera = ref<boolean>(false)
+const negateCamera = ref<boolean>(false)
+const filterMovement = ref<boolean>(false)
+const negateMovement = ref<boolean>(false)
 
 const isPlayer = () => {
   return (
@@ -83,11 +86,12 @@ function getTargetTypes() {
     { label: t('targetSelector.type.a'), value: '@a' },
     { label: t('targetSelector.type.n'), value: '@n' },
     { label: t('targetSelector.type.e'), value: '@e' },
+    { label: t('targetSelector.type.initiator'), value: '@initiator' },
   ]
   if (edition.value === 'bedrock') {
     return items.filter((item) => item.value !== '@n')
   }
-  return items
+  return items.filter((item) => item.value !== '@initiator')
 }
 
 function getEntityTypes() {
@@ -284,8 +288,16 @@ const finalSelector = computed(() => {
       params.push(`advancements=${advancements.value}`)
     }
 
-    if (edition.value === 'bedrock' && haspermission.value) {
-      params.push(`haspermission=${haspermission.value}`)
+    if (edition.value === 'bedrock') {
+      const cameraStatus = negateCamera.value ? "disabled" : "enabled"
+      const movementStatus = negateMovement.value ? "disabled" : "enabled"
+      if (filterCamera.value && filterMovement.value) {
+        params.push(`haspermission={camera=${cameraStatus},movement=${movementStatus}`)
+      } else if (filterCamera.value) {
+        params.push(`haspermission={camera=${cameraStatus}`)
+      } else if (filterMovement.value) {
+        params.push(`haspermission={movement=${movementStatus}`)
+      }
     }
   }
 
@@ -591,7 +603,22 @@ async function copySelector() {
 
       <CdxField v-if="edition === 'bedrock'">
         <template #label>{{ t('targetSelector.haspermission') }}</template>
-        <CdxTextInput v-model="haspermission" input-type="text" />
+        <div>
+          <CdxCheckbox v-model="filterCamera" class="mt-2" :inline="true">
+            {{ t('targetSelector.filterCamera') }}
+          </CdxCheckbox>
+          <CdxCheckbox v-model="negateCamera" class="mt-2" :inline="true" :disabled = "!filterCamera">
+            {{ t('targetSelector.negated') }}
+          </CdxCheckbox>
+        </div>
+        <div>
+          <CdxCheckbox v-model="filterMovement" class="mt-2" :inline="true">
+            {{ t('targetSelector.filterMovement') }}
+          </CdxCheckbox>
+          <CdxCheckbox v-model="negateMovement" class="mt-2" :inline="true" :disabled = "!filterMovement">
+            {{ t('targetSelector.negated') }}
+          </CdxCheckbox>
+        </div>
       </CdxField>
     </div>
 
