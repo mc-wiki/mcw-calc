@@ -31,6 +31,7 @@
   "targetSelector.predicate": "[[Prädikate]]",
   "targetSelector.nbt": "[[NBT]]-Daten",
   "targetSelector.hasitem": "Getragene Gegenstände",
+  "targetSelector.tag": "Aliasdaten",
   "targetSelector.team": "Teamname",
   "targetSelector.level": "Erfahrungslevel",
   "targetSelector.gamemode": "Spielmodus",
