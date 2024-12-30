@@ -343,8 +343,8 @@ async function copySelector() {
     </CdxTabs>
 
     <!-- Base selection -->
-    <div class="flex flex-row flex-wrap gap-x-6 items-baseline">
-      <CdxField style="margin-top: 16px">
+    <div class="flex flex-row flex-wrap gap-x-6 items-baseline mt-4">
+      <CdxField>
         <template #label>{{ t('targetSelector.type') }}</template>
         <CdxSelect v-model:selected="type" :menu-items="getTargetTypes()" />
       </CdxField>
@@ -370,8 +370,8 @@ async function copySelector() {
     </div>
 
     <!-- Position -->
-    <div class="flex flex-row flex-wrap gap-x-12">
-      <CdxField style="margin-top: 16px">
+    <div class="flex flex-row flex-wrap gap-x-12 mt-4">
+      <CdxField>
         <template #label>{{ t('targetSelector.pos') }}</template>
         <div class="flex flex-row gap-2">
           <p>{{ t('targetSelector.pos.x') }}</p>
@@ -385,8 +385,8 @@ async function copySelector() {
     </div>
 
     <!-- Distance -->
-    <div class="flex flex-row flex-wrap gap-x-12">
-      <CdxField style="margin-top: 16px">
+    <div class="flex flex-row flex-wrap gap-x-12 mt-4">
+      <CdxField>
         <template #label>{{ t('targetSelector.distance') }}</template>
         <div class="flex flex-row gap-2">
           <p>{{ t('targetSelector.min') }}</p>
@@ -421,8 +421,8 @@ async function copySelector() {
     </div>
 
     <!-- Rotation -->
-    <div class="flex flex-row flex-wrap gap-x-12">
-      <CdxField style="margin-top: 16px">
+    <div class="flex flex-row flex-wrap gap-x-12 mt-4">
+      <CdxField>
         <template #label>{{ t('targetSelector.x_rotation') }}</template>
         <div class="flex flex-row gap-2">
           <p>{{ t('targetSelector.min') }}</p>
@@ -468,8 +468,8 @@ async function copySelector() {
     </div>
 
     <!-- Entity info -->
-    <div class="flex flex-row flex-wrap gap-x-6">
-      <CdxField v-if="isNotPlayer()" style="margin-top: 16px">
+    <div class="flex flex-row flex-wrap gap-x-6 mt-4">
+      <CdxField v-if="isNotPlayer()">
         <template #label>{{ t('targetSelector.entityType') }}</template>
         <CdxSelect v-model:selected="entityType" :menu-items="getEntityTypes()">
           <template #menu-item="{ menuItem }: { menuItem: MenuItemData }">
@@ -491,7 +491,7 @@ async function copySelector() {
         </CdxCheckbox>
       </CdxField>
 
-      <CdxField style="margin-top: 16px">
+      <CdxField>
         <template #label>{{ t('targetSelector.name') }}</template>
         <CdxTextInput v-model="entityName" input-type="text" />
         <CdxCheckbox v-model="entityNameNegated" class="mt-2">
@@ -499,7 +499,7 @@ async function copySelector() {
         </CdxCheckbox>
       </CdxField>
 
-      <CdxField v-if="edition === 'bedrock'" style="margin-top: 16px">
+      <CdxField v-if="edition === 'bedrock'">
         <template #label><span v-html="parseWikitext(t('targetSelector.family'))" /></template>
         <CdxSelect v-model:selected="entityFamily" :menu-items="getEntityFamilies()" />
         <CdxCheckbox v-model="entityFamilyNegated" class="mt-2">
@@ -509,8 +509,8 @@ async function copySelector() {
     </div>
 
     <!-- Entity data -->
-    <div class="flex flex-row flex-wrap gap-x-6">
-      <CdxField v-if="edition === 'java'" style="margin-top: 16px">
+    <div class="flex flex-row flex-wrap gap-x-6 mt-4">
+      <CdxField v-if="edition === 'java'">
         <template #label><span v-html="parseWikitext(t('targetSelector.predicate'))" /></template>
         <CdxTextInput v-model="predicate" input-type="text" />
         <CdxCheckbox v-model="predicateNegated" class="mt-2">
@@ -526,15 +526,15 @@ async function copySelector() {
         </CdxCheckbox>
       </CdxField>
 
-      <CdxField v-if="edition === 'bedrock'" style="margin-top: 16px">
+      <CdxField v-if="edition === 'bedrock'">
         <template #label>{{ t('targetSelector.hasitem') }}</template>
         <CdxTextInput v-model="hasitem" input-type="text" />
       </CdxField>
     </div>
 
     <!-- Scoreboard-related -->
-    <div class="flex flex-row flex-wrap gap-x-6">
-      <CdxField style="margin-top: 16px">
+    <div class="flex flex-row flex-wrap gap-x-6 mt-4">
+      <CdxField>
         <template #label>{{ t('targetSelector.scores') }}</template>
         <CdxTextInput v-model="scores" input-type="text" />
       </CdxField>
@@ -557,8 +557,8 @@ async function copySelector() {
     </div>
 
     <!-- Player-specific -->
-    <div v-if="isPlayer()" class="flex flex-row flex-wrap gap-x-6">
-      <CdxField style="margin-top: 16px">
+    <div v-if="isPlayer()" class="flex flex-row flex-wrap gap-x-6 mt-4">
+      <CdxField>
         <template #label>{{ t('targetSelector.level') }}</template>
         <div class="flex flex-row gap-4">
           <p>{{ t('targetSelector.min') }}</p>
