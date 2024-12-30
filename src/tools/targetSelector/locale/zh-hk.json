@@ -1,0 +1,6 @@
+{
+  "targetSelector.java": "Java版",
+  "targetSelector.bedrock": "基岩版",
+  "targetSelector.copy": "複製",
+  "targetSelector.copied": "已複製！"
+}

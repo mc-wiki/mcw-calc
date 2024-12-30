@@ -1,0 +1,6 @@
+{
+  "targetSelector.java": "Java Edition",
+  "targetSelector.bedrock": "Bedrock Edition",
+  "targetSelector.copy": "コピー",
+  "targetSelector.copied": "コピー完了！"
+}

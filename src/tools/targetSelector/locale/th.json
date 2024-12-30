@@ -1,0 +1,6 @@
+{
+  "targetSelector.java": "รุ่น Java",
+  "targetSelector.bedrock": "รุ่น Bedrock",
+  "targetSelector.copy": "คัดลอก",
+  "targetSelector.copied": "คัดลอกแล้ว!"
+}
