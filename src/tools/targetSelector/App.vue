@@ -289,14 +289,14 @@ const finalSelector = computed(() => {
     }
 
     if (edition.value === 'bedrock') {
-      const cameraStatus = negateCamera.value ? "disabled" : "enabled"
-      const movementStatus = negateMovement.value ? "disabled" : "enabled"
+      const cameraStatus = negateCamera.value ? 'disabled' : 'enabled'
+      const movementStatus = negateMovement.value ? 'disabled' : 'enabled'
       if (filterCamera.value && filterMovement.value) {
-        params.push(`haspermission={camera=${cameraStatus},movement=${movementStatus}`)
+        params.push(`haspermission={camera=${cameraStatus},movement=${movementStatus}}`)
       } else if (filterCamera.value) {
-        params.push(`haspermission={camera=${cameraStatus}`)
+        params.push(`haspermission={camera=${cameraStatus}}`)
       } else if (filterMovement.value) {
-        params.push(`haspermission={movement=${movementStatus}`)
+        params.push(`haspermission={movement=${movementStatus}}`)
       }
     }
   }
@@ -607,7 +607,7 @@ async function copySelector() {
           <CdxCheckbox v-model="filterCamera" class="mt-2" :inline="true">
             {{ t('targetSelector.filterCamera') }}
           </CdxCheckbox>
-          <CdxCheckbox v-model="negateCamera" class="mt-2" :inline="true" :disabled = "!filterCamera">
+          <CdxCheckbox v-model="negateCamera" class="mt-2" :inline="true" :disabled="!filterCamera">
             {{ t('targetSelector.negated') }}
           </CdxCheckbox>
         </div>
@@ -615,7 +615,12 @@ async function copySelector() {
           <CdxCheckbox v-model="filterMovement" class="mt-2" :inline="true">
             {{ t('targetSelector.filterMovement') }}
           </CdxCheckbox>
-          <CdxCheckbox v-model="negateMovement" class="mt-2" :inline="true" :disabled = "!filterMovement">
+          <CdxCheckbox
+            v-model="negateMovement"
+            class="mt-2"
+            :inline="true"
+            :disabled="!filterMovement"
+          >
             {{ t('targetSelector.negated') }}
           </CdxCheckbox>
         </div>
@@ -626,7 +631,7 @@ async function copySelector() {
       <template #label>{{ t('targetSelector.selector') }}</template>
       <div class="grid grid-cols-[1fr_auto] gap-x-6">
         <CdxTextInput v-model="finalSelector" input-type="text" :disabled="true" />
-        <CdxButton v-if="finalSelector !== ''" @click="copySelector()">
+        <CdxButton @click="copySelector()">
           {{ copyText }}
         </CdxButton>
       </div>
