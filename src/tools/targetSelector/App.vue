@@ -29,7 +29,7 @@ interface RangeParam {
 
 const edition = ref<'java' | 'bedrock'>('java')
 
-const type = ref<'@s' | '@p' | '@r' | '@a' | '@n' | '@e'>('@s')
+const type = ref<'@s' | '@p' | '@r' | '@a' | '@n' | '@e' | '@initiator'>('@s')
 const limit = ref()
 const sort = ref('')
 const posX = ref()
@@ -68,7 +68,7 @@ const negateMovement = ref<boolean>(false)
 
 const isPlayer = () => {
   return (
-    ['@p', '@r', '@a'].includes(type.value) ||
+    ['@p', '@r', '@a', '@initiator'].includes(type.value) ||
     !entityType.value ||
     entityType.value === 'minecraft:player'
   )
@@ -316,6 +316,8 @@ const finalSelector = computed(() => {
 function onEditionChange(edition: 'java' | 'bedrock') {
   if (edition === 'bedrock') {
     if (type.value === '@n') type.value = '@s'
+  } else {
+    if (type.value === '@initiator') type.value = '@s'
   }
 }
 
