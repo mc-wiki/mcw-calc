@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import CalcField from '@/components/CalcField.vue'
 import { entityFamilies } from '@/tools/targetSelector/data/entity_families.ts'
-import { entityTypes } from '@/tools/targetSelector/data/entity_types.ts'
+import { javaEntityTypes } from '@/tools/targetSelector/data/entity_types_java.ts'
+import { bedrockEntityTypes } from '@/tools/targetSelector/data/entity_types_bedrock.ts'
 import { permissions } from '@/tools/targetSelector/data/permissions.ts'
 import { parseWikitext } from '@/utils/i18n'
 import { copyToClipboard } from '@/utils/iframe.ts'
@@ -10,6 +11,7 @@ import {
   CdxButton,
   CdxCheckbox,
   CdxField,
+  CdxLookup,
   CdxMultiselectLookup,
   CdxSelect,
   CdxTab,
@@ -48,6 +50,9 @@ const dz = ref()
 const xRotation = ref<RangeParam>({ jeName: 'x_rotation', beMinName: 'rxm', beMaxName: 'rx' })
 const yRotation = ref<RangeParam>({ jeName: 'y_rotation', beMinName: 'rym', beMaxName: 'ry' })
 const entityType = ref('')
+const entityTypeChips = ref<ChipInputItem[]>([])
+const entityTypeItems = ref<MenuItemData[]>(getEntityTypes())
+const entityTypeInputValue = ref('')
 const entityTypeNegated = ref<boolean>(false)
 const entityName = ref('')
 const entityNameNegated = ref<boolean>(false)
@@ -100,6 +105,7 @@ function getTargetTypes() {
 }
 
 function getEntityTypes() {
+  const entityTypes = edition.value === 'java' ? javaEntityTypes : bedrockEntityTypes
   const items = [
     {
       label: t('targetSelector.none'),
@@ -109,7 +115,7 @@ function getEntityTypes() {
   ]
   Object.entries(entityTypes).map(([name, image]) =>
     items.push({
-      label: name,
+      label: name, // t("entity." + name),
       value: `minecraft:${name}`,
       thumbnail: {
         url: wikiImg(image),
@@ -235,9 +241,10 @@ const finalSelector = computed(() => {
     addRangeParam(yRotation.value, params)
   }
 
-  if (isNotPlayer() && entityType.value) {
+  if (isNotPlayer() && (entityType.value || entityTypeInputValue.value)) {
     const comparison = entityTypeNegated.value ? '=!' : '='
-    params.push(`type${comparison}${entityType.value}`)
+    const value = entityType.value ?? entityTypeInputValue.value
+    params.push(`type${comparison}${value}`)
   }
 
   if (entityName.value) {
@@ -322,6 +329,11 @@ function onEditionChange(edition: 'java' | 'bedrock') {
     if (type.value === '@n') type.value = '@s'
   } else {
     if (type.value === '@initiator') type.value = '@s'
+  }
+
+  entityTypeItems.value = getEntityTypes()
+  if (!entityTypeItems.value.map(element => element.value).includes(entityType.value)) {
+    entityType.value = ""
   }
 }
 
@@ -477,7 +489,17 @@ async function copySelector() {
     <div class="flex flex-row flex-wrap gap-x-6 mt-4">
       <CdxField v-if="isNotPlayer()">
         <template #label>{{ t('targetSelector.entityType') }}</template>
-        <CdxSelect v-model:selected="entityType" :menu-items="getEntityTypes()">
+        <CdxLookup 
+		      v-model:input-chips="entityTypeChips"
+		      v-model:selected="entityType"
+		      v-model:input-value="entityTypeInputValue"
+		      :menu-items="entityTypeItems"
+          :menu-config="{ visibleItemLimit: 5 }"
+          @input="
+            (value:string) =>
+              entityTypeItems = getEntityTypes().filter( ( item ) => t(item.label).includes( value ) || item.value.includes( value ))
+            ">
+
           <template #menu-item="{ menuItem }: { menuItem: MenuItemData }">
             <div class="flex items-center">
               <img
@@ -491,7 +513,7 @@ async function copySelector() {
               <span>{{ menuItem.label }}</span>
             </div>
           </template>
-        </CdxSelect>
+        </CdxLookup>
         <CdxCheckbox v-model="entityTypeNegated" class="mt-2">
           {{ t('targetSelector.negated') }}
         </CdxCheckbox>
