@@ -115,7 +115,7 @@ function getEntityTypes() {
   ]
   Object.entries(entityTypes).map(([name, image]) =>
     items.push({
-      label: name, // t("entity." + name),
+      label: t("global.entity." + name),
       value: `minecraft:${name}`,
       thumbnail: {
         url: wikiImg(image),

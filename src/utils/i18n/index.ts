@@ -14,6 +14,7 @@ const FALLBACK_CHAIN = new Map(
 )
 
 export function createMcwI18n(files: Record<string, { default: Record<string, string> }>) {
+  const globalFiles: Record<string, { default: Record<string, string> }> = import.meta.glob('@/globalLocale/*.json', { eager: true })
   const locale =
     new URLSearchParams(window.location.hash.substring(2)).get('locale') ??
     window.navigator.language.split('-')[0]
@@ -27,12 +28,23 @@ export function createMcwI18n(files: Record<string, { default: Record<string, st
     ]),
   )
 
-  return createI18n({
+  const sharedMessages: Record<string, Record<string, string>> = Object.fromEntries(
+    Object.entries(globalFiles).map(([path, value]) => [
+      path.match(/([a-z-]+)\.json/)![1],
+      value.default,
+    ]),
+  )
+
+  const finali18n =  createI18n({
     legacy: false,
     locale,
     fallbackLocale: fallback,
     messages,
+    sharedMessages
   })
+
+  // console.log(finali18n.global.locale)
+  return finali18n
 }
 
 export function parseWikitext(wikitext: string) {
