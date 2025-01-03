@@ -49,8 +49,6 @@
   "targetSelector.gamemode.spectator": "旁观模式",
   "targetSelector.advancements": "进度",
   "targetSelector.haspermission": "权限",
-  "targetSelector.filterCamera": "相机视角权限",
-  "targetSelector.filterMovement": "移动权限",
   "targetSelector.selector": "目标选择器",
   "targetSelector.copy": "复制",
   "targetSelector.copied": "已复制！"

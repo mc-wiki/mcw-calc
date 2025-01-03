@@ -49,8 +49,6 @@
   "targetSelector.gamemode.spectator": "Спостерігач",
   "targetSelector.advancements": "Досягнення",
   "targetSelector.haspermission": "Дозволи фільтрів",
-  "targetSelector.filterCamera": "Вимагати дозволу на камеру",
-  "targetSelector.filterMovement": "Вимагати дозволу на пересування",
   "targetSelector.selector": "Селектор цілей",
   "targetSelector.copy": "Скопіювати",
   "targetSelector.copied": "Скопійовано!"

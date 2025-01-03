@@ -49,8 +49,6 @@
   "targetSelector.gamemode.spectator": "スペクテイター",
   "targetSelector.advancements": "進捗",
   "targetSelector.haspermission": "権限フィルター",
-  "targetSelector.filterCamera": "カメラ権限を必須にする",
-  "targetSelector.filterMovement": "移動権限を必須にする",
   "targetSelector.selector": "ターゲットセレクター",
   "targetSelector.copy": "コピー",
   "targetSelector.copied": "コピー完了！"
