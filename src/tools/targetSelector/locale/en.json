@@ -50,6 +50,11 @@
   "targetSelector.advancements": "Advancements",
   "targetSelector.haspermission": "Permissions",
   "targetSelector.selector": "Target selector",
+  "targetSelector.group.basic": "Basic",
+  "targetSelector.group.position": "Position",
+  "targetSelector.group.entityInfo": "Entity information",
+  "targetSelector.group.scoreboard": "Scoreboard",
+  "targetSelector.group.player": "Player",
   "targetSelector.copy": "Copy",
   "targetSelector.copied": "Copied!"
 }
