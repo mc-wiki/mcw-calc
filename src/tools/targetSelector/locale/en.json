@@ -48,9 +48,7 @@
   "targetSelector.gamemode.adventure": "Adventure",
   "targetSelector.gamemode.spectator": "Spectator",
   "targetSelector.advancements": "Advancements",
-  "targetSelector.haspermission": "Filter permissions",
-  "targetSelector.filterCamera": "Require camera permission",
-  "targetSelector.filterMovement": "Require movement permission",
+  "targetSelector.haspermission": "Permissions",
   "targetSelector.selector": "Target selector",
   "targetSelector.copy": "Copy",
   "targetSelector.copied": "Copied!"

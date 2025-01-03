@@ -2,17 +2,23 @@
 import CalcField from '@/components/CalcField.vue'
 import { entityFamilies } from '@/tools/targetSelector/data/entity_families.ts'
 import { entityTypes } from '@/tools/targetSelector/data/entity_types.ts'
+import { permissions } from '@/tools/targetSelector/data/permissions.ts'
 import { parseWikitext } from '@/utils/i18n'
 import { copyToClipboard } from '@/utils/iframe.ts'
+import { wikiImg } from '@/utils/image.ts'
 import {
   CdxButton,
   CdxCheckbox,
   CdxField,
+  CdxMultiselectLookup,
   CdxSelect,
   CdxTab,
   CdxTabs,
   CdxTextInput,
+  CdxToggleSwitch,
+  type ChipInputItem,
   type MenuItemData,
+  type MenuItemValue,
 } from '@wikimedia/codex'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -61,10 +67,9 @@ const level = ref<RangeParam>({ jeName: 'level', beMinName: 'lm', beMaxName: 'l'
 const gameMode = ref('')
 const gameModeNegated = ref<boolean>(false)
 const advancements = ref('')
-const filterCamera = ref<boolean>(false)
-const negateCamera = ref<boolean>(false)
-const filterMovement = ref<boolean>(false)
-const negateMovement = ref<boolean>(false)
+const haspermissionChips = ref<ChipInputItem[]>([])
+const haspermissionItems = ref<MenuItemValue[]>([])
+const haspermission = ref<{ [key: string]: boolean }>({})
 
 const isPlayer = () => {
   return (
@@ -99,7 +104,7 @@ function getEntityTypes() {
     {
       label: t('targetSelector.none'),
       value: '',
-      thumbnail: { url: 'https://minecraft.wiki/images/BlockSprite_barrier.png?format=original' },
+      thumbnail: { url: wikiImg('BlockSprite_barrier') },
     },
   ]
   Object.entries(entityTypes).map(([name, image]) =>
@@ -107,7 +112,7 @@ function getEntityTypes() {
       label: name,
       value: `minecraft:${name}`,
       thumbnail: {
-        url: `https://minecraft.wiki/images/${image}.png?format=original`,
+        url: wikiImg(image),
       },
     }),
   )
@@ -135,27 +140,27 @@ function getGameModes() {
     {
       label: t('targetSelector.none'),
       value: '',
-      thumbnail: { url: 'https://minecraft.wiki/images/BlockSprite_barrier.png?format=original' },
+      thumbnail: { url: wikiImg('BlockSprite_barrier') },
     },
     {
       label: t('targetSelector.gamemode.survival'),
       value: 'survival',
-      thumbnail: { url: 'https://minecraft.wiki/images/EnvSprite_survival.png?format=original' },
+      thumbnail: { url: wikiImg('EnvSprite_survival') },
     },
     {
       label: t('targetSelector.gamemode.creative'),
       value: 'creative',
-      thumbnail: { url: 'https://minecraft.wiki/images/EnvSprite_creative.png?format=original' },
+      thumbnail: { url: wikiImg('EnvSprite_creative') },
     },
     {
       label: t('targetSelector.gamemode.adventure'),
       value: 'adventure',
-      thumbnail: { url: 'https://minecraft.wiki/images/EnvSprite_adventure.png?format=original' },
+      thumbnail: { url: wikiImg('EnvSprite_adventure') },
     },
     {
       label: t('targetSelector.gamemode.spectator'),
       value: 'spectator',
-      thumbnail: { url: 'https://minecraft.wiki/images/EnvSprite_spectator.png?format=original' },
+      thumbnail: { url: wikiImg('EnvSprite_spectator') },
     },
   ]
 }
@@ -288,16 +293,15 @@ const finalSelector = computed(() => {
       params.push(`advancements=${advancements.value}`)
     }
 
-    if (edition.value === 'bedrock') {
-      const cameraStatus = negateCamera.value ? 'disabled' : 'enabled'
-      const movementStatus = negateMovement.value ? 'disabled' : 'enabled'
-      if (filterCamera.value && filterMovement.value) {
-        params.push(`haspermission={camera=${cameraStatus},movement=${movementStatus}}`)
-      } else if (filterCamera.value) {
-        params.push(`haspermission={camera=${cameraStatus}}`)
-      } else if (filterMovement.value) {
-        params.push(`haspermission={movement=${movementStatus}}`)
-      }
+    if (edition.value === 'bedrock' && haspermissionItems.value.length > 0) {
+      let permStr = '{'
+      haspermissionItems.value.forEach((perm, index) => {
+        const status = haspermission.value[perm] ? 'enabled' : 'disabled'
+        permStr += `${perm}=${status}`
+        if (index !== haspermissionItems.value.length - 1) permStr += ','
+      })
+      permStr += '}'
+      params.push(`haspermission=${permStr}`)
     }
   }
 
@@ -603,28 +607,31 @@ async function copySelector() {
         <CdxTextInput v-model="advancements" input-type="text" />
       </CdxField>
 
-      <CdxField v-if="edition === 'bedrock'">
+      <CdxField v-if="edition === 'bedrock'" style="max-width: 256px">
         <template #label>{{ t('targetSelector.haspermission') }}</template>
-        <div>
-          <CdxCheckbox v-model="filterCamera" class="mt-2" :inline="true">
-            {{ t('targetSelector.filterCamera') }}
-          </CdxCheckbox>
-          <CdxCheckbox v-model="negateCamera" class="mt-2" :inline="true" :disabled="!filterCamera">
-            {{ t('targetSelector.negated') }}
-          </CdxCheckbox>
-        </div>
-        <div>
-          <CdxCheckbox v-model="filterMovement" class="mt-2" :inline="true">
-            {{ t('targetSelector.filterMovement') }}
-          </CdxCheckbox>
-          <CdxCheckbox
-            v-model="negateMovement"
-            class="mt-2"
-            :inline="true"
-            :disabled="!filterMovement"
-          >
-            {{ t('targetSelector.negated') }}
-          </CdxCheckbox>
+        <CdxMultiselectLookup
+          v-model:input-chips="haspermissionChips"
+          v-model:selected="haspermissionItems"
+          :menu-items="
+            permissions.map((perm) => {
+              return { label: perm, value: perm }
+            })
+          "
+          :menu-config="{ visibleItemLimit: 5 }"
+          @update:selected="
+            (sel: string[]) => {
+              sel.forEach((item) => {
+                if (!(item in haspermission)) {
+                  haspermission[item] = true
+                }
+              })
+            }
+          "
+        />
+        <div v-for="perm in haspermissionItems" :key="perm">
+          <CdxToggleSwitch v-model="haspermission[perm]" class="mt-2" :align-switch="true">
+            {{ perm }}
+          </CdxToggleSwitch>
         </div>
       </CdxField>
     </div>
