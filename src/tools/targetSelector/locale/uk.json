@@ -48,7 +48,7 @@
   "targetSelector.gamemode.adventure": "Пригода",
   "targetSelector.gamemode.spectator": "Спостерігач",
   "targetSelector.advancements": "Досягнення",
-  "targetSelector.haspermission": "Дозволи фільтрів",
+  "targetSelector.haspermission": "Дозволи",
   "targetSelector.selector": "Селектор цілей",
   "targetSelector.copy": "Скопіювати",
   "targetSelector.copied": "Скопійовано!"
