@@ -51,7 +51,6 @@ const xRotation = ref<RangeParam>({ jeName: 'x_rotation', beMinName: 'rxm', beMa
 const yRotation = ref<RangeParam>({ jeName: 'y_rotation', beMinName: 'rym', beMaxName: 'ry' })
 const entityType = ref('')
 const entityTypeChips = ref<ChipInputItem[]>([])
-const entityTypeItems = ref<MenuItemData[]>(getEntityTypes())
 const entityTypeInputValue = ref('')
 const entityTypeNegated = ref<boolean>(false)
 const entityName = ref('')
@@ -104,26 +103,30 @@ function getTargetTypes() {
   return items.filter((item) => item.value !== '@initiator')
 }
 
-function getEntityTypes() {
+const entityTypes = computed(() => {
   const entityTypes = edition.value === 'java' ? javaEntityTypes : bedrockEntityTypes
   const items = [
     {
       label: t('targetSelector.none'),
       value: '',
+      description: null,
       thumbnail: { url: wikiImg('BlockSprite_barrier') },
     },
-  ]
+  ] as MenuItemData[]
   Object.entries(entityTypes).map(([name, image]) =>
     items.push({
       label: t(`global.entity.${name}.${edition.value}`),
       value: `minecraft:${name}`,
+      description: name,
       thumbnail: {
         url: wikiImg(image),
       },
     }),
   )
   return items
-}
+})
+
+const entityTypeItems = ref<MenuItemData[]>(entityTypes.value)
 
 function getEntityFamilies() {
   const items = [
@@ -335,7 +338,6 @@ function onEditionChange(edition: 'java' | 'bedrock') {
     if (type.value === '@initiator') type.value = '@s'
   }
 
-  entityTypeItems.value = getEntityTypes()
   if (!entityTypeItems.value.map((element) => element.value).includes(entityType.value)) {
     entityType.value = ''
   }
@@ -512,25 +514,32 @@ async function copySelector() {
             :menu-config="{ visibleItemLimit: 5 }"
             @input="
               (value: string) =>
-                (entityTypeItems = getEntityTypes().filter(
+                (entityTypeItems = entityTypes.filter(
                   (item) =>
-                    item.label.toLowerCase().includes(value.toLowerCase()) ||
-                    item.value.includes(value.toLowerCase()),
+                    item.label?.toLowerCase().includes(value.toLowerCase()) ||
+                    (item.value as string).includes(value.toLowerCase()),
                 ))
             "
           >
             <template #menu-item="{ menuItem }: { menuItem: MenuItemData }">
-              <div class="flex items-center">
+              <span class="cdx-menu-item__content">
                 <img
-                  class="pixel-image mr-2"
+                  class="cdx-menu-item__icon pixel-image"
                   width="16"
                   height="16"
                   loading="lazy"
                   :src="menuItem.thumbnail?.url"
                   :alt="menuItem.label"
                 />
-                <span>{{ menuItem.label }}</span>
-              </div>
+                <span class="cdx-menu-item__text">
+                  <span class="cdx-menu-item__text__label">
+                    <bdi>{{ menuItem.label }}</bdi>
+                  </span>
+                  <span class="cdx-menu-item__text__description">
+                    <bdi>{{ menuItem.description }}</bdi>
+                  </span>
+                </span>
+              </span>
             </template>
           </CdxLookup>
           <CdxCheckbox v-model="entityTypeNegated" class="mt-2">
