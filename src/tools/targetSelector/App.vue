@@ -13,16 +13,13 @@ import {
   CdxCheckbox,
   CdxField,
   CdxLookup,
-  CdxMultiselectLookup,
   CdxSelect,
   CdxTab,
   CdxTabs,
   CdxTextInput,
   CdxToggleButtonGroup,
-  CdxToggleSwitch,
   type ChipInputItem,
   type MenuItemData,
-  type MenuItemValue,
 } from '@wikimedia/codex'
 import { cdxIconCheck, cdxIconClose, cdxIconHelp } from '@wikimedia/codex-icons'
 import { computed, ref } from 'vue'
@@ -366,12 +363,7 @@ async function copySelector() {
       <CdxTab name="java" :label="t('targetSelector.java')" />
       <CdxTab name="bedrock" :label="t('targetSelector.bedrock')" />
     </CdxTabs>
-
-    <CdxAccordion open>
-      <template #title>
-        {{ t('targetSelector.group.basic') }}
-      </template>
-
+    <CdxField>
       <!-- Basic selection -->
       <div class="flex flex-row flex-wrap gap-x-6 items-baseline">
         <CdxField>
@@ -398,7 +390,7 @@ async function copySelector() {
           />
         </CdxField>
       </div>
-    </CdxAccordion>
+    </CdxField>
 
     <CdxAccordion open>
       <template #title>
