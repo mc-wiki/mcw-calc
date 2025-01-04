@@ -497,7 +497,7 @@ async function copySelector() {
           :menu-config="{ visibleItemLimit: 5 }"
           @input="
             (value:string) =>
-              entityTypeItems = getEntityTypes().filter( ( item ) => t(item.label).includes( value ) || item.value.includes( value ))
+              entityTypeItems = getEntityTypes().filter( ( item ) => item.label.toLowerCase().includes( value.toLowerCase() ) || item.value.includes( value.toLowerCase() ))
             ">
 
           <template #menu-item="{ menuItem }: { menuItem: MenuItemData }">
