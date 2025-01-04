@@ -20,15 +20,15 @@ export function createMcwI18n(files: Record<string, { default: Record<string, st
   const fallback = FALLBACK_CHAIN.get(locale) ?? FALLBACK_CHAIN.get('default')!
   console.log('locale:', locale, 'fallback:', fallback)
 
-  // merge all messages
-  const messages: Record<string, Record<string, string>> = Object.fromEntries(
-    files.map((file) =>
-      Object.entries(file).map(([path, value]) => [
-        path.match(/([a-z-]+)\.json/)![1],
-        value.default,
-      ]),
-    ),
-  )
+  const messages: Record<string, Record<string, string>> = {}
+  for (const file of files) {
+    for (const [path, content] of Object.entries(file)) {
+      const localeName = path.match(/([a-z-]+)\.json/)![1]
+      messages[localeName] = Object.assign(messages[localeName] ?? {}, content.default)
+    }
+  }
+
+  console.log('messages:', messages)
 
   const finalI18n = createI18n({
     legacy: false,
