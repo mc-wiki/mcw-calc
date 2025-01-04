@@ -13,7 +13,7 @@ const FALLBACK_CHAIN = new Map(
   }),
 )
 
-export function createMcwI18n(files: Record<string, { default: Record<string, string> }>) {
+export function createMcwI18n(files: Record<string, { default: Record<string, string> }>, useGlobal: boolean = false) {
   const globalFiles: Record<string, { default: Record<string, string> }> = import.meta.glob(
     '@/globalLocale/*.json',
     { eager: true },
@@ -39,9 +39,11 @@ export function createMcwI18n(files: Record<string, { default: Record<string, st
     ]),
   )
 
-  for (const [key, value] of Object.entries(messages)) {
-    if (globalMessages[key]) {
-      Object.assign(value, globalMessages[key])
+  if (useGlobal) {
+    for (const [key, value] of Object.entries(messages)) {
+      if (globalMessages[key]) {
+        Object.assign(value, globalMessages[key])
+      }
     }
   }
 
