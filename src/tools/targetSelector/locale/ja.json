@@ -49,9 +49,12 @@
   "targetSelector.gamemode.spectator": "スペクテイター",
   "targetSelector.advancements": "進捗",
   "targetSelector.haspermission": "権限フィルター",
-  "targetSelector.filterCamera": "カメラ権限を必須にする",
-  "targetSelector.filterMovement": "移動権限を必須にする",
   "targetSelector.selector": "ターゲットセレクター",
+  "targetSelector.group.basic": "基本",
+  "targetSelector.group.position": "位置",
+  "targetSelector.group.entityInfo": "エンティティ情報",
+  "targetSelector.group.scoreboard": "スコアボード",
+  "targetSelector.group.player": "プレイヤー",
   "targetSelector.copy": "コピー",
   "targetSelector.copied": "コピー完了！"
 }

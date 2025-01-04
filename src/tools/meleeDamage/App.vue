@@ -2,6 +2,7 @@
 import CalcField from '@/components/CalcField.vue'
 import { parseWikitext } from '@/utils/i18n'
 import {
+  CdxAccordion,
   CdxButton,
   CdxCheckbox,
   CdxField,
@@ -414,7 +415,7 @@ function selectOutput() {
 
 <template>
   <CalcField>
-    <template #heading>
+    <template #title>
       {{ t('meleeDamage.title') }}
     </template>
 
@@ -423,18 +424,9 @@ function selectOutput() {
       <CdxTab name="bedrock" :label="t('meleeDamage.bedrock')" />
     </CdxTabs>
 
-    <CdxCheckbox
-      id="can-obtain-in-survival-checkbox"
-      v-model="canObtainInSurvival"
-      class="mt-2"
-      @update:model-value="sanitizeCanObtainInSurvival"
-    >
-      {{ t('meleeDamage.canObtainInSurvival') }}
-    </CdxCheckbox>
-
-    <CalcField>
+    <CdxAccordion open>
       <!-- Attacker state panel -->
-      <template #heading>
+      <template #title>
         {{ t('meleeDamage.attacker.title') }}
       </template>
 
@@ -588,11 +580,11 @@ function selectOutput() {
           <span class="text-xs font-mono">{{ `${Math.round(cooldownProgress * 100)}%` }}</span>
         </div>
       </div>
-    </CalcField>
+    </CdxAccordion>
 
-    <CalcField>
+    <CdxAccordion open>
       <!-- Tool state panel -->
-      <template #heading>
+      <template #title>
         {{ t('meleeDamage.tool.title') }}
       </template>
       <div class="flex flex-col gap-2">
@@ -840,10 +832,10 @@ function selectOutput() {
           </CdxField>
         </div>
       </div>
-    </CalcField>
-    <CalcField>
+    </CdxAccordion>
+    <CdxAccordion open>
       <!-- Victim state panel -->
-      <template #heading>
+      <template #title>
         {{ t('meleeDamage.victim.title') }}
       </template>
 
@@ -871,16 +863,24 @@ function selectOutput() {
           }
         "
       />
-    </CalcField>
+    </CdxAccordion>
 
-    <div class="mt-2 font-bold">
-      <I18nT keypath="meleeDamage.finalDamage">
+    <div class="mt-2 flex items-center justify-between">
+      <I18nT tag="span" keypath="meleeDamage.finalDamage" class="font-bold">
         <template #damage>
           <output id="output" class="text-lg font-mono" @click="selectOutput">{{
             totalAttackDamage.toFixed(2)
           }}</output>
         </template>
       </I18nT>
+
+      <CdxCheckbox
+        id="can-obtain-in-survival-checkbox"
+        v-model="canObtainInSurvival"
+        @update:model-value="sanitizeCanObtainInSurvival"
+      >
+        {{ t('meleeDamage.canObtainInSurvival') }}
+      </CdxCheckbox>
     </div>
   </CalcField>
 </template>

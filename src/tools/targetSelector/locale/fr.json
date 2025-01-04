@@ -49,8 +49,6 @@
   "targetSelector.gamemode.spectator": "Spectateur",
   "targetSelector.advancements": "Progrès",
   "targetSelector.haspermission": "Filtrer les permissions",
-  "targetSelector.filterCamera": "Nécessité d'une autorisation de la caméra",
-  "targetSelector.filterMovement": "Nécessité d'une autorisation de mouvement",
   "targetSelector.selector": "Sélecteur de cible",
   "targetSelector.copy": "Copier",
   "targetSelector.copied": "Copié !"
