@@ -33,7 +33,7 @@ import {
   cdxIconStrikethrough,
   cdxIconUnderline,
 } from '@wikimedia/codex-icons'
-import { computed, ref, useTemplateRef } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ColorClass } from './color-class'
 import { TextClass } from './text-class'

@@ -61,9 +61,9 @@ export class ModelReferenceGroup implements ModelReferenceProvider {
     positionRelativeSeed = positionRelativeSeed >> 16
 
     // Java LCG algorithm
-    const seedParsed = (positionRelativeSeed ^ 0x5DEECE66D) & 0xFFFFFFFFFFFF
-    const first = (seedParsed * 25214903917 + 11) & 0xFFFFFFFFFFFF
-    const second = (first * 25214903917 + 11) & 0xFFFFFFFFFFFF
+    const seedParsed = (positionRelativeSeed ^ 0x5deece66d) & 0xffffffffffff
+    const first = (seedParsed * 25214903917 + 11) & 0xffffffffffff
+    const second = (first * 25214903917 + 11) & 0xffffffffffff
     const random = Math.abs(((first >> 16) << 16) + (second >> 16)) % this.totalWeight
 
     let acc = 0

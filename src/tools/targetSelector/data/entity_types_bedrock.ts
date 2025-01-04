@@ -119,5 +119,5 @@ export const bedrockEntityTypes = {
   zombie_horse: 'EntitySprite_zombie-horse',
   zombie_pigman: 'EntitySprite_zombie-pigman',
   zombie_villager: 'EntitySprite_zombie-villager',
-  zombie_villager_v2: 'EntitySprite_zombie-villager'
+  zombie_villager_v2: 'EntitySprite_zombie-villager',
 }

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import CalcField from '@/components/CalcField.vue'
 import { entityFamilies } from '@/tools/targetSelector/data/entity_families.ts'
-import { javaEntityTypes } from '@/tools/targetSelector/data/entity_types_java.ts'
 import { bedrockEntityTypes } from '@/tools/targetSelector/data/entity_types_bedrock.ts'
+import { javaEntityTypes } from '@/tools/targetSelector/data/entity_types_java.ts'
 import { permissions } from '@/tools/targetSelector/data/permissions.ts'
 import { parseWikitext } from '@/utils/i18n'
 import { copyToClipboard } from '@/utils/iframe.ts'
@@ -336,8 +336,8 @@ function onEditionChange(edition: 'java' | 'bedrock') {
   }
 
   entityTypeItems.value = getEntityTypes()
-  if (!entityTypeItems.value.map(element => element.value).includes(entityType.value)) {
-    entityType.value = ""
+  if (!entityTypeItems.value.map((element) => element.value).includes(entityType.value)) {
+    entityType.value = ''
   }
 }
 
@@ -504,17 +504,21 @@ async function copySelector() {
       <div class="flex flex-row flex-wrap gap-x-6">
         <CdxField v-if="isNotPlayer()">
           <template #label>{{ t('targetSelector.entityType') }}</template>
-          <CdxLookup 
-		      v-model:input-chips="entityTypeChips"
-		      v-model:selected="entityType"
-		      v-model:input-value="entityTypeInputValue"
-		      :menu-items="entityTypeItems"
-          :menu-config="{ visibleItemLimit: 5 }"
-          @input="
-            (value:string) =>
-              entityTypeItems = getEntityTypes().filter( ( item ) => item.label.toLowerCase().includes( value.toLowerCase() ) || item.value.includes( value.toLowerCase() ))
-            ">
-
+          <CdxLookup
+            v-model:input-chips="entityTypeChips"
+            v-model:selected="entityType"
+            v-model:input-value="entityTypeInputValue"
+            :menu-items="entityTypeItems"
+            :menu-config="{ visibleItemLimit: 5 }"
+            @input="
+              (value: string) =>
+                (entityTypeItems = getEntityTypes().filter(
+                  (item) =>
+                    item.label.toLowerCase().includes(value.toLowerCase()) ||
+                    item.value.includes(value.toLowerCase()),
+                ))
+            "
+          >
             <template #menu-item="{ menuItem }: { menuItem: MenuItemData }">
               <div class="flex items-center">
                 <img

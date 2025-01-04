@@ -41,7 +41,7 @@ describe('createMcwI18n', () => {
       'en.json': { default: { greeting: 'Hello' } },
       'fr.json': { default: { greeting: 'Bonjour' } },
     }
-    const i18n = createMcwI18n(files).global
+    const i18n = createMcwI18n([files]).global
     expect(i18n).toBeDefined()
     expect(i18n.locale.value).toBe('en')
     expect(i18n.fallbackLocale.value).toStrictEqual(['en'])
@@ -57,7 +57,7 @@ describe('createMcwI18n', () => {
       'fr.json': { default: { greeting: 'Bonjour' } },
     }
     vi.stubGlobal('location', { hash: '#?locale=fr' })
-    const i18n = createMcwI18n(files).global
+    const i18n = createMcwI18n([files]).global
     expect(i18n.locale.value).toBe('fr')
     expect(i18n.fallbackLocale.value).toStrictEqual(['en'])
     vi.unstubAllGlobals()
@@ -69,7 +69,7 @@ describe('createMcwI18n', () => {
       'fr.json': { default: { greeting: 'Bonjour' } },
     }
     vi.stubGlobal('location', { hash: '#?locale=es' })
-    const i18n = createMcwI18n(files).global
+    const i18n = createMcwI18n([files]).global
     expect(i18n.locale.value).toBe('es')
     expect(i18n.fallbackLocale.value).toStrictEqual(['en'])
     expect(i18n.t('greeting')).toBe('Hello')
@@ -83,7 +83,7 @@ describe('createMcwI18n', () => {
     }
     vi.stubGlobal('location', { hash: '' })
     vi.stubGlobal('navigator', { language: 'fr-FR' })
-    const i18n = createMcwI18n(files).global
+    const i18n = createMcwI18n([files]).global
     expect(i18n.locale.value).toBe('fr')
     expect(i18n.fallbackLocale.value).toStrictEqual(['en'])
     vi.unstubAllGlobals()
@@ -95,7 +95,7 @@ describe('createMcwI18n', () => {
       'fr.json': { default: { greeting: 'Bonjour' } },
     }
     vi.stubGlobal('location', { hash: '' })
-    const i18n = createMcwI18n(files).global
+    const i18n = createMcwI18n([files]).global
     expect(i18n.locale.value).toBe('en')
     expect(i18n.fallbackLocale.value).toStrictEqual(['en'])
     vi.unstubAllGlobals()
@@ -109,7 +109,7 @@ describe('createMcwI18n', () => {
       'zh-hk.json': { default: { audio: '音頻' } },
     }
     vi.stubGlobal('location', { hash: '#?locale=zh-hk' })
-    const i18n = createMcwI18n(files).global
+    const i18n = createMcwI18n([files]).global
     expect(i18n.locale.value).toBe('zh-hk')
     expect(i18n.fallbackLocale.value).toStrictEqual(['zh-tw', 'zh-cn', 'en'])
     expect(i18n.t('audio')).toBe('音頻')

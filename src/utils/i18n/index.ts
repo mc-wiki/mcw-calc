@@ -13,39 +13,22 @@ const FALLBACK_CHAIN = new Map(
   }),
 )
 
-export function createMcwI18n(files: Record<string, { default: Record<string, string> }>, useGlobal: boolean = false) {
-  const globalFiles: Record<string, { default: Record<string, string> }> = import.meta.glob(
-    '@/globalLocale/*.json',
-    { eager: true },
-  )
-
+export function createMcwI18n(files: Record<string, { default: Record<string, string> }>[]) {
   const locale =
     new URLSearchParams(window.location.hash.substring(2)).get('locale') ??
     window.navigator.language.split('-')[0]
   const fallback = FALLBACK_CHAIN.get(locale) ?? FALLBACK_CHAIN.get('default')!
   console.log('locale:', locale, 'fallback:', fallback)
 
-  const globalMessages: Record<string, Record<string, string>> = Object.fromEntries(
-    Object.entries(globalFiles).map(([path, value]) => [
-      path.match(/([a-z-]+)\.json/)![1],
-      value.default,
-    ]),
-  )
-
+  // merge all messages
   const messages: Record<string, Record<string, string>> = Object.fromEntries(
-    Object.entries(files).map(([path, value]) => [
-      path.match(/([a-z-]+)\.json/)![1],
-      value.default,
-    ]),
+    files.map((file) =>
+      Object.entries(file).map(([path, value]) => [
+        path.match(/([a-z-]+)\.json/)![1],
+        value.default,
+      ]),
+    ),
   )
-
-  if (useGlobal) {
-    for (const [key, value] of Object.entries(messages)) {
-      if (globalMessages[key]) {
-        Object.assign(value, globalMessages[key])
-      }
-    }
-  }
 
   const finalI18n = createI18n({
     legacy: false,
