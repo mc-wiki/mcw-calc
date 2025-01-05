@@ -13,26 +13,31 @@ const FALLBACK_CHAIN = new Map(
   }),
 )
 
-export function createMcwI18n(files: Record<string, { default: Record<string, string> }>) {
+export function createMcwI18n(files: Record<string, { default: Record<string, string> }>[]) {
   const locale =
     new URLSearchParams(window.location.hash.substring(2)).get('locale') ??
     window.navigator.language.split('-')[0]
   const fallback = FALLBACK_CHAIN.get(locale) ?? FALLBACK_CHAIN.get('default')!
   console.log('locale:', locale, 'fallback:', fallback)
 
-  const messages: Record<string, Record<string, string>> = Object.fromEntries(
-    Object.entries(files).map(([path, value]) => [
-      path.match(/([a-z-]+)\.json/)![1],
-      value.default,
-    ]),
-  )
+  const messages: Record<string, Record<string, string>> = {}
+  for (const file of files) {
+    for (const [path, content] of Object.entries(file)) {
+      const localeName = path.match(/([a-z-]+)\.json/)![1]
+      messages[localeName] = Object.assign(messages[localeName] ?? {}, content.default)
+    }
+  }
 
-  return createI18n({
+  console.log('messages:', messages)
+
+  const finalI18n = createI18n({
     legacy: false,
     locale,
     fallbackLocale: fallback,
     messages,
   })
+
+  return finalI18n
 }
 
 export function parseWikitext(wikitext: string) {

@@ -33,3 +33,6 @@ coverage
 
 # vite #13267
 vite.config.*.timestamp-*
+
+# bin / tests
+bin/*

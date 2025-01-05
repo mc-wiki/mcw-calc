@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import CalcField from '@/components/CalcField.vue'
 import { parseWikitext } from '@/utils/i18n'
-import { CdxCheckbox, CdxField, CdxMessage, CdxTextInput } from '@wikimedia/codex'
+import { CdxCheckbox, CdxMessage, CdxTextInput } from '@wikimedia/codex'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 

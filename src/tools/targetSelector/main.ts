@@ -6,5 +6,8 @@ import '@/init'
 
 const targetEl = document.querySelector('#app')!
 
-const i18n = createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }))
+const i18n = createMcwI18n([
+  import.meta.glob('./locale/*.json', { eager: true }),
+  import.meta.glob('@/globalLocale/entity/*.json', { eager: true }),
+])
 vue.createApp(App).use(i18n).use(plugin).mount(targetEl)

@@ -23,7 +23,7 @@ describe('app.vue', () => {
 
   it('should compute correctly', async () => {
     const { container } = render(App, {
-      global: { plugins: [createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }))] },
+      global: { plugins: [createMcwI18n([import.meta.glob('./locale/*.json', { eager: true })])] },
     })
 
     const gt = container.querySelector('#gt input')!
@@ -59,7 +59,7 @@ describe('app.vue', () => {
 
   it('should compute correctly with setters', async () => {
     const { container } = render(App, {
-      global: { plugins: [createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }))] },
+      global: { plugins: [createMcwI18n([import.meta.glob('./locale/*.json', { eager: true })])] },
     })
 
     const gt = container.querySelector('#gt input')!
@@ -85,7 +85,7 @@ describe('app.vue', () => {
 
   it('should compute correctly with setters when it overflows', async () => {
     const { container } = render(App, {
-      global: { plugins: [createMcwI18n(import.meta.glob('./locale/*.json', { eager: true }))] },
+      global: { plugins: [createMcwI18n([import.meta.glob('./locale/*.json', { eager: true })])] },
     })
 
     const gt = container.querySelector('#gt input')!

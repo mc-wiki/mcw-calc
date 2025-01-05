@@ -207,12 +207,7 @@ export const netherBlockMap = generateBlockMap(
   0,
   130,
 )
-export const endBlockMap = generateBlockMap(
-  endData.block,
-  endData.chunkCount * 256,
-  0,
-  255,
-)
+export const endBlockMap = generateBlockMap(endData.block, endData.chunkCount * 256, 0, 255)
 
 function generateBlockMap(
   data: Record<string, number[]>,

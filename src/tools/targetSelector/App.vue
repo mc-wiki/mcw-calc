@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import CalcField from '@/components/CalcField.vue'
 import { entityFamilies } from '@/tools/targetSelector/data/entity_families.ts'
-import { entityTypes } from '@/tools/targetSelector/data/entity_types.ts'
+import { bedrockEntityTypes } from '@/tools/targetSelector/data/entity_types_bedrock.ts'
+import { javaEntityTypes } from '@/tools/targetSelector/data/entity_types_java.ts'
 import { permissions } from '@/tools/targetSelector/data/permissions.ts'
 import { parseWikitext } from '@/utils/i18n'
 import { copyToClipboard } from '@/utils/iframe.ts'
@@ -11,11 +12,13 @@ import {
   CdxButton,
   CdxCheckbox,
   CdxField,
+  CdxLookup,
   CdxSelect,
   CdxTab,
   CdxTabs,
   CdxTextInput,
   CdxToggleButtonGroup,
+  type ChipInputItem,
   type MenuItemData,
 } from '@wikimedia/codex'
 import { cdxIconCheck, cdxIconClose, cdxIconHelp } from '@wikimedia/codex-icons'
@@ -47,6 +50,8 @@ const dz = ref()
 const xRotation = ref<RangeParam>({ jeName: 'x_rotation', beMinName: 'rxm', beMaxName: 'rx' })
 const yRotation = ref<RangeParam>({ jeName: 'y_rotation', beMinName: 'rym', beMaxName: 'ry' })
 const entityType = ref('')
+const entityTypeChips = ref<ChipInputItem[]>([])
+const entityTypeInputValue = ref('')
 const entityTypeNegated = ref<boolean>(false)
 const entityName = ref('')
 const entityNameNegated = ref<boolean>(false)
@@ -98,25 +103,30 @@ function getTargetTypes() {
   return items.filter((item) => item.value !== '@initiator')
 }
 
-function getEntityTypes() {
+const entityTypes = computed(() => {
+  const entityTypes = edition.value === 'java' ? javaEntityTypes : bedrockEntityTypes
   const items = [
     {
       label: t('targetSelector.none'),
       value: '',
+      description: null,
       thumbnail: { url: wikiImg('BlockSprite_barrier') },
     },
-  ]
+  ] as MenuItemData[]
   Object.entries(entityTypes).map(([name, image]) =>
     items.push({
-      label: name,
+      label: t(`global.entity.${name}.${edition.value}`),
       value: `minecraft:${name}`,
+      description: name,
       thumbnail: {
         url: wikiImg(image),
       },
     }),
   )
   return items
-}
+})
+
+const entityTypeItems = ref<MenuItemData[]>(entityTypes.value)
 
 function getEntityFamilies() {
   const items = [
@@ -234,9 +244,10 @@ const finalSelector = computed(() => {
     addRangeParam(yRotation.value, params)
   }
 
-  if (isNotPlayer() && entityType.value) {
+  if (isNotPlayer() && (entityType.value || entityTypeInputValue.value !== '')) {
     const comparison = entityTypeNegated.value ? '=!' : '='
-    params.push(`type${comparison}${entityType.value}`)
+    const value = entityType.value ?? entityTypeInputValue.value
+    params.push(`type${comparison}${value}`)
   }
 
   if (entityName.value) {
@@ -326,6 +337,13 @@ function onEditionChange(edition: 'java' | 'bedrock') {
   } else {
     if (type.value === '@initiator') type.value = '@s'
   }
+
+  if (
+    entityType.value === '' ||
+    !entityTypes.value.some((item) => item.value === entityType.value)
+  ) {
+    entityType.value = ''
+  }
 }
 
 const copyText = ref(t('targetSelector.copy'))
@@ -350,12 +368,7 @@ async function copySelector() {
       <CdxTab name="java" :label="t('targetSelector.java')" />
       <CdxTab name="bedrock" :label="t('targetSelector.bedrock')" />
     </CdxTabs>
-
-    <CdxAccordion open>
-      <template #title>
-        {{ t('targetSelector.group.basic') }}
-      </template>
-
+    <CdxField>
       <!-- Basic selection -->
       <div class="flex flex-row flex-wrap gap-x-6 items-baseline">
         <CdxField>
@@ -382,7 +395,7 @@ async function copySelector() {
           />
         </CdxField>
       </div>
-    </CdxAccordion>
+    </CdxField>
 
     <CdxAccordion open>
       <template #title>
@@ -496,21 +509,45 @@ async function copySelector() {
       <div class="flex flex-row flex-wrap gap-x-6">
         <CdxField v-if="isNotPlayer()">
           <template #label>{{ t('targetSelector.entityType') }}</template>
-          <CdxSelect v-model:selected="entityType" :menu-items="getEntityTypes()">
+          <CdxLookup
+            v-model:input-chips="entityTypeChips"
+            v-model:selected="entityType"
+            v-model:input-value="entityTypeInputValue"
+            :menu-items="entityTypeItems"
+            :menu-config="{ visibleItemLimit: 5 }"
+            @update:selected="
+              (value: string) => (entityTypeInputValue = value === '' ? '' : entityTypeInputValue)
+            "
+            @input="
+              (value: string) =>
+                (entityTypeItems = entityTypes.filter(
+                  (item) =>
+                    item.label?.toLowerCase().includes(value.toLowerCase()) ||
+                    (item.value as string).includes(value.toLowerCase()),
+                ))
+            "
+          >
             <template #menu-item="{ menuItem }: { menuItem: MenuItemData }">
-              <div class="flex items-center">
+              <span class="cdx-menu-item__content">
                 <img
-                  class="pixel-image mr-2"
+                  class="cdx-menu-item__icon pixel-image"
                   width="16"
                   height="16"
                   loading="lazy"
                   :src="menuItem.thumbnail?.url"
                   :alt="menuItem.label"
                 />
-                <span>{{ menuItem.label }}</span>
-              </div>
+                <span class="cdx-menu-item__text">
+                  <span class="cdx-menu-item__text__label">
+                    <bdi>{{ menuItem.label }}</bdi>
+                  </span>
+                  <span class="cdx-menu-item__text__description">
+                    <bdi>{{ menuItem.description }}</bdi>
+                  </span>
+                </span>
+              </span>
             </template>
-          </CdxSelect>
+          </CdxLookup>
           <CdxCheckbox v-model="entityTypeNegated" class="mt-2">
             {{ t('targetSelector.negated') }}
           </CdxCheckbox>

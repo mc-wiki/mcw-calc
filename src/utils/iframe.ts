@@ -13,8 +13,7 @@ export function parentUrl(): URL {
 export function isEmbedded() {
   try {
     return window.self !== window.top
-    // eslint-disable-next-line unused-imports/no-unused-vars
-  } catch (_e) {
+  } catch {
     return true
   }
 }

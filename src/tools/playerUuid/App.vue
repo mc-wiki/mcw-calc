@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import CalcField from '@/components/CalcField.vue'
 import { parseWikitext } from '@/utils/i18n'
-import { copyToClipboard, isEmbedded, postMessageParent } from '@/utils/iframe'
+import { copyToClipboard } from '@/utils/iframe'
 import { CdxButton, CdxField, CdxTextInput } from '@wikimedia/codex'
 import SparkMD5 from 'spark-md5'
 import { ref } from 'vue'
