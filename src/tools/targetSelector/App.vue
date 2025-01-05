@@ -244,7 +244,7 @@ const finalSelector = computed(() => {
     addRangeParam(yRotation.value, params)
   }
 
-  if (isNotPlayer() && (entityType.value || entityTypeInputValue.value)) {
+  if (isNotPlayer() && (entityType.value || entityTypeInputValue.value !== '')) {
     const comparison = entityTypeNegated.value ? '=!' : '='
     const value = entityType.value ?? entityTypeInputValue.value
     params.push(`type${comparison}${value}`)
@@ -338,7 +338,10 @@ function onEditionChange(edition: 'java' | 'bedrock') {
     if (type.value === '@initiator') type.value = '@s'
   }
 
-  if (!entityTypeItems.value.map((element) => element.value).includes(entityType.value)) {
+  if (
+    entityType.value === '' ||
+    !entityTypes.value.some((item) => item.value === entityType.value)
+  ) {
     entityType.value = ''
   }
 }
@@ -512,6 +515,9 @@ async function copySelector() {
             v-model:input-value="entityTypeInputValue"
             :menu-items="entityTypeItems"
             :menu-config="{ visibleItemLimit: 5 }"
+            @update:selected="
+              (value: string) => (entityTypeInputValue = value === '' ? '' : entityTypeInputValue)
+            "
             @input="
               (value: string) =>
                 (entityTypeItems = entityTypes.filter(
