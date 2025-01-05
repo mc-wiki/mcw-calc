@@ -48,8 +48,13 @@
   "targetSelector.gamemode.adventure": "Aventure",
   "targetSelector.gamemode.spectator": "Spectateur",
   "targetSelector.advancements": "Progrès",
-  "targetSelector.haspermission": "Filtrer les permissions",
+  "targetSelector.haspermission": "Permissions",
   "targetSelector.selector": "Sélecteur de cible",
+  "targetSelector.group.basic": "Base",
+  "targetSelector.group.position": "Position",
+  "targetSelector.group.entityInfo": "Information de l'entité",
+  "targetSelector.group.scoreboard": "Tableau de score",
+  "targetSelector.group.player": "Joueur",
   "targetSelector.copy": "Copier",
   "targetSelector.copied": "Copié !"
 }
