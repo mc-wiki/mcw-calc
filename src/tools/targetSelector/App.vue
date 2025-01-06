@@ -624,12 +624,12 @@ async function copySelector() {
       </div>
     </CdxAccordion>
 
-    <CdxAccordion open>
+    <CdxAccordion v-if="isPlayer()" open>
       <template #title>
         {{ t('targetSelector.group.player') }}
       </template>
       <!-- Player-specific -->
-      <div v-if="isPlayer()" class="flex flex-row flex-wrap gap-x-6">
+      <div class="flex flex-row flex-wrap gap-x-6">
         <CdxField>
           <template #label>{{ t('targetSelector.level') }}</template>
           <div class="flex flex-row gap-4">
