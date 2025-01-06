@@ -30,7 +30,7 @@ const targetEl = document.querySelector('#app')!
     .object({
       datapage: sz.string().default('Module:Maps/Minecraft_Dungeons_Mainland.json'),
       disableMarkerTitleLink: sz.boolean().default(false),
-      zoom: sz.number(),
+      zoom: sz.number().default(-3),
     })
     .safeParse(await getParams())
 
@@ -52,7 +52,6 @@ const targetEl = document.querySelector('#app')!
     smoothWheelZoom: true, // enable smooth zoom
     smoothSensitivity: 3, // zoom speed. default is 1
     minZoom: -5,
-    zoom: params.zoom,
   })
 
   L.imageOverlay(mapData.mapImage, mapData.mapBounds, {
@@ -99,4 +98,5 @@ const targetEl = document.querySelector('#app')!
   }
 
   map.fitBounds(mapData.mapBounds)
+  map.setZoom(params.zoom)
 })()
