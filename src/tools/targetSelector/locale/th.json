@@ -48,7 +48,13 @@
   "targetSelector.gamemode.adventure": "ผจญภัย",
   "targetSelector.gamemode.spectator": "ผู้ชม",
   "targetSelector.advancements": "ความก้าวหน้า",
+  "targetSelector.haspermission": "สิทธิ์",
   "targetSelector.selector": "ตัวเลือกเป้าหมาย",
+  "targetSelector.group.basic": "พื้นฐาน",
+  "targetSelector.group.position": "ตำแหน่ง",
+  "targetSelector.group.entityInfo": "ข้อมูลเอนทิตี้",
+  "targetSelector.group.scoreboard": "กระดานคะแนน",
+  "targetSelector.group.player": "ผู้เล่น",
   "targetSelector.copy": "คัดลอก",
   "targetSelector.copied": "คัดลอกแล้ว!"
 }
