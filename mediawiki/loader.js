@@ -23,7 +23,12 @@ mw.hook('wikipage.content').add(() => {
     }
 
     // eslint-disable-next-line no-undef
-    const url = `/tools/${type}/#?id=${id}&locale=${mw.config.get('wgPageContentLanguage')}&url=${encodeURIComponent(window.location.href)}`
+    let local = mw.config.get('wgContentLanguage')
+    if (local === 'zh') {
+      // eslint-disable-next-line no-undef
+      local = mw.config.get('wgUserVariant') || new URL(window.location.href).searchParams.get('variant') || mw.user.options.get('variant')
+    }
+    const url = `/tools/${type}/#?id=${id}&locale=${local}&url=${encodeURIComponent(window.location.href)}`
 
     if (localStorage.getItem('mcwCalcLocal') === 'true') {
       console.log('You are in development environment and tools are loaded from localhost.')
