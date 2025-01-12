@@ -8,7 +8,7 @@
   "tick.minute": "Minuto(s)",
   "tick.hour": "Hora(s)",
   "tick.day": "Dia(s)",
-  "tick.runningAt": "a uma taxa de",
+  "tick.runningAt": "sendo executados a",
   "tick.tps": "TPS",
   "tick.tps.explain": "Ticks por segundo, o número de ticks de jogo executados a cada segundo",
   "tick.mspt": "MSPT",

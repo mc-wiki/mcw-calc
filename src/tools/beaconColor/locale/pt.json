@@ -1,11 +1,11 @@
 {
-  "beaconColor.title": "Calcular a sequência de vidros para cores em um feixe de sinalizador",
+  "beaconColor.title": "Calcular a sequência de vidros para cores num feixe de sinalizador",
   "beaconColor.java": "Edição Java",
   "beaconColor.bedrock": "Edição Bedrock",
   "beaconColor.color": "Cor:",
   "beaconColor.calculate": "Calcular",
   "beaconColor.sequence": "Sequência:",
-  "beaconColor.dE": "dE",
+  "beaconColor.dE": "ΔE",
   "beaconColor.dE.help": "O Delta E é uma medida de proximidade de cor. Quanto menor, melhor. Valores menores que 1,0 indicam uma diferença imperceptível aos olhos humanos.",
   "beaconColor.glass.white": "Vidro branco",
   "beaconColor.glass.lightGray": "Vidro cinza-claro",

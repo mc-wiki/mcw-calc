@@ -1,9 +1,9 @@
 {
-  "chunkbase.title": "Prévia de geração de mundo fornecida por Chunk Base",
+  "chunkbase.title": "Prévia da geração de mundo",
   "chunkbase.name": "Chunk Base",
-  "chunkbase.promo": "Para visualizar outras gerações de mundo, acesse {link}.",
+  "chunkbase.promo": "Para ver outras gerações de mundo, acesse {link}.",
   "chunkbase.java": "Edição Java",
   "chunkbase.bedrock": "Edição Bedrock",
   "chunkbase.seed": "Semente",
-  "chunkbase.submit": "Confirmar"
+  "chunkbase.submit": "Aplicar"
 }

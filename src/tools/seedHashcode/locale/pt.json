@@ -1,7 +1,7 @@
 {
-  "seedHashcode.title": "Converter um texto em uma semente real",
+  "seedHashcode.title": "Converter um texto numa semente real",
   "seedHashcode.actual": "Semente real:",
   "seedHashcode.emptyString": "Um texto em branco deveria resultar em 0, mas o Minecraft gera um número aleatório como semente.",
-  "seedHashcode.number": "Na prática, o número inserido é usado. Teoricamente, esse é o hash derivado do número.",
+  "seedHashcode.number": "O número inserido seria usado diretamente. Esse é o hash teórico derivado do número.",
   "seedHashcode.outOfRange": "O número atinge o limite de números inteiros em 64 bits. Na prática, a semente acima é usada."
 }

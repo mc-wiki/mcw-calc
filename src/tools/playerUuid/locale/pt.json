@@ -1,7 +1,7 @@
 {
   "playerUuid.title": "Converter o nome de um jogador para UUID",
   "playerUuid.name": "Nome do jogador",
-  "playerUuid.get": "UUID",
+  "playerUuid.get": "Obter UUID",
   "playerUuid.loading": "Carregando...",
   "playerUuid.uuid": "[[UUID]]",
   "playerUuid.uuidOffline": "[[UUID]] off-line",

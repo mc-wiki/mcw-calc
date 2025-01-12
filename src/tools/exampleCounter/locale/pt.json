@@ -1,4 +1,4 @@
 {
-  "exampleCounter.count": "Contagem: ",
-  "exampleCounter.increment": "Aumento"
+  "exampleCounter.count": "Contador: ",
+  "exampleCounter.increment": "Aumentar"
 }

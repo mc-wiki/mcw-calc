@@ -3,11 +3,11 @@
   "maceDamage.java": "Edição Java",
   "maceDamage.bedrock": "Edição Bedrock",
   "maceDamage.fallHeight": "Altura da queda em blocos:",
-  "maceDamage.densityLevel": "Nível do encantamento de [[Densidade]]",
+  "maceDamage.densityLevel": "Nível do encantamento de [[Densidade]]:",
   "maceDamage.critical": "Ataque crítico",
-  "maceDamage.critical.help": "Golpear uma entidade com a clava causará um ataque crítico na maioria das vezes, exceto se outras condições não forem cumpridas, como o período de recarga do ataque não estar reiniciado.",
+  "maceDamage.critical.help": "Ao golpear uma entidade com a clava, um ataque crítico ocorre na maioria das vezes, exceto se outras condições não forem atendidas, como o ataque não estar totalmente recarregado.",
   "maceDamage.cooldownReset": "Período de recarga reiniciado",
   "maceDamage.cooldownReset.help": "Desmarque esta opção se o período de recarga do ataque não estiver zerado antes do ataque.",
   "maceDamage.damage": "Dano causado:",
-  "maceDamage.densityLevelWarning": "Apenas níveis de densidade entre 0 e 5 podem ser obtidos no modo sobrevivência."
+  "maceDamage.densityLevelWarning": "Apenas níveis de Densidade entre 0 e 5 podem ser obtidos no modo Sobrevivência."
 }

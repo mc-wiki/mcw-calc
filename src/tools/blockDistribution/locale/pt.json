@@ -1,7 +1,7 @@
 {
   "blockDistribution.xAxis": "Nível Y →",
   "blockDistribution.yAxis": "↑ Número de X encontrados em 100.000 blocos",
-  "blockDistribution.xInTenThousand": "{num} em 100,000",
+  "blockDistribution.xInTenThousand": "{num} em 100.000",
   "blockDistribution.title": "Distribuição de {block} na [[Edição Java {version}]]",
   "blockDistribution.total": "Total",
   "blockDistribution.overworld": "Superfície",
