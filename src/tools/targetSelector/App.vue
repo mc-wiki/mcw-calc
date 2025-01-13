@@ -722,7 +722,7 @@ async function copySelector() {
       </div>
     </CdxAccordion>
 
-    <CdxField class="!mt-4">
+    <CdxField class="mt-4">
       <template #label>{{ t('targetSelector.selector') }}</template>
       <div class="grid grid-cols-[1fr_auto] gap-x-2">
         <CdxTextInput
