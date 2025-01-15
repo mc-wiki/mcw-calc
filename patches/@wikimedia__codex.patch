@@ -1,0 +1,21 @@
+diff --git a/dist/codex.js b/dist/codex.js
+index caca8a92d96d0c8e7e82cbc3f9c5674ee99da2ce..42a77a25b5412de11662959582e08cfb9999d67e 100644
+--- a/dist/codex.js
++++ b/dist/codex.js
+@@ -9370,11 +9370,11 @@ const _sfc_main$4 = defineComponent({
+     const currentDirection = useComputedDirection(rootElement);
+     const childTabNodes = computed(() => {
+       const slotContents = useSlotContents(slots.default);
+-      if (!slotContents.every(
+-        (node) => typeof node === "object" && isComponentVNode(node, CdxTab.name)
+-      )) {
+-        throw new Error("Slot content may only contain CdxTab components");
+-      }
++      // if (!slotContents.every(
++      //   (node) => typeof node === "object" && isComponentVNode(node, CdxTab.name)
++      // )) {
++      //   throw new Error("Slot content may only contain CdxTab components");
++      // }
+       if (slotContents.length === 0) {
+         throw new Error("Slot content cannot be empty");
+       }

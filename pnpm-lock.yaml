@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@wikimedia/codex':
+    hash: 4cplr3ae4k2xf3vrgn2vbhdvm4
+    path: patches/@wikimedia__codex.patch
+
 importers:
 
   .:
@@ -70,7 +75,7 @@ importers:
         version: 12.3.0(typescript@5.7.2)
       '@wikimedia/codex':
         specifier: ^1.17.0
-        version: 1.18.0(vue@3.5.13(typescript@5.7.2))
+        version: 1.18.0(patch_hash=4cplr3ae4k2xf3vrgn2vbhdvm4)(vue@3.5.13(typescript@5.7.2))
       '@wikimedia/codex-design-tokens':
         specifier: ^1.17.0
         version: 1.18.0
@@ -8682,7 +8687,7 @@ snapshots:
 
   '@wikimedia/codex-icons@1.18.0': {}
 
-  '@wikimedia/codex@1.18.0(vue@3.5.13(typescript@5.7.2))':
+  '@wikimedia/codex@1.18.0(patch_hash=4cplr3ae4k2xf3vrgn2vbhdvm4)(vue@3.5.13(typescript@5.7.2))':
     dependencies:
       '@floating-ui/vue': 1.0.6(vue@3.5.13(typescript@5.7.2))
       '@wikimedia/codex-icons': 1.18.0

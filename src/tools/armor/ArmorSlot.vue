@@ -67,11 +67,7 @@ function materials(type: 'helmet' | 'chestplate' | 'leggings' | 'boots'): MenuIt
 }
 </script>
 <template>
-  <CdxAccordion open>
-    <template #title>
-      {{ t(`armor.${type}`) }}
-    </template>
-
+  <div class="mt-2">
     <CdxField class="mb-4">
       <template #label>
         {{ t('armor.material') }}
@@ -153,5 +149,5 @@ function materials(type: 'helmet' | 'chestplate' | 'leggings' | 'boots'): MenuIt
         </CdxField>
       </div>
     </div>
-  </CdxAccordion>
+  </div>
 </template>

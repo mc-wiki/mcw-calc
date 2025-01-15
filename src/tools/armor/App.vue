@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import CalcField from '@/components/CalcField.vue'
-import { CdxAccordion, CdxField, CdxSelect, CdxTextInput } from '@wikimedia/codex'
+import { CdxAccordion, CdxField, CdxSelect, CdxTab, CdxTabs, CdxTextInput } from '@wikimedia/codex'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ArmorSlot from './ArmorSlot.vue'
@@ -126,7 +126,7 @@ export interface Armor<M, E> {
   enchantments: { enchantment: E; level: 0 | 1 | 2 | 3 | 4 }[]
 }
 
-const sourceDamage = ref(0)
+const sourceDamage = ref(1)
 type Source = 'other' | 'fire' | 'explosion' | 'projectile' | 'fall'
 const source = ref<Source>('other')
 const breachLevel = ref(0)
@@ -226,51 +226,70 @@ function selectOutput() {
       {{ t('armor.title') }}
     </template>
 
-    <ArmorSlot v-model="helmet" type="helmet" />
-    <ArmorSlot v-model="chestplate" type="chestplate" />
-    <ArmorSlot v-model="leggings" type="leggings" />
-    <ArmorSlot v-model="boots" type="boots" />
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div>
+        <h3 class="mb-2">
+          {{ t('armor.armor') }}
+        </h3>
 
-    <CdxAccordion open>
-      <template #title>
-        {{ t('armor.source') }}
-      </template>
+        <CdxTabs>
+          <CdxTab :name="t('armor.helmet')">
+            <ArmorSlot v-model="helmet" type="helmet" />
+          </CdxTab>
+          <CdxTab :name="t('armor.chestplate')">
+            <ArmorSlot v-model="chestplate" type="chestplate" />
+          </CdxTab>
+          <CdxTab :name="t('armor.leggings')">
+            <ArmorSlot v-model="leggings" type="leggings" />
+          </CdxTab>
+          <CdxTab :name="t('armor.boots')">
+            <ArmorSlot v-model="boots" type="boots" />
+          </CdxTab>
+        </CdxTabs>
+      </div>
 
-      <CdxField>
-        <template #label>
+      <div>
+        <h3 class="mb-2">
           {{ t('armor.source') }}
-        </template>
+        </h3>
+        <CdxField>
+          <template #label>
+            {{ t('armor.sourceInput') }}
+          </template>
 
-        <CdxSelect
-          v-model:selected="source"
-          :menu-items="[
-            { label: t('armor.source.other'), value: 'other' },
-            { label: t('armor.source.fire'), value: 'fire' },
-            { label: t('armor.source.explosion'), value: 'explosion' },
-            { label: t('armor.source.projectile'), value: 'projectile' },
-            { label: t('armor.source.fall'), value: 'fall' },
-          ]"
-        />
-      </CdxField>
+          <CdxSelect
+            v-model:selected="source"
+            :menu-items="[
+              { label: t('armor.source.other'), value: 'other' },
+              { label: t('armor.source.fire'), value: 'fire' },
+              { label: t('armor.source.explosion'), value: 'explosion' },
+              { label: t('armor.source.projectile'), value: 'projectile' },
+              { label: t('armor.source.fall'), value: 'fall' },
+            ]"
+          />
+        </CdxField>
 
-      <CdxField>
-        <template #label>
-          {{ t('armor.breachLevel') }}
-        </template>
+        <CdxField>
+          <template #label>
+            {{ t('armor.breachLevel') }}
+          </template>
 
-        <CdxTextInput v-model="breachLevel" input-type="number" />
-      </CdxField>
+          <CdxTextInput v-model="breachLevel" input-type="number" />
+        </CdxField>
 
-      <CdxField>
-        <template #label>
-          {{ t('armor.sourceDamage') }}
-        </template>
+        <CdxField>
+          <template #label>
+            {{ t('armor.sourceDamage') }}
+          </template>
 
-        <CdxTextInput v-model="sourceDamage" input-type="number" />
-      </CdxField>
-    </CdxAccordion>
+          <CdxTextInput v-model="sourceDamage" input-type="number" />
+        </CdxField>
+      </div>
+    </div>
 
-    <div class="mt-2 flex items-center justify-between">
+    <hr class="mt-4 mb-2" />
+
+    <div class="flex items-center justify-between">
       <I18nT tag="span" keypath="armor.finalDamage" class="font-bold">
         <template #damage>
           <output id="output" class="text-lg font-mono" @click="selectOutput">{{

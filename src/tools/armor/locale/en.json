@@ -14,6 +14,7 @@
   "armor.enchantment.projectileProtection": "Projectile Protection",
   "armor.enchantment.level": "Level",
   "armor.source": "Damage source",
+  "armor.sourceInput": "Source",
   "armor.source.other": "Other",
   "armor.source.fire": "Fire",
   "armor.source.explosion": "Explosion",
@@ -21,5 +22,6 @@
   "armor.source.fall": "Fall",
   "armor.breachLevel": "Breach level",
   "armor.sourceDamage": "Source damage",
-  "armor.finalDamage": "Damage done: {damage}"
+  "armor.finalDamage": "Damage done: {damage}",
+  "armor.armor": "Armor"
 }
