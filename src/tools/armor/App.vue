@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import CalcField from '@/components/CalcField.vue'
-import { CdxAccordion, CdxField, CdxSelect, CdxTab, CdxTabs, CdxTextInput } from '@wikimedia/codex'
+import { CdxField, CdxSelect, CdxTab, CdxTabs, CdxTextInput } from '@wikimedia/codex'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ArmorSlot from './ArmorSlot.vue'
@@ -127,7 +127,7 @@ export interface Armor<M, E> {
 }
 
 const sourceDamage = ref(1)
-type Source = 'other' | 'fire' | 'explosion' | 'projectile' | 'fall'
+type Source = 'other' | 'fire' | 'explosion' | 'projectile' | 'fall' | 'magic'
 const source = ref<Source>('other')
 const breachLevel = ref(0)
 const helmet = ref<Armor<HelmetMaterial, ArmorEnchantment>>({
@@ -148,22 +148,26 @@ const boots = ref<Armor<ArmorMaterial, BootsEnchantment>>({
 })
 
 const finalDamage = computed(() => {
-  const armorValue =
-    armorValueMap[helmet.value.material].helmet +
-    armorValueMap[chestplate.value.material].chestplate +
-    armorValueMap[leggings.value.material].leggings +
-    armorValueMap[boots.value.material].boots
-  const armorToughness =
-    armorToughnessMap[helmet.value.material].helmet +
-    armorToughnessMap[chestplate.value.material].chestplate +
-    armorToughnessMap[leggings.value.material].leggings +
-    armorToughnessMap[boots.value.material].boots
+  let materialFactor = 1
 
-  const a = 0.2 * armorValue
-  const b = armorValue - sourceDamage.value / (2 + 0.25 * armorToughness)
-  const x = Math.min(20, Math.max(a, b)) / 25 - 0.15 * breachLevel.value
+  if (source.value !== 'fire' && source.value !== 'fall' && source.value !== 'magic') {
+    const armorValue =
+      armorValueMap[helmet.value.material].helmet +
+      armorValueMap[chestplate.value.material].chestplate +
+      armorValueMap[leggings.value.material].leggings +
+      armorValueMap[boots.value.material].boots
+    const armorToughness =
+      armorToughnessMap[helmet.value.material].helmet +
+      armorToughnessMap[chestplate.value.material].chestplate +
+      armorToughnessMap[leggings.value.material].leggings +
+      armorToughnessMap[boots.value.material].boots
 
-  const materialFactor = Math.min(1, 1 - x)
+    const a = 0.2 * armorValue
+    const b = armorValue - sourceDamage.value / (2 + 0.25 * armorToughness)
+    const x = Math.min(20, Math.max(a, b)) / 25 - 0.15 * breachLevel.value
+
+    materialFactor = Math.min(1, 1 - x)
+  }
 
   function determineEpf(level: number, enchantment: BootsEnchantment): number {
     const epfMap: Record<BootsEnchantment, [number, number, number, number, number]> = {
@@ -207,7 +211,7 @@ const finalDamage = computed(() => {
         0,
       ),
   )
-  console.log(cumulativeEpf)
+
   const epf = cumulativeEpf / 25 || 0
 
   return materialFactor * (1 - epf) * sourceDamage.value
@@ -265,6 +269,11 @@ function selectOutput() {
               { label: t('armor.source.explosion'), value: 'explosion' },
               { label: t('armor.source.projectile'), value: 'projectile' },
               { label: t('armor.source.fall'), value: 'fall' },
+              {
+                label: t('armor.source.magic'),
+                value: 'magic',
+                description: t('armor.source.magic.help'),
+              },
             ]"
           />
         </CdxField>

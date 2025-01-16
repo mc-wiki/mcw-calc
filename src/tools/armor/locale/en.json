@@ -20,6 +20,8 @@
   "armor.source.explosion": "Explosion",
   "armor.source.projectile": "Projectile",
   "armor.source.fall": "Fall",
+  "armor.source.magic": "Magic",
+  "armor.source.magic.help": "Includes damage that cannot be reduced by armor",
   "armor.breachLevel": "Breach level",
   "armor.sourceDamage": "Source damage",
   "armor.finalDamage": "Damage done: {damage}",
