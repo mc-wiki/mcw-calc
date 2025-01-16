@@ -17,7 +17,7 @@ export type ArmorMaterial =
   | 'netherite'
 export type HelmetMaterial = 'turtle' | ArmorMaterial
 
-const armorValueMap = {
+const armorPointMap = {
   empty: {
     helmet: 0,
     chestplate: 0,
@@ -113,6 +113,9 @@ const armorToughnessMap = {
   },
 }
 
+const extraArmorPoint = ref(0)
+const extraArmorToughness = ref(0)
+
 export type ArmorEnchantment =
   | 'empty'
   | 'protection'
@@ -147,52 +150,38 @@ const boots = ref<Armor<ArmorMaterial, BootsEnchantment>>({
   enchantments: [{ enchantment: 'empty', level: 1 }],
 })
 
-const finalDamage = computed(() => {
-  let materialFactor = 1
+const armorPoint = computed(
+  () =>
+    armorPointMap[helmet.value.material].helmet +
+    armorPointMap[chestplate.value.material].chestplate +
+    armorPointMap[leggings.value.material].leggings +
+    armorPointMap[boots.value.material].boots +
+    extraArmorPoint.value,
+)
 
-  if (source.value !== 'fire' && source.value !== 'fall' && source.value !== 'magic') {
-    const armorValue =
-      armorValueMap[helmet.value.material].helmet +
-      armorValueMap[chestplate.value.material].chestplate +
-      armorValueMap[leggings.value.material].leggings +
-      armorValueMap[boots.value.material].boots
-    const armorToughness =
-      armorToughnessMap[helmet.value.material].helmet +
-      armorToughnessMap[chestplate.value.material].chestplate +
-      armorToughnessMap[leggings.value.material].leggings +
-      armorToughnessMap[boots.value.material].boots
+const armorToughness = computed(
+  () =>
+    armorToughnessMap[helmet.value.material].helmet +
+    armorToughnessMap[chestplate.value.material].chestplate +
+    armorToughnessMap[leggings.value.material].leggings +
+    armorToughnessMap[boots.value.material].boots +
+    extraArmorToughness.value,
+)
 
-    const a = 0.2 * armorValue
-    const b = armorValue - sourceDamage.value / (2 + 0.25 * armorToughness)
-    const x = Math.min(20, Math.max(a, b)) / 25 - 0.15 * breachLevel.value
+const extraEpf = ref(0)
 
-    materialFactor = Math.min(1, 1 - x)
-  }
+function determineEpf(level: number, enchantment: BootsEnchantment): number {
+  if (enchantment === 'protection') return level
+  if (enchantment === 'fireProtection' && source.value === 'fire') return level * 2
+  if (enchantment === 'blastProtection' && source.value === 'explosion') return level * 2
+  if (enchantment === 'projectileProtection' && source.value === 'projectile') return level * 2
+  if (enchantment === 'featherFalling' && source.value === 'fall') return level * 3
 
-  function determineEpf(level: number, enchantment: BootsEnchantment): number {
-    const epfMap: Record<BootsEnchantment, [number, number, number, number, number]> = {
-      empty: [0, 0, 0, 0, 0],
-      protection: [0, 1, 2, 3, 4],
-      fireProtection: [0, 2, 4, 6, 8],
-      blastProtection: [0, 2, 4, 6, 8],
-      projectileProtection: [0, 2, 4, 6, 8],
-      featherFalling: [0, 3, 6, 9, 12],
-    }
+  return 0
+}
 
-    if (enchantment === 'protection') return epfMap[enchantment][level]
-    if (enchantment === 'fireProtection' && source.value === 'fire')
-      return epfMap[enchantment][level]
-    if (enchantment === 'blastProtection' && source.value === 'explosion')
-      return epfMap[enchantment][level]
-    if (enchantment === 'projectileProtection' && source.value === 'projectile')
-      return epfMap[enchantment][level]
-    if (enchantment === 'featherFalling' && source.value === 'fall')
-      return epfMap[enchantment][level]
-
-    return 0
-  }
-
-  const cumulativeEpf = Math.min(
+const cumulativeEpf = computed(() =>
+  Math.min(
     20,
     helmet.value.enchantments.reduce(
       (acc, { enchantment, level }) => acc + determineEpf(level, enchantment),
@@ -209,10 +198,23 @@ const finalDamage = computed(() => {
       boots.value.enchantments.reduce(
         (acc, { enchantment, level }) => acc + determineEpf(level, enchantment),
         0,
-      ),
-  )
+      ) +
+      extraEpf.value,
+  ),
+)
 
-  const epf = cumulativeEpf / 25 || 0
+const finalDamage = computed(() => {
+  let materialFactor = 1
+
+  if (source.value !== 'fire' && source.value !== 'fall' && source.value !== 'magic') {
+    const a = 0.2 * armorPoint.value
+    const b = armorPoint.value - sourceDamage.value / (2 + 0.25 * armorToughness.value)
+    const x = Math.min(20, Math.max(a, b)) / 25 - 0.15 * breachLevel.value
+
+    materialFactor = Math.min(1, 1 - x)
+  }
+
+  const epf = cumulativeEpf.value / 25 || 0
 
   return materialFactor * (1 - epf) * sourceDamage.value
 })
@@ -250,6 +252,34 @@ function selectOutput() {
             <ArmorSlot v-model="boots" type="boots" />
           </CdxTab>
         </CdxTabs>
+
+        <hr class="mt-4 mb-2" />
+
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 no-min-w">
+          <CdxField>
+            <template #label>
+              {{ t('armor.extraArmorPoint') }}
+            </template>
+
+            <CdxTextInput v-model="extraArmorPoint" input-type="number" />
+          </CdxField>
+
+          <CdxField>
+            <template #label>
+              {{ t('armor.extraArmorToughness') }}
+            </template>
+
+            <CdxTextInput v-model="extraArmorToughness" input-type="number" />
+          </CdxField>
+
+          <CdxField>
+            <template #label>
+              {{ t('armor.extraEpf') }}
+            </template>
+
+            <CdxTextInput v-model="extraEpf" input-type="number" />
+          </CdxField>
+        </div>
       </div>
 
       <div>
@@ -298,14 +328,35 @@ function selectOutput() {
 
     <hr class="mt-4 mb-2" />
 
-    <div class="flex items-center justify-between">
-      <I18nT tag="span" keypath="armor.finalDamage" class="font-bold">
-        <template #damage>
-          <output id="output" class="text-lg font-mono" @click="selectOutput">{{
-            finalDamage.toFixed(2)
-          }}</output>
+    <div class="flex gap-4 mb-2">
+      <I18nT tag="div" keypath="armor.armorPoint">
+        <template #point>
+          <output class="font-mono">{{ armorPoint.toFixed(2) }}</output>
+        </template>
+      </I18nT>
+      <I18nT tag="div" keypath="armor.armorToughness">
+        <template #toughness>
+          <output class="font-mono">{{ armorToughness.toFixed(2) }}</output>
+        </template>
+      </I18nT>
+      <I18nT tag="div" keypath="armor.cumulativeEpf">
+        <template #epf>
+          <output class="font-mono">{{ cumulativeEpf.toFixed(2) }}</output>
         </template>
       </I18nT>
     </div>
+
+    <I18nT tag="div" keypath="armor.finalDamage" class="font-bold">
+      <template #damage>
+        <output id="output" class="text-lg font-mono" @click="selectOutput">{{
+          finalDamage.toFixed(2)
+        }}</output>
+      </template>
+    </I18nT>
   </CalcField>
 </template>
+<style>
+.no-min-w .cdx-text-input {
+  min-width: auto;
+}
+</style>

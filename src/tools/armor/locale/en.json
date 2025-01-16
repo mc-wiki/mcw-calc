@@ -25,5 +25,11 @@
   "armor.breachLevel": "Breach level",
   "armor.sourceDamage": "Source damage",
   "armor.finalDamage": "Damage done: {damage}",
-  "armor.armor": "Armor"
+  "armor.armor": "Armor",
+  "armor.extraArmorPoint": "Extra armor point",
+  "armor.extraArmorToughness": "Extra armor toughness",
+  "armor.extraEpf": "Extra EPF",
+  "armor.armorPoint": "Armor point: {point}",
+  "armor.armorToughness": "Armor toughness: {toughness}",
+  "armor.cumulativeEpf": "Cumulative EPF: {epf}"
 }
