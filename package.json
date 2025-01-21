@@ -92,7 +92,7 @@
     "types-mediawiki": "^1.9.1",
     "typescript": "^5.7.2",
     "unplugin-vue-macros": "^2.13.5",
-    "vite": "^6.0.7",
+    "vite": "^6.0.9",
     "vite-plugin-comlink": "^5.1.0",
     "vite-plugin-vue-devtools": "^7.6.7",
     "vitest": "^2.1.8",
