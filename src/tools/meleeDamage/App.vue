@@ -415,7 +415,7 @@ function selectOutput() {
 
 <template>
   <CalcField>
-    <template #title>
+    <template #heading>
       {{ t('meleeDamage.title') }}
     </template>
 
