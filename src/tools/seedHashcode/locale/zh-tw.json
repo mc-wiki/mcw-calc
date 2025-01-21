@@ -1,5 +1,7 @@
 {
   "seedHashcode.title": "將字串轉換為實際種子碼",
   "seedHashcode.actual": "實際種子碼：",
-  "seedHashcode.emptyString": "計算結果應為 0，然而因其為空字串，Minecraft實際上會產生一個隨機數字。"
+  "seedHashcode.emptyString": "計算結果應為 0，然而因其為空字串，Minecraft實際上會產生一個隨機數字。",
+  "seedHashcode.number": "輸入數字會直接將其作為種子碼。此為該數字的理論雜湊值。",
+  "seedHashcode.outOfRange": "該數字超出了64位元有符號整數的範圍。實際上會使用上方的種子碼。"
 }

@@ -3,10 +3,11 @@
   "maceDamage.java": "Java版",
   "maceDamage.bedrock": "基岩版",
   "maceDamage.fallHeight": "下落高度格數：",
-  "maceDamage.densityLevel": "[[緻密]]附魔等級：",
+  "maceDamage.densityLevel": "[[致密{'|'}緻密]]附魔等級：",
   "maceDamage.critical": "暴擊",
   "maceDamage.critical.help": "重錘的下落攻擊通常會同時造成暴擊，但有些情況下可能因不滿足其他條件而未能觸發（例如仍在攻擊冷卻時間）。",
   "maceDamage.cooldownReset": "冷卻完成",
   "maceDamage.cooldownReset.help": "若在攻擊冷卻時間攻擊，請取消選擇此項",
-  "maceDamage.damage": "造成傷害："
+  "maceDamage.damage": "造成傷害：",
+  "maceDamage.densityLevelWarning": "生存模式下僅能取得0至5級的緻密附魔。"
 }

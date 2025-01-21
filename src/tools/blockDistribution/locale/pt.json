@@ -8,6 +8,6 @@
   "blockDistribution.theNether": "O Nether",
   "blockDistribution.theEnd": "O End",
   "blockDistribution.logarithmicScale": "Escala logarítmica",
-  "blockDistribution.logarithmicScaleHelp": "Uma pequena diferença na coordenada Y representa uma grande mudança na frequência relativa de um tipo de bloco, facilitando a visualização de pequenas mudanças no gráfico quando há um grande pico.",
+  "blockDistribution.logarithmicScaleHelp": "Uma pequena diferença na coordenada Y representa uma grande mudança na frequência relativa de um bloco, facilitando a visualização de pequenas mudanças no gráfico quando há um grande pico.",
   "blockDistribution.selectAll": "Selecionar tudo"
 }
