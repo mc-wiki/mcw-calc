@@ -160,3 +160,38 @@ hr {
 .cdx-tabs:not(.cdx-tabs--framed) > .cdx-tabs__header {
   background-color: transparent;
 }
+
+ul.hlist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.286em;
+}
+
+.hlist li:not(:last-child) {
+  padding-right: 0.286em
+}
+
+.hlist li:not(:last-child)::after {
+  content: "";
+  display: inline-block;
+  position: relative;
+  left: 0.286em;
+  bottom: 0.214em;
+  background-color: @color-base;
+  height: 3px;
+  width: 3px
+}
+
+.hlist li li:first-child::before {
+  content: "(";
+  font-weight: normal;
+}
+
+.hlist li li:last-child::after {
+  content: ")";
+  font-weight: normal;
+}
+
+.hlist li li li {
+  font-size: x-small;
+}

@@ -1,20 +1,14 @@
 <script setup lang="ts">
-import type { Armor, ArmorEnchantment, BootsEnchantment, HelmetMaterial } from './App.vue'
+import type { Armor, ArmorEnchantment, HelmetMaterial } from './App.vue'
 import { wikiImg } from '@/utils/image'
-import {
-  CdxAccordion,
-  CdxField,
-  CdxSelect,
-  CdxTextInput,
-  type MenuItemData,
-} from '@wikimedia/codex'
+import { CdxField, CdxSelect, CdxTextInput, type MenuItemData } from '@wikimedia/codex'
 import { useI18n } from 'vue-i18n'
 
 const { type } = defineProps<{
   type: 'helmet' | 'chestplate' | 'leggings' | 'boots'
 }>()
 
-const model = defineModel<Armor<HelmetMaterial, BootsEnchantment>>()
+const model = defineModel<Armor<HelmetMaterial, ArmorEnchantment>>()
 
 const { t } = useI18n()
 
@@ -87,6 +81,20 @@ function materials(type: 'helmet' | 'chestplate' | 'leggings' | 'boots'): MenuIt
             <span>{{ menuItem.label }}</span>
           </div>
         </template>
+
+        <template #label="{ selectedMenuItem }: { selectedMenuItem: MenuItemData }">
+          <div v-if="selectedMenuItem" class="flex items-center">
+            <img
+              class="pixel-image mr-2"
+              width="16"
+              height="16"
+              loading="lazy"
+              :src="selectedMenuItem?.thumbnail?.url"
+              :alt="selectedMenuItem?.label"
+            />
+            <span>{{ selectedMenuItem?.label }}</span>
+          </div>
+        </template>
       </CdxSelect>
     </CdxField>
 
@@ -111,7 +119,6 @@ function materials(type: 'helmet' | 'chestplate' | 'leggings' | 'boots'): MenuIt
                 'blastProtection',
                 'projectileProtection',
                 'featherFalling',
-                ...(type === 'boots' ? ['featherFalling'] : []),
               ].map((enchantment) => ({
                 label: t(`armor.enchantment.${enchantment}`),
                 value: enchantment,

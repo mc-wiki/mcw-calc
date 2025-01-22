@@ -122,7 +122,7 @@ export type ArmorEnchantment =
   | 'fireProtection'
   | 'blastProtection'
   | 'projectileProtection'
-export type BootsEnchantment = 'featherFalling' | ArmorEnchantment
+  | 'featherFalling'
 
 export interface Armor<M, E> {
   material: M
@@ -145,7 +145,7 @@ const leggings = ref<Armor<ArmorMaterial, ArmorEnchantment>>({
   material: 'empty',
   enchantments: [{ enchantment: 'empty', level: 1 }],
 })
-const boots = ref<Armor<ArmorMaterial, BootsEnchantment>>({
+const boots = ref<Armor<ArmorMaterial, ArmorEnchantment>>({
   material: 'empty',
   enchantments: [{ enchantment: 'empty', level: 1 }],
 })
@@ -170,7 +170,7 @@ const armorToughness = computed(
 
 const extraEpf = ref(0)
 
-function determineEpf(level: number, enchantment: BootsEnchantment): number {
+function determineEpf(level: number, enchantment: ArmorEnchantment): number {
   if (enchantment === 'protection') return level
   if (enchantment === 'fireProtection' && source.value === 'fire') return level * 2
   if (enchantment === 'blastProtection' && source.value === 'explosion') return level * 2
@@ -282,10 +282,11 @@ function selectOutput() {
         </div>
       </div>
 
-      <div>
-        <h3 class="mb-2">
+      <div class="flex flex-col gap-2">
+        <h3>
           {{ t('armor.source') }}
         </h3>
+
         <CdxField>
           <template #label>
             {{ t('armor.sourceInput') }}
@@ -328,23 +329,23 @@ function selectOutput() {
 
     <hr class="mt-4 mb-2" />
 
-    <div class="flex gap-4 mb-2">
-      <I18nT tag="div" keypath="armor.armorPoint">
+    <ul class="hlist mb-2">
+      <I18nT tag="li" keypath="armor.armorPoint">
         <template #point>
           <output class="font-mono">{{ armorPoint.toFixed(2) }}</output>
         </template>
       </I18nT>
-      <I18nT tag="div" keypath="armor.armorToughness">
+      <I18nT tag="li" keypath="armor.armorToughness">
         <template #toughness>
           <output class="font-mono">{{ armorToughness.toFixed(2) }}</output>
         </template>
       </I18nT>
-      <I18nT tag="div" keypath="armor.cumulativeEpf">
+      <I18nT tag="li" keypath="armor.cumulativeEpf">
         <template #epf>
           <output class="font-mono">{{ cumulativeEpf.toFixed(2) }}</output>
         </template>
       </I18nT>
-    </div>
+    </ul>
 
     <I18nT tag="div" keypath="armor.finalDamage" class="font-bold">
       <template #damage>
