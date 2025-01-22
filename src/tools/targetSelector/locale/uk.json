@@ -50,6 +50,11 @@
   "targetSelector.advancements": "Досягнення",
   "targetSelector.haspermission": "Дозволи",
   "targetSelector.selector": "Селектор цілей",
+  "targetSelector.group.basic": "Основне",
+  "targetSelector.group.position": "Позиція",
+  "targetSelector.group.entityInfo": "Інформація про сутність",
+  "targetSelector.group.scoreboard": "Табло",
+  "targetSelector.group.player": "Гравець",
   "targetSelector.copy": "Скопіювати",
   "targetSelector.copied": "Скопійовано!"
 }
