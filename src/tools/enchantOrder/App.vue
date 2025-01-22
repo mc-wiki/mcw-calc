@@ -51,7 +51,7 @@ onMounted(() => {
     <iframe
       ref="iframe"
       :src="`https://mc-wiki.github.io/enchant-order/?lang=${locale}&theme=${theme}`"
-      style="width: 100%; height: 100%; border: none"
+      style="border: medium; display: block; width: 100%; color-scheme: auto"
     />
   </CalcField>
 </template>
