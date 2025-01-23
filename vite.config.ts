@@ -1,5 +1,6 @@
 import { fileURLToPath } from 'node:url'
 import vueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
+import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
 import { globSync } from 'glob'
 import { visualizer } from 'rollup-plugin-visualizer'
@@ -63,6 +64,7 @@ export default defineConfig({
     vueI18nPlugin({
       include: fileURLToPath(new URL('./src/tools/*/locale/*.json', import.meta.url)),
     }),
+    tailwindcss(),
   ],
   worker: {
     plugins: () => [comlink()],

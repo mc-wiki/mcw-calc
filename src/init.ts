@@ -1,7 +1,7 @@
 import { postMessageParent } from './utils/iframe'
 import { theme as themeRef } from './utils/theme'
-import '@wikimedia/codex/dist/codex.style.css'
 import './common.less'
+import './common.css'
 
 // use ResizeObserver to detect change of height and postMessage to parent
 

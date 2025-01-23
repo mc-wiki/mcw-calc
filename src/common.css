@@ -1,0 +1,2 @@
+@import 'tailwindcss';
+@import '@wikimedia/codex/dist/codex.style.css' layer(components);

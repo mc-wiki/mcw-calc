@@ -2,10 +2,6 @@
   margin-top: 0;
 }
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @import '@wikimedia/codex-design-tokens/theme-wikimedia-ui.less';
 @import '@wikimedia/codex-design-tokens/theme-wikimedia-ui-reset.less';
 @import '@wikimedia/codex-design-tokens/theme-wikimedia-ui-mixin-dark.less';
@@ -19,144 +15,148 @@
     url(https://minecraft.wiki/images/Minecraft.ttf) format('truetype');
 }
 
-:root {
-  .cdx-mode-reset();
-}
-
-html {
-  font-family: 'Liberation Sans', Arial, Helvetica, FreeSans, sans-serif;
-  font-size: 0.875em;
-  font-size: calc(1em * 0.875);
-  line-height: 1.6;
-}
-
-body {
-  background: transparent;
-  margin: 0;
-}
-
-a {
-  text-decoration: none;
-  color: @color-progressive;
-  background: none;
-
-  &:not([href]) {
-    cursor: pointer;
+@layer base {
+  :root {
+    .cdx-mode-reset();
   }
 
-  &:visited {
-    color: @color-visited;
+  html {
+    font-family: 'Liberation Sans', Arial, Helvetica, FreeSans, sans-serif;
+    font-size: 0.875em;
+    font-size: calc(1em * 0.875);
+    line-height: 1.6;
   }
 
-  &:hover {
-    color: @color-progressive--hover;
+  body {
+    background: transparent;
+    margin: 0;
   }
 
-  &:focus {
-    color: @color-progressive--focus;
+  a {
+    text-decoration: none;
+    color: @color-progressive;
+    background: none;
+
+    &:not([href]) {
+      cursor: pointer;
+    }
+
+    &:visited {
+      color: @color-visited;
+    }
+
+    &:hover {
+      color: @color-progressive--hover;
+    }
+
+    &:focus {
+      color: @color-progressive--focus;
+    }
+
+    &:active {
+      color: @color-progressive--active;
+    }
+
+    &:hover,
+    &:focus {
+      text-decoration: underline;
+    }
   }
-
-  &:active {
-    color: @color-progressive--active;
-  }
-
-  &:hover,
-  &:focus {
-    text-decoration: underline;
-  }
-}
-
-pre,
-code {
-  background-color: #f8f9fa;
-  color: #000;
-  border: 1px solid #bbc2c6;
-  border-radius: 2px;
-  padding: 1px 4px;
-  overflow-wrap: break-word;
-}
-
-.dark {
-  .cdx-mode-dark();
-
-  color: #e6e6e6;
-  color-scheme: dark;
 
   pre,
   code {
-    background-color: #444444;
-    color: #fff;
-    border: 1px solid #6f6f6f;
+    background-color: #f8f9fa;
+    color: #000;
+    border: 1px solid #bbc2c6;
+    border-radius: 2px;
+    padding: 1px 4px;
+    overflow-wrap: break-word;
+  }
+
+  .dark {
+    .cdx-mode-dark();
+
+    color: #e6e6e6;
+    color-scheme: dark;
+
+    pre,
+    code {
+      background-color: #444444;
+      color: #fff;
+      border: 1px solid #6f6f6f;
+    }
+  }
+
+  .pixel-image {
+    image-rendering: optimizeSpeed;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: optimize-contrast;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -o-crisp-edges;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+    -ms-interpolation-mode: nearest-neighbor;
+  }
+
+  .explain {
+    border-bottom: 0;
+    text-decoration: underline dotted;
+    cursor: help;
+  }
+
+  .cdx-tabs__next-scroller {
+    display: none;
+  }
+
+  h1 {
+    margin-top: 1em;
+  }
+
+  h2 {
+    margin-top: 1em;
+    font-size: 1.5em;
+  }
+
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-top: 0.3em;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    line-height: 1.6;
+  }
+
+  h3 {
+    font-size: 1.2em;
+  }
+
+  h3,
+  h4 {
+    font-weight: bold;
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-size: 100%;
+  }
+
+  p {
+    margin: 0.5em 0;
+  }
+
+  hr {
+    border-top: 1px solid var(--border-color-subtle, #c8ccd1);
   }
 }
 
-.pixel-image {
-  image-rendering: optimizeSpeed;
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: optimize-contrast;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: -o-crisp-edges;
-  image-rendering: crisp-edges;
-  image-rendering: pixelated;
-  -ms-interpolation-mode: nearest-neighbor;
-}
+@layer components {
+  .mcw-calc-parameter {
+    display: none;
+  }
 
-.explain {
-  border-bottom: 0;
-  text-decoration: underline dotted;
-  cursor: help;
-}
-
-.cdx-tabs__next-scroller {
-  display: none;
-}
-
-h1 {
-  margin-top: 1em;
-}
-
-h2 {
-  margin-top: 1em;
-  font-size: 1.5em;
-}
-
-h3,
-h4,
-h5,
-h6 {
-  margin-top: 0.3em;
-  margin-bottom: 0;
-  padding-bottom: 0;
-  line-height: 1.6;
-}
-
-h3 {
-  font-size: 1.2em;
-}
-
-h3,
-h4 {
-  font-weight: bold;
-}
-
-h4,
-h5,
-h6 {
-  font-size: 100%;
-}
-
-p {
-  margin: 0.5em 0;
-}
-
-hr {
-  border-top: 1px solid var(--border-color-subtle, #c8ccd1);
-}
-
-.mcw-calc-parameter {
-  display: none;
-}
-
-.cdx-tabs:not(.cdx-tabs--framed) > .cdx-tabs__header {
-  background-color: transparent;
+  .cdx-tabs:not(.cdx-tabs--framed) > .cdx-tabs__header {
+    background-color: transparent;
+  }
 }
