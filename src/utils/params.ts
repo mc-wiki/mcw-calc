@@ -9,8 +9,8 @@ export function getParams(): Promise<Record<string, string>> {
     postMessageParent('mcw-calc-init-request-data', {})
 
     const fromSearch = Object.fromEntries(new URLSearchParams(window.location.search))
-    for (const [key, _value] of Object.entries(fromSearch)) {
-      fromSearch[key] = kebabToCamel(key)
+    for (const [key, value] of Object.entries(fromSearch)) {
+      fromSearch[key] = kebabToCamel(value)
     }
 
     if (!new URLSearchParams(window.location.hash.substring(2)).has('id')) resolve(fromSearch)

@@ -1,6 +1,6 @@
 /// <reference types="types-mediawiki" />
+/* global mw */
 
-// eslint-disable-next-line no-undef
 mw.hook('wikipage.content').add(() => {
   const calcs = document.querySelectorAll('div.mcw-calc')
   calcs.forEach((calc) => {
@@ -22,11 +22,12 @@ mw.hook('wikipage.content').add(() => {
       iframe.setAttribute(attributes[i].name, attributes[i].value)
     }
 
-    // eslint-disable-next-line no-undef
     let local = mw.config.get('wgContentLanguage')
     if (local === 'zh') {
-      // eslint-disable-next-line no-undef
-      local = mw.config.get('wgUserVariant') || new URL(window.location.href).searchParams.get('variant') || mw.user.options.get('variant')
+      local =
+        mw.config.get('wgUserVariant') ||
+        new URL(window.location.href).searchParams.get('variant') ||
+        mw.user.options.get('variant')
     }
     const url = `/tools/${type}/#?id=${id}&locale=${local}&url=${encodeURIComponent(window.location.href)}`
 
@@ -58,6 +59,8 @@ mw.hook('wikipage.content').add(() => {
       chunkbase: '900px',
     }[type]
 
+    iframe.allow = 'fullscreen *'
+
     const dataset = {}
     Object.entries(calc.dataset).forEach((entry) => {
       const key = entry[0]
@@ -76,7 +79,6 @@ mw.hook('wikipage.content').add(() => {
         new URL(iframe.src).origin
       )
 
-      // eslint-disable-next-line no-undef
       mw.hook('wgl.themeChanged').add((theme) => {
         iframe.contentWindow.postMessage(
           {
