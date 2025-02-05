@@ -1,16 +1,16 @@
 {
-  "tick.title": "Calculadora de ticks",
-  "tick.gt": "Tick(s) de jogo",
-  "tick.rt": "Tick(s) de redstone",
+  "tick.title": "Calculadora de tiques",
+  "tick.gt": "Tique(s) de jogo",
+  "tick.rt": "Tique(s) de redstone",
   "tick.inGameDay": "Dia(s) no jogo",
   "tick.millisecond": "Milissegundo(s)",
   "tick.second": "Segundo(s)",
   "tick.minute": "Minuto(s)",
   "tick.hour": "Hora(s)",
   "tick.day": "Dia(s)",
-  "tick.runningAt": "sendo executados a",
+  "tick.runningAt": "executados a",
   "tick.tps": "TPS",
-  "tick.tps.explain": "Ticks por segundo, o número de ticks de jogo executados a cada segundo",
+  "tick.tps.explain": "Tiques por segundo, o número de tiques de jogo executados a cada segundo",
   "tick.mspt": "MSPT",
-  "tick.mspt.explain": "Milissegundos por tick, o tempo, em milissegundos, necessário para processar um único tick"
+  "tick.mspt.explain": "Milissegundos por tique, o tempo, em milissegundos, necessário para processar um único tique"
 }

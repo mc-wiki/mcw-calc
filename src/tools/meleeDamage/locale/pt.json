@@ -35,7 +35,7 @@
   "meleeDamage.victim.isWaterMob": "É aquático?",
   "meleeDamage.victim.isInWater": "Está encostando na água?",
   "meleeDamage.attackCondition.critical": "Golpe crítico",
-  "meleeDamage.attackCondition.tickAfterLastAttack": "Ticks desde o último ataque",
+  "meleeDamage.attackCondition.tickAfterLastAttack": "Tiques desde o último ataque",
   "meleeDamage.attackCondition.setFullCooldown": "Tempo de recarga completo",
   "meleeDamage.finalDamage": "Dano causado: {damage}",
   "meleeDamage.defaultTools.hand": "Mão",
