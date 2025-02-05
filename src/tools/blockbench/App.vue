@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import type { max } from 'd3'
 import { useFullscreen } from '@vueuse/core'
 import { CdxButton, CdxIcon, CdxProgressBar } from '@wikimedia/codex'
-import { cdxIconClose, cdxIconExitFullscreen, cdxIconFullScreen } from '@wikimedia/codex-icons'
+import { cdxIconExitFullscreen, cdxIconFullScreen } from '@wikimedia/codex-icons'
 import { ref, useTemplateRef } from 'vue'
 import BlockBenchLogo from './blockbench_logo_text.webp'
 
@@ -44,7 +43,7 @@ iframeSrc.search = params.toString()
     class="dark"
     :style="{
       backgroundColor: '#181a1f',
-      height: isFullscreen ? '100vh' : '632px',
+      height: isFullscreen ? '100vh' : '682px',
       maxHeight: '100vh',
     }"
   >
