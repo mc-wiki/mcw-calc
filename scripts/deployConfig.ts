@@ -32,6 +32,12 @@ export const targets: DeployTarget[] = [
   },
   {
     type: 'production',
+    name: 'ko',
+    apiUrl: 'https://ko.minecraft.wiki/api.php',
+    credentials: 'PROD',
+  },
+  {
+    type: 'production',
     name: 'pt',
     apiUrl: 'https://pt.minecraft.wiki/api.php',
     credentials: 'PROD',
