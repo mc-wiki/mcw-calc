@@ -1,1 +1,13 @@
-{}
+{
+  "blockDistribution.xAxis": "Y 좌표 →",
+  "blockDistribution.yAxis": "↑ 100,000블록 내에서 발견된 수",
+  "blockDistribution.xInTenThousand": "100,000블록 중 {num}개",
+  "blockDistribution.title": "[[Java Edition {version}]]에서 {block}의 블록 분포",
+  "blockDistribution.total": "전체 수량",
+  "blockDistribution.overworld": "오버월드",
+  "blockDistribution.theNether": "네더",
+  "blockDistribution.theEnd": "엔드",
+  "blockDistribution.logarithmicScale": "로그 눈금",
+  "blockDistribution.logarithmicScaleHelp": "Y 좌표의 미세한 차이에도 블록 유형의 상대적 빈도에 큰 변화가 있으므로, 값이 급증할 때 그래프의 작은 변화를 확인하는 데 유용합니다.",
+  "blockDistribution.selectAll": "모두 선택"
+}

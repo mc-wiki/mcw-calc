@@ -1,1 +1,16 @@
-{}
+{
+  "tick.title": "틱 계산기",
+  "tick.gt": "게임 틱",
+  "tick.rt": "레드스톤 틱",
+  "tick.inGameDay": "게임 시간",
+  "tick.millisecond": "밀리초",
+  "tick.second": "초",
+  "tick.minute": "분",
+  "tick.hour": "시간",
+  "tick.day": "일",
+  "tick.runningAt": "실행 환경:",
+  "tick.tps": "TPS",
+  "tick.tps.explain": "초당 틱, 초당 게임의 실행 틱 수",
+  "tick.mspt": "MSPT",
+  "tick.mspt.explain": "틱 당 밀리초, 단일 틱을 처리하는 데 걸린 밀리초"
+}

@@ -1,1 +1,9 @@
-{}
+{
+  "chunkbase.title": "세계 생성 미리 보기",
+  "chunkbase.name": "Chunkbase",
+  "chunkbase.promo": "다른 세계 생성 시각 자료를 보려면, {link}를 방문해주세요.",
+  "chunkbase.java": "Java Edition",
+  "chunkbase.bedrock": "Bedrock Edition",
+  "chunkbase.seed": "시드",
+  "chunkbase.submit": "적용"
+}

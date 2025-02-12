@@ -1,1 +1,6 @@
-{}
+{
+  "netherCoords.title": "네더 좌표 변환기",
+  "netherCoords.dimension": "차원",
+  "netherCoords.overworld": "오버월드",
+  "netherCoords.nether": "네더"
+}

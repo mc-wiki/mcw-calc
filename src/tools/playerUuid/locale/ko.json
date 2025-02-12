@@ -1,1 +1,12 @@
-{}
+{
+  "playerUuid.title": "플레이어 닉네임을 UUID로 변환",
+  "playerUuid.name": "플레이어 이름",
+  "playerUuid.get": "UUID 가져오기",
+  "playerUuid.loading": "불러오는 중...",
+  "playerUuid.uuid": "[[UUID]]",
+  "playerUuid.uuidOffline": "오프라인 [[UUID]]",
+  "playerUuid.error.invalid": "이 사용자 이름은 잘못되었습니다!",
+  "playerUuid.error.notFound": "이 사용자 이름은 존재하지 않습니다!",
+  "playerUuid.copy": "복사",
+  "playerUuid.copied": "복사 완료!"
+}
