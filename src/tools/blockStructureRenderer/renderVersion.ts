@@ -1,0 +1,1 @@
+export const BLOCK_RENDERER_MINECRAFT_VERSION = '25w07a'

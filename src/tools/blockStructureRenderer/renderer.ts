@@ -25,6 +25,7 @@ import {
   Rotation,
 } from '@/tools/blockStructureRenderer/math.ts'
 import { renderBakedFaces, renderModelNoCullFaces } from '@/tools/blockStructureRenderer/model.ts'
+import { BLOCK_RENDERER_MINECRAFT_VERSION } from '@/tools/blockStructureRenderer/renderVersion.ts'
 import { digestMessage } from '@/utils/digest'
 import { fetchJigsawAPI } from '@/utils/jigsaw.ts'
 import * as THREE from 'three'
@@ -160,7 +161,8 @@ function blockStateDefinitionToString(blockState: BlockStateDefinition) {
 
 async function fetchBlockData(blockStates: BlockState[]) {
   const blockHashStr = await digestMessage(
-    blockStates.map((blockState) => blockState.toString()).join('|'),
+    BLOCK_RENDERER_MINECRAFT_VERSION +
+      blockStates.map((blockState) => blockState.toString()).join('|'),
   )
   const response = await fetchJigsawAPI(`renderer/${encodeURIComponent(blockHashStr)}`)
   const json = await response.json()
