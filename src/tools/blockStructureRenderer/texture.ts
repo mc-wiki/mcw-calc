@@ -57,8 +57,7 @@ class TextureAtlasNode {
     if (dw > dh) {
       this.left = new TextureAtlasNode(this.x, this.y, spriteDataWidth, this.height)
       this.right = new TextureAtlasNode(this.x + spriteDataWidth + 1, this.y, dw - 1, this.height)
-    }
-    else {
+    } else {
       this.left = new TextureAtlasNode(this.x, this.y, this.width, spriteDataHeight)
       this.right = new TextureAtlasNode(this.x, this.y + spriteDataHeight + 1, this.width, dh - 1)
     }

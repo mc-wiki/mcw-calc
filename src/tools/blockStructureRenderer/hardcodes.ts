@@ -101,6 +101,7 @@ const GRASS_LIKE_BLOCK = [
   'potted_fern',
   'pink_petals',
   'sugar_cane',
+  'wildflowers'
 ]
 
 const FOLIAGE_BLOCK = [
@@ -124,6 +125,7 @@ export function hardcodedBlockTint(blockState: BlockState) {
   } else if (GRASS_LIKE_BLOCK.includes(blockState.blockName)) {
     if (blockState.tintData.length > 0) return
     blockState.tintData[0] = '7cbd6b'
+    blockState.tintData[1] = '7cbd6b'
   } else if (blockState.blockName === 'spruce_leaves') {
     blockState.tintData[0] = '619961'
   } else if (blockState.blockName === 'birch_leaves') {

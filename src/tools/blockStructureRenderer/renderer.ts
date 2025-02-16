@@ -162,7 +162,7 @@ async function fetchBlockData(blockStates: BlockState[]) {
   const blockHashStr = await digestMessage(
     blockStates.map((blockState) => blockState.toString()).join('|'),
   )
-  const response = await fetchJigsawAPI(`renderer/${encodeURIComponent(blockHashStr)}`)
+  const response = await fetchJigsawAPI(`renderer?key=${encodeURIComponent(blockHashStr)}`)
   const json = await response.json()
   if (json.processed) return json
   const blockDefinitions = blockStates.map((blockState) => blockState.toBlockStateDefinition())
