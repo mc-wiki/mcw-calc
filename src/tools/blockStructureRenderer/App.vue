@@ -164,7 +164,7 @@ const moving = [
   isUpMoving,
   isDownMoving,
 ]
-const MOVING_KEYS = ['a', 'd', 'w', 's', ' ', 'Shift']
+const MOVING_KEYS = ['a', 'd', 'w', 's', ' ', 'shift']
 
 function parsePosition(value?: string) {
   if (value) {
@@ -224,14 +224,14 @@ renderer.domElement.addEventListener('wheel', (event) => {
 
 renderer.domElement.addEventListener('keydown', (event) => {
   event.preventDefault()
-  const index = MOVING_KEYS.indexOf(event.key)
+  const index = MOVING_KEYS.indexOf(event.key.toLowerCase())
   if (index === -1) return
   moving[index].value = true
 })
 
 renderer.domElement.addEventListener('keyup', (event) => {
   event.preventDefault()
-  const index = MOVING_KEYS.indexOf(event.key)
+  const index = MOVING_KEYS.indexOf(event.key.toLowerCase())
   if (index === -1) return
   moving[index].value = false
 })
