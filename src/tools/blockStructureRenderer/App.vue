@@ -11,6 +11,7 @@ import {
 } from '@/tools/blockStructureRenderer/renderer.ts'
 import { saveAsLitematic, saveAsStructureFile } from '@/tools/blockStructureRenderer/structure.ts'
 import { MaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
+import { flip, offset, shift, useFloating, type VirtualElement } from '@floating-ui/vue'
 import {
   CdxButton,
   CdxCheckbox,
@@ -45,8 +46,6 @@ const { t } = useI18n()
 
 const renderTarget = useTemplateRef('render-target')
 const loaded = ref(false)
-const showHelp = ref(false)
-
 const orthographic = ref(props.orthographicDefault)
 const animatedTexture = ref(props.animatedTextureDefault)
 const invisibleBlocks = ref(props.showInvisibleBlocksDefault)
@@ -76,18 +75,8 @@ const cameraSettingModes = cameraSettingModeStr.map((str) => ({
 }))
 const cameraSettingMode = ref(cameraSettingModeStr[0])
 
-const cameraX = ref(0)
-const cameraY = ref(0)
-const cameraZ = ref(0)
-const cameraCenterX = ref(0)
-const cameraCenterY = ref(0)
-const cameraCenterZ = ref(0)
-const cameraFOV = ref(70)
-const cameraZoom = ref(1)
+// Three.js Renderer Setup -------------------------------------------------------------------------
 
-const requireReBake = ref(false)
-
-// Three.js setup
 const rendererAvailable = WebGL.isWebGLAvailable()
 const renderer = new THREE.WebGLRenderer({
   preserveDrawingBuffer: true,
@@ -95,6 +84,7 @@ const renderer = new THREE.WebGLRenderer({
   antialias: false,
 }) // Do not enable antialiasing: it makes block edges black
 renderer.setPixelRatio(window.devicePixelRatio)
+renderer.domElement.tabIndex = 0
 
 const scene = new THREE.Scene()
 const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 1000)
@@ -112,6 +102,7 @@ persControl.enableZoom = false
 
 // Material and model setup ------------------------------------------------------------------------
 
+const requireReBake = ref(false)
 const lineMaterialList = ref([] as LineMaterial[])
 
 const blockStructure = new BlockStructure(props.structure, props.marks)
@@ -148,7 +139,32 @@ function reBakeRenderLayers() {
     lineMaterialList.value = bakeInvisibleBlocks(renderer, scene, nameMapping, blockStructure)
 }
 
-// Camera Default Settings -------------------------------------------------------------------------
+// Camera Settings ---------------------------------------------------------------------------------
+
+const cameraX = ref(0)
+const cameraY = ref(0)
+const cameraZ = ref(0)
+const cameraCenterX = ref(0)
+const cameraCenterY = ref(0)
+const cameraCenterZ = ref(0)
+const cameraFOV = ref(70)
+const cameraZoom = ref(1)
+
+const isLeftMoving = ref(false)
+const isRightMoving = ref(false)
+const isForwardMoving = ref(false)
+const isBackwardMoving = ref(false)
+const isUpMoving = ref(false)
+const isDownMoving = ref(false)
+const moving = [
+  isLeftMoving,
+  isRightMoving,
+  isForwardMoving,
+  isBackwardMoving,
+  isUpMoving,
+  isDownMoving,
+]
+const MOVING_KEYS = ['a', 'd', 'w', 's', ' ', 'Shift']
 
 function parsePosition(value?: string) {
   if (value) {
@@ -174,12 +190,91 @@ function resetCamera() {
   cameraCenterZ.value = defaultCameraLookingPos[2]
 }
 
+// Tooltip & Help ----------------------------------------------------------------------------------
+
+const dragTooltip = useTemplateRef('drag-tooltip')
+const showHelp = ref(false)
+const tooltipOpen = ref(false)
+const focused = ref(false)
+
+const virtualEl = ref<VirtualElement>({
+  getBoundingClientRect() {
+    return new DOMRect()
+  },
+})
+const { floatingStyles, update } = useFloating(virtualEl, dragTooltip, {
+  open: tooltipOpen,
+  placement: 'right-start',
+  middleware: [
+    offset({
+      alignmentAxis: 20,
+    }),
+    flip(),
+    shift(),
+  ],
+})
+
 // Event listeners & Watch Effect ------------------------------------------------------------------
 
 renderer.domElement.addEventListener('wheel', (event) => {
   event.preventDefault()
   if (orthographic.value) cameraZoom.value = Math.max(0.1, cameraZoom.value - event.deltaY * 0.0001)
   else cameraFOV.value = Math.min(110, Math.max(30, cameraFOV.value + event.deltaY * 0.01))
+})
+
+renderer.domElement.addEventListener('keydown', (event) => {
+  event.preventDefault()
+  const index = MOVING_KEYS.indexOf(event.key)
+  if (index === -1) return
+  moving[index].value = true
+})
+
+renderer.domElement.addEventListener('keyup', (event) => {
+  event.preventDefault()
+  const index = MOVING_KEYS.indexOf(event.key)
+  if (index === -1) return
+  moving[index].value = false
+})
+
+renderer.domElement.addEventListener('focusin', () => {
+  focused.value = true
+  showHelp.value = true
+  tooltipOpen.value = false
+  setTimeout(() => {
+    showHelp.value = false
+  }, 4000)
+})
+
+renderer.domElement.addEventListener('focusout', () => {
+  focused.value = false
+  showHelp.value = false
+  moving.forEach((ref) => (ref.value = false))
+})
+
+renderer.domElement.addEventListener('mouseenter', () => {
+  if (!focused.value) tooltipOpen.value = true
+})
+
+renderer.domElement.addEventListener('mouseleave', () => {
+  tooltipOpen.value = false
+})
+
+renderer.domElement.addEventListener('mousemove', (event) => {
+  if (!focused.value) {
+    virtualEl.value.getBoundingClientRect = () => {
+      if (!renderTarget.value) return new DOMRect()
+      const x = Math.min(
+        Math.max(event.clientX, renderTarget.value.getBoundingClientRect().left),
+        renderTarget.value.getBoundingClientRect().right,
+      )
+      const y = Math.min(
+        Math.max(event.clientY, renderTarget.value.getBoundingClientRect().top),
+        renderTarget.value.getBoundingClientRect().bottom,
+      )
+      return new DOMRect(x, y, 0, 0)
+    }
+    update()
+  }
 })
 
 watch([displayMode, yRangeMin, yRangeMax, ySelected], () => {
@@ -290,6 +385,8 @@ async function saveLitematic() {
 }
 
 // Main render loop --------------------------------------------------------------------------------
+const lastTime = ref(Date.now())
+
 function animate() {
   requestAnimationFrame(animate)
 
@@ -317,6 +414,36 @@ function animate() {
     return
   }
 
+  // Move Control
+  const delta = (Date.now() - lastTime.value) / 1000
+  lastTime.value = Date.now()
+  const moveSpeed = 5 * delta
+  let x = 0
+  let y = 0
+  let z = 0
+  if (isForwardMoving.value) z += moveSpeed
+  if (isBackwardMoving.value) z -= moveSpeed
+  if (isLeftMoving.value) x -= moveSpeed
+  if (isRightMoving.value) x += moveSpeed
+  if (isUpMoving.value) y += moveSpeed
+  if (isDownMoving.value) y -= moveSpeed
+  if (x || z) {
+    const forward = new THREE.Vector3()
+    camera.value.getWorldDirection(forward)
+    forward.y = 0
+    forward.normalize()
+    const right = new THREE.Vector3()
+    right.crossVectors(forward, new THREE.Vector3(0, 1, 0))
+    cameraX.value += x * right.x + z * forward.x
+    cameraCenterX.value += x * right.x + z * forward.x
+    cameraZ.value += x * right.z + z * forward.z
+    cameraCenterZ.value += x * right.z + z * forward.z
+  }
+  if (y) {
+    cameraY.value += y
+    cameraCenterY.value += y
+  }
+
   renderer.render(scene, camera.value)
 }
 
@@ -340,6 +467,7 @@ function updateDisplay() {
 
 onMounted(() => {
   if (rendererAvailable && renderTarget.value) {
+    virtualEl.value.contextElement = renderTarget.value
     yRangeMax.value = blockStructure.y - 1
     updateDisplay()
     resetCamera()
@@ -615,6 +743,20 @@ onMounted(() => {
         </div>
       </BsrPopup>
     </div>
+    <div
+      v-if="loaded"
+      ref="drag-tooltip"
+      class="dark"
+      style="
+        background-color: var(--background-color-base, #fff);
+        border: 1px solid var(--border-color-base, #a2a9b1);
+        border-radius: 4px;
+        padding: 6px;
+      "
+      :style="{ ...floatingStyles, display: tooltipOpen ? 'block' : 'none' }"
+    >
+      {{ t('blockStructureRenderer.dragTooltip') }}
+    </div>
     <Transition>
       <div
         v-if="loaded && showHelp"
@@ -634,3 +776,15 @@ onMounted(() => {
     </Transition>
   </div>
 </template>
+
+<style>
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+</style>
