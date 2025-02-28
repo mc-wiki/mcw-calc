@@ -23,7 +23,6 @@
   "blockStructureRenderer.cameraSetting.manual": "Manually set",
   "blockStructureRenderer.cameraSetting.position": "Camera position",
   "blockStructureRenderer.cameraSetting.origin": "Camera origin",
-  "blockStructureRenderer.cameraSetting.confirm": "Confirm",
   "blockStructureRenderer.backgroundColor": "Background color",
   "blockStructureRenderer.backgroundAlpha": "Opacity",
   "blockStructureRenderer.renderMarks": "Render marks",

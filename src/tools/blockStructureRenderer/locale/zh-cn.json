@@ -23,7 +23,6 @@
   "blockStructureRenderer.cameraSetting.manual": "手动设置",
   "blockStructureRenderer.cameraSetting.position": "摄像机位置",
   "blockStructureRenderer.cameraSetting.origin": "摄像机原点",
-  "blockStructureRenderer.cameraSetting.confirm": "确定",
   "blockStructureRenderer.backgroundColor": "背景颜色",
   "blockStructureRenderer.backgroundAlpha": "背景不透明度",
   "blockStructureRenderer.renderMarks": "显示标记",

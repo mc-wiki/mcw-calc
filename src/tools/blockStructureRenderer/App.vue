@@ -148,7 +148,7 @@ function reBakeRenderLayers() {
     lineMaterialList.value = bakeInvisibleBlocks(renderer, scene, nameMapping, blockStructure)
 }
 
-// Camera Default Settings ------------------------------------------------------------------------
+// Camera Default Settings -------------------------------------------------------------------------
 
 function parsePosition(value?: string) {
   if (value) {
@@ -252,6 +252,11 @@ watchEffect(() => {
 
 watch([displayMarks, invisibleBlocks], () => {
   requireReBake.value = true
+})
+
+watch([cameraSettingMode], () => {
+  const enabled = cameraSettingMode.value === cameraSettingModeStr[0]
+  controls.forEach((control) => (control.enabled = enabled))
 })
 
 // Save as file ------------------------------------------------------------------------------------
@@ -473,20 +478,14 @@ onMounted(() => {
           }"
         >
           <CdxField>
-            <div style="display: flex; gap: 5px">
-              <CdxSelect
-                id="cameraSetting"
-                v-model:selected="cameraSettingMode"
-                :menu-items="cameraSettingModes"
-                :style="{
-                  width: 'fit-content',
-                }"
-              />
-
-              <CdxButton v-if="cameraSettingMode === cameraSettingModeStr[1]">
-                {{ t('blockStructureRenderer.cameraSetting.confirm') }}
-              </CdxButton>
-            </div>
+            <CdxSelect
+              id="cameraSetting"
+              v-model:selected="cameraSettingMode"
+              :menu-items="cameraSettingModes"
+              :style="{
+                width: 'fit-content',
+              }"
+            />
 
             <template #label>
               {{ t('blockStructureRenderer.cameraSetting') }}
@@ -635,15 +634,3 @@ onMounted(() => {
     </Transition>
   </div>
 </template>
-
-<style>
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
-}
-</style>
