@@ -54,11 +54,11 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^3.16.0",
+    "@antfu/eslint-config": "^4.4.0",
     "@peculiar/webcrypto": "^1.5.0",
     "@prettier/sync": "^0.5.2",
     "@rushstack/eslint-patch": "^1.10.5",
-    "@tailwindcss/vite": "4.0.0",
+    "@tailwindcss/vite": "4.0.9",
     "@testing-library/vue": "^8.1.0",
     "@tsconfig/node20": "^20.1.4",
     "@types/d3": "^7.4.3",
@@ -70,7 +70,7 @@
     "@vitest/browser": "^3.0.7",
     "@vitest/coverage-istanbul": "^3.0.7",
     "@vitest/ui": "^3.0.7",
-    "@vue-macros/volar": "^0.30.15",
+    "@vue-macros/volar": "3.0.0-beta.1",
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.7.0",
     "babel-preset-typescript-vue3": "^2.0.17",
@@ -95,7 +95,7 @@
     "vite-plugin-comlink": "^5.1.0",
     "vite-plugin-vue-devtools": "^7.7.2",
     "vitest": "^3.0.7",
-    "vitest-browser-vue": "^0.1.0",
+    "vitest-browser-vue": "^0.2.0",
     "vue-tsc": "https://pkg.pr.new/vuejs/language-tools/vue-tsc@3fb59af"
   }
 }
