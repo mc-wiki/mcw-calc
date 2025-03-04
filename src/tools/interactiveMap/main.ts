@@ -56,8 +56,8 @@ const targetEl = document.querySelector('#app')!
     minZoom: -5,
     maxBoundsViscosity: 0.5,
     maxBounds: [
-      mapData.mapBounds[0].map((x) => x - 1000) as LatLngTuple,
-      mapData.mapBounds[1].map((x) => x + 1000) as LatLngTuple,
+      mapData.mapBounds[0].map((x) => x - 3000) as LatLngTuple,
+      mapData.mapBounds[1].map((x) => x + 3000) as LatLngTuple,
     ],
   })
 
