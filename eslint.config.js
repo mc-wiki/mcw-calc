@@ -21,5 +21,6 @@ export default antfu({
     'vue/html-self-closing': 'off',
     'vue/html-indent': 'off',
     'unicorn/number-literal-case': 'off',
+    'import-x/consistent-type-specifier-style': 'off',
   },
 })

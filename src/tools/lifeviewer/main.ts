@@ -1,4 +1,3 @@
-import { parentOrigin } from '@/utils/iframe'
 import { getParams, handleParseError, sz } from '@/utils/params'
 import { z } from 'zod'
 import '@/init'
@@ -16,6 +15,4 @@ bo3b3o$b3o2bo$2bo!`),
   const params = handleParseError(parsed, targetEl)
 
   targetEl.querySelector('textarea').textContent = params.pattern
-
-  await import('./lv-viewer.js')
 })()
