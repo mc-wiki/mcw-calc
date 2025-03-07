@@ -101,7 +101,7 @@ const GRASS_LIKE_BLOCK = [
   'potted_fern',
   'pink_petals',
   'sugar_cane',
-  'wildflowers'
+  'wildflowers',
 ]
 
 const FOLIAGE_BLOCK = [
