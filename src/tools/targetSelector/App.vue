@@ -6,7 +6,7 @@ import { javaEntityTypes } from '@/tools/targetSelector/data/entity_types_java.t
 import { permissions } from '@/tools/targetSelector/data/permissions.ts'
 import { parseWikitext } from '@/utils/i18n'
 import { copyToClipboard } from '@/utils/iframe.ts'
-import { wikiImg } from '@/utils/image.ts'
+import { getImageLink } from '@/utils/image.ts'
 import {
   CdxAccordion,
   CdxButton,
@@ -110,7 +110,7 @@ const entityTypes = computed(() => {
       label: t('targetSelector.none'),
       value: '',
       description: null,
-      thumbnail: { url: wikiImg('BlockSprite_barrier') },
+      thumbnail: { url: getImageLink('en:BlockSprite_barrier.png') },
     },
   ] as MenuItemData[]
   Object.entries(entityTypes).map(([name, image]) =>
@@ -119,7 +119,7 @@ const entityTypes = computed(() => {
       value: `minecraft:${name}`,
       description: name,
       thumbnail: {
-        url: wikiImg(image),
+        url: getImageLink(`en:${image}`),
       },
     }),
   )
@@ -149,27 +149,27 @@ function getGameModes() {
     {
       label: t('targetSelector.none'),
       value: '',
-      thumbnail: { url: wikiImg('BlockSprite_barrier') },
+      thumbnail: { url: getImageLink('en:BlockSprite_barrier.png') },
     },
     {
       label: t('targetSelector.gamemode.survival'),
       value: 'survival',
-      thumbnail: { url: wikiImg('EnvSprite_survival') },
+      thumbnail: { url: getImageLink('en:EnvSprite_survival.png') },
     },
     {
       label: t('targetSelector.gamemode.creative'),
       value: 'creative',
-      thumbnail: { url: wikiImg('EnvSprite_creative') },
+      thumbnail: { url: getImageLink('en:EnvSprite_creative.png') },
     },
     {
       label: t('targetSelector.gamemode.adventure'),
       value: 'adventure',
-      thumbnail: { url: wikiImg('EnvSprite_adventure') },
+      thumbnail: { url: getImageLink('en:EnvSprite_adventure.png') },
     },
     {
       label: t('targetSelector.gamemode.spectator'),
       value: 'spectator',
-      thumbnail: { url: wikiImg('EnvSprite_spectator') },
+      thumbnail: { url: getImageLink('en:EnvSprite_spectator.png') },
     },
   ]
 }

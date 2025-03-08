@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { getImageLink } from '@/utils/image'
 import { CdxButton, CdxIcon } from '@wikimedia/codex'
 import { cdxIconPause, cdxIconPlay } from '@wikimedia/codex-icons'
 import * as THREE from 'three'
@@ -6,7 +7,6 @@ import WebGL from 'three/addons/capabilities/WebGL.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { getImageLink } from '../interactiveMap/processJson'
 
 const props = defineProps<{
   images: string[]

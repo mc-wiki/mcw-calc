@@ -2,6 +2,7 @@
 import CalcField from '@/components/CalcField.vue'
 import { parseWikitext } from '@/utils/i18n'
 import { copyToClipboard } from '@/utils/iframe'
+import { getImageLink } from '@/utils/image'
 import { CdxButton, CdxField, CdxTextInput } from '@wikimedia/codex'
 import SparkMD5 from 'spark-md5'
 import { ref } from 'vue'
@@ -175,7 +176,7 @@ updatePlayerInfo()
           width="48"
           height="48"
           class="pixel-image"
-          :src="`https://minecraft.wiki/images/EntitySprite_${playerOfflineSkinLocation}.png?format=original`"
+          :src="getImageLink(`en:EntitySprite_${playerOfflineSkinLocation}.png`)"
           :title="playerOfflineSkinName"
         />
       </div>

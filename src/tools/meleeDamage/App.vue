@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import CalcField from '@/components/CalcField.vue'
 import { parseWikitext } from '@/utils/i18n'
+import { getImageLink } from '@/utils/image'
 import {
   CdxAccordion,
   CdxButton,
@@ -154,23 +155,23 @@ function getToolsMenuItems() {
     value: tool.name,
     label: t(`meleeDamage.defaultTools.${tool.name}`),
     thumbnail: {
-      url: `https://minecraft.wiki/images/ItemSprite_${tool.name.replace('_', '-')}.png?format=original`,
+      url: getImageLink(`en:ItemSprite_${tool.name.replace('_', '-')}.png`),
     },
   }))
-  items[0].thumbnail!.url = 'https://minecraft.wiki/images/ItemSprite_paper.png?format=original'
+  items[0].thumbnail!.url = getImageLink('en:ItemSprite_paper.png')
   if (!canObtainInSurvival.value && isJavaEdition.value) {
     items.push({
       value: 'direct-am',
       label: t('meleeDamage.defaultTools.directAttributeModifiers'),
       thumbnail: {
-        url: 'https://minecraft.wiki/images/ItemSprite_stick.png?format=original',
+        url: getImageLink('en:ItemSprite_stick.png'),
       },
     })
     items.push({
       value: 'mace-am',
       label: t('meleeDamage.defaultTools.maceAttributeModifiers'),
       thumbnail: {
-        url: 'https://minecraft.wiki/images/ItemSprite_mace.png?format=original',
+        url: getImageLink('en:ItemSprite_mace.png'),
       },
     })
   }

@@ -1,5 +1,6 @@
 import { parseWikitext } from '@/utils/i18n'
 import { parentOrigin } from '@/utils/iframe'
+import { getImageLink } from '@/utils/image'
 
 export type Coordinate = [number, number]
 export interface FandomMapConfig {
@@ -73,13 +74,4 @@ export function convertCoordinate(
   coordinateOrder: FandomMapConfig['coordinateOrder'],
 ): Coordinate {
   return coordinateOrder === 'yx' ? coordinate : (coordinate.slice().reverse() as Coordinate)
-}
-
-export function getImageLink(image: string) {
-  const origin = image.startsWith('en:') ? 'https://minecraft.wiki' : parentOrigin()
-  const imageNameNormalized = image
-    .replace(/^en:/, '')
-    .replace(/^File:/, '')
-    .replace(/ /g, '_')
-  return `${origin}/images/${encodeURIComponent(imageNameNormalized)}`
 }

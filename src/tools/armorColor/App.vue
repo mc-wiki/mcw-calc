@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import CalcField from '@/components/CalcField.vue'
 import { type Color, colorStringToRgb, imgNames } from '@/utils/color'
+import { getImageLink } from '@/utils/image'
 import { CdxButton, CdxTab, CdxTabs } from '@wikimedia/codex'
 import { nextTick, ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -15,7 +16,7 @@ const canvasRef = useTemplateRef('canvasRef')
 const sequence = ref<[Color[], number, [number, number, number]]>([['white'], 0, [249, 255, 254]])
 
 function generateDye(color: Color) {
-  return `https://minecraft.wiki/images/Invicon_${imgNames[color]}_Dye.png?format=original`
+  return getImageLink(`en:Invicon_${imgNames[color]}_Dye.png`)
 }
 
 function generateDyeName(color: Color) {
@@ -56,10 +57,9 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
     false,
   )
   if (props.type === 'horse') {
-    img.src = 'https://minecraft.wiki/images/Leather_Horse_Armor_(texture)_JE2.png?format=original'
+    img.src = getImageLink('en:Leather_Horse_Armor_(texture)_JE2.png')
   } else if (props.type === 'wolf') {
-    img.src =
-      'https://minecraft.wiki/images/Wolf_Armor_(overlay_texture)_JE2_BE2.png?format=original'
+    img.src = getImageLink('en:Wolf_Armor_(overlay_texture)_JE2_BE2.png')
 
     img.addEventListener('load', () => {
       const dyeCanvas = document.createElement('canvas')
@@ -87,10 +87,10 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
         false,
       )
 
-      background.src = 'https://minecraft.wiki/images/Wolf_Armor_JE2_BE2.png?format=original'
+      background.src = getImageLink('en:Wolf_Armor_JE2_BE2.png')
     })
   } else {
-    img.src = 'https://minecraft.wiki/images/Leather_Tunic_(texture)_JE4_BE3.png?format=original'
+    img.src = getImageLink('en:Leather_Tunic_(texture)_JE4_BE3.png')
   }
   img.crossOrigin = 'anonymous'
 })

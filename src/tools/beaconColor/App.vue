@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import CalcField from '@/components/CalcField.vue'
 import { type Color, colorStringToRgb, imgNames } from '@/utils/color'
+import { getImageLink } from '@/utils/image'
 import { CdxButton, CdxTab, CdxTabs } from '@wikimedia/codex'
 import { nextTick, ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -20,7 +21,7 @@ async function updateSequence(targetColor: [number, number, number]) {
 }
 
 function generateGlass(color: Color) {
-  return `https://minecraft.wiki/images/Invicon_${imgNames[color]}_Stained_Glass_Pane.png?format=original`
+  return getImageLink(`en:Invicon_${imgNames[color]}_Stained_Glass_Pane.png`)
 }
 
 function generateGlassName(color: Color) {
@@ -53,7 +54,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
     false,
   )
 
-  img.src = 'https://minecraft.wiki/images/Beacon_Beam_(texture).png?format=original'
+  img.src = getImageLink('en:Beacon_Beam_(texture).png')
   img.crossOrigin = 'anonymous'
 })
 </script>
