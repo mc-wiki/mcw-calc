@@ -204,8 +204,8 @@ onMounted(() => {
 <template>
   <div
     :style="{
-      height: '60vw',
-      width: 'max(60%, 60vw)',
+      width: '100%',
+      paddingBottom: '56.25%',
       position: 'relative',
     }"
   >
@@ -213,9 +213,11 @@ onMounted(() => {
       ref="renderTarget"
       class="renderer-component"
       :style="{
+        position: 'absolute',
+        top: 0,
+        left: 0,
         width: '100%',
         height: '100%',
-        position: 'relative',
         cursor: 'grab',
       }"
     />
