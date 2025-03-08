@@ -1,4 +1,6 @@
 {
   "panoramaRenderer.pause": "Pause",
-  "panoramaRenderer.play": "Play"
+  "panoramaRenderer.play": "Play",
+  "panoramaRenderer.fullscreen": "Fullscreen",
+  "panoramaRenderer.exitFullscreen": "Exit Fullscreen"
 }

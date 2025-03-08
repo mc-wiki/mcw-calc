@@ -250,14 +250,14 @@ onMounted(() => {
       style="position: absolute; bottom: 10px; right: 10px; padding: 0.5em; display: flex; gap: 5px"
     >
       <CdxButton
-        :icon-label="t(isAnimating ? 'panoramaRenderer.pause' : 'panoramaRenderer.play')"
+        :aria-label="t(isAnimating ? 'panoramaRenderer.pause' : 'panoramaRenderer.play')"
         @click="toggleAnimation"
       >
         <CdxIcon :icon="isAnimating ? cdxIconPause : cdxIconPlay" />
       </CdxButton>
       <CdxButton
         v-if="isSupported"
-        :icon-label="
+        :aria-label="
           t(isFullscreen ? 'panoramaRenderer.exitFullscreen' : 'panoramaRenderer.fullscreen')
         "
         @click="isFullscreen ? exit() : enter()"

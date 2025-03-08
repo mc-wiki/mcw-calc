@@ -3,11 +3,17 @@ import { theme as themeRef } from './utils/theme'
 import './common.css'
 import './common.less'
 
-// use ResizeObserver to detect change of height and postMessage to parent
+function sendHeightChange() {
+  return () => {
+    postMessageParent('mcw-calc-height-change', { height: document.body.scrollHeight + 10 })
+  }
+}
 
-const observer = new ResizeObserver(() => {
-  postMessageParent('mcw-calc-height-change', { height: document.body.scrollHeight + 10 })
-})
+// use ResizeObserver to detect change of height and postMessage to parent
+const observer = new ResizeObserver(sendHeightChange())
+
+// listen to fullscreen
+document.addEventListener('fullscreenchange', sendHeightChange)
 
 for (const child of document.body.children) {
   observer.observe(child)
