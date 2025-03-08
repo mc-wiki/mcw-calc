@@ -54,6 +54,7 @@ mw.hook('wikipage.content').add(() => {
     iframe.style.width = '100%'
     iframe.style.colorScheme = 'auto'
     iframe.style.maxWidth = {
+      panoramaRenderer: 'max(60%, 60vw)',
       lifeviewer: '600px',
       blockDistribution: '640px',
       interactiveMap: '900px',

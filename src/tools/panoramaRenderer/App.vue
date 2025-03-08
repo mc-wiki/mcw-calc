@@ -100,8 +100,8 @@ function loadPanoramaImages() {
       texture.colorSpace = THREE.SRGBColorSpace
 
       texture.anisotropy = 16
-      texture.minFilter = THREE.LinearFilter
-      texture.magFilter = THREE.LinearFilter
+      texture.minFilter = THREE.NearestFilter
+      texture.magFilter = THREE.NearestFilter
       texture.generateMipmaps = false
 
       panoramaImages.value[index] = texture
