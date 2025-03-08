@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { getImageLink } from '@/utils/image'
 import { useFullscreen } from '@vueuse/core'
-import { CdxButton, CdxIcon } from '@wikimedia/codex'
+import { CdxButton, CdxCheckbox, CdxIcon } from '@wikimedia/codex'
 import {
   cdxIconExitFullscreen,
   cdxIconFullscreen,
+  cdxIconInstance,
   cdxIconPause,
   cdxIconPlay,
 } from '@wikimedia/codex-icons'
@@ -13,6 +14,8 @@ import WebGL from 'three/addons/capabilities/WebGL.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { onMounted, ref, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
+import BsrPopup from '../blockStructureRenderer/BsrPopup.vue'
+import panoramaOverlay from './panorama_overlay.png'
 
 const props = defineProps<{
   images: string[]
@@ -27,6 +30,9 @@ let renderer: THREE.WebGLRenderer
 let scene: THREE.Scene
 let camera: THREE.PerspectiveCamera
 let controls: OrbitControls
+
+const gradientOverlay = ref(false)
+const blurOverlay = ref(false)
 
 const isAnimating = ref(true)
 let autoRotate = true
@@ -228,10 +234,12 @@ onMounted(() => {
 
 <template>
   <div
+    ref="wrapper"
     :style="{
       width: '100%',
       paddingBottom: isFullscreen ? '100vh' : '56.25%',
       position: 'relative',
+      overflow: 'hidden',
     }"
   >
     <div
@@ -244,17 +252,41 @@ onMounted(() => {
         width: '100%',
         height: '100%',
         cursor: 'grab',
+        filter: blurOverlay ? 'blur(5px)' : 'none',
+      }"
+    />
+    <div
+      v-if="gradientOverlay"
+      :style="{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        backgroundImage: `url(${panoramaOverlay})`,
+        backgroundSize: 'contain',
+        pointerEvents: 'none',
       }"
     />
     <div
       style="position: absolute; bottom: 10px; right: 10px; padding: 0.5em; display: flex; gap: 5px"
     >
+      <BsrPopup :name="t('panoramaRenderer.overlayOptions')" :icon="cdxIconInstance">
+        <CdxCheckbox v-model="gradientOverlay">
+          {{ t('panoramaRenderer.gradientOverlay') }}
+        </CdxCheckbox>
+        <CdxCheckbox v-model="blurOverlay">
+          {{ t('panoramaRenderer.blurOverlay') }}
+        </CdxCheckbox>
+      </BsrPopup>
+
       <CdxButton
         :aria-label="t(isAnimating ? 'panoramaRenderer.pause' : 'panoramaRenderer.play')"
         @click="toggleAnimation"
       >
         <CdxIcon :icon="isAnimating ? cdxIconPause : cdxIconPlay" />
       </CdxButton>
+
       <CdxButton
         v-if="isSupported"
         :aria-label="

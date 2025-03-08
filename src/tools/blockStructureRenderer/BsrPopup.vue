@@ -2,12 +2,12 @@
 import { flip, offset, shift, useFloating } from '@floating-ui/vue'
 import { onClickOutside } from '@vueuse/core'
 import { CdxButton, CdxIcon } from '@wikimedia/codex'
-import { cdxIconClose } from '@wikimedia/codex-icons'
+import { cdxIconClose, type Icon } from '@wikimedia/codex-icons'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
-  icon: string
+  icon: Icon
   name: string
 }>()
 
@@ -44,6 +44,7 @@ onClickOutside(popup, () => {
       border: 1px solid var(--border-color-base, #a2a9b1);
       border-radius: 4px;
       padding: 12px;
+      width: fit-content;
     "
     :style="{ ...popupStyles, display: popupOpen ? 'block' : 'none' }"
   >
