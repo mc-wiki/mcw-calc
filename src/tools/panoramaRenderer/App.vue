@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import { getImageLink } from '@/utils/image'
+import { useFullscreen } from '@vueuse/core'
 import { CdxButton, CdxIcon } from '@wikimedia/codex'
-import { cdxIconPause, cdxIconPlay } from '@wikimedia/codex-icons'
+import {
+  cdxIconExitFullscreen,
+  cdxIconFullscreen,
+  cdxIconPause,
+  cdxIconPlay,
+} from '@wikimedia/codex-icons'
 import * as THREE from 'three'
 import WebGL from 'three/addons/capabilities/WebGL.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
@@ -36,6 +42,10 @@ const startPosition = new THREE.Vector3()
 const targetPosition = new THREE.Vector3(rotationRadius, 0, 0)
 const startTarget = new THREE.Vector3()
 const endTarget = new THREE.Vector3(0, 0, 0)
+
+const wrapper = useTemplateRef<HTMLElement>('wrapper')
+
+const { isFullscreen, isSupported, enter, exit } = useFullscreen(wrapper)
 
 function toggleAnimation() {
   isAnimating.value = !isAnimating.value
@@ -137,23 +147,20 @@ function createPanoramaScene() {
 function setupRenderer() {
   if (!renderTarget.value) return
 
-  const width = renderTarget.value.clientWidth
-  const height = renderTarget.value.clientHeight
+  const width = renderTarget.value!.clientWidth
+  const height = renderTarget.value!.clientHeight
 
   renderer = new THREE.WebGLRenderer({
     antialias: true,
     preserveDrawingBuffer: true,
   })
 
-  renderer.setPixelRatio(window.devicePixelRatio)
-  renderer.setSize(width, height)
-
   renderer.outputColorSpace = THREE.SRGBColorSpace
   renderer.toneMapping = THREE.NoToneMapping
 
   renderTarget.value.appendChild(renderer.domElement)
 
-  camera = new THREE.PerspectiveCamera(85, width / height, 0.05, 1000) // High FOV
+  camera = new THREE.PerspectiveCamera(85, width / height, 0.05, 1000)
 
   camera.position.set(rotationRadius, 0, 0)
   camera.lookAt(new THREE.Vector3(0, 0, 0))
@@ -162,6 +169,24 @@ function setupRenderer() {
   controls.enableZoom = false
   controls.autoRotate = autoRotate
   controls.autoRotateSpeed = 0.5
+
+  const updateSize = () => {
+    camera.aspect = renderTarget.value!.clientWidth / renderTarget.value!.clientHeight
+    camera.updateProjectionMatrix()
+
+    renderer.setSize(renderTarget.value!.clientWidth, renderTarget.value!.clientHeight)
+    renderer.setPixelRatio(window.devicePixelRatio)
+  }
+
+  // Call updateSize initially and whenever the window resizes
+  updateSize()
+
+  window.addEventListener('resize', updateSize)
+
+  // Clean up the event listener when the component is unmounted
+  onMounted(() => {
+    window.removeEventListener('resize', updateSize)
+  })
 
   renderTarget.value.addEventListener('mousedown', () => {
     autoRotate = false
@@ -205,7 +230,7 @@ onMounted(() => {
   <div
     :style="{
       width: '100%',
-      paddingBottom: '56.25%',
+      paddingBottom: isFullscreen ? '100vh' : '56.25%',
       position: 'relative',
     }"
   >
@@ -229,6 +254,15 @@ onMounted(() => {
         @click="toggleAnimation"
       >
         <CdxIcon :icon="isAnimating ? cdxIconPause : cdxIconPlay" />
+      </CdxButton>
+      <CdxButton
+        v-if="isSupported"
+        :icon-label="
+          t(isFullscreen ? 'panoramaRenderer.exitFullscreen' : 'panoramaRenderer.fullscreen')
+        "
+        @click="isFullscreen ? exit() : enter()"
+      >
+        <CdxIcon :icon="isFullscreen ? cdxIconExitFullscreen : cdxIconFullscreen" />
       </CdxButton>
     </div>
   </div>
