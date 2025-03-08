@@ -252,7 +252,6 @@ onMounted(() => {
         width: '100%',
         height: '100%',
         cursor: 'grab',
-        filter: blurOverlay ? 'blur(5px)' : 'none',
       }"
     />
     <div
@@ -265,6 +264,18 @@ onMounted(() => {
         height: '100%',
         backgroundImage: `url(${panoramaOverlay})`,
         backgroundSize: 'contain',
+        pointerEvents: 'none',
+      }"
+    />
+    <div
+      v-if="blurOverlay"
+      :style="{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        backdropFilter: blurOverlay ? 'blur(3px)' : 'none',
         pointerEvents: 'none',
       }"
     />
