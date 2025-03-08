@@ -47,6 +47,9 @@ mw.hook('wikipage.content').add(() => {
       iframe.appendChild(iframeParameter)
     })
 
+    // inherit all styles, we'll set our own later
+    iframe.style = calc.style
+
     calc.replaceWith(iframe)
 
     iframe.style.border = 'none'
