@@ -53,6 +53,9 @@ const wrapper = useTemplateRef<HTMLElement>('wrapper')
 
 const { isFullscreen, isSupported, enter, exit } = useFullscreen(wrapper)
 
+const isInView = ref(false)
+const isWindowFocused = ref(true)
+
 function toggleAnimation() {
   isAnimating.value = !isAnimating.value
   if (controls) {
@@ -203,6 +206,10 @@ function setupRenderer() {
 
 function animate() {
   requestAnimationFrame(animate)
+
+  // Only render if the component is in view and the window is focused
+  if (!isInView.value || !isWindowFocused.value || !scene || !camera || !renderer) return
+
   if (scene && camera && renderer) {
     const isCurrentlyTransitioning = updateTransition()
 
@@ -225,6 +232,21 @@ onMounted(() => {
   if (rendererAvailable && renderTarget.value) {
     setupRenderer()
     loadPanoramaImages()
+
+    // Observe the render target to check if it's in view
+    const observer = new IntersectionObserver((entries) => {
+      isInView.value = entries.some((entry) => entry.isIntersecting)
+    })
+    observer.observe(renderTarget.value)
+
+    // Check if the window is focused
+    window.addEventListener('focus', () => {
+      isWindowFocused.value = true
+    })
+    window.addEventListener('blur', () => {
+      isWindowFocused.value = false
+    })
+
     animate()
   } else {
     renderTarget.value?.appendChild(WebGL.getWebGLErrorMessage())
