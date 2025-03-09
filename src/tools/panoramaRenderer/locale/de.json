@@ -1,1 +1,9 @@
-{}
+{
+  "panoramaRenderer.pause": "Pause",
+  "panoramaRenderer.play": "Abspielen",
+  "panoramaRenderer.fullscreen": "Vollbild",
+  "panoramaRenderer.exitFullscreen": "Vollbildmodus beenden",
+  "panoramaRenderer.overlayOptions": "Überlagerungsoptionen",
+  "panoramaRenderer.blurOverlay": "Unschärfe-Überlagerung",
+  "panoramaRenderer.gradientOverlay": "Verlaufs-Überlagerung"
+}
