@@ -114,7 +114,7 @@ function loadPanoramaImages() {
   const loader = new THREE.TextureLoader()
 
   let loadedImages = 0
-  props.images.map(getImageLink).forEach((path, index) => {
+  props.images.map((image) => getImageLink(image)).forEach((path, index) => {
     loader.load(path, (texture) => {
       texture.colorSpace = THREE.SRGBColorSpace
 
