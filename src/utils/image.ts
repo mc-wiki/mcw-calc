@@ -1,6 +1,6 @@
 import { parentOrigin } from './iframe'
 
-export function getImageLink(image: string) {
+export function getImageLink(image: string, original: boolean = false) {
   const origin = image.startsWith('en:') ? 'https://minecraft.wiki' : parentOrigin()
   const normalized = image
     .replace(/^en:/, '')
@@ -8,5 +8,6 @@ export function getImageLink(image: string) {
     .replace(/ /g, '_')
 
   const capitalized = normalized.charAt(0).toUpperCase() + normalized.slice(1)
-  return `${origin}/images/${encodeURIComponent(capitalized)}?format=original`
+  const query = original ? '?format=original' : ''
+  return `${origin}/images/${encodeURIComponent(capitalized)}${query}`
 }
