@@ -1,1 +1,9 @@
-{}
+{
+  "panoramaRenderer.pause": "Pause",
+  "panoramaRenderer.play": "Lecture",
+  "panoramaRenderer.fullscreen": "Plein écran",
+  "panoramaRenderer.exitFullscreen": "Quitter le plein écran",
+  "panoramaRenderer.overlayOptions": "Superposition",
+  "panoramaRenderer.blurOverlay": "Flou",
+  "panoramaRenderer.gradientOverlay": "Dégradé"
+}
