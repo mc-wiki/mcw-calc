@@ -1,1 +1,9 @@
-{}
+{
+  "panoramaRenderer.pause": "일시 정지",
+  "panoramaRenderer.play": "재생",
+  "panoramaRenderer.fullscreen": "전체 화면",
+  "panoramaRenderer.exitFullscreen": "전체 화면 종료",
+  "panoramaRenderer.overlayOptions": "오버레이 설정",
+  "panoramaRenderer.blurOverlay": "흐린 오버레이",
+  "panoramaRenderer.gradientOverlay": "그라디언트 오버레이"
+}
