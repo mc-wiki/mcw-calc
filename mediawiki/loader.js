@@ -63,7 +63,8 @@ mw.hook('wikipage.content').add(() => {
       chunkbase: '900px',
     }[type]
 
-    iframe.allow = 'fullscreen *'
+    iframe.allow =
+      'accelerometer; clipboard-write; encrypted-media; fullscreen; picture-in-picture; autoplay'
 
     const dataset = {}
     Object.entries(calc.dataset).forEach((entry) => {
