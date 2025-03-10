@@ -114,22 +114,24 @@ function loadPanoramaImages() {
   const loader = new THREE.TextureLoader()
 
   let loadedImages = 0
-  props.images.map((image) => getImageLink(image)).forEach((path, index) => {
-    loader.load(path, (texture) => {
-      texture.colorSpace = THREE.SRGBColorSpace
+  props.images
+    .map((image) => getImageLink(image))
+    .forEach((path, index) => {
+      loader.load(path, (texture) => {
+        texture.colorSpace = THREE.SRGBColorSpace
 
-      texture.anisotropy = 16
-      texture.minFilter = THREE.NearestFilter
-      texture.magFilter = THREE.NearestFilter
-      texture.generateMipmaps = false
+        texture.anisotropy = 16
+        texture.minFilter = THREE.NearestFilter
+        texture.magFilter = THREE.NearestFilter
+        texture.generateMipmaps = false
 
-      panoramaImages.value[index] = texture
-      loadedImages++
-      if (loadedImages === 6) {
-        createPanoramaScene()
-      }
+        panoramaImages.value[index] = texture
+        loadedImages++
+        if (loadedImages === 6) {
+          createPanoramaScene()
+        }
+      })
     })
-  })
 }
 
 function createPanoramaScene() {
@@ -178,6 +180,7 @@ function setupRenderer() {
   controls.enableZoom = false
   controls.autoRotate = autoRotate
   controls.autoRotateSpeed = 0.5
+  controls.rotateSpeed *= -1
 
   const updateSize = () => {
     camera.aspect = renderTarget.value!.clientWidth / renderTarget.value!.clientHeight
