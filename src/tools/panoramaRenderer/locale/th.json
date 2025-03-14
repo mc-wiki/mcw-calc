@@ -1,1 +1,9 @@
-{}
+{
+  "panoramaRenderer.pause": "หยุดชั่วคราว",
+  "panoramaRenderer.play": "เล่น",
+  "panoramaRenderer.fullscreen": "เต็มหน้าจอ",
+  "panoramaRenderer.exitFullscreen": "ออกจากเต็มหน้าจอ",
+  "panoramaRenderer.overlayOptions": "ตัวเลือกการวางซ้อน",
+  "panoramaRenderer.blurOverlay": "วางซ้อนแบบเบลอ",
+  "panoramaRenderer.gradientOverlay": "วางซ้อนแบบไล่ระดับสี"
+}
