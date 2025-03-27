@@ -1,1 +1,6 @@
-{}
+{
+  "panoramaRenderer.pause": "暫停",
+  "panoramaRenderer.play": "播放",
+  "panoramaRenderer.fullscreen": "全螢幕",
+  "panoramaRenderer.exitFullscreen": "退出全螢幕"
+}
