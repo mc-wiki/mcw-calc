@@ -14,5 +14,8 @@ bo3b3o$b3o2bo$2bo!`),
 
   const params = handleParseError(parsed, targetEl)
 
-  targetEl.querySelector('textarea').textContent = params.pattern
+  const textArea = targetEl.querySelector('textarea')
+  if (textArea) {
+    textArea.textContent = params.pattern
+  }
 })()
