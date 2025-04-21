@@ -1,8 +1,8 @@
 {
   "decimalColor.title": "Calculate representation of color",
-  "decimalColor.color": "Color:",
-  "decimalColor.decimal": "Decimal:",
-  "decimalColor.hexadecimal": "Hexadecimal:",
-  "decimalColor.floats": "Float values:",
+  "decimalColor.color": "Color",
+  "decimalColor.decimal": "Decimal",
+  "decimalColor.hexadecimal": "Hexadecimal",
+  "decimalColor.floats": "Float values",
   "decimalColor.random": "Pick random color"
 }
