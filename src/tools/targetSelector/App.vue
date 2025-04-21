@@ -727,9 +727,9 @@ async function copySelector() {
       <div class="grid grid-cols-[1fr_auto] gap-x-2">
         <CdxTextInput
           v-model="finalSelector"
+          v-select-on-focus
           input-type="text"
           :readonly="true"
-          @focus="(event: Event) => (event.target as HTMLInputElement).select()"
         />
         <CdxButton @click="copySelector()">
           {{ copyText }}

@@ -4,6 +4,7 @@ import {
   colorToSequence,
   deltaE,
   floatRgbToInteger,
+  integerRgbToFloat,
   rgb2lab,
   separateRgb,
   sequenceToColorFloatAverage,
@@ -22,6 +23,13 @@ describe('floatRgbToInteger', () => {
   it('should convert float RGB to integer', () => {
     const rgb = [0.5, 0.5, 0.5] as [number, number, number]
     expect(floatRgbToInteger(rgb)).toEqual([127, 127, 127])
+  })
+})
+
+describe('integerRgbToFloat', () => {
+  it('should convert integer RGB to float', () => {
+    const rgb = [127, 127, 127] as [number, number, number]
+    expect(integerRgbToFloat(rgb)).toEqual([0.5, 0.5, 0.5])
   })
 })
 
