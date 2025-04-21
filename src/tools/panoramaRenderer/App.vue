@@ -12,6 +12,9 @@ import {
 import * as THREE from 'three'
 import WebGL from 'three/addons/capabilities/WebGL.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js'
 import { onMounted, ref, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import BsrPopup from '../blockStructureRenderer/BsrPopup.vue'
@@ -19,6 +22,7 @@ import panoramaOverlay from './panorama_overlay.png'
 
 const props = defineProps<{
   images: string[]
+  endSky: boolean
 }>()
 
 const { t } = useI18n()
@@ -141,14 +145,22 @@ function createPanoramaScene() {
 
   const textureOrder = [1, 3, 4, 5, 0, 2]
 
-  const materials = textureOrder.map(
-    (index) =>
-      new THREE.MeshBasicMaterial({
-        map: panoramaImages.value[index],
-        side: THREE.BackSide,
-        toneMapped: false,
-      }),
-  )
+  const materials = textureOrder.map((index) => {
+    const material = new THREE.MeshBasicMaterial({
+      map: panoramaImages.value[index],
+      side: THREE.BackSide,
+      toneMapped: false,
+    })
+
+    if (props.endSky && material.map) {
+      // Tile the texture 16 times for the end sky
+      material.map.wrapS = THREE.RepeatWrapping
+      material.map.wrapT = THREE.RepeatWrapping
+      material.map.repeat.set(16, 16) // 4x4 tiling = 16 tiles
+    }
+
+    return material
+  })
 
   const cube = new THREE.Mesh(geometry, materials)
   cube.scale.x = -1
@@ -227,7 +239,41 @@ function animate() {
       }
     }
 
-    renderer.render(scene, camera)
+    if (props.endSky) {
+      const shader = {
+        uniforms: {
+          tDiffuse: { value: null },
+          colorMultiplier: { value: new THREE.Vector3(40 / 255, 40 / 255, 40 / 255) },
+        },
+        vertexShader: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+        fragmentShader: `
+      uniform sampler2D tDiffuse;
+      uniform vec3 colorMultiplier;
+      varying vec2 vUv;
+      void main() {
+        vec4 color = texture2D(tDiffuse, vUv);
+        gl_FragColor = vec4(color.rgb * colorMultiplier, color.a);
+      }
+    `,
+      }
+
+      const composer = new EffectComposer(renderer)
+      const renderPass = new RenderPass(scene, camera)
+      composer.addPass(renderPass)
+
+      const shaderPass = new ShaderPass(shader)
+      composer.addPass(shaderPass)
+
+      composer.render()
+    } else {
+      renderer.render(scene, camera)
+    }
   }
 }
 
