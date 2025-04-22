@@ -32,7 +32,7 @@ declare module 'vue' {
   interface GlobalDirectives {
     vTooltip: FunctionDirective<
       any,
-      (_: string) => void,
+      string,
       | 'bottom'
       | 'bottom-start'
       | 'bottom-end'
