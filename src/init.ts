@@ -31,7 +31,16 @@ window.addEventListener('message', (event) => {
       classList.remove('dark')
       themeRef.value = 'light'
     }
+  } else if (event.data.type === 'mcw-calc-styles') {
+    const { styles } = event.data.data
+    const styleEl = document.createElement('style')
+    styleEl.innerHTML = styles
+    document.head.appendChild(styleEl)
   }
+})
+
+postMessageParent('mcw-calc-init-request-styles', {
+  type: new URL(window.location.href).pathname.split('/').slice(-2, -1)[0],
 })
 
 const locale =
