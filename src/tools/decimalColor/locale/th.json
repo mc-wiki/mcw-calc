@@ -1,5 +1,8 @@
 {
-  "decimalColor.title": "คำนวณการแทนสีด้วยเลขฐานสิบ",
-  "decimalColor.color": "สี:",
-  "decimalColor.decimal": "เลขฐานสิบ:"
+  "decimalColor.title": "คำนวณการแทนสีด้วยเลขฐานต่าง ๆ",
+  "decimalColor.color": "สี",
+  "decimalColor.decimal": "เลขฐานสิบ",
+  "decimalColor.hexadecimal": "เลขฐานสิบหก",
+  "decimalColor.floats": "ค่า Float",
+  "decimalColor.random": "เลือกสีแบบสุ่ม"
 }

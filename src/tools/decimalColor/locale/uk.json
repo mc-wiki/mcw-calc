@@ -1,5 +1,8 @@
 {
   "decimalColor.title": "Обчислити десяткове представлення кольору",
   "decimalColor.color": "Колір:",
-  "decimalColor.decimal": "Десяткове:"
+  "decimalColor.decimal": "Десяткове",
+  "decimalColor.hexadecimal": "Шістнадцяткове",
+  "decimalColor.floats": "Значення з рухомою комою",
+  "decimalColor.random": "Обрати випадковий колір"
 }
