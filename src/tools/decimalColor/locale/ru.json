@@ -1,5 +1,8 @@
 {
   "decimalColor.title": "Вычислить десятичное представление цвета",
   "decimalColor.color": "Цвет:",
-  "decimalColor.decimal": "Десятичное число:"
+  "decimalColor.decimal": "Десятичное число:",
+  "decimalColor.hexadecimal": "Шестнадцатеричное число",
+  "decimalColor.floats": "Значения с плавающей запятой",
+  "decimalColor.random": "Выбрать случайный цвет"
 }

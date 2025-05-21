@@ -2,5 +2,8 @@
   "panoramaRenderer.pause": "暫停",
   "panoramaRenderer.play": "播放",
   "panoramaRenderer.fullscreen": "全螢幕",
-  "panoramaRenderer.exitFullscreen": "退出全螢幕"
+  "panoramaRenderer.exitFullscreen": "退出全螢幕",
+  "panoramaRenderer.overlayOptions": "效果選項",
+  "panoramaRenderer.blurOverlay": "模糊效果",
+  "panoramaRenderer.gradientOverlay": "漸深效果"
 }

@@ -1,1 +1,9 @@
-{}
+{
+  "panoramaRenderer.pause": "暂停",
+  "panoramaRenderer.play": "播放",
+  "panoramaRenderer.fullscreen": "全屏",
+  "panoramaRenderer.exitFullscreen": "退出全屏",
+  "panoramaRenderer.overlayOptions": "效果选项",
+  "panoramaRenderer.blurOverlay": "模糊效果",
+  "panoramaRenderer.gradientOverlay": "渐深效果"
+}
