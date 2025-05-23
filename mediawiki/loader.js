@@ -66,6 +66,9 @@ mw.hook('wikipage.content').add(() => {
     iframe.allow =
       "accelerometer 'src'; clipboard-write 'src'; encrypted-media 'src'; fullscreen 'src'; picture-in-picture 'src'; autoplay 'src'"
     iframe.allowFullscreen = true
+    if (calcs.length > 5) {
+      iframe.loading = 'lazy'
+    }
 
     const dataset = {}
     Object.entries(calc.dataset).forEach((entry) => {
