@@ -20,6 +20,10 @@ for (const child of document.body.children) {
 }
 
 window.addEventListener('message', (event) => {
+  if (!/^(?:https?:\/\/)?(?:www\.)?(?:minecraft\.wiki|.*\.minecraft\.wiki)$/.test(event.origin)) {
+    return
+  }
+
   if (event.data.type === 'mcw-calc-theme-change') {
     const { theme } = event.data.data
     const { classList } = document.body
