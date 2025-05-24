@@ -2,8 +2,8 @@
 import CalcField from '@/components/CalcField.vue'
 import { type Color, colorStringToRgb, imgNames } from '@/utils/color'
 import { getImageLink } from '@/utils/image'
-import { CdxButton, CdxTab, CdxTabs } from '@wikimedia/codex'
-import { nextTick, ref, useTemplateRef, watch } from 'vue'
+import { CdxButton, CdxTab, CdxTabs, CdxTextInput } from '@wikimedia/codex'
+import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{ type: 'normal' | 'horse' | 'wolf' }>()
@@ -11,6 +11,22 @@ const props = defineProps<{ type: 'normal' | 'horse' | 'wolf' }>()
 const { t } = useI18n()
 
 const color = ref('#f9fffe')
+const colorText = computed({
+  get() {
+    return color.value
+  },
+  set(value: string) {
+    if (value.startsWith('#')) {
+      if (value.length > 7) {
+        color.value = value.slice(0, 7)
+      } else {
+        color.value = value
+      }
+    } else {
+      color.value = `#${value}`
+    }
+  },
+})
 const edition = ref<'java' | 'bedrock'>('java')
 const canvasRef = useTemplateRef('canvasRef')
 const sequence = ref<[Color[], number, [number, number, number]]>([['white'], 0, [249, 255, 254]])
@@ -127,6 +143,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
         >
           <label for="color-picker">{{ t('armorColor.color') }}</label>
           <input id="color-picker" v-model="color" type="color" />
+          <CdxTextInput v-model="colorText" class="min-w-[100px] font-mono" type="text" />
           <CdxButton @click="updateSequence(colorStringToRgb(color))">
             {{ t('armorColor.calculate') }}
           </CdxButton>

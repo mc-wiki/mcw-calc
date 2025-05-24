@@ -9,6 +9,22 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
 const color = ref('#f9fffe')
+const colorText = computed({
+  get() {
+    return color.value
+  },
+  set(value: string) {
+    if (value.startsWith('#')) {
+      if (value.length > 7) {
+        color.value = value.slice(0, 7)
+      } else {
+        color.value = value
+      }
+    } else {
+      color.value = `#${value}`
+    }
+  },
+})
 
 const decimal = computed({
   get: () => {
@@ -73,6 +89,7 @@ const randomColor = () => {
             }"
           >
             <input v-model="color" type="color" />
+            <CdxTextInput v-model="colorText" class="min-w-[100px] font-mono" type="text" />
             <CdxButton weight="quiet" @click="randomColor">
               <CdxIcon :icon="cdxIconDie" :icon-label="t('decimalColor.random')" />
             </CdxButton>
