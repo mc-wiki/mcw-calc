@@ -38,6 +38,7 @@
   "targetSelector.predicate": "[[Predicate]]",
   "targetSelector.nbt": "[[NBT]] data",
   "targetSelector.hasitem": "Carried items",
+  "targetSelector.has_property": "Properties",
   "targetSelector.scores": "Scores",
   "targetSelector.tag": "Tag",
   "targetSelector.team": "Team name",

@@ -38,6 +38,7 @@
   "targetSelector.predicate": "[[谓词]]",
   "targetSelector.nbt": "[[NBT]]数据",
   "targetSelector.hasitem": "持有物品",
+  "targetSelector.has_property": "属性",
   "targetSelector.scores": "分数",
   "targetSelector.tag": "标签",
   "targetSelector.team": "队伍名称",
