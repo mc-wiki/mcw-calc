@@ -48,6 +48,7 @@
   "targetSelector.gamemode.creative": "创造",
   "targetSelector.gamemode.adventure": "冒险",
   "targetSelector.gamemode.spectator": "旁观",
+  "targetSelector.gamemode.default": "默认",
   "targetSelector.advancements": "进度",
   "targetSelector.haspermission": "权限",
   "targetSelector.selector": "目标选择器",
