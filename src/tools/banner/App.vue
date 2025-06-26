@@ -618,7 +618,7 @@ onMounted(() => {
           </CdxTable>
         </div>
 
-        <div class="flex gap-2">
+        <div class="flex gap-2 flex-wrap">
           <CdxButton @click="copyShareUrl">
             <CdxIcon :icon="cdxIconLink" />
             {{ t('banner.copyShareUrl') }}
