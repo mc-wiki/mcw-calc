@@ -346,7 +346,10 @@ const finalSelector = computed(() => {
 })
 
 function onEditionChange(edition: 'java' | 'bedrock') {
-  if (edition === 'java' && type.value === '@initiator') type.value = '@s'
+  if (edition === 'java') {
+    if (type.value === '@initiator') type.value = '@s'
+    if (gameMode.value === 'default') gameMode.value = ''
+  }
 
   if (
     entityType.value === '' ||
