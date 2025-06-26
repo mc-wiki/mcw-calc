@@ -146,7 +146,7 @@ function getEntityFamilies() {
 }
 
 function getGameModes() {
-  return [
+  const items = [
     {
       label: t('targetSelector.none'),
       value: '',
@@ -172,7 +172,16 @@ function getGameModes() {
       value: 'spectator',
       thumbnail: { url: getImageLink('en:EnvSprite_spectator.png') },
     },
+    {
+      label: t('targetSelector.gamemode.default'),
+      value: 'default',
+      thumbnail: { url: getImageLink('en:EntitySprite_steve.png') },
+    },
   ]
+  if (edition.value === 'java') {
+    return items.filter((item) => item.value !== 'default')
+  }
+  return items
 }
 
 function toQuotedStringParam(str: string) {
@@ -337,7 +346,10 @@ const finalSelector = computed(() => {
 })
 
 function onEditionChange(edition: 'java' | 'bedrock') {
-  if (edition === 'java' && type.value === '@initiator') type.value = '@s'
+  if (edition === 'java') {
+    if (type.value === '@initiator') type.value = '@s'
+    if (gameMode.value === 'default') gameMode.value = ''
+  }
 
   if (
     entityType.value === '' ||
