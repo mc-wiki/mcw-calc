@@ -47,6 +47,7 @@
   "targetSelector.gamemode.creative": "Kreativmodus",
   "targetSelector.gamemode.adventure": "Abenteuermodus",
   "targetSelector.gamemode.spectator": "Zuschauermodus",
+  "targetSelector.gamemode.default": "Standard",
   "targetSelector.advancements": "Fortschritte",
   "targetSelector.haspermission": "Berechtigungen",
   "targetSelector.selector": "Zielauswahl",

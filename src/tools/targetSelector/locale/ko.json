@@ -47,6 +47,7 @@
   "targetSelector.gamemode.creative": "크리에이티브",
   "targetSelector.gamemode.adventure": "모험",
   "targetSelector.gamemode.spectator": "관전",
+  "targetSelector.gamemode.default": "기본",
   "targetSelector.advancements": "발전 과제",
   "targetSelector.haspermission": "권한",
   "targetSelector.selector": "대상 선택자",

@@ -47,6 +47,7 @@
   "targetSelector.gamemode.creative": "สร้างสรรค์",
   "targetSelector.gamemode.adventure": "ผจญภัย",
   "targetSelector.gamemode.spectator": "ผู้ชม",
+  "targetSelector.gamemode.default": "ค่าเริ่มต้น",
   "targetSelector.advancements": "ความก้าวหน้า",
   "targetSelector.haspermission": "สิทธิ์",
   "targetSelector.selector": "ตัวเลือกเป้าหมาย",

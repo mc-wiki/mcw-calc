@@ -47,6 +47,7 @@
   "targetSelector.gamemode.creative": "Творчість",
   "targetSelector.gamemode.adventure": "Пригода",
   "targetSelector.gamemode.spectator": "Спостерігач",
+  "targetSelector.gamemode.default": "Усталене",
   "targetSelector.advancements": "Досягнення",
   "targetSelector.haspermission": "Дозволи",
   "targetSelector.selector": "Селектор цілей",

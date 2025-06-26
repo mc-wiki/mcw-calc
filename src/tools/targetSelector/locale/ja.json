@@ -47,6 +47,7 @@
   "targetSelector.gamemode.creative": "クリエイティブ",
   "targetSelector.gamemode.adventure": "アドベンチャー",
   "targetSelector.gamemode.spectator": "スペクテイター",
+  "targetSelector.gamemode.default": "デフォルト",
   "targetSelector.advancements": "進捗",
   "targetSelector.haspermission": "権限フィルター",
   "targetSelector.selector": "ターゲットセレクター",
