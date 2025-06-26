@@ -62,6 +62,7 @@ const predicateNegated = ref<boolean>(false)
 const nbt = ref('')
 const nbtNegated = ref<boolean>(false)
 const hasitem = ref('')
+const hasProperty = ref('')
 const scores = ref('')
 const tag = ref('')
 const tagNegated = ref<boolean>(false)
@@ -97,10 +98,10 @@ function getTargetTypes() {
     { label: t('targetSelector.type.e'), value: '@e' },
     { label: t('targetSelector.type.initiator'), value: '@initiator' },
   ]
-  if (edition.value === 'bedrock') {
-    return items.filter((item) => item.value !== '@n')
+  if (edition.value === 'java') {
+    return items.filter((item) => item.value !== '@initiator')
   }
-  return items.filter((item) => item.value !== '@initiator')
+  return items
 }
 
 const entityTypes = computed(() => {
@@ -260,6 +261,10 @@ const finalSelector = computed(() => {
     params.push(`family${comparison}${entityFamily.value}`)
   }
 
+  if (edition.value === 'bedrock' && hasProperty.value) {
+    params.push(`has_property=${hasProperty.value}`)
+  }
+
   if (edition.value === 'java' && predicate.value) {
     const comparison = predicateNegated.value ? '=!' : '='
     params.push(`predicate${comparison}${predicate.value}`)
@@ -332,11 +337,7 @@ const finalSelector = computed(() => {
 })
 
 function onEditionChange(edition: 'java' | 'bedrock') {
-  if (edition === 'bedrock') {
-    if (type.value === '@n') type.value = '@s'
-  } else {
-    if (type.value === '@initiator') type.value = '@s'
-  }
+  if (edition === 'java' && type.value === '@initiator') type.value = '@s'
 
   if (
     entityType.value === '' ||
@@ -591,6 +592,11 @@ async function copySelector() {
         <CdxField v-if="edition === 'bedrock'">
           <template #label>{{ t('targetSelector.hasitem') }}</template>
           <CdxTextInput v-model="hasitem" input-type="text" />
+        </CdxField>
+
+        <CdxField v-if="edition === 'bedrock'">
+          <template #label>{{ t('targetSelector.has_property') }}</template>
+          <CdxTextInput v-model="hasProperty" input-type="text" />
         </CdxField>
       </div>
     </CdxAccordion>
