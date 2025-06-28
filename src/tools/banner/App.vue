@@ -152,6 +152,7 @@ const activePatterns = useLocalStorage<Pattern[]>('mcwBannerActivePatterns', [
 ])
 function updatePattern(index: number, pattern: keyof typeof patternName) {
   activePatterns.value[index].name = pattern
+  activePatterns.value = activePatterns.value.filter((v) => v !== null)
 }
 function updatePatternIds() {
   activePatterns.value.forEach((pattern, index) => {
@@ -171,6 +172,8 @@ function newLayer() {
       id: activePatterns.value.length,
     })
   }
+
+  activePatterns.value = activePatterns.value.filter((v) => v !== null)
 }
 
 const patternMenuItems: MenuItemData[] = patternId.map((pattern) => ({
