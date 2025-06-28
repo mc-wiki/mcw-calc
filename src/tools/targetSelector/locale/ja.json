@@ -38,6 +38,7 @@
   "targetSelector.predicate": "[[プレディケート]]",
   "targetSelector.nbt": "[[NBT]]データ",
   "targetSelector.hasitem": "持っているアイテム",
+  "targetSelector.has_property": "プロパティ",
   "targetSelector.scores": "スコア",
   "targetSelector.tag": "タグ",
   "targetSelector.team": "チーム名",
