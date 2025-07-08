@@ -38,6 +38,7 @@
   "targetSelector.predicate": "[[술어]]",
   "targetSelector.nbt": "[[NBT]] 데이터",
   "targetSelector.hasitem": "가지고 있는 아이템",
+  "targetSelector.has_property": "속성",
   "targetSelector.scores": "점수",
   "targetSelector.tag": "태그",
   "targetSelector.team": "팀 이름",

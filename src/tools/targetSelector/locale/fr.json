@@ -38,6 +38,7 @@
   "targetSelector.predicate": "[[Prédicat]]",
   "targetSelector.nbt": "Données [[NBT]]",
   "targetSelector.hasitem": "Objets transportés",
+  "targetSelector.has_property": "Propriétés",
   "targetSelector.scores": "Scores",
   "targetSelector.tag": "Tag",
   "targetSelector.team": "Nom de l’équipe",
