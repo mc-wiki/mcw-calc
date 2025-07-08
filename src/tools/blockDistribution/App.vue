@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { parseWikitext } from '@/utils/i18n'
-import { theme } from '@/utils/theme'
+import type { Block } from './data'
 import { useLocalStorage } from '@vueuse/core'
 import { CdxCheckbox, CdxTab, CdxTabs } from '@wikimedia/codex'
 import * as d3 from 'd3'
 import { computed, onMounted, onUpdated, ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { type Block, endBlockMap, getColor, netherBlockMap, overworldBlockMap } from './data'
+import { parseWikitext } from '@/utils/i18n'
+import { theme } from '@/utils/theme'
+import { endBlockMap, getColor, netherBlockMap, overworldBlockMap } from './data'
 
 const props = defineProps<{
   blocks: string[]
@@ -318,7 +319,7 @@ function update() {
                 ? new Intl.ListFormat($i18n.locale).format(props.blockNames)
                 : props.blockNames.join(', ')
               : props.pageName,
-          version: '1.21.4',
+          version: '1.21.7',
         }),
       )
     "
