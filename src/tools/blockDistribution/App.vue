@@ -13,6 +13,7 @@ const props = defineProps<{
   blocks: string[]
   blockNames: string[]
   pageName: string
+  dimensions: string[]
 }>()
 
 const { t } = useI18n()
@@ -411,21 +412,21 @@ function update() {
   </div>
   <CdxTabs v-model:active="currentTab">
     <CdxTab
-      v-if="overworldBlockMapFiltered.length !== 0"
+      v-if="overworldBlockMapFiltered.length !== 0 && props.dimensions.includes('overworld')"
       name="overworld"
       :label="t('blockDistribution.overworld')"
     >
       <div ref="overworld" style="overflow: auto" />
     </CdxTab>
     <CdxTab
-      v-if="netherBlockMapFiltered.length !== 0"
+      v-if="netherBlockMapFiltered.length !== 0 && props.dimensions.includes('nether')"
       name="nether"
       :label="t('blockDistribution.theNether')"
     >
       <div ref="nether" style="overflow: auto" />
     </CdxTab>
     <CdxTab
-      v-if="endBlockMapFiltered.length !== 0"
+      v-if="endBlockMapFiltered.length !== 0 && props.dimensions.includes('end')"
       name="end"
       :label="t('blockDistribution.theEnd')"
     >
