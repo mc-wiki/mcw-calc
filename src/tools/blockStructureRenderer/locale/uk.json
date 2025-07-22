@@ -3,7 +3,7 @@
   "blockStructureRenderer.optionsScene": "Сцена",
   "blockStructureRenderer.optionsExport": "Експортувати",
   "blockStructureRenderer.dragTooltip": "Перетягуйте, щоб керувати камерою",
-  "blockStructureRenderer.controlHelp": "Використовуйте вашу мишу та клавіатуру, щоб контролювати камеру. Натисніть ESC, щоб вийти.",
+  "blockStructureRenderer.controlHelp": "Використовуйте вашу мишу та клавіатуру, щоб контролювати камеру.",
   "blockStructureRenderer.closePopup": "Закрити",
   "blockStructureRenderer.orthographic": "Орфографічний вигляд",
   "blockStructureRenderer.displayMode": "Режим відображення",
