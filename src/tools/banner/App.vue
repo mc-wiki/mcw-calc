@@ -1,19 +1,8 @@
 <script setup lang="ts">
+import type { MenuItemData } from '@wikimedia/codex'
 import type { Color } from '@/utils/color'
-import CalcField from '@/components/CalcField.vue'
-import { colorMap, colorRgbMap } from '@/utils/color/java'
-import { copyToClipboard, parentUrl } from '@/utils/iframe'
-import { getImageLink } from '@/utils/image'
-import { theme } from '@/utils/theme'
 import { useLocalStorage } from '@vueuse/core'
-import {
-  CdxButton,
-  CdxIcon,
-  CdxSelect,
-  CdxTable,
-  CdxToggleButtonGroup,
-  type MenuItemData,
-} from '@wikimedia/codex'
+import { CdxButton, CdxIcon, CdxSelect, CdxTable, CdxToggleButtonGroup } from '@wikimedia/codex'
 import {
   cdxIconAlert,
   cdxIconDownTriangle,
@@ -26,6 +15,11 @@ import {
 } from '@wikimedia/codex-icons'
 import { onMounted, ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import CalcField from '@/components/CalcField.vue'
+import { colorMap, colorRgbMap } from '@/utils/color/java'
+import { copyToClipboard, parentUrl } from '@/utils/iframe'
+import { getImageLink } from '@/utils/image'
+import { theme } from '@/utils/theme'
 import BannerPopup from './BannerPopup.vue'
 
 const props = defineProps<{ icon: 'banner' | 'shield' }>()
@@ -154,10 +148,37 @@ function updatePattern(index: number, pattern: keyof typeof patternName) {
   activePatterns.value[index].name = pattern
   activePatterns.value = activePatterns.value.filter((v) => v !== null)
 }
-function updatePatternIds() {
-  activePatterns.value.forEach((pattern, index) => {
-    pattern.id = index
-  })
+function deletePattern(index: number) {
+  if (activePatterns.value.length <= 1) {
+    activePatterns.value = [
+      {
+        id: 0,
+        name: 'mojang',
+        color: 'black',
+      },
+    ]
+  } else {
+    activePatterns.value = activePatterns.value
+      .filter((_, i) => i !== index)
+      .map((pattern, index) => ({
+        ...pattern,
+        id: index,
+      }))
+  }
+}
+function swapPattern(from: number, to: number) {
+  const workingPatterns = activePatterns.value
+  if (from < 0 || from >= workingPatterns.length || to < 0 || to >= workingPatterns.length) {
+    return
+  }
+  const temp = workingPatterns[from]
+  workingPatterns[from] = workingPatterns[to]
+  workingPatterns[to] = temp
+
+  activePatterns.value = workingPatterns.map((pattern, index) => ({
+    ...pattern,
+    id: index,
+  }))
 }
 function newLayer() {
   if (activePatterns.value.length === 0) {
@@ -565,15 +586,7 @@ onMounted(() => {
                     class="min-h-0"
                     weight="quiet"
                     :aria-label="t('banner.move_up')"
-                    @click="
-                      () => {
-                        const index = row.id
-                        const temp = activePatterns[index]
-                        activePatterns[index] = activePatterns[index - 1]
-                        activePatterns[index - 1] = temp
-                        updatePatternIds()
-                      }
-                    "
+                    @click="() => swapPattern(row.id, row.id - 1)"
                   >
                     <CdxIcon size="x-small" :icon="cdxIconUpTriangle" />
                   </CdxButton>
@@ -582,15 +595,7 @@ onMounted(() => {
                     class="min-h-0"
                     weight="quiet"
                     :aria-label="t('banner.move_down')"
-                    @click="
-                      () => {
-                        const index = row.id
-                        const temp = activePatterns[index]
-                        activePatterns[index] = activePatterns[index + 1]
-                        activePatterns[index + 1] = temp
-                        updatePatternIds()
-                      }
-                    "
+                    @click="() => swapPattern(row.id, row.id + 1)"
                   >
                     <CdxIcon size="x-small" :icon="cdxIconDownTriangle" />
                   </CdxButton>
@@ -600,12 +605,7 @@ onMounted(() => {
                   weight="quiet"
                   action="destructive"
                   :aria-label="t('banner.remove')"
-                  @click="
-                    () => {
-                      activePatterns.splice(row.id, 1)
-                      updatePatternIds()
-                    }
-                  "
+                  @click="() => deletePattern(row.id)"
                 >
                   <CdxIcon :icon="cdxIconTrash" />
                 </CdxButton>
