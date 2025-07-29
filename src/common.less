@@ -3,23 +3,15 @@
 }
 
 @import '@wikimedia/codex-design-tokens/theme-wikimedia-ui.less';
-@import '@wikimedia/codex-design-tokens/theme-wikimedia-ui-reset.less';
+@import '@wikimedia/codex-design-tokens/theme-wikimedia-ui.css';
 @import '@wikimedia/codex-design-tokens/theme-wikimedia-ui-mixin-dark.less';
 
 @font-face {
   font-family: Minecraft;
-  src:
-    url(https://minecraft.wiki/images/Minecraft.eot) format('embedded-opentype'),
-    url(https://minecraft.wiki/images/Minecraft.woff2) format('woff2'),
-    url(https://minecraft.wiki/images/Minecraft.woff) format('woff'),
-    url(https://minecraft.wiki/images/Minecraft.ttf) format('truetype');
+  src: url(https://minecraft.wiki/images/Minecraft.woff2) format('woff2');
 }
 
 @layer base {
-  :root {
-    .cdx-mode-reset();
-  }
-
   html {
     font-family: 'Liberation Sans', Arial, Helvetica, FreeSans, sans-serif;
     font-size: 0.875em;
