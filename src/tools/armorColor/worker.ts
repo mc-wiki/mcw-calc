@@ -1,4 +1,5 @@
-import { type Color, colorToSequence as func, sequenceToColorFloatAverage } from '@/utils/color'
+import type { Color } from '@/utils/color'
+import { colorToSequence as func, sequenceToColorFloatAverage } from '@/utils/color'
 import { colorRgbMap as bedrockColorRgbMap } from '@/utils/color/bedrock'
 import { colorRgbMap as javaColorRgbMap } from '@/utils/color/java'
 
@@ -30,7 +31,7 @@ function sequenceToColorJavaArmor(
   const resultGreen = averageGreen * gainFactor
   const resultBlue = averageBlue * gainFactor
 
-  return [resultRed, resultGreen, resultBlue]
+  return [resultRed, resultGreen, resultBlue].map(Math.floor) as [number, number, number]
 }
 
 export async function colorToSequence(

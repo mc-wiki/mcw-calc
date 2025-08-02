@@ -145,8 +145,14 @@ const activePatterns = useLocalStorage<Pattern[]>('mcwBannerActivePatterns', [
   },
 ])
 function updatePattern(index: number, pattern: keyof typeof patternName) {
-  activePatterns.value[index].name = pattern
-  activePatterns.value = activePatterns.value.filter((v) => v !== null)
+  const workingPatterns = activePatterns.value.slice()
+  workingPatterns[index].name = pattern
+  activePatterns.value = workingPatterns.filter((v) => v !== null)
+
+  activePatterns.value = activePatterns.value.map((pattern, index) => ({
+    ...pattern,
+    id: index,
+  }))
 }
 function deletePattern(index: number) {
   if (activePatterns.value.length <= 1) {
@@ -167,7 +173,7 @@ function deletePattern(index: number) {
   }
 }
 function swapPattern(from: number, to: number) {
-  const workingPatterns = activePatterns.value
+  const workingPatterns = activePatterns.value.slice()
   if (from < 0 || from >= workingPatterns.length || to < 0 || to >= workingPatterns.length) {
     return
   }
