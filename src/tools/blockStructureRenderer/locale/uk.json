@@ -5,7 +5,7 @@
   "blockStructureRenderer.dragTooltip": "Перетягуйте, щоб керувати камерою",
   "blockStructureRenderer.controlHelp": "Використовуйте вашу мишу та клавіатуру, щоб контролювати камеру.",
   "blockStructureRenderer.closePopup": "Закрити",
-  "blockStructureRenderer.orthographic": "Орфографічний вигляд",
+  "blockStructureRenderer.orthographic": "Ортографічний вигляд",
   "blockStructureRenderer.displayMode": "Режим відображення",
   "blockStructureRenderer.displayModes.all": "Відображати всі блоки",
   "blockStructureRenderer.displayModes.yRange": "Відображати тільки блоки між певними Y",
