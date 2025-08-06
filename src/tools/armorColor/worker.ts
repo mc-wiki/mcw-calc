@@ -19,10 +19,10 @@ function sequenceToColorJavaArmor(
     totalMaximum = totalMaximum + Math.max(...colorRgbMap[color])
     numberOfColors++
   }
-  const averageRed = totalRed / numberOfColors
-  const averageGreen = totalGreen / numberOfColors
-  const averageBlue = totalBlue / numberOfColors
-  const averageMaximum = totalMaximum / numberOfColors
+  const averageRed = Math.floor(totalRed / numberOfColors)
+  const averageGreen = Math.floor(totalGreen / numberOfColors)
+  const averageBlue = Math.floor(totalBlue / numberOfColors)
+  const averageMaximum = Math.floor(totalMaximum / numberOfColors)
   const maximumOfAverage = Math.max(averageRed, averageGreen, averageBlue)
 
   const gainFactor = averageMaximum / maximumOfAverage
