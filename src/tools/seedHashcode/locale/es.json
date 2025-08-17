@@ -1,0 +1,7 @@
+{
+  "seedHashcode.title": "Convertir texto a número de semilla",
+  "seedHashcode.actual": "Semilla real:",
+  "seedHashcode.emptyString": "Un texto vacío debería resultar en 0; pero Minecraft decide generar un número aleatorio como semilla.",
+  "seedHashcode.number": "El número se usaría directamente, este es un hash teórico derivado del número como si fuese texto.",
+  "seedHashcode.outOfRange": "Este número excede el límite de un número de 64-bits. La semilla de arriba es la que realmente se usa."
+}

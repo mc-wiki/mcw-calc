@@ -1,0 +1,13 @@
+{
+  "blockDistribution.xAxis": "Nivel Y →",
+  "blockDistribution.yAxis": "↑ Número de X encontrado entre cada 100.000 bloques",
+  "blockDistribution.xInTenThousand": "{num} entre cada 100.000",
+  "blockDistribution.title": "Distribución de {block} en [[Java Edition {version}]]",
+  "blockDistribution.total": "Total",
+  "blockDistribution.overworld": "Mundo superior",
+  "blockDistribution.theNether": "El Nether",
+  "blockDistribution.theEnd": "El End",
+  "blockDistribution.logarithmicScale": "Escala logarítmica",
+  "blockDistribution.logarithmicScaleHelp": "Incluso las más ligeras diferencias en la coordenada Y representan un gran cambio en la frecuencia de un tipo de bloque, lo que facilita la visualización de pequeños cambios en el gráfico incluso cuando hay un gran pico.",
+  "blockDistribution.selectAll": "Seleccionar todo"
+}

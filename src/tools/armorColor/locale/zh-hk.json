@@ -6,6 +6,7 @@
   "armorColor.calculate": "計算",
   "armorColor.sequence": "序列：",
   "armorColor.sequence.help": "你需要同時使用所有染料",
+  "armorColor.sequence.helpBedrock": "要為皮革裝備染色，請按順序向鍋中加入染料，再拿裝備對鍋按下使用即可染色。",
   "armorColor.dE": "ΔE",
   "armorColor.dE.help": "ΔE是用於描述顏色間差異的度量，越小表示越接近。肉眼無法區分此值低於1.0的色彩。",
   "armorColor.type.normal": "皮革盔甲",

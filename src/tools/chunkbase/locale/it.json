@@ -1,1 +1,9 @@
-{}
+{
+  "chunkbase.title": "Anteprima della generazione del mondo",
+  "chunkbase.name": "Chunkbase",
+  "chunkbase.promo": "Per altre visualizzazioni, visita {link}.",
+  "chunkbase.java": "Java Edition",
+  "chunkbase.bedrock": "Bedrock Edition",
+  "chunkbase.seed": "Seme",
+  "chunkbase.submit": "Invia"
+}
