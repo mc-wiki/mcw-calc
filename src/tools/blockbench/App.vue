@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useFullscreen } from '@vueuse/core'
 import { CdxButton, CdxIcon, CdxProgressBar } from '@wikimedia/codex'
-import { cdxIconExitFullscreen, cdxIconFullScreen } from '@wikimedia/codex-icons'
+import { cdxIconExitFullscreen, cdxIconFullscreen } from '@wikimedia/codex-icons'
 import { ref, useTemplateRef } from 'vue'
 import BlockBenchLogo from './blockbench_logo_text.webp'
 
@@ -54,7 +54,7 @@ iframeSrc.search = params.toString()
           Exit fullscreen
         </CdxButton>
         <CdxButton v-else action="progressive" weight="quiet" @click="enter()">
-          <CdxIcon :icon="cdxIconFullScreen" />
+          <CdxIcon :icon="cdxIconFullscreen" />
           Enter fullscreen
         </CdxButton>
       </div>
