@@ -1,14 +1,19 @@
+import type {AnimatedTexture, BlockModel, BlockStateDefinition, BSRApiResponse, ModelReference, ModelReferenceWithWeight, StateData} from '@/tools/blockStructureRenderer/definitions.ts';
 import type { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
 import type { MaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
+import * as THREE from 'three'
+import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
+import { LineSegments2 } from 'three/examples/jsm/lines/LineSegments2.js'
+import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js'
 import {
-  type AnimatedTexture,
-  type BlockModel,
-  type BlockStateDefinition,
-  type BSRApiResponse,
-  EMPTY_STATE_DATA,
-  type ModelReference,
-  type ModelReferenceWithWeight,
-  type StateData,
+  
+  
+  
+  
+  EMPTY_STATE_DATA
+  
+  
+  
 } from '@/tools/blockStructureRenderer/definitions.ts'
 import { renderFluid } from '@/tools/blockStructureRenderer/fluid.ts'
 import {
@@ -28,10 +33,6 @@ import { renderBakedFaces, renderModelNoCullFaces } from '@/tools/blockStructure
 import { BLOCK_RENDERER_MINECRAFT_VERSION } from '@/tools/blockStructureRenderer/renderVersion.ts'
 import { digestMessage } from '@/utils/digest'
 import { fetchJigsawAPI } from '@/utils/jigsaw.ts'
-import * as THREE from 'three'
-import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
-import { LineSegments2 } from 'three/examples/jsm/lines/LineSegments2.js'
-import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js'
 
 // Block Structure ---------------------------------------------------------------------------------
 

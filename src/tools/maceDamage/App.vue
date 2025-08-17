@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import CalcField from '@/components/CalcField.vue'
-import { parseWikitext } from '@/utils/i18n'
-import { getImageLink } from '@/utils/image'
 import { CdxCheckbox, CdxMessage, CdxTextInput } from '@wikimedia/codex'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import CalcField from '@/components/CalcField.vue'
+import { parseWikitext } from '@/utils/i18n'
+import { getImageLink } from '@/utils/image'
 
 const { t } = useI18n()
 

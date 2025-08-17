@@ -1,8 +1,8 @@
+import * as vue from 'vue'
+import { z } from 'zod'
 import { createMcwI18n } from '@/utils/i18n'
 import { getParams, handleParseError, sz } from '@/utils/params'
 import plugin from '@/utils/plugin'
-import * as vue from 'vue'
-import { z } from 'zod'
 import App from './App.vue'
 import '@/init'
 

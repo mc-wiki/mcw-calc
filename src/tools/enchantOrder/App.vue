@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { onMounted, useTemplateRef } from 'vue'
 import CalcField from '@/components/CalcField.vue'
 import { theme } from '@/utils/theme'
-import { onMounted, useTemplateRef } from 'vue'
 
 const rawLocale =
   new URLSearchParams(window.location.hash.substring(2)).get('locale') ??

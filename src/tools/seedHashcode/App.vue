@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import CalcField from '@/components/CalcField.vue'
-import { hashCode } from '@/utils/seed'
 import { CdxMessage, CdxTextInput } from '@wikimedia/codex'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import CalcField from '@/components/CalcField.vue'
+import { hashCode } from '@/utils/seed'
 
 const { t } = useI18n()
 

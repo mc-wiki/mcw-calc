@@ -1,9 +1,9 @@
-import App from '@/tools/tick/App.vue'
-import { createMcwI18n } from '@/utils/i18n'
 import { userEvent } from '@vitest/browser/context'
 import { expect } from 'vitest'
 import { render } from 'vitest-browser-vue'
 import { createI18n } from 'vue-i18n'
+import App from '@/tools/tick/App.vue'
+import { createMcwI18n } from '@/utils/i18n'
 
 describe('app.vue', () => {
   it('renders the component', async () => {

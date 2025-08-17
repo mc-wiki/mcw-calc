@@ -1,8 +1,9 @@
+import type {LatLngTuple} from 'leaflet';
+import L from 'leaflet'
+import { z } from 'zod'
 import { parentOrigin } from '@/utils/iframe'
 import { getParams, handleParseError, sz } from '@/utils/params'
-import L, { type LatLngTuple } from 'leaflet'
-import { z } from 'zod'
-import processJson, { type Coordinate } from './processJson'
+import processJson from './processJson'
 import smoothWheelScroll from './smoothWheelScroll'
 import '@/init'
 import './main.css'

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { getImageLink } from '@/utils/image'
 import { useFullscreen } from '@vueuse/core'
 import { CdxButton, CdxCheckbox, CdxIcon } from '@wikimedia/codex'
 import {
@@ -17,6 +16,7 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js'
 import { onMounted, ref, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { getImageLink } from '@/utils/image'
 import BsrPopup from '../blockStructureRenderer/BsrPopup.vue'
 import panoramaOverlay from './panorama_overlay.png'
 

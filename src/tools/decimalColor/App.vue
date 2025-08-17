@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import CalcField from '@/components/CalcField.vue'
-import { colorStringToRgb, integerRgbToFloat } from '@/utils/color'
 import { CdxButton, CdxField, CdxIcon, CdxTextInput } from '@wikimedia/codex'
 import { cdxIconDie } from '@wikimedia/codex-icons'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import CalcField from '@/components/CalcField.vue'
+import { colorStringToRgb, integerRgbToFloat } from '@/utils/color'
 
 const { t } = useI18n()
 

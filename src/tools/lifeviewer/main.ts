@@ -1,5 +1,5 @@
-import { getParams, handleParseError, sz } from '@/utils/params'
 import { z } from 'zod'
+import { getParams, handleParseError } from '@/utils/params'
 import '@/init'
 
 const targetEl = document.querySelector('#app')!

@@ -1,10 +1,12 @@
 import type { ModelFace } from '@/tools/blockStructureRenderer/definitions.ts'
+import type {BlockStateModelManager} from '@/tools/blockStructureRenderer/model.ts';
 import type {
   BlockState,
   BlockStructure,
   NameMapping,
 } from '@/tools/blockStructureRenderer/renderer.ts'
 import type { MaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
+import * as THREE from 'three'
 import {
   Direction,
   getDirectionFromName,
@@ -18,15 +20,14 @@ import {
 } from '@/tools/blockStructureRenderer/math.ts'
 import {
   bakeModel,
-  type BlockStateModelManager,
-  renderModelNoCullsWithMS,
+  
+  renderModelNoCullsWithMS
 } from '@/tools/blockStructureRenderer/model.ts'
 import {
   ANIMATED_TEXTURE_ATLAS_SIZE,
   ATLAS_HEIGHT,
   ATLAS_WIDTH,
 } from '@/tools/blockStructureRenderer/texture.ts'
-import * as THREE from 'three'
 
 export function checkNameInSet(name: string, nameSet: (string | RegExp)[]) {
   return nameSet.some((nameTest) =>

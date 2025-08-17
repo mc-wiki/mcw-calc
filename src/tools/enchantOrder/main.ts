@@ -1,5 +1,5 @@
-import plugin from '@/utils/plugin'
 import * as vue from 'vue'
+import plugin from '@/utils/plugin'
 import App from './App.vue'
 import '@/init'
 

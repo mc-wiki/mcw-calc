@@ -1,6 +1,7 @@
 import type { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
 import type { BlockState, FluidState } from '@/tools/blockStructureRenderer/renderer.ts'
 import type { MaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
+import * as THREE from 'three'
 import {
   checkNameInSet,
   getShade,
@@ -19,7 +20,6 @@ import {
   oppositeDirection,
 } from '@/tools/blockStructureRenderer/math.ts'
 import { SpriteData } from '@/tools/blockStructureRenderer/texture.ts'
-import * as THREE from 'three'
 
 function isSameFluid(thisFluidState: FluidState, neighborFluidState: FluidState): boolean {
   return thisFluidState.fluid === neighborFluidState.fluid

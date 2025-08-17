@@ -1,12 +1,5 @@
 <script setup lang="ts">
-import CalcField from '@/components/CalcField.vue'
-import { entityFamilies } from '@/tools/targetSelector/data/entity_families.ts'
-import { bedrockEntityTypes } from '@/tools/targetSelector/data/entity_types_bedrock.ts'
-import { javaEntityTypes } from '@/tools/targetSelector/data/entity_types_java.ts'
-import { permissions } from '@/tools/targetSelector/data/permissions.ts'
-import { parseWikitext } from '@/utils/i18n'
-import { copyToClipboard } from '@/utils/iframe.ts'
-import { getImageLink } from '@/utils/image.ts'
+import type {ChipInputItem, MenuItemData} from '@wikimedia/codex';
 import {
   CdxAccordion,
   CdxButton,
@@ -17,13 +10,21 @@ import {
   CdxTab,
   CdxTabs,
   CdxTextInput,
-  CdxToggleButtonGroup,
-  type ChipInputItem,
-  type MenuItemData,
+  CdxToggleButtonGroup
+  
+  
 } from '@wikimedia/codex'
 import { cdxIconCheck, cdxIconClose, cdxIconHelp } from '@wikimedia/codex-icons'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import CalcField from '@/components/CalcField.vue'
+import { entityFamilies } from '@/tools/targetSelector/data/entity_families.ts'
+import { bedrockEntityTypes } from '@/tools/targetSelector/data/entity_types_bedrock.ts'
+import { javaEntityTypes } from '@/tools/targetSelector/data/entity_types_java.ts'
+import { permissions } from '@/tools/targetSelector/data/permissions.ts'
+import { parseWikitext } from '@/utils/i18n'
+import { copyToClipboard } from '@/utils/iframe.ts'
+import { getImageLink } from '@/utils/image.ts'
 
 const { t } = useI18n()
 

@@ -1,17 +1,7 @@
 <script setup lang="ts">
+import type {VirtualElement} from '@floating-ui/vue';
 import type { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
-import { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
-import {
-  bakeBlockMarkers,
-  bakeBlockModelRenderLayer,
-  bakeFluidRenderLayer,
-  bakeInvisibleBlocks,
-  BlockStructure,
-  NameMapping,
-} from '@/tools/blockStructureRenderer/renderer.ts'
-import { saveAsLitematic, saveAsStructureFile } from '@/tools/blockStructureRenderer/structure.ts'
-import { MaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
-import { flip, offset, shift, useFloating, type VirtualElement } from '@floating-ui/vue'
+import { flip, offset, shift, useFloating  } from '@floating-ui/vue'
 import {
   CdxButton,
   CdxCheckbox,
@@ -26,6 +16,17 @@ import WebGL from 'three/addons/capabilities/WebGL.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { computed, onMounted, ref, useTemplateRef, watch, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
+import {
+  bakeBlockMarkers,
+  bakeBlockModelRenderLayer,
+  bakeFluidRenderLayer,
+  bakeInvisibleBlocks,
+  BlockStructure,
+  NameMapping,
+} from '@/tools/blockStructureRenderer/renderer.ts'
+import { saveAsLitematic, saveAsStructureFile } from '@/tools/blockStructureRenderer/structure.ts'
+import { MaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
 import BsrPopup from './BsrPopup.vue'
 
 const props = defineProps<{

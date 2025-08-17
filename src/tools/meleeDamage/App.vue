@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import CalcField from '@/components/CalcField.vue'
-import { parseWikitext } from '@/utils/i18n'
-import { getImageLink } from '@/utils/image'
+import type {MenuItemData} from '@wikimedia/codex';
 import {
   CdxAccordion,
   CdxButton,
@@ -13,12 +11,15 @@ import {
   CdxTable,
   CdxTabs,
   CdxTextInput,
-  CdxToggleButtonGroup,
-  type MenuItemData,
+  CdxToggleButtonGroup
+  
 } from '@wikimedia/codex'
 import { cdxIconAdd, cdxIconTrash } from '@wikimedia/codex-icons'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import CalcField from '@/components/CalcField.vue'
+import { parseWikitext } from '@/utils/i18n'
+import { getImageLink } from '@/utils/image'
 
 const { t } = useI18n()
 
