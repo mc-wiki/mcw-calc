@@ -1,23 +1,23 @@
-import type {RawCreateParams, ZodRawShape} from 'zod';
-import {  z,  ZodType } from 'zod'
+import type { ZodRawShape } from 'zod'
+import { z, ZodType } from 'zod'
 
-export function string(param?: RawCreateParams) {
+export function string(param?: z.core.$ZodStringParams) {
   return z.preprocess((val) => {
     if (val === 'null') return null
     return val
   }, z.string(param))
 }
-export const number = (param?: RawCreateParams) => z.coerce.number(param)
-export const bigint = (param?: RawCreateParams) => z.coerce.bigint(param)
-export function boolean(param?: RawCreateParams) {
+export const number = z.coerce.number
+export const bigint = z.coerce.bigint
+export function boolean(param?: z.core.$ZodBooleanParams) {
   return z.preprocess((val, ctx) => {
     if (val === undefined) return undefined
     if (typeof val === 'boolean') return val
     if (typeof val != 'string') {
-      ctx.addIssue({
-        code: z.ZodIssueCode.invalid_type,
+      ctx.issues.push({
+        code: 'invalid_type',
         expected: 'string',
-        received: typeof val,
+        input: val,
         message: `Expected string, received${typeof val}`,
       })
       return false
@@ -25,12 +25,12 @@ export function boolean(param?: RawCreateParams) {
     return val === 'true'
   }, z.boolean(param))
 }
-export const date = (_param?: RawCreateParams) => z.coerce.date()
+export const date = (_param?: z.core.$ZodDateParams) => z.coerce.date()
 
 export function array<T extends ZodType>(
   type: T,
   separator: string | RegExp = ',',
-  param?: RawCreateParams,
+  param?: z.core.$ZodArrayParams,
 ) {
   return z.preprocess(
     (val, ctx) => {
@@ -38,10 +38,10 @@ export function array<T extends ZodType>(
       if (val === null) return null
       if (Array.isArray(val)) return val
       if (typeof val !== 'string') {
-        ctx.addIssue({
-          code: z.ZodIssueCode.invalid_type,
+        ctx.issues.push({
+          code: 'invalid_type',
           expected: 'string',
-          received: typeof val,
+          input: val,
           message: `Expected string, received${typeof val}`,
         })
         return false

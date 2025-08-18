@@ -1,4 +1,4 @@
-import type { SafeParseReturnType } from 'zod'
+import type { ZodSafeParseResult } from 'zod'
 import { postMessageParent } from './iframe'
 
 import * as sz from './sz'
@@ -42,7 +42,7 @@ function kebabToCamel(str: string) {
   return str.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
 }
 
-export function handleParseError<I, O>(returnValue: SafeParseReturnType<I, O>, targetEl: Element) {
+export function handleParseError<T>(returnValue: ZodSafeParseResult<T>, targetEl: Element) {
   if (returnValue.error) {
     const errorEl = document.createElement('ul')
     errorEl.id = 'error'
