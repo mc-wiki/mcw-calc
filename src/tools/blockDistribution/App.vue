@@ -239,13 +239,17 @@ function plot(
     const [xm, ym] = d3.pointer(event)
     const i = d3.leastIndex(points, ([x, y]) => Math.hypot(x - xm, y - ym))!
     const [x1, y1, k] = points[i]
+    const pos = x.invert(x1)
     dot.attr('transform', `translate(${x1},${y1})`)
     const formatter = d3.format('d')
     dot.select('text').html(
       `<tspan x="0" dy="1.2em">${t('blockDistribution.xInTenThousand', {
-        num: formatter(y.invert(y1)),
+        num: formatter(
+          blockMapFiltered.find((b) => b.block === k && Math.abs(b.pos - pos) < 1e-7)?.count ??
+          y.invert(y1),
+        ),
       })}</tspan>
-        <tspan x="0" dy="1.2em">Y=${formatter(x.invert(x1))}</tspan>
+        <tspan x="0" dy="1.2em">Y=${formatter(pos)}</tspan>
         <tspan x="0" dy="1.2em">${k}</tspan>`,
     )
     svg.property('value', points[i][2]).dispatch('input', { bubbles: true } as any)
