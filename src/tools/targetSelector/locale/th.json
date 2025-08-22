@@ -38,6 +38,7 @@
   "targetSelector.predicate": "[[เพรดิเคต]]",
   "targetSelector.nbt": "ข้อมูล [[NBT]]",
   "targetSelector.hasitem": "ไอเทมที่ถือ",
+  "targetSelector.has_property": "คุณสมบัติ",
   "targetSelector.scores": "คะแนน",
   "targetSelector.tag": "แท็ก",
   "targetSelector.team": "ชื่อทีม",
