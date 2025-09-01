@@ -38,6 +38,7 @@
   "targetSelector.predicate": "[[Предикат]]",
   "targetSelector.nbt": "[[NBT]]-данные",
   "targetSelector.hasitem": "Подобранные предметы",
+  "targetSelector.has_property": "Свойства",
   "targetSelector.scores": "Очки",
   "targetSelector.tag": "Тег",
   "targetSelector.team": "Название команды",

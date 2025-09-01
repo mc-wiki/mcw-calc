@@ -6,6 +6,7 @@
   "armorColor.calculate": "계산하기",
   "armorColor.sequence": "염색 순서:",
   "armorColor.sequence.help": "한 번에 모든 염료를 사용해 갑옷을 염색해야 합니다.",
+  "armorColor.sequence.helpBedrock": "가마솥에 알맞은 순서로 염료를 추가하고 가마솥에 갑옷을 사용해 염색해야 합니다.",
   "armorColor.dE": "델타 E",
   "armorColor.dE.help": "색 근접성의 측정값. 낮을 수록 정확합니다. 값이 ≤1.0이라면 사람의 눈으로는 차이를 인지할 수 없습니다.",
   "armorColor.type.normal": "가죽 갑옷",
