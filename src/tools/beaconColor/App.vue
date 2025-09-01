@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type {Color} from '@/utils/color';
-import { CdxButton, CdxTab, CdxTabs } from '@wikimedia/codex'
+import type { Color } from '@/utils/color'
+import { CdxButton, CdxTab, CdxTabs, CdxTextInput } from '@wikimedia/codex'
 import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CalcField from '@/components/CalcField.vue'
-import {  colorStringToRgb, imgNames } from '@/utils/color'
+import { colorStringToRgb, imgNames } from '@/utils/color'
 import { getImageLink } from '@/utils/image'
 
 const { t } = useI18n()
