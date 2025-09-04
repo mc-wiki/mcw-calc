@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import type { MenuItemData } from '@wikimedia/codex'
 import type { Armor, ArmorEnchantment, HelmetMaterial } from './App.vue'
-import { wikiImg } from '@/utils/image'
-import { CdxField, CdxSelect, CdxTextInput, type MenuItemData } from '@wikimedia/codex'
+import { CdxField, CdxSelect, CdxTextInput } from '@wikimedia/codex'
 import { useI18n } from 'vue-i18n'
+import { getImageLink } from '@/utils/image'
 
 const { type } = defineProps<{
   type: 'helmet' | 'chestplate' | 'leggings' | 'boots'
@@ -14,13 +15,13 @@ const { t } = useI18n()
 
 function materials(type: 'helmet' | 'chestplate' | 'leggings' | 'boots'): MenuItemData[] {
   return [
-    { label: 'Empty', value: 'empty', thumbnail: { url: wikiImg('BlockSprite_air') } },
+    { label: 'Empty', value: 'empty', thumbnail: { url: getImageLink('en:BlockSprite_air.png') } },
     ...(type === 'helmet'
       ? [
           {
             label: 'Turtle Shell',
             value: 'turtle',
-            thumbnail: { url: wikiImg('ItemSprite_turtle-shell') },
+            thumbnail: { url: getImageLink('en:ItemSprite_turtle-shell.png') },
           },
         ]
       : []),
@@ -28,34 +29,42 @@ function materials(type: 'helmet' | 'chestplate' | 'leggings' | 'boots'): MenuIt
       label: 'Leather',
       value: 'leather',
       thumbnail: {
-        url: wikiImg(
-          `ItemSprite_leather-${
+        url: getImageLink(
+          `en:ItemSprite_leather-${
             {
               helmet: 'cap',
               chestplate: 'tunic',
               leggings: 'pants',
               boots: 'boots',
             }[type]
-          }`,
+          }.png`,
         ),
       },
     },
-    { label: 'Golden', value: 'golden', thumbnail: { url: wikiImg(`ItemSprite_golden-${type}`) } },
+    {
+      label: 'Golden',
+      value: 'golden',
+      thumbnail: { url: getImageLink(`en:ItemSprite_golden-${type}.png`) },
+    },
     {
       label: 'Chainmail',
       value: 'chainmail',
-      thumbnail: { url: wikiImg(`ItemSprite_chainmail-${type}`) },
+      thumbnail: { url: getImageLink(`en:ItemSprite_chainmail-${type}.png`) },
     },
-    { label: 'Iron', value: 'iron', thumbnail: { url: wikiImg(`ItemSprite_iron-${type}`) } },
+    {
+      label: 'Iron',
+      value: 'iron',
+      thumbnail: { url: getImageLink(`en:ItemSprite_iron-${type}.png`) },
+    },
     {
       label: 'Diamond',
       value: 'diamond',
-      thumbnail: { url: wikiImg(`ItemSprite_diamond-${type}`) },
+      thumbnail: { url: getImageLink(`en:ItemSprite_diamond-${type}.png`) },
     },
     {
       label: 'Netherite',
       value: 'netherite',
-      thumbnail: { url: wikiImg(`ItemSprite_netherite-${type}`) },
+      thumbnail: { url: getImageLink(`en:ItemSprite_netherite-${type}.png`) },
     },
   ]
 }
