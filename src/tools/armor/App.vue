@@ -1,11 +1,23 @@
 <script setup lang="ts">
-import { CdxSelect, CdxTextInput } from '@wikimedia/codex'
-import { computed, reactive, ref } from 'vue'
+import CalcField from '@/components/CalcField.vue'
+import { CdxField, CdxSelect, CdxTab, CdxTabs, CdxTextInput } from '@wikimedia/codex'
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import ArmorSlot from './ArmorSlot.vue'
 
-type ArmorMaterial = 'empty' | 'leather' | 'golden' | 'chainmail' | 'iron' | 'diamond' | 'netherite'
-type HelmetMaterial = 'turtle' | ArmorMaterial
+const { t } = useI18n()
 
-const armorValueMap = {
+export type ArmorMaterial =
+  | 'empty'
+  | 'leather'
+  | 'golden'
+  | 'chainmail'
+  | 'iron'
+  | 'diamond'
+  | 'netherite'
+export type HelmetMaterial = 'turtle' | ArmorMaterial
+
+const armorPointMap = {
   empty: {
     helmet: 0,
     chestplate: 0,
@@ -101,311 +113,251 @@ const armorToughnessMap = {
   },
 }
 
-type ArmorEnchantment =
+const extraArmorPoint = ref(0)
+const extraArmorToughness = ref(0)
+
+export type ArmorEnchantment =
   | 'empty'
   | 'protection'
   | 'fireProtection'
   | 'blastProtection'
   | 'projectileProtection'
-type BootsEnchantment = 'featherFalling' | ArmorEnchantment
+  | 'featherFalling'
 
-const ePFMap: Record<BootsEnchantment, [number, number, number, number, number]> = {
-  empty: [0, 0, 0, 0, 0],
-  protection: [0, 1, 2, 3, 4],
-  fireProtection: [0, 2, 4, 6, 8],
-  blastProtection: [0, 2, 4, 6, 8],
-  projectileProtection: [0, 2, 4, 6, 8],
-  featherFalling: [0, 3, 6, 9, 12],
-}
-
-interface Armor<M, E> {
+export interface Armor<M, E> {
   material: M
-  enchantment: E
-  enchantmentLevel: 0 | 1 | 2 | 3 | 4
-  featherFalling: BootsEnchantment
-  featherFallingLevel: 0 | 1 | 2 | 3 | 4
+  enchantments: { enchantment: E; level: 0 | 1 | 2 | 3 | 4 }[]
 }
 
-const damage = ref(0)
-const helmet = reactive<Armor<HelmetMaterial, ArmorEnchantment>>({
+const sourceDamage = ref(1)
+type Source = 'other' | 'fire' | 'explosion' | 'projectile' | 'fall' | 'magic'
+const source = ref<Source>('other')
+const breachLevel = ref(0)
+const helmet = ref<Armor<HelmetMaterial, ArmorEnchantment>>({
   material: 'empty',
-  enchantment: 'empty',
-  enchantmentLevel: 1,
-  featherFalling: 'empty',
-  featherFallingLevel: 1,
+  enchantments: [{ enchantment: 'empty', level: 1 }],
 })
-const chestplate = reactive<Armor<ArmorMaterial, ArmorEnchantment>>({
+const chestplate = ref<Armor<ArmorMaterial, ArmorEnchantment>>({
   material: 'empty',
-  enchantment: 'empty',
-  enchantmentLevel: 1,
-  featherFalling: 'empty',
-  featherFallingLevel: 1,
+  enchantments: [{ enchantment: 'empty', level: 1 }],
 })
-const leggings = reactive<Armor<ArmorMaterial, ArmorEnchantment>>({
+const leggings = ref<Armor<ArmorMaterial, ArmorEnchantment>>({
   material: 'empty',
-  enchantment: 'empty',
-  enchantmentLevel: 1,
-  featherFalling: 'empty',
-  featherFallingLevel: 1,
+  enchantments: [{ enchantment: 'empty', level: 1 }],
 })
-const boots = reactive<Armor<ArmorMaterial, ArmorEnchantment>>({
+const boots = ref<Armor<ArmorMaterial, ArmorEnchantment>>({
   material: 'empty',
-  enchantment: 'empty',
-  enchantmentLevel: 1,
-  featherFalling: 'empty',
-  featherFallingLevel: 1,
+  enchantments: [{ enchantment: 'empty', level: 1 }],
 })
 
-const actualDamage = computed(() => {
-  const armorValue =
-    armorValueMap[helmet.material].helmet +
-    armorValueMap[chestplate.material].chestplate +
-    armorValueMap[leggings.material].leggings +
-    armorValueMap[boots.material].boots
-  const armorToughness =
-    armorToughnessMap[helmet.material].helmet +
-    armorToughnessMap[chestplate.material].chestplate +
-    armorToughnessMap[leggings.material].leggings +
-    armorToughnessMap[boots.material].boots
+const armorPoint = computed(
+  () =>
+    armorPointMap[helmet.value.material].helmet +
+    armorPointMap[chestplate.value.material].chestplate +
+    armorPointMap[leggings.value.material].leggings +
+    armorPointMap[boots.value.material].boots +
+    extraArmorPoint.value,
+)
 
-  const a = 0.2 * armorValue
-  const b = armorValue - damage.value / (2 + 0.5 * armorToughness)
-  const x = Math.min(20, Math.max(a, b)) / 25
+const armorToughness = computed(
+  () =>
+    armorToughnessMap[helmet.value.material].helmet +
+    armorToughnessMap[chestplate.value.material].chestplate +
+    armorToughnessMap[leggings.value.material].leggings +
+    armorToughnessMap[boots.value.material].boots +
+    extraArmorToughness.value,
+)
 
-  const materialFactor = 1 - x
+const extraEpf = ref(0)
 
-  const cumulativeEPF = Math.min(
+function determineEpf(level: number, enchantment: ArmorEnchantment): number {
+  if (enchantment === 'protection') return level
+  if (enchantment === 'fireProtection' && source.value === 'fire') return level * 2
+  if (enchantment === 'blastProtection' && source.value === 'explosion') return level * 2
+  if (enchantment === 'projectileProtection' && source.value === 'projectile') return level * 2
+  if (enchantment === 'featherFalling' && source.value === 'fall') return level * 3
+
+  return 0
+}
+
+const cumulativeEpf = computed(() =>
+  Math.min(
     20,
-    ePFMap[helmet.enchantment][helmet.enchantmentLevel] +
-      ePFMap[chestplate.enchantment][chestplate.enchantmentLevel] +
-      ePFMap[leggings.enchantment][leggings.enchantmentLevel] +
-      ePFMap[boots.enchantment][boots.enchantmentLevel] +
-      ePFMap[boots.featherFalling][boots.featherFallingLevel],
-  )
-  const ePF = cumulativeEPF / 25 || 1
+    helmet.value.enchantments.reduce(
+      (acc, { enchantment, level }) => acc + determineEpf(level, enchantment),
+      0,
+    ) +
+      chestplate.value.enchantments.reduce(
+        (acc, { enchantment, level }) => acc + determineEpf(level, enchantment),
+        0,
+      ) +
+      leggings.value.enchantments.reduce(
+        (acc, { enchantment, level }) => acc + determineEpf(level, enchantment),
+        0,
+      ) +
+      boots.value.enchantments.reduce(
+        (acc, { enchantment, level }) => acc + determineEpf(level, enchantment),
+        0,
+      ) +
+      extraEpf.value,
+  ),
+)
 
-  return materialFactor * ePF * damage.value
+const finalDamage = computed(() => {
+  let materialFactor = 1
+
+  if (source.value !== 'fire' && source.value !== 'fall' && source.value !== 'magic') {
+    const a = 0.2 * armorPoint.value
+    const b = armorPoint.value - sourceDamage.value / (2 + 0.25 * armorToughness.value)
+    const x = Math.min(20, Math.max(a, b)) / 25 - 0.15 * breachLevel.value
+
+    materialFactor = Math.min(1, 1 - x)
+  }
+
+  const epf = cumulativeEpf.value / 25 || 0
+
+  return materialFactor * (1 - epf) * sourceDamage.value
 })
+
+function selectOutput() {
+  const selection = window.getSelection()
+  selection?.removeAllRanges()
+  selection?.selectAllChildren(document.getElementById('output')!)
+}
 </script>
 
 <template>
-  <table class="wikitable" style="margin: auto">
-    <caption>
-      Actual damage taken
-    </caption>
-    <tbody>
-      <tr>
-        <th scope="col">Slot</th>
-        <th scope="col">Material</th>
-        <th scope="col">Enchantment 1</th>
-        <th scope="col">Enchantment 2</th>
-      </tr>
-      <tr>
-        <th scope="row">Helmet</th>
-        <td>
-          <CdxSelect
-            v-model:selected="helmet.material"
-            :menu-items="[
-              { label: 'Empty', value: 'empty' },
-              { label: 'Turtle Shell', value: 'turtle' },
-              { label: 'Leather', value: 'leather' },
-              { label: 'Golden', value: 'golden' },
-              { label: 'Chainmail', value: 'chainmail' },
-              { label: 'Iron', value: 'iron' },
-              { label: 'Diamond', value: 'diamond' },
-              { label: 'Netherite', value: 'netherite' },
-            ]"
-          />
-        </td>
-        <td>
-          <div style="display: flex; flex-direction: row">
-            <CdxSelect
-              v-model:selected="helmet.enchantment"
-              :menu-items="[
-                { label: 'Empty', value: 'empty' },
-                { label: 'Protection', value: 'protection' },
-                { label: 'Fire Protection', value: 'fireProtection' },
-                { label: 'Blast Protection', value: 'blastProtection' },
-                {
-                  label: 'Projectile Protection',
-                  value: 'projectileProtection',
-                },
-              ]"
-            />
-            <CdxSelect
-              v-if="helmet.enchantment !== 'empty'"
-              v-model:selected="helmet.enchantmentLevel"
-              :menu-items="[
-                { label: 'I', value: 1 },
-                { label: 'II', value: 2 },
-                { label: 'III', value: 3 },
-                { label: 'IV', value: 4 },
-              ]"
-            />
-          </div>
-        </td>
-        <td>N/A</td>
-      </tr>
-      <tr>
-        <th scope="row">Chestplate</th>
-        <td>
-          <CdxSelect
-            v-model:selected="chestplate.material"
-            :menu-items="[
-              { label: 'Empty', value: 'empty' },
-              { label: 'Leather', value: 'leather' },
-              { label: 'Golden', value: 'golden' },
-              { label: 'Chainmail', value: 'chainmail' },
-              { label: 'Iron', value: 'iron' },
-              { label: 'Diamond', value: 'diamond' },
-              { label: 'Netherite', value: 'netherite' },
-            ]"
-          />
-        </td>
-        <td>
-          <div style="display: flex; flex-direction: row">
-            <CdxSelect
-              v-model:selected="chestplate.enchantment"
-              :menu-items="[
-                { label: 'Empty', value: 'empty' },
-                { label: 'Protection', value: 'protection' },
-                { label: 'Fire Protection', value: 'fireProtection' },
-                { label: 'Blast Protection', value: 'blastProtection' },
-                {
-                  label: 'Projectile Protection',
-                  value: 'projectileProtection',
-                },
-              ]"
-            />
-            <CdxSelect
-              v-if="chestplate.enchantment !== 'empty'"
-              v-model:selected="chestplate.enchantmentLevel"
-              :menu-items="[
-                { label: 'I', value: 1 },
-                { label: 'II', value: 2 },
-                { label: 'III', value: 3 },
-                { label: 'IV', value: 4 },
-              ]"
-            />
-          </div>
-        </td>
-        <td>N/A</td>
-      </tr>
-      <tr>
-        <th scope="row">Leggings</th>
-        <td>
-          <CdxSelect
-            v-model:selected="leggings.material"
-            :menu-items="[
-              { label: 'Empty', value: 'empty' },
-              { label: 'Leather', value: 'leather' },
-              { label: 'Golden', value: 'golden' },
-              { label: 'Chainmail', value: 'chainmail' },
-              { label: 'Iron', value: 'iron' },
-              { label: 'Diamond', value: 'diamond' },
-              { label: 'Netherite', value: 'netherite' },
-            ]"
-          />
-        </td>
-        <td>
-          <div style="display: flex; flex-direction: row">
-            <CdxSelect
-              v-model:selected="leggings.enchantment"
-              :menu-items="[
-                { label: 'Empty', value: 'empty' },
-                { label: 'Protection', value: 'protection' },
-                { label: 'Fire Protection', value: 'fireProtection' },
-                { label: 'Blast Protection', value: 'blastProtection' },
-                {
-                  label: 'Projectile Protection',
-                  value: 'projectileProtection',
-                },
-              ]"
-            />
-            <CdxSelect
-              v-if="leggings.enchantment !== 'empty'"
-              v-model:selected="leggings.enchantmentLevel"
-              :menu-items="[
-                { label: 'I', value: 1 },
-                { label: 'II', value: 2 },
-                { label: 'III', value: 3 },
-                { label: 'IV', value: 4 },
-              ]"
-            />
-          </div>
-        </td>
-        <td>N/A</td>
-      </tr>
-      <tr>
-        <th scope="row">Boots</th>
-        <td>
-          <CdxSelect
-            v-model:selected="boots.material"
-            :menu-items="[
-              { label: 'Empty', value: 'empty' },
-              { label: 'Leather', value: 'leather' },
-              { label: 'Golden', value: 'golden' },
-              { label: 'Chainmail', value: 'chainmail' },
-              { label: 'Iron', value: 'iron' },
-              { label: 'Diamond', value: 'diamond' },
-              { label: 'Netherite', value: 'netherite' },
-            ]"
-          />
-        </td>
-        <td>
-          <div style="display: flex; flex-direction: row">
-            <CdxSelect
-              v-model:selected="boots.enchantment"
-              :menu-items="[
-                { label: 'Empty', value: 'empty' },
-                { label: 'Protection', value: 'protection' },
-                { label: 'Fire Protection', value: 'fireProtection' },
-                { label: 'Blast Protection', value: 'blastProtection' },
-                {
-                  label: 'Projectile Protection',
-                  value: 'projectileProtection',
-                },
-                { label: 'Feather Falling', value: 'featherFalling' },
-              ]"
-            />
-            <CdxSelect
-              v-if="boots.enchantment !== 'empty'"
-              v-model:selected="boots.enchantmentLevel"
-              :menu-items="[
-                { label: 'I', value: 1 },
-                { label: 'II', value: 2 },
-                { label: 'III', value: 3 },
-                { label: 'IV', value: 4 },
-              ]"
-            />
-          </div>
-        </td>
-        <td>
-          <div style="display: flex; flex-direction: row">
-            <CdxSelect
-              v-model:selected="boots.featherFalling"
-              :menu-items="[
-                { label: 'Empty', value: 'empty' },
-                { label: 'Feather Falling', value: 'featherFalling' },
-              ]"
-            />
-            <CdxSelect
-              v-if="boots.featherFalling !== 'empty'"
-              v-model:selected="boots.featherFallingLevel"
-              :menu-items="[
-                { label: 'I', value: 1 },
-                { label: 'II', value: 2 },
-                { label: 'III', value: 3 },
-                { label: 'IV', value: 4 },
-              ]"
-            />
-          </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <CalcField>
+    <template #heading>
+      {{ t('armor.title') }}
+    </template>
 
-  <CdxTextInput v-model="damage" input-type="number" />
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div>
+        <h3 class="mb-2">
+          {{ t('armor.armor') }}
+        </h3>
 
-  {{ actualDamage }}
+        <CdxTabs>
+          <CdxTab :name="t('armor.helmet')">
+            <ArmorSlot v-model="helmet" type="helmet" />
+          </CdxTab>
+          <CdxTab :name="t('armor.chestplate')">
+            <ArmorSlot v-model="chestplate" type="chestplate" />
+          </CdxTab>
+          <CdxTab :name="t('armor.leggings')">
+            <ArmorSlot v-model="leggings" type="leggings" />
+          </CdxTab>
+          <CdxTab :name="t('armor.boots')">
+            <ArmorSlot v-model="boots" type="boots" />
+          </CdxTab>
+        </CdxTabs>
+
+        <hr class="mt-4 mb-2" />
+
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 no-min-w">
+          <CdxField>
+            <template #label>
+              {{ t('armor.extraArmorPoint') }}
+            </template>
+
+            <CdxTextInput v-model="extraArmorPoint" input-type="number" />
+          </CdxField>
+
+          <CdxField>
+            <template #label>
+              {{ t('armor.extraArmorToughness') }}
+            </template>
+
+            <CdxTextInput v-model="extraArmorToughness" input-type="number" />
+          </CdxField>
+
+          <CdxField>
+            <template #label>
+              {{ t('armor.extraEpf') }}
+            </template>
+
+            <CdxTextInput v-model="extraEpf" input-type="number" />
+          </CdxField>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <h3>
+          {{ t('armor.source') }}
+        </h3>
+
+        <CdxField>
+          <template #label>
+            {{ t('armor.sourceInput') }}
+          </template>
+
+          <CdxSelect
+            v-model:selected="source"
+            :menu-items="[
+              { label: t('armor.source.other'), value: 'other' },
+              { label: t('armor.source.fire'), value: 'fire' },
+              { label: t('armor.source.explosion'), value: 'explosion' },
+              { label: t('armor.source.projectile'), value: 'projectile' },
+              { label: t('armor.source.fall'), value: 'fall' },
+              {
+                label: t('armor.source.magic'),
+                value: 'magic',
+                description: t('armor.source.magic.help'),
+              },
+            ]"
+          />
+        </CdxField>
+
+        <CdxField>
+          <template #label>
+            {{ t('armor.breachLevel') }}
+          </template>
+
+          <CdxTextInput v-model="breachLevel" input-type="number" />
+        </CdxField>
+
+        <CdxField>
+          <template #label>
+            {{ t('armor.sourceDamage') }}
+          </template>
+
+          <CdxTextInput v-model="sourceDamage" input-type="number" />
+        </CdxField>
+      </div>
+    </div>
+
+    <hr class="mt-4 mb-2" />
+
+    <ul class="hlist mb-2">
+      <I18nT tag="li" keypath="armor.armorPoint">
+        <template #point>
+          <output class="font-mono">{{ armorPoint.toFixed(2) }}</output>
+        </template>
+      </I18nT>
+      <I18nT tag="li" keypath="armor.armorToughness">
+        <template #toughness>
+          <output class="font-mono">{{ armorToughness.toFixed(2) }}</output>
+        </template>
+      </I18nT>
+      <I18nT tag="li" keypath="armor.cumulativeEpf">
+        <template #epf>
+          <output class="font-mono">{{ cumulativeEpf.toFixed(2) }}</output>
+        </template>
+      </I18nT>
+    </ul>
+
+    <I18nT tag="div" keypath="armor.finalDamage" class="font-bold">
+      <template #damage>
+        <output id="output" class="text-lg font-mono" @click="selectOutput">{{
+          finalDamage.toFixed(2)
+        }}</output>
+      </template>
+    </I18nT>
+  </CalcField>
 </template>
+<style>
+.no-min-w .cdx-text-input {
+  min-width: auto;
+}
+</style>
