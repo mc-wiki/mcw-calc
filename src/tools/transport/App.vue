@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import CalcField from '@/components/CalcField.vue'
 import { CdxField, CdxTextInput } from '@wikimedia/codex'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import CalcField from '@/components/CalcField.vue'
 
 const { t } = useI18n()
 
@@ -260,7 +260,7 @@ watch(
 </template>
 
 <style lang="less">
-@import '@wikimedia/codex-design-tokens/theme-wikimedia-ui-reset.less';
+@import '@wikimedia/codex-design-tokens/theme-wikimedia-ui-mixin-mode-reset.less';
 @import '@wikimedia/codex-design-tokens/theme-wikimedia-ui-mixin-dark.less';
 
 svg {

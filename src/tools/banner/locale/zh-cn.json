@@ -22,7 +22,7 @@
   "banner.copyJavaCommand": "复制Java版命令",
   "banner.copyBedrockCommand": "复制基岩版命令",
   "banner.bedrockCommandHelpButton": "基岩版？",
-  "banner.bedrockCommandHelpTooltip": "基岩版不支持使用命令向旗帜添加图案。",
+  "banner.bedrockCommandHelpTooltip": "基岩版不支持使用命令设置旗帜图案。",
   "banner.color.white": "白色",
   "banner.color.lightGray": "淡灰色",
   "banner.color.gray": "灰色",

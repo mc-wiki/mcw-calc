@@ -1,10 +1,10 @@
+import * as vue from 'vue'
+import { z } from 'zod'
 import App from '@/tools/blockStructureRenderer/App.vue'
 import { createMcwI18n } from '@/utils/i18n'
 import { fetchJigsawAPI } from '@/utils/jigsaw.ts'
 import { getParams, handleParseError, sz } from '@/utils/params.ts'
 import plugin from '@/utils/plugin'
-import * as vue from 'vue'
-import { z } from 'zod'
 import '@/init'
 
 const targetEl = document.querySelector('#app')!

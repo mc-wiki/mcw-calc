@@ -1,17 +1,19 @@
 <script setup lang="ts">
-import { parseWikitext } from '@/utils/i18n'
-import { theme } from '@/utils/theme'
+import type { Block } from './data'
 import { useLocalStorage } from '@vueuse/core'
 import { CdxCheckbox, CdxTab, CdxTabs } from '@wikimedia/codex'
 import * as d3 from 'd3'
 import { computed, onMounted, onUpdated, ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { type Block, endBlockMap, getColor, netherBlockMap, overworldBlockMap } from './data'
+import { parseWikitext } from '@/utils/i18n'
+import { theme } from '@/utils/theme'
+import { endBlockMap, getColor, netherBlockMap, overworldBlockMap } from './data'
 
 const props = defineProps<{
   blocks: string[]
   blockNames: string[]
   pageName: string
+  dimensions: string[]
 }>()
 
 const { t } = useI18n()
@@ -237,13 +239,17 @@ function plot(
     const [xm, ym] = d3.pointer(event)
     const i = d3.leastIndex(points, ([x, y]) => Math.hypot(x - xm, y - ym))!
     const [x1, y1, k] = points[i]
+    const pos = x.invert(x1)
     dot.attr('transform', `translate(${x1},${y1})`)
     const formatter = d3.format('d')
     dot.select('text').html(
       `<tspan x="0" dy="1.2em">${t('blockDistribution.xInTenThousand', {
-        num: formatter(y.invert(y1)),
+        num: formatter(
+          blockMapFiltered.find((b) => b.block === k && Math.abs(b.pos - pos) < 1e-7)?.count ??
+          y.invert(y1),
+        ),
       })}</tspan>
-        <tspan x="0" dy="1.2em">Y=${formatter(x.invert(x1))}</tspan>
+        <tspan x="0" dy="1.2em">Y=${formatter(pos)}</tspan>
         <tspan x="0" dy="1.2em">${k}</tspan>`,
     )
     svg.property('value', points[i][2]).dispatch('input', { bubbles: true } as any)
@@ -318,7 +324,7 @@ function update() {
                 ? new Intl.ListFormat($i18n.locale).format(props.blockNames)
                 : props.blockNames.join(', ')
               : props.pageName,
-          version: '1.21.4',
+          version: '1.21.7',
         }),
       )
     "
@@ -410,21 +416,21 @@ function update() {
   </div>
   <CdxTabs v-model:active="currentTab">
     <CdxTab
-      v-if="overworldBlockMapFiltered.length !== 0"
+      v-if="overworldBlockMapFiltered.length !== 0 && props.dimensions.includes('overworld')"
       name="overworld"
       :label="t('blockDistribution.overworld')"
     >
       <div ref="overworld" style="overflow: auto" />
     </CdxTab>
     <CdxTab
-      v-if="netherBlockMapFiltered.length !== 0"
+      v-if="netherBlockMapFiltered.length !== 0 && props.dimensions.includes('nether')"
       name="nether"
       :label="t('blockDistribution.theNether')"
     >
       <div ref="nether" style="overflow: auto" />
     </CdxTab>
     <CdxTab
-      v-if="endBlockMapFiltered.length !== 0"
+      v-if="endBlockMapFiltered.length !== 0 && props.dimensions.includes('end')"
       name="end"
       :label="t('blockDistribution.theEnd')"
     >

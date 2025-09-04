@@ -1,5 +1,8 @@
 {
-  "decimalColor.title": "カラーコードの10進表記を計算",
-  "decimalColor.color": "色：",
-  "decimalColor.decimal": "10進表記："
+  "decimalColor.title": "カラーコードの各表記を計算",
+  "decimalColor.color": "色",
+  "decimalColor.decimal": "10進表記",
+  "decimalColor.hexadecimal": "16進表記",
+  "decimalColor.floats": "float値のリスト",
+  "decimalColor.random": "ランダムな色を選択"
 }

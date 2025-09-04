@@ -1,21 +1,39 @@
 <script setup lang="ts">
-import CalcField from '@/components/CalcField.vue'
-import { type Color, colorStringToRgb, imgNames } from '@/utils/color'
-import { CdxButton, CdxTab, CdxTabs } from '@wikimedia/codex'
-import { nextTick, ref, useTemplateRef, watch } from 'vue'
+import type { Color } from '@/utils/color'
+import { CdxButton, CdxTab, CdxTabs, CdxTextInput } from '@wikimedia/codex'
+import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import CalcField from '@/components/CalcField.vue'
+import { colorStringToRgb, imgNames } from '@/utils/color'
+import { getImageLink } from '@/utils/image'
 
 const props = defineProps<{ type: 'normal' | 'horse' | 'wolf' }>()
 
 const { t } = useI18n()
 
 const color = ref('#f9fffe')
+const colorText = computed({
+  get() {
+    return color.value
+  },
+  set(value: string) {
+    if (value.startsWith('#')) {
+      if (value.length > 7) {
+        color.value = value.slice(0, 7)
+      } else {
+        color.value = value
+      }
+    } else {
+      color.value = `#${value}`
+    }
+  },
+})
 const edition = ref<'java' | 'bedrock'>('java')
 const canvasRef = useTemplateRef('canvasRef')
 const sequence = ref<[Color[], number, [number, number, number]]>([['white'], 0, [249, 255, 254]])
 
 function generateDye(color: Color) {
-  return `https://minecraft.wiki/images/Invicon_${imgNames[color]}_Dye.png?format=original`
+  return getImageLink(`en:Invicon_${imgNames[color]}_Dye.png`)
 }
 
 function generateDyeName(color: Color) {
@@ -56,10 +74,9 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
     false,
   )
   if (props.type === 'horse') {
-    img.src = 'https://minecraft.wiki/images/Leather_Horse_Armor_(texture)_JE2.png?format=original'
+    img.src = getImageLink('en:Leather_Horse_Armor_(texture)_JE2.png')
   } else if (props.type === 'wolf') {
-    img.src =
-      'https://minecraft.wiki/images/Wolf_Armor_(overlay_texture)_JE2_BE2.png?format=original'
+    img.src = getImageLink('en:Wolf_Armor_(overlay_texture)_JE2_BE2.png')
 
     img.addEventListener('load', () => {
       const dyeCanvas = document.createElement('canvas')
@@ -87,10 +104,10 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
         false,
       )
 
-      background.src = 'https://minecraft.wiki/images/Wolf_Armor_JE2_BE2.png?format=original'
+      background.src = getImageLink('en:Wolf_Armor_JE2_BE2.png')
     })
   } else {
-    img.src = 'https://minecraft.wiki/images/Leather_Tunic_(texture)_JE4_BE3.png?format=original'
+    img.src = getImageLink('en:Leather_Tunic_(texture)_JE4_BE3.png')
   }
   img.crossOrigin = 'anonymous'
 })
@@ -127,6 +144,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
         >
           <label for="color-picker">{{ t('armorColor.color') }}</label>
           <input id="color-picker" v-model="color" type="color" />
+          <CdxTextInput v-model="colorText" class="min-w-[100px] font-mono" type="text" />
           <CdxButton @click="updateSequence(colorStringToRgb(color))">
             {{ t('armorColor.calculate') }}
           </CdxButton>
@@ -139,7 +157,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
             gap: '.5rem',
           }"
           class="explain"
-          :title="t('armorColor.sequence.help')"
+          :title="t(`armorColor.sequence.help${edition === 'bedrock' ? 'Bedrock' : ''}`)"
         >
           {{ t('armorColor.sequence') }}
           <div v-for="(item, index) in sequence[0]" :key="index">

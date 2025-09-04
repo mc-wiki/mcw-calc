@@ -7,7 +7,7 @@
   "blockDistribution.overworld": "Верхній світ",
   "blockDistribution.theNether": "Незер",
   "blockDistribution.theEnd": "Енд",
-  "blockDistribution.logarithmicScale": "Логарифмічна шкала",
+  "blockDistribution.logarithmicScale": "Логаритмічна шкала",
   "blockDistribution.logarithmicScaleHelp": "Невелика різниця в координаті Y відображає велику зміну відносної частоти типу блока, тому корисно бачити невеликі зміни на графіку, коли спостерігається великий сплеск.",
   "blockDistribution.selectAll": "Вибрати все"
 }

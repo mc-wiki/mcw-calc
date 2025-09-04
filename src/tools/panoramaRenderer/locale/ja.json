@@ -1,0 +1,9 @@
+{
+  "panoramaRenderer.pause": "一時停止",
+  "panoramaRenderer.play": "再生",
+  "panoramaRenderer.fullscreen": "全画面表示",
+  "panoramaRenderer.exitFullscreen": "全画面表示を終了",
+  "panoramaRenderer.overlayOptions": "オーバーレイ設定",
+  "panoramaRenderer.blurOverlay": "ぼかし効果",
+  "panoramaRenderer.gradientOverlay": "グラデーション効果"
+}

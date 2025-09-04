@@ -1,6 +1,6 @@
 /// <reference types="types-mediawiki" />
+/* global mw */
 
-// eslint-disable-next-line no-undef
 mw.hook('wikipage.content').add(() => {
   const calcs = document.querySelectorAll('div.mcw-calc')
   calcs.forEach((calc) => {
@@ -22,11 +22,12 @@ mw.hook('wikipage.content').add(() => {
       iframe.setAttribute(attributes[i].name, attributes[i].value)
     }
 
-    // eslint-disable-next-line no-undef
     let local = mw.config.get('wgContentLanguage')
     if (local === 'zh') {
-      // eslint-disable-next-line no-undef
-      local = mw.config.get('wgUserVariant') || new URL(window.location.href).searchParams.get('variant') || mw.user.options.get('variant')
+      local =
+        mw.config.get('wgUserVariant') ||
+        new URL(window.location.href).searchParams.get('variant') ||
+        mw.user.options.get('variant')
     }
     const url = `/tools/${type}/#?id=${id}&locale=${local}&url=${encodeURIComponent(window.location.href)}`
 
@@ -46,6 +47,9 @@ mw.hook('wikipage.content').add(() => {
       iframe.appendChild(iframeParameter)
     })
 
+    // inherit all styles, we'll set our own later
+    iframe.style = calc.style
+
     calc.replaceWith(iframe)
 
     iframe.style.border = 'none'
@@ -53,10 +57,18 @@ mw.hook('wikipage.content').add(() => {
     iframe.style.width = '100%'
     iframe.style.colorScheme = 'auto'
     iframe.style.maxWidth = {
+      lifeviewer: '600px',
       blockDistribution: '640px',
       interactiveMap: '900px',
       chunkbase: '900px',
     }[type]
+
+    iframe.allow =
+      "accelerometer 'src'; clipboard-write 'src'; encrypted-media 'src'; fullscreen 'src'; picture-in-picture 'src'; autoplay 'src'"
+    iframe.allowFullscreen = true
+    if (calcs.length > 5) {
+      iframe.loading = 'lazy'
+    }
 
     const dataset = {}
     Object.entries(calc.dataset).forEach((entry) => {
@@ -76,7 +88,6 @@ mw.hook('wikipage.content').add(() => {
         new URL(iframe.src).origin
       )
 
-      // eslint-disable-next-line no-undef
       mw.hook('wgl.themeChanged').add((theme) => {
         iframe.contentWindow.postMessage(
           {

@@ -1,12 +1,5 @@
 <script setup lang="ts">
-import CalcField from '@/components/CalcField.vue'
-import { entityFamilies } from '@/tools/targetSelector/data/entity_families.ts'
-import { bedrockEntityTypes } from '@/tools/targetSelector/data/entity_types_bedrock.ts'
-import { javaEntityTypes } from '@/tools/targetSelector/data/entity_types_java.ts'
-import { permissions } from '@/tools/targetSelector/data/permissions.ts'
-import { parseWikitext } from '@/utils/i18n'
-import { copyToClipboard } from '@/utils/iframe.ts'
-import { wikiImg } from '@/utils/image.ts'
+import type {ChipInputItem, MenuItemData} from '@wikimedia/codex';
 import {
   CdxAccordion,
   CdxButton,
@@ -17,13 +10,21 @@ import {
   CdxTab,
   CdxTabs,
   CdxTextInput,
-  CdxToggleButtonGroup,
-  type ChipInputItem,
-  type MenuItemData,
+  CdxToggleButtonGroup
+  
+  
 } from '@wikimedia/codex'
 import { cdxIconCheck, cdxIconClose, cdxIconHelp } from '@wikimedia/codex-icons'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import CalcField from '@/components/CalcField.vue'
+import { entityFamilies } from '@/tools/targetSelector/data/entity_families.ts'
+import { bedrockEntityTypes } from '@/tools/targetSelector/data/entity_types_bedrock.ts'
+import { javaEntityTypes } from '@/tools/targetSelector/data/entity_types_java.ts'
+import { permissions } from '@/tools/targetSelector/data/permissions.ts'
+import { parseWikitext } from '@/utils/i18n'
+import { copyToClipboard } from '@/utils/iframe.ts'
+import { getImageLink } from '@/utils/image.ts'
 
 const { t } = useI18n()
 
@@ -62,6 +63,7 @@ const predicateNegated = ref<boolean>(false)
 const nbt = ref('')
 const nbtNegated = ref<boolean>(false)
 const hasitem = ref('')
+const hasProperty = ref('')
 const scores = ref('')
 const tag = ref('')
 const tagNegated = ref<boolean>(false)
@@ -97,10 +99,10 @@ function getTargetTypes() {
     { label: t('targetSelector.type.e'), value: '@e' },
     { label: t('targetSelector.type.initiator'), value: '@initiator' },
   ]
-  if (edition.value === 'bedrock') {
-    return items.filter((item) => item.value !== '@n')
+  if (edition.value === 'java') {
+    return items.filter((item) => item.value !== '@initiator')
   }
-  return items.filter((item) => item.value !== '@initiator')
+  return items
 }
 
 const entityTypes = computed(() => {
@@ -110,7 +112,7 @@ const entityTypes = computed(() => {
       label: t('targetSelector.none'),
       value: '',
       description: null,
-      thumbnail: { url: wikiImg('BlockSprite_barrier') },
+      thumbnail: { url: getImageLink('en:BlockSprite_barrier.png') },
     },
   ] as MenuItemData[]
   Object.entries(entityTypes).map(([name, image]) =>
@@ -119,7 +121,7 @@ const entityTypes = computed(() => {
       value: `minecraft:${name}`,
       description: name,
       thumbnail: {
-        url: wikiImg(image),
+        url: getImageLink(`en:${image}`),
       },
     }),
   )
@@ -145,33 +147,42 @@ function getEntityFamilies() {
 }
 
 function getGameModes() {
-  return [
+  const items = [
     {
       label: t('targetSelector.none'),
       value: '',
-      thumbnail: { url: wikiImg('BlockSprite_barrier') },
+      thumbnail: { url: getImageLink('en:BlockSprite_barrier.png') },
     },
     {
       label: t('targetSelector.gamemode.survival'),
       value: 'survival',
-      thumbnail: { url: wikiImg('EnvSprite_survival') },
+      thumbnail: { url: getImageLink('en:EnvSprite_survival.png') },
     },
     {
       label: t('targetSelector.gamemode.creative'),
       value: 'creative',
-      thumbnail: { url: wikiImg('EnvSprite_creative') },
+      thumbnail: { url: getImageLink('en:EnvSprite_creative.png') },
     },
     {
       label: t('targetSelector.gamemode.adventure'),
       value: 'adventure',
-      thumbnail: { url: wikiImg('EnvSprite_adventure') },
+      thumbnail: { url: getImageLink('en:EnvSprite_adventure.png') },
     },
     {
       label: t('targetSelector.gamemode.spectator'),
       value: 'spectator',
-      thumbnail: { url: wikiImg('EnvSprite_spectator') },
+      thumbnail: { url: getImageLink('en:EnvSprite_spectator.png') },
+    },
+    {
+      label: t('targetSelector.gamemode.default'),
+      value: 'default',
+      thumbnail: { url: getImageLink('en:EntitySprite_steve.png') },
     },
   ]
+  if (edition.value === 'java') {
+    return items.filter((item) => item.value !== 'default')
+  }
+  return items
 }
 
 function toQuotedStringParam(str: string) {
@@ -260,6 +271,10 @@ const finalSelector = computed(() => {
     params.push(`family${comparison}${entityFamily.value}`)
   }
 
+  if (edition.value === 'bedrock' && hasProperty.value) {
+    params.push(`has_property=${hasProperty.value}`)
+  }
+
   if (edition.value === 'java' && predicate.value) {
     const comparison = predicateNegated.value ? '=!' : '='
     params.push(`predicate${comparison}${predicate.value}`)
@@ -332,10 +347,9 @@ const finalSelector = computed(() => {
 })
 
 function onEditionChange(edition: 'java' | 'bedrock') {
-  if (edition === 'bedrock') {
-    if (type.value === '@n') type.value = '@s'
-  } else {
+  if (edition === 'java') {
     if (type.value === '@initiator') type.value = '@s'
+    if (gameMode.value === 'default') gameMode.value = ''
   }
 
   if (
@@ -592,6 +606,11 @@ async function copySelector() {
           <template #label>{{ t('targetSelector.hasitem') }}</template>
           <CdxTextInput v-model="hasitem" input-type="text" />
         </CdxField>
+
+        <CdxField v-if="edition === 'bedrock'">
+          <template #label>{{ t('targetSelector.has_property') }}</template>
+          <CdxTextInput v-model="hasProperty" input-type="text" />
+        </CdxField>
       </div>
     </CdxAccordion>
 
@@ -727,9 +746,9 @@ async function copySelector() {
       <div class="grid grid-cols-[1fr_auto] gap-x-2">
         <CdxTextInput
           v-model="finalSelector"
+          v-select-on-focus
           input-type="text"
           :readonly="true"
-          @focus="(event: Event) => (event.target as HTMLInputElement).select()"
         />
         <CdxButton @click="copySelector()">
           {{ copyText }}

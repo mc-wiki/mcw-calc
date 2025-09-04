@@ -1,18 +1,8 @@
 <script setup lang="ts">
+import type { MenuItemData } from '@wikimedia/codex'
 import type { Color } from '@/utils/color'
-import CalcField from '@/components/CalcField.vue'
-import { colorMap, colorRgbMap } from '@/utils/color/java'
-import { copyToClipboard, parentUrl } from '@/utils/iframe'
-import { theme } from '@/utils/theme'
 import { useLocalStorage } from '@vueuse/core'
-import {
-  CdxButton,
-  CdxIcon,
-  CdxSelect,
-  CdxTable,
-  CdxToggleButtonGroup,
-  type MenuItemData,
-} from '@wikimedia/codex'
+import { CdxButton, CdxIcon, CdxSelect, CdxTable, CdxToggleButtonGroup } from '@wikimedia/codex'
 import {
   cdxIconAlert,
   cdxIconDownTriangle,
@@ -25,6 +15,11 @@ import {
 } from '@wikimedia/codex-icons'
 import { onMounted, ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import CalcField from '@/components/CalcField.vue'
+import { colorMap, colorRgbMap } from '@/utils/color/java'
+import { copyToClipboard, parentUrl } from '@/utils/iframe'
+import { getImageLink } from '@/utils/image'
+import { theme } from '@/utils/theme'
 import BannerPopup from './BannerPopup.vue'
 
 const props = defineProps<{ icon: 'banner' | 'shield' }>()
@@ -150,12 +145,46 @@ const activePatterns = useLocalStorage<Pattern[]>('mcwBannerActivePatterns', [
   },
 ])
 function updatePattern(index: number, pattern: keyof typeof patternName) {
-  activePatterns.value[index].name = pattern
+  const workingPatterns = activePatterns.value.slice()
+  workingPatterns[index].name = pattern
+  activePatterns.value = workingPatterns.filter((v) => v !== null)
+
+  activePatterns.value = activePatterns.value.map((pattern, index) => ({
+    ...pattern,
+    id: index,
+  }))
 }
-function updatePatternIds() {
-  activePatterns.value.forEach((pattern, index) => {
-    pattern.id = index
-  })
+function deletePattern(index: number) {
+  if (activePatterns.value.length <= 1) {
+    activePatterns.value = [
+      {
+        id: 0,
+        name: 'mojang',
+        color: 'black',
+      },
+    ]
+  } else {
+    activePatterns.value = activePatterns.value
+      .filter((_, i) => i !== index)
+      .map((pattern, index) => ({
+        ...pattern,
+        id: index,
+      }))
+  }
+}
+function swapPattern(from: number, to: number) {
+  const workingPatterns = activePatterns.value.slice()
+  if (from < 0 || from >= workingPatterns.length || to < 0 || to >= workingPatterns.length) {
+    return
+  }
+  const temp = workingPatterns[from]
+  workingPatterns[from] = workingPatterns[to]
+  workingPatterns[to] = temp
+
+  activePatterns.value = workingPatterns.map((pattern, index) => ({
+    ...pattern,
+    id: index,
+  }))
 }
 function newLayer() {
   if (activePatterns.value.length === 0) {
@@ -170,13 +199,15 @@ function newLayer() {
       id: activePatterns.value.length,
     })
   }
+
+  activePatterns.value = activePatterns.value.filter((v) => v !== null)
 }
 
 const patternMenuItems: MenuItemData[] = patternId.map((pattern) => ({
   value: pattern,
   label: t(`banner.pattern.${pattern}`),
   thumbnail: {
-    url: `https://minecraft.wiki/images/SlotSprite_${patternName[pattern].replace(/ /g, '_')}.png`,
+    url: getImageLink(`en:SlotSprite_${patternName[pattern].replace(/ /g, '_')}.png`),
   },
 }))
 
@@ -241,14 +272,16 @@ watch(
     const images = await promiseAllObject({
       base: loadImage(
         type === 'banner'
-          ? 'https://minecraft.wiki/images/Banner_base_(texture)_JE1_BE1.png?format=original'
-          : 'https://minecraft.wiki/images/Shield_base_(texture)_JE2_BE1.png?format=original',
+          ? getImageLink('en:Banner_base_(texture)_JE1_BE1.png')
+          : getImageLink('en:Shield_base_(texture)_JE2_BE1.png'),
       ),
       ...Object.fromEntries(
         patterns.map((pattern) => [
           pattern.name,
           loadImage(
-            `https://minecraft.wiki/images/${type === 'banner' ? 'Banner' : 'Shield'}_${pattern.name}_(texture)_JE1_BE1.png?format=original`,
+            getImageLink(
+              `en:${type === 'banner' ? 'Banner' : 'Shield'}_${pattern.name}_(texture)_JE1_BE1.png`,
+            ),
           ),
         ]),
       ),
@@ -495,11 +528,13 @@ onMounted(() => {
                         width="24"
                         height="24"
                         loading="lazy"
-                        :src="`https://minecraft.wiki/images/ItemSprite_${patternName[
-                          menuItem.value as keyof typeof patternName
-                        ]
-                          .toLowerCase()
-                          .replace(/ /, '-')}-banner-pattern.png`"
+                        :src="
+                          getImageLink(
+                            `en:ItemSprite_${patternName[menuItem.value as keyof typeof patternName]
+                              .toLowerCase()
+                              .replace(/ /, '-')}-banner-pattern.png`,
+                          )
+                        "
                       />
                     </div>
                   </div>
@@ -525,11 +560,15 @@ onMounted(() => {
                         width="24"
                         height="24"
                         loading="lazy"
-                        :src="`https://minecraft.wiki/images/ItemSprite_${patternName[
-                          selectedMenuItem.value as keyof typeof patternName
-                        ]
-                          .toLowerCase()
-                          .replace(/ /, '-')}-banner-pattern.png`"
+                        :src="
+                          getImageLink(
+                            `en:ItemSprite_${patternName[
+                              selectedMenuItem.value as keyof typeof patternName
+                            ]
+                              .toLowerCase()
+                              .replace(/ /g, '-')}-banner-pattern.png`,
+                          )
+                        "
                       />
                     </div>
                   </div>
@@ -553,15 +592,7 @@ onMounted(() => {
                     class="min-h-0"
                     weight="quiet"
                     :aria-label="t('banner.move_up')"
-                    @click="
-                      () => {
-                        const index = row.id
-                        const temp = activePatterns[index]
-                        activePatterns[index] = activePatterns[index - 1]
-                        activePatterns[index - 1] = temp
-                        updatePatternIds()
-                      }
-                    "
+                    @click="() => swapPattern(row.id, row.id - 1)"
                   >
                     <CdxIcon size="x-small" :icon="cdxIconUpTriangle" />
                   </CdxButton>
@@ -570,15 +601,7 @@ onMounted(() => {
                     class="min-h-0"
                     weight="quiet"
                     :aria-label="t('banner.move_down')"
-                    @click="
-                      () => {
-                        const index = row.id
-                        const temp = activePatterns[index]
-                        activePatterns[index] = activePatterns[index + 1]
-                        activePatterns[index + 1] = temp
-                        updatePatternIds()
-                      }
-                    "
+                    @click="() => swapPattern(row.id, row.id + 1)"
                   >
                     <CdxIcon size="x-small" :icon="cdxIconDownTriangle" />
                   </CdxButton>
@@ -588,12 +611,7 @@ onMounted(() => {
                   weight="quiet"
                   action="destructive"
                   :aria-label="t('banner.remove')"
-                  @click="
-                    () => {
-                      activePatterns.splice(row.id, 1)
-                      updatePatternIds()
-                    }
-                  "
+                  @click="() => deletePattern(row.id)"
                 >
                   <CdxIcon :icon="cdxIconTrash" />
                 </CdxButton>
@@ -609,7 +627,7 @@ onMounted(() => {
           </CdxTable>
         </div>
 
-        <div class="flex gap-2">
+        <div class="flex gap-2 flex-wrap">
           <CdxButton @click="copyShareUrl">
             <CdxIcon :icon="cdxIconLink" />
             {{ t('banner.copyShareUrl') }}

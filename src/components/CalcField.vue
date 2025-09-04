@@ -1,8 +1,17 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useSlots } from 'vue'
+
+defineSlots<{
+  heading?: () => any
+  default: () => any
+}>()
+
+const slots = useSlots()
+</script>
 
 <template>
   <div class="mcw-calc-field">
-    <h2 class="cdx-label m-0 text-lg">
+    <h2 v-if="slots.heading" class="cdx-label m-0 text-lg">
       <span class="cdx-label__label__text">
         <slot name="heading">Calculator</slot>
       </span>

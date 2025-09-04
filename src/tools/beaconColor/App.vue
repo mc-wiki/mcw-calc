@@ -1,13 +1,31 @@
 <script setup lang="ts">
-import CalcField from '@/components/CalcField.vue'
-import { type Color, colorStringToRgb, imgNames } from '@/utils/color'
-import { CdxButton, CdxTab, CdxTabs } from '@wikimedia/codex'
-import { nextTick, ref, useTemplateRef, watch } from 'vue'
+import type { Color } from '@/utils/color'
+import { CdxButton, CdxTab, CdxTabs, CdxTextInput } from '@wikimedia/codex'
+import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import CalcField from '@/components/CalcField.vue'
+import { colorStringToRgb, imgNames } from '@/utils/color'
+import { getImageLink } from '@/utils/image'
 
 const { t } = useI18n()
 
 const color = ref('#f9fffe')
+const colorText = computed({
+  get() {
+    return color.value
+  },
+  set(value: string) {
+    if (value.startsWith('#')) {
+      if (value.length > 7) {
+        color.value = value.slice(0, 7)
+      } else {
+        color.value = value
+      }
+    } else {
+      color.value = `#${value}`
+    }
+  },
+})
 const edition = ref<'java' | 'bedrock'>('java')
 const canvasRef = useTemplateRef('canvasRef')
 const sequence = ref<[Color[], number, [number, number, number]]>([['white'], 0, [249, 255, 254]])
@@ -20,7 +38,7 @@ async function updateSequence(targetColor: [number, number, number]) {
 }
 
 function generateGlass(color: Color) {
-  return `https://minecraft.wiki/images/Invicon_${imgNames[color]}_Stained_Glass_Pane.png?format=original`
+  return getImageLink(`en:Invicon_${imgNames[color]}_Stained_Glass_Pane.png`)
 }
 
 function generateGlassName(color: Color) {
@@ -53,7 +71,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
     false,
   )
 
-  img.src = 'https://minecraft.wiki/images/Beacon_Beam_(texture).png?format=original'
+  img.src = getImageLink('en:Beacon_Beam_(texture).png')
   img.crossOrigin = 'anonymous'
 })
 </script>
@@ -90,6 +108,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
         >
           <label for="color-picker">{{ t('beaconColor.color') }}</label>
           <input id="color-picker" v-model="color" type="color" />
+          <CdxTextInput v-model="colorText" class="min-w-[100px] font-mono" type="text" />
           <CdxButton @click="updateSequence(colorStringToRgb(color))">
             {{ t('beaconColor.calculate') }}
           </CdxButton>

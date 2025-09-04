@@ -1,0 +1,9 @@
+{
+  "panoramaRenderer.pause": "Pausar",
+  "panoramaRenderer.play": "Reproduzir",
+  "panoramaRenderer.fullscreen": "Tela cheia",
+  "panoramaRenderer.exitFullscreen": "Sair da tela cheia",
+  "panoramaRenderer.overlayOptions": "Sobreposição",
+  "panoramaRenderer.blurOverlay": "Desfoque",
+  "panoramaRenderer.gradientOverlay": "Degradê"
+}

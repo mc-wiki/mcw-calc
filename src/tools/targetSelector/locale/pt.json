@@ -47,6 +47,7 @@
   "targetSelector.gamemode.creative": "Criativo",
   "targetSelector.gamemode.adventure": "Aventura",
   "targetSelector.gamemode.spectator": "Espectador",
+  "targetSelector.gamemode.default": "Padrão",
   "targetSelector.advancements": "Progressos",
   "targetSelector.haspermission": "Permissões",
   "targetSelector.selector": "Seletor de alvos",

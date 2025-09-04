@@ -1,0 +1,9 @@
+{
+  "panoramaRenderer.pause": "Sospendi",
+  "panoramaRenderer.play": "Riprendi",
+  "panoramaRenderer.fullscreen": "Schermo intero",
+  "panoramaRenderer.exitFullscreen": "Disattiva schermo intero",
+  "panoramaRenderer.overlayOptions": "Opzioni overlay",
+  "panoramaRenderer.blurOverlay": "Sfocatura",
+  "panoramaRenderer.gradientOverlay": "Sfumatura"
+}

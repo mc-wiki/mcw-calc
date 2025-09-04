@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import CalcField from '@/components/CalcField.vue'
-import { parseWikitext } from '@/utils/i18n'
 import { CdxCheckbox, CdxMessage, CdxTextInput } from '@wikimedia/codex'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import CalcField from '@/components/CalcField.vue'
+import { parseWikitext } from '@/utils/i18n'
+import { getImageLink } from '@/utils/image'
 
 const { t } = useI18n()
 
-const maceImage = 'https://minecraft.wiki/images/Mace_JE1_BE1.png?format=original'
+const maceImage = getImageLink('en:Mace_JE1_BE1.png')
 
 const fallHeight = ref(1.5)
 const densityLevel = ref(0)

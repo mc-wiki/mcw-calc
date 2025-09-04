@@ -70,6 +70,7 @@ export function parseWikitext(wikitext: string) {
     'sup',
     'del',
     'ins',
+    'p',
   ]
   wikitext = wikitext.replace(/<([^>]+)>/g, (match, tag: string) => {
     const [tagNameRaw] = tag.split(/\s+/)

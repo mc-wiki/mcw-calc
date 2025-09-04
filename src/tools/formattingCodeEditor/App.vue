@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import CalcField from '@/components/CalcField.vue'
+import type { JSONContent } from '@tiptap/vue-3'
+import type { ButtonGroupItem, MenuItemData } from '@wikimedia/codex'
 import Bold from '@tiptap/extension-bold'
 import Document from '@tiptap/extension-document'
 import DropCursor from '@tiptap/extension-dropcursor'
@@ -9,11 +10,10 @@ import Italic from '@tiptap/extension-italic'
 import Paragraph from '@tiptap/extension-paragraph'
 import Strike from '@tiptap/extension-strike'
 import Text from '@tiptap/extension-text'
-import TextStyle from '@tiptap/extension-text-style'
+import { TextStyle } from '@tiptap/extension-text-style'
 import Underline from '@tiptap/extension-underline'
-import { EditorContent, type JSONContent, useEditor } from '@tiptap/vue-3'
+import { EditorContent, useEditor } from '@tiptap/vue-3'
 import {
-  type ButtonGroupItem,
   CdxButton,
   CdxField,
   CdxIcon,
@@ -22,7 +22,6 @@ import {
   CdxTabs,
   CdxTextArea,
   CdxToggleButtonGroup,
-  type MenuItemData,
 } from '@wikimedia/codex'
 import {
   cdxIconBold,
@@ -35,6 +34,7 @@ import {
 } from '@wikimedia/codex-icons'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import CalcField from '@/components/CalcField.vue'
 import { ColorClass } from './color-class'
 import { TextClass } from './text-class'
 

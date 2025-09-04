@@ -1,0 +1,13 @@
+{
+  "maceDamage.title": "Calcular daño de maza",
+  "maceDamage.java": "Java Edition",
+  "maceDamage.bedrock": "Bedrock Edition",
+  "maceDamage.fallHeight": "Altura de la caída en bloques:",
+  "maceDamage.densityLevel": "Nivel de encantamiento de [[Densidad]]:",
+  "maceDamage.critical": "Ataque crítico",
+  "maceDamage.critical.help": "Golpear una entidad con la maza produce un ataque crítico la mayoría del tiempo, a menos que no se cumplan otras condiciones, como que el ataque no esté recargado.",
+  "maceDamage.cooldownReset": "Reinicio de tiempo de recarga",
+  "maceDamage.cooldownReset.help": "Desmarca esta casilla si el tiempo de recarga de ataque no se reinicia antes del ataque.",
+  "maceDamage.damage": "Daño causado:",
+  "maceDamage.densityLevelWarning": "Solo niveles de Densidad entre 0 y 5 son obtenibles en Supervivencia."
+}

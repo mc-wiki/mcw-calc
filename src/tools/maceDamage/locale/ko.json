@@ -1,0 +1,13 @@
+{
+  "maceDamage.title": "철퇴 피해 계산",
+  "maceDamage.java": "Java Edition",
+  "maceDamage.bedrock": "Bedrock Edition",
+  "maceDamage.fallHeight": "떨어진 블록 높이:",
+  "maceDamage.densityLevel": "[[육중]] 마법 부여 레벨:",
+  "maceDamage.critical": "치명적 공격",
+  "maceDamage.critical.help": "쿨타임이 초기화되지 않는 등의 특이한 상황이 아니라면 철퇴로 개체를 공격할 때 대부분 치명적인 공격이 발생합니다.",
+  "maceDamage.cooldownReset": "쿨타임 초기화",
+  "maceDamage.cooldownReset.help": "공격 쿨타임이 공격 전에 초기화되지 않는다면 상자의 체크를 풀어주세요.",
+  "maceDamage.damage": "피해량:",
+  "maceDamage.densityLevelWarning": "서바이벌에서 얻을 수 있는 육중 마법의 최대 레벨은 5입니다."
+}

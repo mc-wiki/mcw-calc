@@ -1,0 +1,8 @@
+{
+  "decimalColor.title": "색 표기 계산",
+  "decimalColor.color": "색:",
+  "decimalColor.decimal": "십진수:",
+  "decimalColor.hexadecimal": "십육진수",
+  "decimalColor.floats": "부동 소수점 수 값",
+  "decimalColor.random": "무작위 색 선택"
+}

@@ -1,0 +1,9 @@
+{
+  "panoramaRenderer.pause": "Pause",
+  "panoramaRenderer.play": "Play",
+  "panoramaRenderer.fullscreen": "Fullscreen",
+  "panoramaRenderer.exitFullscreen": "Exit fullscreen",
+  "panoramaRenderer.overlayOptions": "Overlay options",
+  "panoramaRenderer.blurOverlay": "Blur overlay",
+  "panoramaRenderer.gradientOverlay": "Gradient overlay"
+}

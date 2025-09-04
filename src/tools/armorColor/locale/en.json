@@ -6,6 +6,7 @@
   "armorColor.calculate": "Calculate",
   "armorColor.sequence": "Sequence:",
   "armorColor.sequence.help": "You should dye the armor using all dyes at once.",
+  "armorColor.sequence.helpBedrock": "You should dye the armor by adding each dye in order to a cauldron and then use the armor on the cauldron.",
   "armorColor.dE": "dE",
   "armorColor.dE.help": "Delta E is a measure of color proximity. Lower is better. Values ≤1.0 means the difference is not perceptible by human eyes.",
 

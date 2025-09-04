@@ -1,5 +1,8 @@
 {
   "decimalColor.title": "计算颜色值的十进制表示",
   "decimalColor.color": "颜色：",
-  "decimalColor.decimal": "值表示："
+  "decimalColor.decimal": "值表示：",
+  "decimalColor.hexadecimal": "十六进制",
+  "decimalColor.floats": "浮点数列表",
+  "decimalColor.random": "随机颜色"
 }

@@ -1,6 +1,6 @@
 {
   "netherCoords.title": "Convertisseur de coordonnées du Nether",
   "netherCoords.dimension": "Dimension",
-  "netherCoords.overworld": "Monde normal",
+  "netherCoords.overworld": "Surface",
   "netherCoords.nether": "Nether"
 }

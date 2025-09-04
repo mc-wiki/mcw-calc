@@ -6,6 +6,7 @@
   "armorColor.calculate": "計算",
   "armorColor.sequence": "配列：",
   "armorColor.sequence.help": "これらの染料を一度に使って鎧を染色してください。",
+  "armorColor.sequence.helpBedrock": "染料をこの通りの順番で大釜に使用して、最後に防具を大釜に使用してください。",
   "armorColor.dE": "ΔE",
   "armorColor.dE.help": "ΔEは、完成品と指定の色の差異の程度を示す値です。この値が小さいほど近い色に染色できます。1.0以下であれば、肉眼では違いが分からない程度であるといえます。",
   "armorColor.type.normal": "革の防具",

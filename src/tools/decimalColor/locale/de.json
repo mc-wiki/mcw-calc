@@ -1,5 +1,8 @@
 {
   "decimalColor.title": "Berechnung der dezimalen Darstellung von Farben",
   "decimalColor.color": "Farbe:",
-  "decimalColor.decimal": "Dezimal:"
+  "decimalColor.decimal": "Dezimal:",
+  "decimalColor.hexadecimal": "Hexadezimal:",
+  "decimalColor.floats": "Float-Werte:",
+  "decimalColor.random": "Zufällige Farbe wählen"
 }

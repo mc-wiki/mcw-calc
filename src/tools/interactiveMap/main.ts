@@ -1,7 +1,8 @@
-import { parentOrigin } from '@/utils/iframe'
-import { getParams, handleParseError, sz } from '@/utils/params'
+import type {LatLngTuple} from 'leaflet';
 import L from 'leaflet'
 import { z } from 'zod'
+import { parentOrigin } from '@/utils/iframe'
+import { getParams, handleParseError, sz } from '@/utils/params'
 import processJson from './processJson'
 import smoothWheelScroll from './smoothWheelScroll'
 import '@/init'
@@ -44,6 +45,8 @@ const targetEl = document.querySelector('#app')!
 
   const mapData = processJson(json)
 
+  console.log(mapData)
+
   const map = L.map(targetEl as HTMLElement, {
     attributionControl: false,
     crs: L.CRS.Simple,
@@ -52,6 +55,11 @@ const targetEl = document.querySelector('#app')!
     smoothWheelZoom: true, // enable smooth zoom
     smoothSensitivity: 3, // zoom speed. default is 1
     minZoom: -5,
+    maxBoundsViscosity: 0.5,
+    maxBounds: [
+      mapData.mapBounds[0].map((x) => x - 3000) as LatLngTuple,
+      mapData.mapBounds[1].map((x) => x + 3000) as LatLngTuple,
+    ],
   })
 
   L.imageOverlay(mapData.mapImage, mapData.mapBounds, {

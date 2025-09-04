@@ -6,7 +6,9 @@ import type {
   ModelRotation,
 } from '@/tools/blockStructureRenderer/definitions.ts'
 import type { Rotation } from '@/tools/blockStructureRenderer/math.ts'
+import type {NameMapping} from '@/tools/blockStructureRenderer/renderer.ts';
 import type { MaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
+import * as THREE from 'three'
 import { getShade } from '@/tools/blockStructureRenderer/hardcodes.ts'
 import {
   Direction,
@@ -17,15 +19,14 @@ import {
 } from '@/tools/blockStructureRenderer/math.ts'
 import {
   BlockDataStorage,
-  BlockState,
-  type NameMapping,
+  BlockState
+  
 } from '@/tools/blockStructureRenderer/renderer.ts'
 import {
   ANIMATED_TEXTURE_ATLAS_SIZE,
   ATLAS_HEIGHT,
   ATLAS_WIDTH,
 } from '@/tools/blockStructureRenderer/texture.ts'
-import * as THREE from 'three'
 
 // Model Reference Provider ------------------------------------------------------------------------
 

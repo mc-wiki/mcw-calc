@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import CalcField from '@/components/CalcField.vue'
-import { parseWikitext } from '@/utils/i18n'
+import type {MenuItemData} from '@wikimedia/codex';
 import {
   CdxAccordion,
   CdxButton,
@@ -12,12 +11,15 @@ import {
   CdxTable,
   CdxTabs,
   CdxTextInput,
-  CdxToggleButtonGroup,
-  type MenuItemData,
+  CdxToggleButtonGroup
+  
 } from '@wikimedia/codex'
 import { cdxIconAdd, cdxIconTrash } from '@wikimedia/codex-icons'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import CalcField from '@/components/CalcField.vue'
+import { parseWikitext } from '@/utils/i18n'
+import { getImageLink } from '@/utils/image'
 
 const { t } = useI18n()
 
@@ -154,23 +156,23 @@ function getToolsMenuItems() {
     value: tool.name,
     label: t(`meleeDamage.defaultTools.${tool.name}`),
     thumbnail: {
-      url: `https://minecraft.wiki/images/ItemSprite_${tool.name.replace('_', '-')}.png?format=original`,
+      url: getImageLink(`en:ItemSprite_${tool.name.replace('_', '-')}.png`),
     },
   }))
-  items[0].thumbnail!.url = 'https://minecraft.wiki/images/ItemSprite_paper.png?format=original'
+  items[0].thumbnail!.url = getImageLink('en:ItemSprite_paper.png')
   if (!canObtainInSurvival.value && isJavaEdition.value) {
     items.push({
       value: 'direct-am',
       label: t('meleeDamage.defaultTools.directAttributeModifiers'),
       thumbnail: {
-        url: 'https://minecraft.wiki/images/ItemSprite_stick.png?format=original',
+        url: getImageLink('en:ItemSprite_stick.png'),
       },
     })
     items.push({
       value: 'mace-am',
       label: t('meleeDamage.defaultTools.maceAttributeModifiers'),
       thumbnail: {
-        url: 'https://minecraft.wiki/images/ItemSprite_mace.png?format=original',
+        url: getImageLink('en:ItemSprite_mace.png'),
       },
     })
   }
@@ -415,7 +417,7 @@ function selectOutput() {
 
 <template>
   <CalcField>
-    <template #title>
+    <template #heading>
       {{ t('meleeDamage.title') }}
     </template>
 

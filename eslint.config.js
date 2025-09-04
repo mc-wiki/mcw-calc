@@ -2,7 +2,7 @@
 import antfu from '@antfu/eslint-config'
 
 export default antfu({
-  ignores: ['dist', '**/dist/**', '**/locale/**'],
+  ignores: ['dist', '**/dist/**', '**/locale/**', 'src/tools/lifeviewer/lv-viewer.js'],
   vue: true,
   stylistic: false,
   rules: {
@@ -21,5 +21,6 @@ export default antfu({
     'vue/html-self-closing': 'off',
     'vue/html-indent': 'off',
     'unicorn/number-literal-case': 'off',
+    'import-x/consistent-type-specifier-style': 'off',
   },
 })

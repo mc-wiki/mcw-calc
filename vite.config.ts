@@ -1,5 +1,8 @@
+/// <reference types="@vitest/browser/providers/playwright" />
+
 import { fileURLToPath } from 'node:url'
 import vueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
+import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
 import { globSync } from 'glob'
 import { visualizer } from 'rollup-plugin-visualizer'
@@ -34,6 +37,30 @@ export default defineConfig({
       provider: 'istanbul',
       reportsDirectory: '../coverage',
     },
+    projects: [
+      {
+        extends: true,
+        test: {
+          setupFiles: ['../vitest.browser.setup.ts'],
+          include: ['**/*.browser.{test,spec}.ts'],
+          name: 'browser',
+          browser: {
+            enabled: true,
+            instances: [{ browser: 'chromium' }],
+            provider: 'playwright',
+          },
+        },
+      },
+      {
+        extends: true,
+        test: {
+          setupFiles: ['./vitest.jsdom.setup.ts'],
+          include: ['**/!(*.browser).{test,spec}.ts'],
+          name: 'unit',
+          environment: 'jsdom',
+        },
+      },
+    ],
   },
   server: {
     port: process.env.VITEST ? 50179 : undefined,
@@ -63,6 +90,7 @@ export default defineConfig({
     vueI18nPlugin({
       include: fileURLToPath(new URL('./src/tools/*/locale/*.json', import.meta.url)),
     }),
+    tailwindcss(),
   ],
   worker: {
     plugins: () => [comlink()],

@@ -1,4 +1,4 @@
-import type { SafeParseReturnType } from 'zod'
+import type { ZodSafeParseResult } from 'zod'
 import { postMessageParent } from './iframe'
 
 import * as sz from './sz'
@@ -9,8 +9,8 @@ export function getParams(): Promise<Record<string, string>> {
     postMessageParent('mcw-calc-init-request-data', {})
 
     const fromSearch = Object.fromEntries(new URLSearchParams(window.location.search))
-    for (const [key, _value] of Object.entries(fromSearch)) {
-      fromSearch[key] = kebabToCamel(key)
+    for (const [key, value] of Object.entries(fromSearch)) {
+      fromSearch[key] = kebabToCamel(value)
     }
 
     if (!new URLSearchParams(window.location.hash.substring(2)).has('id')) resolve(fromSearch)
@@ -42,7 +42,7 @@ function kebabToCamel(str: string) {
   return str.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
 }
 
-export function handleParseError<I, O>(returnValue: SafeParseReturnType<I, O>, targetEl: Element) {
+export function handleParseError<T>(returnValue: ZodSafeParseResult<T>, targetEl: Element) {
   if (returnValue.error) {
     const errorEl = document.createElement('ul')
     errorEl.id = 'error'

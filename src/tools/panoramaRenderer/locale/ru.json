@@ -1,0 +1,9 @@
+{
+  "panoramaRenderer.pause": "Пауза",
+  "panoramaRenderer.play": "Воспроизвести",
+  "panoramaRenderer.fullscreen": "Полный экран",
+  "panoramaRenderer.exitFullscreen": "Выйти из полноэкранного режима",
+  "panoramaRenderer.overlayOptions": "Параметры наложения",
+  "panoramaRenderer.blurOverlay": "Размытое наложение",
+  "panoramaRenderer.gradientOverlay": "Градиентное наложение"
+}

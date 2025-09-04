@@ -4,6 +4,10 @@ This is a repo for Vue apps and the build system (powered by vite) used by the M
 
 If you are interested in this project, feel free to join the thread in #project-forum on MCW Discord.
 
+## How it works
+
+The tools are built using Vue 3 and Vite. Each tool is an independent Vue app that is designed to run in an iframe on the wiki. The tools are built and deployed to a static site, and the wiki loads the tools in an iframe.
+
 ## Development
 
 1. Clone the repo

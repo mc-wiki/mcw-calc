@@ -1,0 +1,11 @@
+{
+  "blockDistribution.xAxis": "Livello Y →",
+  "blockDistribution.xInTenThousand": "{num} su 100.000",
+  "blockDistribution.title": "Distribuzione del blocco {block} nella [[Java Edition {version}]]",
+  "blockDistribution.total": "Totale",
+  "blockDistribution.overworld": "Overworld",
+  "blockDistribution.theNether": "Nether",
+  "blockDistribution.theEnd": "End",
+  "blockDistribution.logarithmicScale": "Scala logaritmica",
+  "blockDistribution.selectAll": "Seleziona tutti"
+}

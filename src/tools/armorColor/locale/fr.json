@@ -6,6 +6,7 @@
   "armorColor.calculate": "Calculer",
   "armorColor.sequence": "Séquence :",
   "armorColor.sequence.help": "Vous devez colorer l'armure en utilisant toutes les teintures à la fois.",
+  "armorColor.sequence.helpBedrock": "Vous devez teindre l'armure en ajoutant chaque teinture dans l'ordre dans un chaudron, puis utiliser l'armure sur le chaudron.",
   "armorColor.dE": "ΔE",
   "armorColor.dE.help": "Le delta E est une mesure de la proximité d'une couleur. Plus la valeur est basse, mieux c'est. Les valeurs ≤1.0 signifient que la différence n'est pas visible à l'œil nu.",
   "armorColor.type.normal": "d'armure en cuir",
