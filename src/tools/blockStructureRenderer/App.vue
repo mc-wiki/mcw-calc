@@ -370,7 +370,7 @@ function saveRenderedImage() {
 async function saveStructureFile() {
   const downloadLink = document.createElement('a')
   downloadLink.setAttribute('download', 'block_structure.nbt')
-  const blob = new Blob([await saveAsStructureFile(blockStructure, nameMapping)])
+  const blob = new Blob([await saveAsStructureFile(blockStructure, nameMapping) as BlobPart])
   const url = URL.createObjectURL(blob)
   downloadLink.setAttribute('href', url)
   downloadLink.click()
@@ -379,7 +379,7 @@ async function saveStructureFile() {
 async function saveLitematic() {
   const downloadLink = document.createElement('a')
   downloadLink.setAttribute('download', 'block_structure.litematic')
-  const blob = new Blob([await saveAsLitematic(blockStructure, nameMapping)])
+  const blob = new Blob([await saveAsLitematic(blockStructure, nameMapping) as BlobPart])
   const url = URL.createObjectURL(blob)
   downloadLink.setAttribute('href', url)
   downloadLink.click()

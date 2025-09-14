@@ -145,6 +145,6 @@ async function gzip(data: Uint8Array) {
     const { Gzip } = await import('zlibt2')
     return new Gzip(data).compress() as Uint8Array
   }
-  const stream = new Response(data).body!.pipeThrough<Uint8Array>(new CompressionStream('gzip'))
-  return (await new Response(stream).arrayBuffer()) as Uint8Array
+  const stream = new Response(data as BodyInit).body!.pipeThrough<Uint8Array>(new CompressionStream('gzip'))
+  return (await new Response(stream).arrayBuffer()) as unknown as Uint8Array
 }
