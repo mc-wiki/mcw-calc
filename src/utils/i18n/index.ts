@@ -9,6 +9,7 @@ const FALLBACK_CHAIN = new Map(
     'zh-hant': ['zh-tw', 'zh-hk', 'zh-cn', 'en'],
     'zh-tw': ['zh-hk', 'zh-cn', 'en'],
     'zh-hk': ['zh-tw', 'zh-cn', 'en'],
+    lzh: ['zh-tw', 'zh-hk', 'zh-cn', 'en'],
     default: ['en'],
   }),
 )
