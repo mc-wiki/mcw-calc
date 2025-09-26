@@ -484,7 +484,7 @@ function JSONToFormatCode(json: JSONContent | undefined) {
 }
 
 .fc-editor {
-  font-family: 'Minecraft', monospace, sans-serif;
+  font-family: 'Minecraft', 'Unifont', monospace, sans-serif;
   background-color: var(--background-color-base, #fff);
   color: var(--color-base, #202122);
 }
