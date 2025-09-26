@@ -1,5 +1,6 @@
 {
   "blockDistribution.xAxis": "高 →",
+  "blockDistribution.title": "[[爪哇版{version}]]中{block}於各層之佈",
   "blockDistribution.total": "總",
   "blockDistribution.overworld": "主界",
   "blockDistribution.theNether": "焱界",
