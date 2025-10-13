@@ -1,11 +1,11 @@
 {
-  "maceDamage.title": "Calcular o dano da clava",
+  "maceDamage.title": "Calcular o dano da maça",
   "maceDamage.java": "Edição Java",
   "maceDamage.bedrock": "Edição Bedrock",
   "maceDamage.fallHeight": "Altura da queda em blocos:",
   "maceDamage.densityLevel": "Nível do encantamento de [[Densidade]]:",
   "maceDamage.critical": "Ataque crítico",
-  "maceDamage.critical.help": "Ao golpear uma entidade com a clava, um ataque crítico ocorre na maioria das vezes, exceto se outras condições não forem atendidas, como o ataque não estar totalmente recarregado.",
+  "maceDamage.critical.help": "Ao golpear uma entidade com a maça, um ataque crítico ocorre na maioria das vezes, exceto se outras condições não forem atendidas, como o ataque não estar totalmente carregado.",
   "maceDamage.cooldownReset": "Período de recarga reiniciado",
   "maceDamage.cooldownReset.help": "Desmarque esta opção se o período de recarga do ataque não estiver zerado antes do ataque.",
   "maceDamage.damage": "Dano causado:",

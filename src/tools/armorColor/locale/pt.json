@@ -6,6 +6,7 @@
   "armorColor.calculate": "Calcular",
   "armorColor.sequence": "Sequência:",
   "armorColor.sequence.help": "Você deve tingir a armadura usando todos os corantes de uma vez.",
+  "armorColor.sequence.helpBedrock": "Ao tingir a armadura, adicione os corantes ao caldeirão em ordem e, em seguida, use a armadura no caldeirão.",
   "armorColor.dE": "ΔE",
   "armorColor.dE.help": "O Delta E é uma medida de proximidade de cor. Quanto menor, melhor. Valores menores que 1,0 indicam uma diferença imperceptível aos olhos humanos.",
   "armorColor.type.normal": "armadura de couro",
@@ -20,11 +21,11 @@
   "armorColor.dye.orange": "Corante laranja",
   "armorColor.dye.yellow": "Corante amarelo",
   "armorColor.dye.lime": "Corante verde-limão",
-  "armorColor.dye.green": "Corante verde",
-  "armorColor.dye.cyan": "Corante ciano",
-  "armorColor.dye.lightBlue": "Corante azul-claro",
-  "armorColor.dye.blue": "Corante azul",
-  "armorColor.dye.purple": "Corante roxo",
-  "armorColor.dye.magenta": "Corante magenta",
-  "armorColor.dye.pink": "Corante rosa"
+  "armorColor.dye.green": "Corante Verde",
+  "armorColor.dye.cyan": "Corante Ciano",
+  "armorColor.dye.lightBlue": "Corante Azul-Claro",
+  "armorColor.dye.blue": "Corante Azul",
+  "armorColor.dye.purple": "Corante Roxo",
+  "armorColor.dye.magenta": "Corante Magenta",
+  "armorColor.dye.pink": "Corante Rosa"
 }

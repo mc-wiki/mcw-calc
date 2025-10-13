@@ -38,6 +38,7 @@
   "targetSelector.predicate": "[[Predicado]]",
   "targetSelector.nbt": "Dados [[NBT]]",
   "targetSelector.hasitem": "Itens carregados",
+  "targetSelector.has_property": "Propriedades",
   "targetSelector.scores": "Pontuação",
   "targetSelector.tag": "Marcação",
   "targetSelector.team": "Nome da equipe",
