@@ -82,7 +82,7 @@
     "less": "^4.4.1",
     "mock-local-storage": "^1.1.24",
     "mwn": "^3.0.1",
-    "playwright": "^1.55.0",
+    "playwright": "^1.55.1",
     "prettier": "^3.6.2",
     "rollup-plugin-visualizer": "^6.0.3",
     "serve": "^14.2.4",
