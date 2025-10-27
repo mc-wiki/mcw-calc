@@ -142,7 +142,13 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
               backgroundColor: `rgb(${sequence[2][0]}, ${sequence[2][1]}, ${sequence[2][2]})`,
               border: '1px solid black',
             }"
-          />
+          />&nbsp;#{{
+            sequence[2][0].toString(16)
+          }}{{
+            sequence[2][1].toString(16)
+          }}{{
+            sequence[2][2].toString(16)
+          }}
         </div>
         <div>
           <span class="explain" :title="t('beaconColor.dE.help')">
