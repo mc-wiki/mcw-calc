@@ -38,6 +38,7 @@
   "targetSelector.predicate": "[[Prädikate]]",
   "targetSelector.nbt": "[[NBT]]-Daten",
   "targetSelector.hasitem": "Getragene Gegenstände",
+  "targetSelector.has_property": "Eigenschaften",
   "targetSelector.scores": "Punktestände",
   "targetSelector.tag": "Aliasdaten",
   "targetSelector.team": "Teamname",

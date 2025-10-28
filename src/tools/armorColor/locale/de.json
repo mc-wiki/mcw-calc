@@ -6,6 +6,7 @@
   "armorColor.calculate": "Berechnen",
   "armorColor.sequence": "Reihenfolge:",
   "armorColor.sequence.help": "Du solltest die Rüstung mit allen Farben auf einmal färben.",
+  "armorColor.sequence.helpBedrock": "Du solltest die Rüstung färben, indem du alle Farbstoffe der Reihe nach in einen Kessel gibst und anschließend die Rüstung mit dem Kessel verwendest.",
   "armorColor.dE": "ΔE",
   "armorColor.dE.help": "Delta E ist ein Maß für die Farbnähe. Kleiner ist besser. Werte ≤1,0 bedeuten, dass der Unterschied für das menschliche Auge nicht wahrnehmbar ist.",
   "armorColor.type.normal": "Lederrüstung",
