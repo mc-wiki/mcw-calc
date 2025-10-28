@@ -171,15 +171,20 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
             />
           </div>
           <span
+            id="result-color"
             :style="{
-              borderRadius: '50%',
-              width: '1em',
-              height: '1em',
-              display: 'inline-block',
-              backgroundColor: `rgb(${sequence[2][0]}, ${sequence[2][1]}, ${sequence[2][2]})`,
-              border: '1px solid black',
+              '--color-r': sequence[2][0],
+              '--color-g': sequence[2][1],
+              '--color-b': sequence[2][2],
             }"
-          />
+          >&nbsp;#{{
+              sequence[2][0].toString(16)
+            }}{{
+              sequence[2][1].toString(16)
+            }}{{
+              sequence[2][2].toString(16)
+            }}
+          </span>
         </div>
         <div>
           <span class="explain" :title="t('armorColor.dE.help')">
@@ -200,3 +205,22 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
     </div>
   </CalcField>
 </template>
+
+<style>
+#result-color {
+  /* Fallback values */
+  --color-r: 249;
+  --color-g: 255;
+  --color-b: 254;
+}
+
+#result-color::before {
+  content: '';
+  border-radius: 50%;
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  background-color: rgb(var(--color-r), var(--color-g), var(--color-b));
+  border: 1px solid black;
+}
+</style>
