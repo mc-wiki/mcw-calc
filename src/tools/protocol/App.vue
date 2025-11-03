@@ -2,7 +2,7 @@
 import { asyncComputed, objectOmit } from '@vueuse/core'
 import { CdxSelect } from '@wikimedia/codex'
 import Papa from 'papaparse'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CalcField from '@/components/CalcField.vue'
 import {
@@ -156,6 +156,13 @@ function updateProtocolSelectState() {
 
   if (!list.some((e) => e.value === selectedProtocol.value)) selectedProtocol.value = list[0].value
 }
+
+watch(selectedVersion, async () => {
+  protocolLoadingState.value = true
+  await setupProtocolMetadata(protocolVersion.value)
+  updateProtocolSelectState()
+  protocolLoadingState.value = false
+})
 
 // SETUP -------------------------------------------------------------------------------------------
 onMounted(() => {
