@@ -1,0 +1,9 @@
+{
+  "protocol.error.loading": "Error in fetching protocol data",
+  "protocol.loading": "Loading...",
+  "protocol.title": "Protocol Viewer",
+  "protocol.version": "Select Protocol Version: ",
+  "protocol.version.display": "{name} (Protocol: {protocol}, Data: {data})",
+  "protocol.packet": "Select Packet: ",
+  "protocol.packet.display": "{state}/{name} ({id})"
+}
