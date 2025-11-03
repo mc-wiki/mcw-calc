@@ -12,7 +12,8 @@ import {
   isVoidProtocol,
   PACKETS_CSV,
   VERSIONS_JSON,
-} from '@/tools/protocol/constants.ts'
+} from './constants.ts'
+import Container from './types/Container.vue'
 
 const props = defineProps<{
   versions?: string[]
@@ -110,27 +111,33 @@ const packetsLoadingState = ref(true)
 const selectedPacket = ref<string>('handshake/server/0')
 const candidatePackets = ref<any[]>([])
 
-const packetData = asyncComputed<string | object>(async () => {
-  if (packetsLoadingState.value) return 'void'
-  const protocol = cachedProtocolMeta.get(protocolVersion.value)
-  if (!protocol) return 'void'
-  const selected = selectedPacket.value
-  const split = selected.lastIndexOf('/')
-  const key = selected.substring(0, split)
-  const index = Number(selected.substring(split + 1))
-  if ([...initialProtocolData.keys()].includes(key)) {
-    return initialProtocolData.get(key)?.[index].type || 'void'
-  } else {
-    const entry = protocol.get(key)?.[index]
-    if (!entry) return 'void'
-    if (entry.type) return entry.type
-    const name = `${key.replace('/', '_')}_${entry.key.replace('/', '_')}`
-    const indexName = indexed(getPacketFor(protocolVersion.value, name), `packets/${name}.json`)
-    return await getOrCache(protocolVersion.value, name, async () => {
-      return await (await fetch(indexName)).json()
-    })
-  }
-}, 'void')
+const packetLoadingState = ref(true)
+const packetData = asyncComputed<string | object>(
+  async () => {
+    if (packetsLoadingState.value) return 'void'
+    const protocol = cachedProtocolMeta.get(protocolVersion.value)
+    if (!protocol) return 'void'
+    const selected = selectedPacket.value
+    const split = selected.lastIndexOf('/')
+    const key = selected.substring(0, split)
+    const index = Number(selected.substring(split + 1))
+    if ([...initialProtocolData.keys()].includes(key)) {
+      // await is necessary to add the microtask
+      return await (initialProtocolData.get(key)?.[index].type || 'void')
+    } else {
+      const entry = protocol.get(key)?.[index]
+      if (!entry) return 'void'
+      if (entry.type) return entry.type
+      const name = `${key.replace('/', '_')}_${entry.key.replace('/', '_')}`
+      const indexName = indexed(getPacketFor(protocolVersion.value, name), `packets/${name}.json`)
+      return await getOrCache(protocolVersion.value, name, async () => {
+        return await (await fetch(indexName)).json()
+      })
+    }
+  },
+  'void',
+  packetLoadingState,
+)
 
 function setupInitialVersionState() {
   candidateVersions.value = versions.map((s) => ({
@@ -211,10 +218,13 @@ onMounted(() => {
         />
       </div>
     </div>
-    <div v-if="isVoidProtocol(packetData)" :style="{ fontStyle: 'italic' }">
+    <div v-if="packetLoadingState">
+      {{ t('protocol.loading') }}
+    </div>
+    <div v-else-if="isVoidProtocol(packetData)" :style="{ fontStyle: 'italic' }">
       {{ t('protocol.type.void') }}
     </div>
-    <div v-else>{{ packetData }}</div>
+    <Container v-else :data="packetData as object" :version="protocolVersion" />
   </CalcField>
   <div v-else-if="errorState" :style="{ color: 'red' }">{{ t('protocol.error.loading') }}</div>
   <div v-else>{{ t('protocol.loading') }}</div>
