@@ -10,3 +10,8 @@ export function indexed(index: number, path: string) {
     ? `${DATA_REPO}/java_edition/indexed_data/${index}/${path}`
     : `${DATA_REPO}/java_edition/${path}`
 }
+
+export function isVoidProtocol(data: string | object) {
+  if (data === 'void') return true
+  return Array.isArray(data) && data[0] === 'void';
+}

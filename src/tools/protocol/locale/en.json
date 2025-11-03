@@ -5,5 +5,6 @@
   "protocol.version": "Select Protocol Version: ",
   "protocol.version.display": "{name} (Protocol: {protocol}, Data: {data})",
   "protocol.packet": "Select Packet: ",
-  "protocol.packet.display": "{state}/{name} ({id})"
+  "protocol.packet.display": "{state}/{name} ({id})",
+  "protocol.type.void": "This packet have no payload."
 }

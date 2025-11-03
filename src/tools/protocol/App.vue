@@ -9,6 +9,7 @@ import {
   INDEX_CSV,
   indexed,
   INITIAL_PROTOCOL,
+  isVoidProtocol,
   PACKETS_CSV,
   VERSIONS_JSON,
 } from '@/tools/protocol/constants.ts'
@@ -105,15 +106,15 @@ const selectedVersion = ref<string>('')
 const candidateVersions = ref<any[]>([])
 const protocolVersion = computed(() => versionMapping.get(selectedVersion.value)?.[0] || -1)
 
-const protocolLoadingState = ref(true)
-const selectedProtocol = ref<string>('handshake/server/0')
-const candidateProtocol = ref<any[]>([])
+const packetsLoadingState = ref(true)
+const selectedPacket = ref<string>('handshake/server/0')
+const candidatePackets = ref<any[]>([])
 
-const protocolData = asyncComputed<string | object>(async () => {
-  if (protocolLoadingState.value) return 'void'
+const packetData = asyncComputed<string | object>(async () => {
+  if (packetsLoadingState.value) return 'void'
   const protocol = cachedProtocolMeta.get(protocolVersion.value)
   if (!protocol) return 'void'
-  const selected = selectedProtocol.value
+  const selected = selectedPacket.value
   const split = selected.lastIndexOf('/')
   const key = selected.substring(0, split)
   const index = Number(selected.substring(split + 1))
@@ -129,7 +130,7 @@ const protocolData = asyncComputed<string | object>(async () => {
       return await (await fetch(indexName)).json()
     })
   }
-})
+}, 'void')
 
 function setupInitialVersionState() {
   candidateVersions.value = versions.map((s) => ({
@@ -152,16 +153,16 @@ function updateProtocolSelectState() {
       })
     }),
   )
-  candidateProtocol.value = list
+  candidatePackets.value = list
 
-  if (!list.some((e) => e.value === selectedProtocol.value)) selectedProtocol.value = list[0].value
+  if (!list.some((e) => e.value === selectedPacket.value)) selectedPacket.value = list[0].value
 }
 
 watch(selectedVersion, async () => {
-  protocolLoadingState.value = true
+  packetsLoadingState.value = true
   await setupProtocolMetadata(protocolVersion.value)
   updateProtocolSelectState()
-  protocolLoadingState.value = false
+  packetsLoadingState.value = false
 })
 
 // SETUP -------------------------------------------------------------------------------------------
@@ -172,7 +173,7 @@ onMounted(() => {
     loadingState.value = false
     await setupProtocolMetadata(protocolVersion.value)
     updateProtocolSelectState()
-    protocolLoadingState.value = false
+    packetsLoadingState.value = false
   })().catch((e: any) => {
     errorState.value = true
     console.error(e)
@@ -184,7 +185,7 @@ onMounted(() => {
     <template #heading>
       {{ t('protocol.title') }}
     </template>
-    <div :style="{ display: 'flex', flexDirection: 'row', gap: '.5rem' }">
+    <div :style="{ display: 'flex', flexDirection: 'row', gap: '.5rem', marginBottom: '1rem' }">
       <div
         :style="{
           display: 'flex',
@@ -194,7 +195,7 @@ onMounted(() => {
         }"
       >
         <label for="version">{{ t('protocol.version') }}</label>
-        <label v-if="!protocolLoadingState" for="protocol">{{ t('protocol.packet') }}</label>
+        <label v-if="!packetsLoadingState" for="packets">{{ t('protocol.packet') }}</label>
       </div>
       <div :style="{ display: 'flex', flexDirection: 'column', gap: '1rem' }">
         <CdxSelect
@@ -203,16 +204,17 @@ onMounted(() => {
           :menu-items="candidateVersions"
         />
         <CdxSelect
-          v-if="!protocolLoadingState"
-          id="protocol"
-          v-model:selected="selectedProtocol"
-          :menu-items="candidateProtocol"
+          v-if="!packetsLoadingState"
+          id="packets"
+          v-model:selected="selectedPacket"
+          :menu-items="candidatePackets"
         />
       </div>
     </div>
-    <div>
-      {{ protocolData }}
+    <div v-if="isVoidProtocol(packetData)" :style="{ fontStyle: 'italic' }">
+      {{ t('protocol.type.void') }}
     </div>
+    <div v-else>{{ packetData }}</div>
   </CalcField>
   <div v-else-if="errorState" :style="{ color: 'red' }">{{ t('protocol.error.loading') }}</div>
   <div v-else>{{ t('protocol.loading') }}</div>
