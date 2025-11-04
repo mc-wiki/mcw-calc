@@ -8,6 +8,7 @@ import EntityMetadataLoopType from './EntityMetadataLoopType.vue'
 import MapperType from './MapperType.vue'
 import OptionType from './OptionType.vue'
 import ReferenceType from './ReferenceType.vue'
+import RegistryType from './RegistryType.vue'
 import TopBitSetTerminatedArrayType from './TopBitSetTerminatedArrayType.vue'
 
 const props = defineProps<{ data: object | string; version: number; type?: string }>()
@@ -46,6 +47,9 @@ const type = props.type || 'td'
   </component>
   <component :is="type" v-else-if="props.data[0] === 'entity_metadata_loop'">
     <EntityMetadataLoopType :data="props.data" :version="props.version" />
+  </component>
+  <component :is="type" v-else-if="props.data[0] === 'registry'">
+    <RegistryType :data="props.data" :version="props.version" />
   </component>
   <component :is="type" v-else-if="props.data[0] === 'fix_buffer'" class="non-complex">
     {{ t('protocol.type.fix_buffer', { length: props.data[1] }) }}
