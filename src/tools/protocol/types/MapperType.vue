@@ -53,7 +53,7 @@ const mapping = asyncComputed(
       [{{ showSubType ? t('protocol.action.collapse') : t('protocol.action.expand') }}]
     </span>
   </div>
-  <div v-if="loadingState && showSubType">{{ t('protocol.loading') }}</div>
+  <div v-if="loadingState && showSubType" class="px-[0.4em]">{{ t('protocol.loading') }}</div>
   <table v-else-if="showSubType" class="mapper-table w-full">
     <tr v-for="item in mapping" :key="item[0]">
       <td class="non-complex">{{ item[0] }}</td>
@@ -62,16 +62,13 @@ const mapping = asyncComputed(
   </table>
 </template>
 <style>
-.mapper-table td:first-child {
+.mapper-table > tr > td:first-child {
   border-left: none;
 }
-.mapper-table td:last-child {
+.mapper-table > tr > td:last-child {
   border-right: none;
 }
-.mapper-table tr:first-child > td {
-  border-top: 1px solid var(--border-color-base, #a2a9b1);
-}
-.mapper-table tr:last-child > td {
+.mapper-table > tr:last-child > td {
   border-bottom: none;
 }
 </style>

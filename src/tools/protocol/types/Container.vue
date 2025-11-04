@@ -25,10 +25,10 @@ const content = ((props.data as any[])[1] || []) as any[]
 .container-table td:last-child {
   border-right: none;
 }
-.container-table tr:first-child > td {
+.container-table > tr:first-child > td {
   border-top: none;
 }
-.container-table tr:last-child > td {
+.container-table > tr:last-child > td {
   border-bottom: none;
 }
 </style>
