@@ -34,6 +34,7 @@
   "protocol.type.nbt": "Named Binary Tag (NBT)",
   "protocol.type.option.complex": "Optional Field",
   "protocol.type.option.primitive": "Optional Field ({type})",
+  "protocol.type.recursive": "Recursive to {root}",
   "protocol.type.reference": "Reference to {type}",
   "protocol.type.registry": "Registry Network ID for {type}",
   "protocol.type.registry.writeable": "This registry is a writable registry, which can be various during the connection",

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { GetOrCache, IndexerType } from '../constants.ts'
 import { asyncComputed } from '@vueuse/core'
-import { inject, ref } from 'vue'
+import { inject, provide, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { indexed, isVoidProtocol } from '../constants.ts'
 import TypeChoice from './TypeChoice.vue'
@@ -15,6 +15,7 @@ const errorState =
   !Array.isArray(props.data) || props.data[0] !== 'reference' || props.data.length !== 2
 const content = (props.data as any[])[1] as string
 const desc = t('protocol.type.reference', { type: content })
+provide('recursive-root', content)
 
 const showSubType = ref(false)
 const loadingState = ref(true)

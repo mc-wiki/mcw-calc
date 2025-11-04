@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { inject } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { getAsPrimitiveProtocol } from '../constants.ts'
+import { getAsPrimitiveProtocol, isRecursiveProtocol } from '../constants.ts'
 import ArrayType from './ArrayType.vue'
 import BitfieldType from './BitfieldType.vue'
 import Container from './Container.vue'
@@ -13,6 +14,7 @@ import TopBitSetTerminatedArrayType from './TopBitSetTerminatedArrayType.vue'
 
 const props = defineProps<{ data: object | string; version: number; type?: string }>()
 const { t } = useI18n()
+const recursiveRoot = inject('recursive-root', null)
 
 const primitive = getAsPrimitiveProtocol(props.data)
 const type = props.type || 'td'
@@ -20,6 +22,17 @@ const type = props.type || 'td'
 <template>
   <component :is="type" v-if="!!primitive" class="non-complex">
     {{ t(`protocol.type.${primitive}`) }}
+  </component>
+  <component
+    :is="type"
+    v-else-if="isRecursiveProtocol(props.data)"
+    :class="recursiveRoot ? 'non-complex italic' : 'non-complex error-state'"
+  >
+    {{
+      recursiveRoot
+        ? t('protocol.type.recursive', { root: recursiveRoot })
+        : t('protocol.error.data')
+    }}
   </component>
   <component :is="type" v-else-if="!Array.isArray(props.data)" class="non-complex error-state">
     {{ t('protocol.error.data') }}

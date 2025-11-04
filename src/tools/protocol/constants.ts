@@ -37,5 +37,10 @@ export function getAsPrimitiveProtocol(data: string | object) {
   return Array.isArray(data) && PRIMITIVE_TYPES.has(data[0]) ? data[0] : undefined
 }
 
+export function isRecursiveProtocol(data: string | object) {
+  if (data === 'recursive') return true
+  return Array.isArray(data) && data[0] === 'recursive'
+}
+
 export type GetOrCache = <T>(p: number, k: string, missing: () => Promise<T>) => Promise<T>
 export type IndexerType = (protocolVersion: number, key: string) => number

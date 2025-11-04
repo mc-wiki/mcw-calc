@@ -16,7 +16,7 @@ const errorState =
   !Array.isArray(props.data) || props.data[0] !== 'bitfield' || props.data.length !== 2
 const content = (props.data as any[])[1] as BitfieldTypeDefinition[]
 const length = content.map((c) => c.size).reduce((p, c) => p + c, 0)
-const display: {offset: string; name: string}[] = []
+const display: { offset: string; name: string }[] = []
 let offset = 0
 for (const entry of content) {
   if (entry.name !== 'unused') {
