@@ -14,7 +14,7 @@ import {
   PACKETS_CSV,
   VERSIONS_JSON,
 } from './constants.ts'
-import Container from './types/Container.vue'
+import RootContainer from './types/RootContainer.vue'
 
 const props = defineProps<{
   versions?: string[]
@@ -206,19 +206,12 @@ onMounted(() => {
     <template #heading>
       {{ t('protocol.title') }}
     </template>
-    <div :style="{ display: 'flex', flexDirection: 'row', gap: '.5rem', marginBottom: '1rem' }">
-      <div
-        :style="{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1rem',
-          justifyContent: 'space-around',
-        }"
-      >
+    <div class="flex flex-row gap-2 mb-4">
+      <div class="flex flex-col gap-4 justify-around">
         <label for="version">{{ t('protocol.version') }}</label>
         <label v-if="!packetsLoadingState" for="packets">{{ t('protocol.packet') }}</label>
       </div>
-      <div :style="{ display: 'flex', flexDirection: 'column', gap: '1rem' }">
+      <div class="flex flex-col gap-4">
         <CdxSelect
           id="version"
           v-model:selected="selectedVersion"
@@ -233,10 +226,10 @@ onMounted(() => {
       </div>
     </div>
     <div v-if="packetLoadingState">{{ t('protocol.loading') }}</div>
-    <div v-else-if="isVoidProtocol(packetData)" :style="{ fontStyle: 'italic' }">
+    <div v-else-if="isVoidProtocol(packetData)" class="italic">
       {{ t('protocol.type.void') }}
     </div>
-    <Container v-else :data="packetData as object" :version="protocolVersion" />
+    <RootContainer v-else :data="packetData as object" :version="protocolVersion" />
   </CalcField>
   <div v-else-if="errorState" :style="{ color: 'red' }">{{ t('protocol.error.loading') }}</div>
   <div v-else>{{ t('protocol.loading') }}</div>
@@ -244,6 +237,19 @@ onMounted(() => {
 <style>
 td {
   border: 1px solid var(--border-color-base, #a2a9b1);
+  padding: 0.2em 0.4em;
+}
+
+td:not(.non-complex) {
+  padding: 0;
+}
+
+.error-state {
+  color: red;
+  font-style: italic;
+}
+
+.complex-padding {
   padding: 0.2em 0.4em;
 }
 </style>

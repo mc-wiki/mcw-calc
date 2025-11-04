@@ -1,4 +1,6 @@
 {
+  "protocol.action.collapse": "Collapse",
+  "protocol.action.expand": "Expand",
   "protocol.error.data": "An error has been occurred in parsing protocol data",
   "protocol.error.loading": "Error in fetching protocol data",
   "protocol.loading": "Loading...",
@@ -7,6 +9,10 @@
   "protocol.version.display": "{name} (Protocol: {protocol}, Data: {data})",
   "protocol.packet": "Select Packet: ",
   "protocol.packet.display": "({hex}, {id}) {name}",
+  "protocol.type.array.count_fixed": "Fixed length: {count}",
+  "protocol.type.array.count_type": "Prefixed with {type}",
+  "protocol.type.array.primitive": "Array ({count}): {type}",
+  "protocol.type.array.complex": "Array ({count})",
   "protocol.type.bool": "Boolean",
   "protocol.type.buffer": "Byte Sequence",
   "protocol.type.f32": "32-bit IEEE-754 Floating Point Number",
