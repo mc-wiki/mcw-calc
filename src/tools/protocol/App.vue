@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { MenuGroupData, MenuItemData } from '@wikimedia/codex'
 import { asyncComputed, objectOmit } from '@vueuse/core'
 import { CdxSelect } from '@wikimedia/codex'
 import Papa from 'papaparse'
@@ -104,12 +105,12 @@ async function getOrCache<T>(p: number, k: string, missing: () => Promise<T>): P
 const errorState = ref(false)
 const loadingState = ref(true)
 const selectedVersion = ref<string>('')
-const candidateVersions = ref<any[]>([])
+const candidateVersions = ref<MenuItemData[]>([])
 const protocolVersion = computed(() => versionMapping.get(selectedVersion.value)?.[0] || -1)
 
 const packetsLoadingState = ref(true)
 const selectedPacket = ref<string>('handshake/server/0')
-const candidatePackets = ref<any[]>([])
+const candidatePackets = ref<MenuGroupData[]>([])
 
 const packetLoadingState = ref(true)
 const packetData = asyncComputed<string | object>(
@@ -148,21 +149,34 @@ function setupInitialVersionState() {
 }
 
 function updateProtocolSelectState() {
-  const list: any[] = []
+  const list: MenuGroupData[] = []
   ;[
     ...initialProtocolData.entries(),
     ...(cachedProtocolMeta.get(protocolVersion.value)?.entries() || []),
-  ].forEach(([k, v]) =>
+  ].forEach(([k, v]) => {
+    const group: MenuItemData[] = []
     v.forEach((e, i) => {
-      list.push({
-        label: t('protocol.packet.display', { name: e.key, state: k, id: i }),
+      group.push({
+        label: t('protocol.packet.display', { name: e.key, hex: `0x${i.toString(16)}`, id: i }),
         value: `${k}/${i}`,
       })
-    }),
-  )
+    })
+    const filtered = props.packets
+      ? group.filter((v) => (props.packets || []).includes(v.value as string))
+      : group
+    if (filtered.length > 0) {
+      const [state, flow] = k.split('/')
+      list.push({
+        label: `${state[0].toUpperCase()}${state.substring(1)} (to ${flow[0].toUpperCase()}${flow.substring(1)})`,
+        items: filtered,
+      })
+    }
+  })
+
   candidatePackets.value = list
 
-  if (!list.some((e) => e.value === selectedPacket.value)) selectedPacket.value = list[0].value
+  if (!list.some((e) => e.items.some((v) => v.value === selectedPacket.value)))
+    selectedPacket.value = list[0].items[0].value as string
 }
 
 watch(selectedVersion, async () => {
@@ -218,9 +232,7 @@ onMounted(() => {
         />
       </div>
     </div>
-    <div v-if="packetLoadingState">
-      {{ t('protocol.loading') }}
-    </div>
+    <div v-if="packetLoadingState">{{ t('protocol.loading') }}</div>
     <div v-else-if="isVoidProtocol(packetData)" :style="{ fontStyle: 'italic' }">
       {{ t('protocol.type.void') }}
     </div>
@@ -229,3 +241,9 @@ onMounted(() => {
   <div v-else-if="errorState" :style="{ color: 'red' }">{{ t('protocol.error.loading') }}</div>
   <div v-else>{{ t('protocol.loading') }}</div>
 </template>
+<style>
+td {
+  border: 1px solid var(--border-color-base, #a2a9b1);
+  padding: 0.2em 0.4em;
+}
+</style>
