@@ -12,7 +12,7 @@ const content = ((props.data as any[])[1] || []) as any[]
 <template>
   <span v-if="errorState" class="error-state">{{ t('protocol.error.data') }}</span>
   <table v-else class="container-table w-full">
-    <tr v-for="item in content" :key="item.name">
+    <tr v-for="item in content.filter(c => c.name !== '<unnamed>')" :key="item.name">
       <td class="non-complex">{{ item.name }}</td>
       <TypeChoice :data="item.type" :version="props.version" />
     </tr>

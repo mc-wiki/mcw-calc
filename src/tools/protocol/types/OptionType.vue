@@ -4,25 +4,16 @@ import { useI18n } from 'vue-i18n'
 import { getAsPrimitiveProtocol } from '../constants.ts'
 import TypeChoice from './TypeChoice.vue'
 
-interface ArrayTypeDefinition {
-  countType?: string
-  count?: number
-  type: object | string
-}
-
 const props = defineProps<{ data: object; version: number }>()
 const { t } = useI18n()
 
 const errorState =
-  !Array.isArray(props.data) || props.data[0] !== 'array' || props.data.length !== 2
-const content = (props.data as any[])[1] as ArrayTypeDefinition
-const primitive = getAsPrimitiveProtocol(content.type)
-const countType = content.countType
-  ? t('protocol.type.array.count_type', { type: t(`protocol.type.${content.countType}`) })
-  : t('protocol.type.array.count_fixed', { count: content.count || '<INVALID>' })
+  !Array.isArray(props.data) || props.data[0] !== 'option' || props.data.length !== 2
+const content = (props.data as any[])[1] as string | object
+const primitive = getAsPrimitiveProtocol(content)
 const desc = primitive
-  ? t('protocol.type.array.primitive', { count: countType, type: t(`protocol.type.${primitive}`) })
-  : t('protocol.type.array.complex', { count: countType })
+  ? t('protocol.type.option.primitive', { type: t(`protocol.type.${primitive}`) })
+  : t('protocol.type.option.complex')
 
 const showSubType = ref(false)
 </script>
@@ -35,11 +26,5 @@ const showSubType = ref(false)
       [{{ showSubType ? t('protocol.action.collapse') : t('protocol.action.expand') }}]
     </span>
   </div>
-  <TypeChoice
-    v-if="showSubType"
-    :data="content.type"
-    :version="version"
-    type="div"
-    class="sub-type"
-  />
+  <TypeChoice v-if="showSubType" :data="content" :version="version" type="div" class="sub-type" />
 </template>

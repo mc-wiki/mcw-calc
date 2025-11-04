@@ -3,7 +3,7 @@ import type { MenuGroupData, MenuItemData } from '@wikimedia/codex'
 import { asyncComputed, objectOmit } from '@vueuse/core'
 import { CdxSelect } from '@wikimedia/codex'
 import Papa from 'papaparse'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, provide, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CalcField from '@/components/CalcField.vue'
 import {
@@ -70,14 +70,6 @@ async function setupProtocolVersions() {
   })
 }
 
-function getIndexFor(protocolVersion: number, key: string) {
-  return indexesMapping.get(protocolVersion)?.[key] || -1
-}
-
-function getPacketFor(protocolVersion: number, key: string) {
-  return packetMapping.get(protocolVersion)?.[key] || -1
-}
-
 async function setupProtocolMetadata(protocolVersion: number) {
   if (cachedProtocolMeta.has(protocolVersion)) return
   const index = getIndexFor(protocolVersion, 'protocol')
@@ -91,6 +83,18 @@ async function setupProtocolMetadata(protocolVersion: number) {
     meta.set(name.replace('_', '/'), array as any[])
   })
   cachedProtocolMeta.set(protocolVersion, meta)
+}
+
+provide('get-or-cache', getOrCache)
+provide('get-index-for', getIndexFor)
+provide('get-packet-for', getPacketFor)
+
+function getIndexFor(protocolVersion: number, key: string) {
+  return indexesMapping.get(protocolVersion)?.[key] || -1
+}
+
+function getPacketFor(protocolVersion: number, key: string) {
+  return packetMapping.get(protocolVersion)?.[key] || -1
 }
 
 async function getOrCache<T>(p: number, k: string, missing: () => Promise<T>): Promise<T> {
@@ -251,5 +255,13 @@ td:not(.non-complex) {
 
 .complex-padding {
   padding: 0.2em 0.4em;
+}
+
+div.sub-type.non-complex {
+  padding: 0.2em 0.4em;
+}
+
+div.sub-type {
+  border-top: 1px solid var(--border-color-base, #a2a9b1);
 }
 </style>

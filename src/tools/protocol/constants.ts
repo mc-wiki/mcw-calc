@@ -36,3 +36,6 @@ export function getAsPrimitiveProtocol(data: string | object) {
   if (typeof data === 'string' && PRIMITIVE_TYPES.has(data)) return data
   return Array.isArray(data) && PRIMITIVE_TYPES.has(data[0]) ? data[0] : undefined
 }
+
+export type GetOrCache = <T>(p: number, k: string, missing: () => Promise<T>) => Promise<T>
+export type IndexerType = (protocolVersion: number, key: string) => number
