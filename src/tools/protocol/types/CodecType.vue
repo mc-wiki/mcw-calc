@@ -69,7 +69,7 @@ watch(registryData, () => (selectedCodec.value = registryData.value[0].value || 
     <I18nT v-else keypath="protocol.type.codec" tag="span" class="flex-1 italic">
       <template #link>
         <span
-          class="underline"
+          class="underline cursor-default"
           @mouseover="state.selectName(varName, scope)"
           @mouseout="state.unselectName(varName, scope)"
         >

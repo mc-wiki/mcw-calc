@@ -31,7 +31,7 @@ const showSubType = ref(false)
     <I18nT v-else keypath="protocol.type.switch" tag="span" class="flex-1 italic">
       <template #link>
         <span
-          class="underline"
+          class="underline cursor-default"
           @mouseover="state.selectName(content.compareTo, scope)"
           @mouseout="state.unselectName(content.compareTo, scope)"
         >

@@ -44,7 +44,7 @@ const showSubType = ref(false)
           <template v-else #count>
             <span
               v-if="typeof content.count === 'string'"
-              class="underline italic"
+              class="underline italic cursor-default"
               @mouseover="state.selectName(content.count, scope)"
               @mouseout="state.unselectName(content.count, scope)"
             >

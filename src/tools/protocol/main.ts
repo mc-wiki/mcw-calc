@@ -13,9 +13,9 @@ const i18n = createMcwI18n([import.meta.glob('../protocol/locale/*.json', { eage
 ;(async () => {
   const parsed = z
     .object({
-      versions: sz.string().array().optional(),
+      versions: sz.array(sz.string(), ';').optional(),
       selectVersion: sz.string().optional(),
-      packets: sz.string().array().optional(),
+      packets: sz.array(sz.string(), ';').optional(),
     })
     .safeParse(await getParams())
 

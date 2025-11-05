@@ -51,7 +51,7 @@ const mapping = asyncComputed(
     <I18nT v-else-if="varName" tag="span" keypath="protocol.type.mapper.var" class="flex-1 italic">
       <template #var>
         <span
-          class="underline"
+          class="underline cursor-default"
           @mouseover="state.selectName(varName, scope)"
           @mouseout="state.unselectName(varName, scope)"
         >

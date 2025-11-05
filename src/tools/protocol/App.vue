@@ -162,19 +162,17 @@ function updateProtocolSelectState() {
   ].forEach(([k, v]) => {
     const group: MenuItemData[] = []
     v.forEach((e, i) => {
-      group.push({
-        label: t('protocol.packet.display', { name: e.key, hex: `0x${i.toString(16)}`, id: i }),
-        value: `${k}/${i}`,
-      })
+      if (!props.packets || props.packets.includes(`${k}/${e.key}`))
+        group.push({
+          label: t('protocol.packet.display', { name: e.key, hex: `0x${i.toString(16)}`, id: i }),
+          value: `${k}/${i}`,
+        })
     })
-    const filtered = props.packets
-      ? group.filter((v) => (props.packets || []).includes(v.value as string))
-      : group
-    if (filtered.length > 0) {
+    if (group.length > 0) {
       const [state, flow] = k.split('/')
       list.push({
         label: `${state[0].toUpperCase()}${state.substring(1)} (to ${flow[0].toUpperCase()}${flow.substring(1)})`,
-        items: filtered,
+        items: group,
       })
     }
   })
@@ -276,5 +274,10 @@ div.sub-type.non-complex {
 
 div.sub-type {
   border-top: 1px solid var(--border-color-base, #a2a9b1);
+}
+</style>
+<style scoped>
+.mcw-calc-field {
+  background: var(--background-color-base);
 }
 </style>
