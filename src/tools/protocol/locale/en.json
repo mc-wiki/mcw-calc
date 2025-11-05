@@ -21,6 +21,8 @@
   "protocol.type.bitfield.signed": "{name} (Signed)",
   "protocol.type.bitfield.unsigned": "{name} (Unsigned)",
   "protocol.type.buffer": "Byte Sequence",
+  "protocol.type.codec": "Registry Codec according to {link}",
+  "protocol.type.codec.void": "This field is discarded",
   "protocol.type.entity_metadata_loop": "Entity Metadata Loop (End with {endVal})",
   "protocol.type.f32": "32-bit IEEE-754 Floating Point Number",
   "protocol.type.f64": "64-bit IEEE-754 Floating Point Number",

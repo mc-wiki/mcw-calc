@@ -40,7 +40,9 @@ const data = asyncComputed<string | object>(
       [{{ showSubType ? t('protocol.action.collapse') : t('protocol.action.expand') }}]
     </span>
   </div>
-  <div v-if="loadingState && showSubType" class="px-[0.4em]">{{ t('protocol.loading') }}</div>
+  <div v-if="loadingState && showSubType" class="px-[0.4em] py-[0.2em]">
+    {{ t('protocol.loading') }}
+  </div>
   <div v-else-if="showSubType && isVoidProtocol(data)">{{ t('protocol.type.void') }}</div>
   <TypeChoice v-else-if="showSubType" :version="version" :data="data" type="div" class="sub-type" />
 </template>

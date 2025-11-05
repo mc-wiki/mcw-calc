@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { getAsPrimitiveProtocol, isRecursiveProtocol } from '../constants.ts'
 import ArrayType from './ArrayType.vue'
 import BitfieldType from './BitfieldType.vue'
+import CodecType from './CodecType.vue'
 import Container from './Container.vue'
 import EntityMetadataLoopType from './EntityMetadataLoopType.vue'
 import MapperType from './MapperType.vue'
@@ -66,11 +67,14 @@ const type = props.type || 'td'
   <component :is="type" v-else-if="props.data[0] === 'registry'">
     <RegistryType :data="props.data" :version="props.version" />
   </component>
-  <component :is="type" v-else-if="props.data[0] === 'save'">
+  <component :is="type" v-else-if="props.data[0] === 'save' || props.data[0] === 'global_save'">
     <SaveType :data="props.data" :version="props.version" />
   </component>
   <component :is="type" v-else-if="props.data[0] === 'switch'">
     <SwitchType :data="props.data" :version="props.version" />
+  </component>
+  <component :is="type" v-else-if="props.data[0] === 'codec'">
+    <CodecType :data="props.data" :version="props.version" />
   </component>
   <component :is="type" v-else-if="props.data[0] === 'fix_buffer'" class="non-complex">
     {{ t('protocol.type.fix_buffer', { length: props.data[1] }) }}

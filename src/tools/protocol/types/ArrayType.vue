@@ -20,13 +20,6 @@ const errorState =
 const content = (props.data as any[])[1] as ArrayTypeDefinition
 const primitive = getAsPrimitiveProtocol(content.type)
 
-const countType = content.countType
-  ? t('protocol.type.array.count_type', { type: t(`protocol.type.${content.countType}`) })
-  : t('protocol.type.array.count_fixed', { count: content.count || '<INVALID>' })
-const desc = primitive
-  ? t('protocol.type.array.primitive', { count: countType, type: t(`protocol.type.${primitive}`) })
-  : t('protocol.type.array.complex', { count: countType })
-
 const showSubType = ref(false)
 </script>
 <template>

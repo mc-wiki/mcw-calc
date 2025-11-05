@@ -6,7 +6,10 @@ import TypeChoice from './TypeChoice.vue'
 const props = defineProps<{ data: object; version: number }>()
 const { t } = useI18n()
 
-const errorState = !Array.isArray(props.data) || props.data[0] !== 'save' || props.data.length !== 3
+const errorState =
+  !Array.isArray(props.data) ||
+  (props.data[0] !== 'save' && props.data[0] !== 'global_save') ||
+  props.data.length !== 3
 const data = props.data as any[]
 const content = data[1] as string | object
 const saveName = data[2] as string
