@@ -8,7 +8,7 @@ import { indexed } from '../constants.ts'
 
 const props = defineProps<{ data: object; version: number }>()
 const { t } = useI18n()
-const getOrCache = inject('get-or-cache') as GetOrCache
+const cacheGet = inject('cache-get') as GetOrCache
 const getIndexFor = inject('get-index-for') as IndexerType
 
 const errorState =
@@ -25,7 +25,7 @@ const loadingState = ref(true)
 const data = asyncComputed<string[]>(
   async () => {
     if (!showSearching.value) return Promise.resolve([]) // lazy
-    return await getOrCache(props.version, content, async () => {
+    return await cacheGet(props.version, `registry.${content}`, async () => {
       const index = getIndexFor(props.version, content)
       return (await (await fetch(indexed(index, `registries/${content}.json`))).json()) || []
     })

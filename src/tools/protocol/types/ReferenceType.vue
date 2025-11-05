@@ -8,7 +8,7 @@ import TypeChoice from './TypeChoice.vue'
 
 const props = defineProps<{ data: object; version: number }>()
 const { t } = useI18n()
-const getOrCache = inject('get-or-cache') as GetOrCache
+const cacheGet = inject('cache-get') as GetOrCache
 const getPacketFor = inject('get-packet-for') as IndexerType
 
 const errorState =
@@ -22,7 +22,7 @@ const loadingState = ref(true)
 const data = asyncComputed<string | object>(
   async () => {
     if (!showSubType.value) return Promise.resolve([]) // lazy
-    return await getOrCache(props.version, content, async () => {
+    return await cacheGet(props.version, `structure.${content}`, async () => {
       const index = getPacketFor(props.version, content)
       return (await (await fetch(indexed(index, `structures/${content}.json`))).json()) || 'void'
     })

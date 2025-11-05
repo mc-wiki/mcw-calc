@@ -86,7 +86,7 @@ async function setupProtocolMetadata(protocolVersion: number) {
   cachedProtocolMeta.set(protocolVersion, meta)
 }
 
-provide('get-or-cache', getOrCache)
+provide('cache-get', cacheGet)
 provide('get-index-for', getIndexFor)
 provide('get-packet-for', getPacketFor)
 
@@ -98,7 +98,7 @@ function getPacketFor(protocolVersion: number, key: string) {
   return packetMapping.get(protocolVersion)?.[key] || -1
 }
 
-async function getOrCache<T>(p: number, k: string, missing: () => Promise<T>): Promise<T> {
+async function cacheGet<T>(p: number, k: string, missing: () => Promise<T>): Promise<T> {
   const key = `${p}/${k}`
   if (sharedProtocolCache.has(key)) return sharedProtocolCache.get(key) as T
   const data = await missing()
@@ -136,7 +136,7 @@ const packetData = asyncComputed<string | object>(
       if (entry.type) return entry.type
       const name = `${key.replace('/', '_')}_${entry.key.replace('/', '_')}`
       const indexName = indexed(getPacketFor(protocolVersion.value, name), `packets/${name}.json`)
-      return await getOrCache(protocolVersion.value, name, async () => {
+      return await cacheGet(protocolVersion.value, name, async () => {
         return await (await fetch(indexName)).json()
       })
     }

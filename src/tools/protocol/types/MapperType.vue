@@ -14,7 +14,7 @@ interface MapperTypeDefinition {
 
 const props = defineProps<{ data: object; version: number }>()
 const { t } = useI18n()
-const getOrCache = inject('get-or-cache') as GetOrCache
+const cacheGet = inject('cache-get') as GetOrCache
 const getIndexFor = inject('get-index-for') as IndexerType
 
 const errorState =
@@ -31,7 +31,7 @@ const mapping = asyncComputed(
   async () => {
     if (!showSubType.value) return Promise.resolve([]) // lazy
     if (content.mappings) return Promise.resolve(Object.entries(content.mappings))
-    return await getOrCache(props.version, content.source || '<unknown>', async () => {
+    return await cacheGet(props.version, `mappings.${content.source || '<unknown>'}`, async () => {
       const index = getIndexFor(props.version, content.source || '<unknown>')
       return (
         Object.entries(

@@ -11,7 +11,7 @@ import TypeChoice from './TypeChoice.vue'
 const props = defineProps<{ data: object; version: number }>()
 const { t } = useI18n()
 const state = useGlobalState()
-const getOrCache = inject('get-or-cache') as GetOrCache
+const cacheGet = inject('cache-get') as GetOrCache
 const getIndexFor = inject('get-index-for') as IndexerType
 const getPacketFor = inject('get-packet-for') as IndexerType
 
@@ -27,7 +27,7 @@ const registryData = asyncComputed(
   async () => {
     if (!showChoice.value) return Promise.resolve([]) // lazy
     return (
-      await getOrCache(props.version, registry, async () => {
+      await cacheGet(props.version, `registry.${registry}`, async () => {
         const index = getIndexFor(props.version, registry)
         return (await (await fetch(indexed(index, `registries/${registry}.json`))).json()) || []
       })
@@ -43,7 +43,7 @@ const codecData = asyncComputed(
   async () => {
     if (!showChoice.value) return Promise.resolve('void') // lazy
     if (!selectedCodec.value) return Promise.resolve('void') // lazy
-    return await getOrCache(props.version, `${registry}/${selectedCodec.value}`, async () => {
+    return await cacheGet(props.version, `codec.${registry}/${selectedCodec.value}`, async () => {
       const index = getPacketFor(props.version, `${registry}/${selectedCodec.value}`)
       return (
         (await (
