@@ -2,8 +2,9 @@
 import type { GetOrCache, IndexerType } from '../constants.ts'
 import { asyncComputed } from '@vueuse/core'
 import { inject, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { I18nT, useI18n } from 'vue-i18n'
 import { getAsPrimitiveProtocol, indexed } from '../constants.ts'
+import { useGlobalState } from '../state.ts'
 
 interface MapperTypeDefinition {
   type?: string | object
@@ -16,14 +17,14 @@ const props = defineProps<{ data: object; version: number }>()
 const { t } = useI18n()
 const cacheGet = inject('cache-get') as GetOrCache
 const getIndexFor = inject('get-index-for') as IndexerType
+const state = useGlobalState()
+const scope = inject('scope') as string
 
 const errorState =
   !Array.isArray(props.data) || props.data[0] !== 'mapper' || props.data.length !== 2
 const content = (props.data as any[])[1] as MapperTypeDefinition
 const primitive = getAsPrimitiveProtocol(content.type ?? '')
-const desc = primitive
-  ? t('protocol.type.mapper.primitive', { type: t(`protocol.type.${primitive}`) })
-  : t('protocol.type.mapper.complex')
+const varName = content.var
 
 const showSubType = ref(false)
 const loadingState = ref(true)
@@ -47,7 +48,24 @@ const mapping = asyncComputed(
 <template>
   <div class="complex-padding flex">
     <span v-if="errorState" class="error-state">{{ t('protocol.error.data') }}</span>
-    <span v-else class="flex-1">{{ desc }}</span>
+    <I18nT v-else-if="varName" tag="span" keypath="protocol.type.mapper.var" class="flex-1 italic">
+      <template #var>
+        <span
+          class="underline"
+          @mouseover="state.selectName(varName, scope)"
+          @mouseout="state.unselectName(varName, scope)"
+        >
+          {{ varName }}
+        </span>
+      </template>
+    </I18nT>
+    <span v-else class="flex-1">
+      {{
+        primitive
+          ? t('protocol.type.mapper.primitive', { type: t(`protocol.type.${primitive}`) })
+          : t('protocol.type.mapper.complex')
+      }}
+    </span>
     <span v-if="!errorState" class="ml-2 cursor-pointer" @click="showSubType = !showSubType">
       [{{ showSubType ? t('protocol.action.collapse') : t('protocol.action.expand') }}]
     </span>

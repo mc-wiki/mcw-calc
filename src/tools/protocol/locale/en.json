@@ -34,6 +34,7 @@
   "protocol.type.i8": "8-bit Signed Integer",
   "protocol.type.mapper.complex": "Mapped Field",
   "protocol.type.mapper.primitive": "Mapped Field ({type})",
+  "protocol.type.mapper.var": "Mapped Field (Virtual) for {var}",
   "protocol.type.nbt": "Named Binary Tag (NBT)",
   "protocol.type.option.complex": "Optional Field",
   "protocol.type.option.primitive": "Optional Field ({type})",

@@ -239,16 +239,14 @@ onMounted(() => {
       {{ t('protocol.type.void') }}
     </div>
     <RootContainer v-else :data="packetData as object" :version="protocolVersion" />
-    <div class="italic text-sm">
-      <I18nT keypath="protocol.tip">
-        <template #data>
-          <a href="https://github.com/Nickid2018/MC_Protocol_Data">Nickid2018/MC_Protocol_Data</a>
-        </template>
-        <template #calc>
-          <a href="https://github.com/mc-wiki/mcw-calc">mc-wiki/mcw-calc</a>
-        </template>
-      </I18nT>
-    </div>
+    <I18nT tag="div" class="italic text-sm" keypath="protocol.tip">
+      <template #data>
+        <a href="https://github.com/Nickid2018/MC_Protocol_Data">Nickid2018/MC_Protocol_Data</a>
+      </template>
+      <template #calc>
+        <a href="https://github.com/mc-wiki/mcw-calc">mc-wiki/mcw-calc</a>
+      </template>
+    </I18nT>
   </CalcField>
   <div v-else-if="errorState" :style="{ color: 'red' }">{{ t('protocol.error.loading') }}</div>
   <div v-else>{{ t('protocol.loading') }}</div>
