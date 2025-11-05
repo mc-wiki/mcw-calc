@@ -10,13 +10,14 @@ export const useGlobalState = createGlobalState(() => {
     nameStateMap.clear()
   }
 
-  function requireName(name: string) {
+  function requireName(name: string, scope: string) {
     const refName = ref(false)
-    nameStateMap.set(name, refName)
+    nameStateMap.set(`${scope}_${name}`, refName)
     return refName
   }
 
-  function selectName(name: string) {
+  function selectName(name: string, scope: string) {
+    name = `${scope}_${name}`
     if (selectedName === name) return
     if (selectedName) {
       const ref = nameStateMap.get(selectedName)
@@ -29,7 +30,8 @@ export const useGlobalState = createGlobalState(() => {
     }
   }
 
-  function unselectName(name: string) {
+  function unselectName(name: string, scope: string) {
+    name = `${scope}_${name}`
     if (selectedName === name) {
       const ref = nameStateMap.get(selectedName)
       if (ref) ref.value = false

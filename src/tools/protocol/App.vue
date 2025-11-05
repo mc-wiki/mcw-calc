@@ -89,6 +89,7 @@ async function setupProtocolMetadata(protocolVersion: number) {
 provide('cache-get', cacheGet)
 provide('get-index-for', getIndexFor)
 provide('get-packet-for', getPacketFor)
+provide('scope', '#root')
 
 function getIndexFor(protocolVersion: number, key: string) {
   return indexesMapping.get(protocolVersion)?.[key] || -1

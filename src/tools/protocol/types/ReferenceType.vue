@@ -15,7 +15,11 @@ const errorState =
   !Array.isArray(props.data) || props.data[0] !== 'reference' || props.data.length !== 2
 const content = (props.data as any[])[1] as string
 const desc = t('protocol.type.reference', { type: content })
+
+const fatherScope = inject('scope')
+const random = Math.random().toString(36).substring(2, 8)
 provide('recursive-root', content)
+provide('scope', `${fatherScope}/${random}`)
 
 const showSubType = ref(false)
 const loadingState = ref(true)

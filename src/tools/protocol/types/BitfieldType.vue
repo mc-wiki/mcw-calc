@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { ref } from 'vue'
+import { inject, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useGlobalState } from '../state.ts'
 
@@ -13,6 +13,7 @@ interface BitfieldTypeDefinition {
 
 const props = defineProps<{ data: object; version: number }>()
 const { t } = useI18n()
+const scope = inject('scope') as string
 const state = useGlobalState()
 
 const errorState =
@@ -28,7 +29,7 @@ for (const entry of content) {
       name: t(`protocol.type.bitfield.${(entry.signed ?? true) ? 'signed' : 'unsigned'}`, {
         name: entry.name,
       }),
-      save: entry.saveName ? state.requireName(entry.saveName) : undefined,
+      save: entry.saveName ? state.requireName(entry.saveName, scope) : undefined,
     })
   }
   offset += entry.size

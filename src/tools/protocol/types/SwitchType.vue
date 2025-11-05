@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { inject, ref } from 'vue'
 import { I18nT, useI18n } from 'vue-i18n'
 import { isVoidProtocol } from '../constants.ts'
 import { useGlobalState } from '../state.ts'
@@ -22,6 +22,7 @@ const fields = Object.entries(content.fields)
 if (content.default) fields.push([t('protocol.type.switch.default'), content.default])
 
 const state = useGlobalState()
+const scope = inject('scope') as string
 const showSubType = ref(false)
 </script>
 <template>
@@ -31,8 +32,8 @@ const showSubType = ref(false)
       <template #link>
         <span
           class="underline"
-          @mouseover="state.selectName(content.compareTo)"
-          @mouseout="state.unselectName(content.compareTo)"
+          @mouseover="state.selectName(content.compareTo, scope)"
+          @mouseout="state.unselectName(content.compareTo, scope)"
         >
           {{ content.compareTo }}
         </span>

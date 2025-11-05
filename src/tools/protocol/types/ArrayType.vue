@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { inject, ref } from 'vue'
 import { I18nT, useI18n } from 'vue-i18n'
 import { getAsPrimitiveProtocol } from '../constants.ts'
 import { useGlobalState } from '../state.ts'
@@ -14,6 +14,7 @@ interface ArrayTypeDefinition {
 const props = defineProps<{ data: object; version: number }>()
 const { t } = useI18n()
 const state = useGlobalState()
+const scope = inject('scope') as string
 
 const errorState =
   !Array.isArray(props.data) || props.data[0] !== 'array' || props.data.length !== 2
@@ -44,8 +45,8 @@ const showSubType = ref(false)
             <span
               v-if="typeof content.count === 'string'"
               class="underline italic"
-              @mouseover="state.selectName(content.count)"
-              @mouseout="state.unselectName(content.count)"
+              @mouseover="state.selectName(content.count, scope)"
+              @mouseout="state.unselectName(content.count, scope)"
             >
               {{ content.count }}
             </span>

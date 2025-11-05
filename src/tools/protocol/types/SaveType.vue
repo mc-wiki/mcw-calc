@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useGlobalState } from '../state.ts'
 import TypeChoice from './TypeChoice.vue'
 
 const props = defineProps<{ data: object; version: number }>()
 const { t } = useI18n()
+const scope = inject('scope') as string
 
 const errorState =
   !Array.isArray(props.data) ||
@@ -15,7 +17,7 @@ const content = data[1] as string | object
 const saveName = data[2] as string
 
 const globalState = useGlobalState()
-const showFrame = globalState.requireName(saveName)
+const showFrame = globalState.requireName(saveName, scope)
 </script>
 <template>
   <span v-if="errorState" class="error-state" :class="showFrame ? 'save-frame' : ''">
