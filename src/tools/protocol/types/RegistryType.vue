@@ -12,8 +12,13 @@ const getOrCache = inject('get-or-cache') as GetOrCache
 const getIndexFor = inject('get-index-for') as IndexerType
 
 const errorState =
-  !Array.isArray(props.data) || props.data[0] !== 'registry' || props.data.length !== 2
-const content = (props.data as any[])[1] as string
+  !Array.isArray(props.data) ||
+  props.data[0] !== 'registry' ||
+  props.data.length > 3 ||
+  props.data.length < 2
+const propData = props.data as any[]
+const content = propData[1] as string
+const offset = propData[2]
 
 const showSearching = ref(false)
 const loadingState = ref(true)
@@ -53,7 +58,9 @@ function changeMode() {
 <template>
   <div class="complex-padding flex">
     <span v-if="errorState" class="error-state">{{ t('protocol.error.data') }}</span>
-    <span v-else class="flex-1">{{ t('protocol.type.registry', { type: content }) }}</span>
+    <span v-else class="flex-1">
+      {{ t(`protocol.type.registry${offset ? '.offset' : ''}`, { type: content, offset }) }}
+    </span>
     <span v-if="!errorState" class="flex-none min-w-2" />
     <span v-if="!errorState" @click="showSearching = !showSearching">
       [{{ showSearching ? t('protocol.action.collapse') : t('protocol.action.search_registry') }}]

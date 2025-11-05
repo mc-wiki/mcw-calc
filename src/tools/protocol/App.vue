@@ -14,6 +14,7 @@ import {
   PACKETS_CSV,
   VERSIONS_JSON,
 } from './constants.ts'
+import { useGlobalState } from './state.ts'
 import RootContainer from './types/RootContainer.vue'
 
 const props = defineProps<{
@@ -189,6 +190,9 @@ watch(selectedVersion, async () => {
   updateProtocolSelectState()
   packetsLoadingState.value = false
 })
+
+const globalState = useGlobalState()
+watch([selectedVersion, selectedPacket], () => globalState.clearState())
 
 // SETUP -------------------------------------------------------------------------------------------
 onMounted(() => {

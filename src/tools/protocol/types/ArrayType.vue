@@ -1,22 +1,25 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { I18nT, useI18n } from 'vue-i18n'
 import { getAsPrimitiveProtocol } from '../constants.ts'
+import { useGlobalState } from '../state.ts'
 import TypeChoice from './TypeChoice.vue'
 
 interface ArrayTypeDefinition {
   countType?: string
-  count?: number
+  count?: number | string
   type: object | string
 }
 
 const props = defineProps<{ data: object; version: number }>()
 const { t } = useI18n()
+const state = useGlobalState()
 
 const errorState =
   !Array.isArray(props.data) || props.data[0] !== 'array' || props.data.length !== 2
 const content = (props.data as any[])[1] as ArrayTypeDefinition
 const primitive = getAsPrimitiveProtocol(content.type)
+
 const countType = content.countType
   ? t('protocol.type.array.count_type', { type: t(`protocol.type.${content.countType}`) })
   : t('protocol.type.array.count_fixed', { count: content.count || '<INVALID>' })
@@ -29,7 +32,35 @@ const showSubType = ref(false)
 <template>
   <div class="complex-padding flex">
     <span v-if="errorState" class="error-state">{{ t('protocol.error.data') }}</span>
-    <span v-else class="flex-1">{{ desc }}</span>
+    <I18nT
+      v-else
+      :keypath="primitive ? 'protocol.type.array.primitive' : 'protocol.type.array.complex'"
+      tag="span"
+      class="flex-1"
+    >
+      <template v-if="primitive" #type>{{ t(`protocol.type.${primitive}`) }}</template>
+      <template #count>
+        <I18nT
+          :keypath="`protocol.type.array.count_${content.countType ? 'type' : 'fixed'}`"
+          tag="span"
+        >
+          <template v-if="content.countType" #type>
+            {{ t(`protocol.type.${content.countType}`) }}
+          </template>
+          <template v-else #count>
+            <span
+              v-if="typeof content.count === 'string'"
+              class="underline italic"
+              @mouseover="state.selectName(content.count)"
+              @mouseout="state.unselectName(content.count)"
+            >
+              {{ content.count }}
+            </span>
+            <span v-else>{{ content.count }}</span>
+          </template>
+        </I18nT>
+      </template>
+    </I18nT>
     <span v-if="!primitive && !errorState" class="flex-none min-w-2" />
     <span v-if="!primitive && !errorState" @click="showSubType = !showSubType">
       [{{ showSubType ? t('protocol.action.collapse') : t('protocol.action.expand') }}]

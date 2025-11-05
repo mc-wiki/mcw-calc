@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import type { Ref } from 'vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useGlobalState } from '../state.ts'
 
 interface BitfieldTypeDefinition {
   name: string
@@ -11,12 +13,13 @@ interface BitfieldTypeDefinition {
 
 const props = defineProps<{ data: object; version: number }>()
 const { t } = useI18n()
+const state = useGlobalState()
 
 const errorState =
   !Array.isArray(props.data) || props.data[0] !== 'bitfield' || props.data.length !== 2
 const content = (props.data as any[])[1] as BitfieldTypeDefinition[]
 const length = content.map((c) => c.size).reduce((p, c) => p + c, 0)
-const display: { offset: string; name: string }[] = []
+const display: { offset: string; name: string; save?: Ref<boolean> }[] = []
 let offset = 0
 for (const entry of content) {
   if (entry.name !== 'unused') {
@@ -25,6 +28,7 @@ for (const entry of content) {
       name: t(`protocol.type.bitfield.${(entry.signed ?? true) ? 'signed' : 'unsigned'}`, {
         name: entry.name,
       }),
+      save: entry.saveName ? state.requireName(entry.saveName) : undefined,
     })
   }
   offset += entry.size
@@ -44,7 +48,9 @@ const showSubType = ref(false)
   <table v-if="showSubType" class="bitfield-table w-full">
     <tr v-for="item in display" :key="item.offset">
       <td class="non-complex">{{ item.offset }}</td>
-      <td class="non-complex">{{ item.name }}</td>
+      <td class="non-complex" :class="item.save?.value ? 'save-bitfield-frame' : ''">
+        {{ item.name }}
+      </td>
     </tr>
   </table>
 </template>
@@ -57,5 +63,8 @@ const showSubType = ref(false)
 }
 .bitfield-table > tr:last-child > td {
   border-bottom: none;
+}
+.save-bitfield-frame {
+  background-color: var(--background-color-notice-subtle);
 }
 </style>
