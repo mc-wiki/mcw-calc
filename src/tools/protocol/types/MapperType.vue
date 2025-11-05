@@ -48,8 +48,7 @@ const mapping = asyncComputed(
   <div class="complex-padding flex">
     <span v-if="errorState" class="error-state">{{ t('protocol.error.data') }}</span>
     <span v-else class="flex-1">{{ desc }}</span>
-    <span v-if="!errorState" class="flex-none min-w-2" />
-    <span v-if="!errorState" @click="showSubType = !showSubType">
+    <span v-if="!errorState" class="ml-2 cursor-pointer" @click="showSubType = !showSubType">
       [{{ showSubType ? t('protocol.action.collapse') : t('protocol.action.expand') }}]
     </span>
   </div>
