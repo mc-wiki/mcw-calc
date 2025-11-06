@@ -4,7 +4,7 @@ import { asyncComputed } from '@vueuse/core'
 import { CdxSelect } from '@wikimedia/codex'
 import { computed, inject, provide, ref, watch } from 'vue'
 import { I18nT, useI18n } from 'vue-i18n'
-import { indexed, isVoidProtocol } from '../constants.ts'
+import { indexed, isActionKey, isVoidProtocol } from '../constants.ts'
 import { useGlobalState } from '../state.ts'
 import TypeChoice from './TypeChoice.vue'
 
@@ -80,7 +80,9 @@ watch(registryData, () => (selectedCodec.value = registryData.value[0].value || 
     <span
       v-if="!errorState"
       class="ml-2 cursor-pointer action-text"
+      tabindex="0"
       @click="showChoice = !showChoice"
+      @keyup="(e: KeyboardEvent) => isActionKey(e) && (showChoice = !showChoice)"
     >
       [{{ showChoice ? t('protocol.action.collapse') : t('protocol.action.expand') }}]
     </span>

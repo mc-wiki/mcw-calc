@@ -4,7 +4,7 @@ import { asyncComputed } from '@vueuse/core'
 import { CdxButton, CdxTextInput } from '@wikimedia/codex'
 import { computed, inject, nextTick, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { indexed } from '../constants.ts'
+import { indexed, isActionKey } from '../constants.ts'
 
 const props = defineProps<{ data: object; version: number }>()
 const { t } = useI18n()
@@ -64,7 +64,9 @@ function changeMode() {
     <span
       v-if="!errorState"
       class="ml-2 cursor-pointer action-text"
+      tabindex="0"
       @click="showSearching = !showSearching"
+      @keyup="(e: KeyboardEvent) => isActionKey(e) && (showSearching = !showSearching)"
     >
       [{{ showSearching ? t('protocol.action.collapse') : t('protocol.action.search_registry') }}]
     </span>

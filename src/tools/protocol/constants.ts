@@ -46,5 +46,9 @@ export function shouldSkip(data: string | object) {
   return Array.isArray(data) && data[0] === 'func'
 }
 
+export function isActionKey(e: KeyboardEvent) {
+  return e.key === 'Enter' || e.key === ' '
+}
+
 export type GetOrCache = <T>(p: number, k: string, missing: () => Promise<T>) => Promise<T>
 export type IndexerType = (protocolVersion: number, key: string) => number

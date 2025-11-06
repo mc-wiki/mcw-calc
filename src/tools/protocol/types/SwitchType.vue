@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { inject, ref } from 'vue'
 import { I18nT, useI18n } from 'vue-i18n'
-import { isVoidProtocol } from '../constants.ts'
+import { isActionKey, isVoidProtocol } from '../constants.ts'
 import { useGlobalState } from '../state.ts'
 import TypeChoice from './TypeChoice.vue'
 
@@ -42,7 +42,9 @@ const showSubType = ref(false)
     <span
       v-if="!errorState"
       class="ml-2 cursor-pointer action-text"
+      tabindex="0"
       @click="showSubType = !showSubType"
+      @keyup="(e: KeyboardEvent) => isActionKey(e) && (showSubType = !showSubType)"
     >
       [{{ showSubType ? t('protocol.action.collapse') : t('protocol.action.expand') }}]
     </span>
