@@ -41,7 +41,11 @@ const showSubType = ref(false)
   <div class="complex-padding flex">
     <span v-if="errorState" class="error-state">{{ t('protocol.error.data') }}</span>
     <span v-else class="flex-1">{{ t('protocol.type.bitfield', { length }) }}</span>
-    <span v-if="!errorState" class="ml-2 cursor-pointer" @click="showSubType = !showSubType">
+    <span
+      v-if="!errorState"
+      class="ml-2 cursor-pointer action-text"
+      @click="showSubType = !showSubType"
+    >
       [{{ showSubType ? t('protocol.action.collapse') : t('protocol.action.expand') }}]
     </span>
   </div>

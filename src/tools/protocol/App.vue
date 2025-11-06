@@ -275,6 +275,10 @@ div.sub-type.non-complex {
 div.sub-type {
   border-top: 1px solid var(--border-color-base, #a2a9b1);
 }
+
+span.action-text {
+  color: var(--color-progressive, #36c)
+}
 </style>
 <style scoped>
 .mcw-calc-field {

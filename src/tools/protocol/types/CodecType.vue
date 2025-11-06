@@ -77,7 +77,11 @@ watch(registryData, () => (selectedCodec.value = registryData.value[0].value || 
         </span>
       </template>
     </I18nT>
-    <span v-if="!errorState" class="ml-2 cursor-pointer" @click="showChoice = !showChoice">
+    <span
+      v-if="!errorState"
+      class="ml-2 cursor-pointer action-text"
+      @click="showChoice = !showChoice"
+    >
       [{{ showChoice ? t('protocol.action.collapse') : t('protocol.action.expand') }}]
     </span>
   </div>

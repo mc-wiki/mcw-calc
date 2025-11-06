@@ -23,7 +23,7 @@ const showSubType = ref(false)
     <span v-else class="flex-1">{{ desc }}</span>
     <span
       v-if="!primitive && !errorState"
-      class="ml-2 cursor-pointer"
+      class="ml-2 cursor-pointer action-text"
       @click="showSubType = !showSubType"
     >
       [{{ showSubType ? t('protocol.action.collapse') : t('protocol.action.expand') }}]

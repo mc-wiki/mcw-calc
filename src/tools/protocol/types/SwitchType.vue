@@ -39,7 +39,11 @@ const showSubType = ref(false)
         </span>
       </template>
     </I18nT>
-    <span v-if="!errorState" class="ml-2 cursor-pointer" @click="showSubType = !showSubType">
+    <span
+      v-if="!errorState"
+      class="ml-2 cursor-pointer action-text"
+      @click="showSubType = !showSubType"
+    >
       [{{ showSubType ? t('protocol.action.collapse') : t('protocol.action.expand') }}]
     </span>
   </div>

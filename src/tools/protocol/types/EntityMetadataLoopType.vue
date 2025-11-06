@@ -18,7 +18,11 @@ const showSubType = ref(false)
     <span v-else class="flex-1">
       {{ t('protocol.type.entity_metadata_loop', { endVal: content.endVal }) }}
     </span>
-    <span v-if="!errorState" class="ml-2 cursor-pointer" @click="showSubType = !showSubType">
+    <span
+      v-if="!errorState"
+      class="ml-2 cursor-pointer action-text"
+      @click="showSubType = !showSubType"
+    >
       [{{ showSubType ? t('protocol.action.collapse') : t('protocol.action.expand') }}]
     </span>
   </div>

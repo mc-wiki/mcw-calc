@@ -61,7 +61,11 @@ function changeMode() {
     <span v-else class="flex-1">
       {{ t(`protocol.type.registry${offset ? '.offset' : ''}`, { type: content, offset }) }}
     </span>
-    <span v-if="!errorState" class="ml-2 cursor-pointer" @click="showSearching = !showSearching">
+    <span
+      v-if="!errorState"
+      class="ml-2 cursor-pointer action-text"
+      @click="showSearching = !showSearching"
+    >
       [{{ showSearching ? t('protocol.action.collapse') : t('protocol.action.search_registry') }}]
     </span>
   </div>
