@@ -23,7 +23,7 @@ const showSubType = ref(false)
     <span v-else class="flex-1">{{ desc }}</span>
     <span
       v-if="!primitive && !errorState"
-      class="ml-2 cursor-pointer action-text"
+      class="action-text"
       tabindex="0"
       @click="showSubType = !showSubType"
       @keyup="(e: KeyboardEvent) => isActionKey(e) && (showSubType = !showSubType)"

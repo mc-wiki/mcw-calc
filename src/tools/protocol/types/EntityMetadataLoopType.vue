@@ -21,7 +21,7 @@ const showSubType = ref(false)
     </span>
     <span
       v-if="!errorState"
-      class="ml-2 cursor-pointer action-text"
+      class="action-text"
       tabindex="0"
       @click="showSubType = !showSubType"
       @keyup="(e: KeyboardEvent) => isActionKey(e) && (showSubType = !showSubType)"

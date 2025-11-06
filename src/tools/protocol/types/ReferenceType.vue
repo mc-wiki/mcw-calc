@@ -41,7 +41,7 @@ const data = asyncComputed<string | object>(
     <span v-else class="flex-1 italic">{{ desc }}</span>
     <span
       v-if="!errorState"
-      class="ml-2 cursor-pointer action-text"
+      class="action-text"
       tabindex="0"
       @click="showSubType = !showSubType"
       @keyup="(e: KeyboardEvent) => isActionKey(e) && (showSubType = !showSubType)"

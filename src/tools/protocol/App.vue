@@ -218,7 +218,7 @@ onMounted(() => {
         <label for="version">{{ t('protocol.version') }}</label>
         <label v-if="!packetsLoadingState" for="packets">{{ t('protocol.packet') }}</label>
       </div>
-      <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-4" translate="no">
         <CdxSelect
           id="version"
           v-model:selected="selectedVersion"
@@ -268,19 +268,31 @@ td:not(.non-complex) {
   padding: 0.2em 0.4em;
 }
 
-div.sub-type.non-complex {
+.sub-type {
+  border-top: 1px solid var(--border-color-base, #a2a9b1);
+}
+.sub-type.non-complex {
   padding: 0.2em 0.4em;
 }
 
-div.sub-type {
-  border-top: 1px solid var(--border-color-base, #a2a9b1);
+.action-text {
+  margin-left: 0.5rem;
+  cursor: pointer;
+  color: var(--color-progressive, #36c);
 }
 
-span.action-text {
-  color: var(--color-progressive, #36c)
+.var-link {
+  font-style: italic;
+  text-decoration: underline dotted;
+  cursor: default;
 }
-</style>
-<style scoped>
+.var-link:hover {
+  color: #338;
+}
+.dark .var-link:hover {
+  color: #bbf;
+}
+
 .mcw-calc-field {
   min-width: 100%;
   width: fit-content;

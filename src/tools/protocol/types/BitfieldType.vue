@@ -44,7 +44,7 @@ const showSubType = ref(false)
     <span v-else class="flex-1">{{ t('protocol.type.bitfield', { length }) }}</span>
     <span
       v-if="!errorState"
-      class="ml-2 cursor-pointer action-text"
+      class="action-text"
       tabindex="0"
       @click="showSubType = !showSubType"
       @keyup="(e: KeyboardEvent) => isActionKey(e) && (showSubType = !showSubType)"
@@ -55,7 +55,11 @@ const showSubType = ref(false)
   <table v-if="showSubType" class="bitfield-table w-full">
     <tr v-for="item in display" :key="item.offset">
       <td class="non-complex">{{ item.offset }}</td>
-      <td class="non-complex" :class="item.save?.value ? 'save-bitfield-frame' : ''">
+      <td
+        class="non-complex bitfield-value"
+        :class="item.save?.value ? 'save-bitfield-frame' : ''"
+        translate="no"
+      >
         {{ item.name }}
       </td>
     </tr>
@@ -71,7 +75,14 @@ const showSubType = ref(false)
 .bitfield-table > tr:last-child > td {
   border-bottom: none;
 }
+.bitfield-value {
+  transition: background-color 0.3s;
+}
 .save-bitfield-frame {
-  background-color: var(--background-color-notice-subtle);
+  background-color: #bbf;
+  transition: background-color 0.1s cubic-bezier(0, 0.8, 1, 1);
+}
+.dark .save-bitfield-frame {
+  background-color: #338;
 }
 </style>

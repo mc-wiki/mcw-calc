@@ -21,7 +21,7 @@ const showSubType = ref(false)
     <span v-else class="flex-1">{{ t('protocol.type.top_bit_set_terminated_array') }}</span>
     <span
       v-if="!errorState"
-      class="ml-2 cursor-pointer action-text"
+      class="action-text"
       tabindex="0"
       @click="showSubType = !showSubType"
       @keyup="(e: KeyboardEvent) => isActionKey(e) && (showSubType = !showSubType)"

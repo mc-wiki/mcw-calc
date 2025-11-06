@@ -31,7 +31,8 @@ const showSubType = ref(false)
     <I18nT v-else keypath="protocol.type.switch" tag="span" class="flex-1 italic">
       <template #link>
         <span
-          class="underline cursor-default"
+          class="var-link"
+          translate="no"
           @mouseover="state.selectName(content.compareTo, scope)"
           @mouseout="state.unselectName(content.compareTo, scope)"
         >
@@ -41,7 +42,7 @@ const showSubType = ref(false)
     </I18nT>
     <span
       v-if="!errorState"
-      class="ml-2 cursor-pointer action-text"
+      class="action-text"
       tabindex="0"
       @click="showSubType = !showSubType"
       @keyup="(e: KeyboardEvent) => isActionKey(e) && (showSubType = !showSubType)"
@@ -51,7 +52,7 @@ const showSubType = ref(false)
   </div>
   <table v-if="showSubType" class="switch-table w-full">
     <tr v-for="item in fields" :key="item[0]">
-      <td class="non-complex">{{ item[0] }}</td>
+      <td class="non-complex" translate="no">{{ item[0] }}</td>
       <td v-if="isVoidProtocol(item[1])" class="italic non-complex">
         {{ t('protocol.type.switch.void') }}
       </td>

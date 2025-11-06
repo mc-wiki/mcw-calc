@@ -33,10 +33,18 @@ const showFrame = globalState.requireName(saveName, scope)
   />
 </template>
 <style>
+.save-sub-type {
+  transition: background-color .3s;
+}
 .save-sub-type.non-complex {
   padding: 0.2em 0.4em;
 }
 .save-frame {
-  background-color: var(--background-color-notice-subtle);
+  background-color: #bbf;
+  transition: background-color .1s cubic-bezier(0, 0.8, 1, 1);
+}
+.dark .save-frame {
+  background-color: #338;
 }
 </style>
+

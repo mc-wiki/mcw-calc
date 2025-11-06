@@ -51,7 +51,8 @@ const mapping = asyncComputed(
     <I18nT v-else-if="varName" tag="span" keypath="protocol.type.mapper.var" class="flex-1 italic">
       <template #var>
         <span
-          class="underline cursor-default"
+          class="var-link"
+          translate="no"
           @mouseover="state.selectName(varName, scope)"
           @mouseout="state.unselectName(varName, scope)"
         >
@@ -68,7 +69,7 @@ const mapping = asyncComputed(
     </span>
     <span
       v-if="!errorState"
-      class="ml-2 cursor-pointer action-text"
+      class="action-text"
       tabindex="0"
       @click="showSubType = !showSubType"
       @keyup="(e: KeyboardEvent) => isActionKey(e) && (showSubType = !showSubType)"
@@ -77,7 +78,7 @@ const mapping = asyncComputed(
     </span>
   </div>
   <div v-if="loadingState && showSubType" class="px-[0.4em]">{{ t('protocol.loading') }}</div>
-  <table v-else-if="showSubType" class="mapper-table w-full">
+  <table v-else-if="showSubType" class="mapper-table w-full" translate="no">
     <tr v-for="item in mapping" :key="item[0]">
       <td class="non-complex">{{ item[0] }}</td>
       <td class="non-complex">{{ item[1] }}</td>

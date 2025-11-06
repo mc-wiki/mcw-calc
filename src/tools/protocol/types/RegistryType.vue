@@ -63,7 +63,7 @@ function changeMode() {
     </span>
     <span
       v-if="!errorState"
-      class="ml-2 cursor-pointer action-text"
+      class="action-text"
       tabindex="0"
       @click="showSearching = !showSearching"
       @keyup="(e: KeyboardEvent) => isActionKey(e) && (showSearching = !showSearching)"
@@ -79,7 +79,7 @@ function changeMode() {
     <CdxButton @click="changeMode">
       {{ t(`protocol.action.search_registry.${mode ? 'network_id' : 'id_network'}`) }}
     </CdxButton>
-    <CdxTextInput v-model="input" :input-type="mode ? 'number' : 'text'" />
-    <span class="px-[0.4em] py-[0.2em] min-w-16 text-center">{{ result }}</span>
+    <CdxTextInput v-model="input" :input-type="mode ? 'number' : 'text'" translate="no" />
+    <span class="px-[0.4em] py-[0.2em] min-w-16 text-center" translate="no">{{ result }}</span>
   </div>
 </template>

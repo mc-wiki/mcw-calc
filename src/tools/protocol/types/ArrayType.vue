@@ -44,7 +44,8 @@ const showSubType = ref(false)
           <template v-else #count>
             <span
               v-if="typeof content.count === 'string'"
-              class="underline italic cursor-default"
+              class="var-link"
+              translate="no"
               @mouseover="state.selectName(content.count, scope)"
               @mouseout="state.unselectName(content.count, scope)"
             >
@@ -57,7 +58,7 @@ const showSubType = ref(false)
     </I18nT>
     <span
       v-if="!primitive && !errorState"
-      class="ml-2 cursor-pointer action-text"
+      class="action-text"
       tabindex="0"
       @click="showSubType = !showSubType"
       @keyup="(e: KeyboardEvent) => isActionKey(e) && (showSubType = !showSubType)"

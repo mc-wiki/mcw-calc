@@ -42,8 +42,8 @@ export function isRecursiveProtocol(data: string | object) {
   return Array.isArray(data) && data[0] === 'recursive'
 }
 
-export function shouldSkip(data: string | object) {
-  return Array.isArray(data) && data[0] === 'func'
+export function shouldSkip(name: string, type: string | object) {
+  return name === '<unnamed>' || (Array.isArray(type) && type[0] === 'func')
 }
 
 export function isActionKey(e: KeyboardEvent) {

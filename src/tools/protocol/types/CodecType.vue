@@ -61,7 +61,7 @@ const codecData = asyncComputed(
 )
 
 const loading = computed(() => registryLoading.value || codecLoading.value)
-watch(registryData, () => (selectedCodec.value = registryData.value[0].value || ''))
+watch(registryData, () => (selectedCodec.value = registryData.value[0]?.value || ''))
 </script>
 <template>
   <div class="complex-padding flex">
@@ -69,7 +69,8 @@ watch(registryData, () => (selectedCodec.value = registryData.value[0].value || 
     <I18nT v-else keypath="protocol.type.codec" tag="span" class="flex-1 italic">
       <template #link>
         <span
-          class="underline cursor-default"
+          class="var-link"
+          translate="no"
           @mouseover="state.selectName(varName, scope)"
           @mouseout="state.unselectName(varName, scope)"
         >
@@ -79,7 +80,7 @@ watch(registryData, () => (selectedCodec.value = registryData.value[0].value || 
     </I18nT>
     <span
       v-if="!errorState"
-      class="ml-2 cursor-pointer action-text"
+      class="action-text"
       tabindex="0"
       @click="showChoice = !showChoice"
       @keyup="(e: KeyboardEvent) => isActionKey(e) && (showChoice = !showChoice)"
@@ -89,7 +90,9 @@ watch(registryData, () => (selectedCodec.value = registryData.value[0].value || 
   </div>
   <div v-if="showChoice">
     <div v-if="registryLoading" class="px-[0.4em] py-[0.2em]">{{ t('protocol.loading') }}</div>
-    <CdxSelect v-else v-model:selected="selectedCodec" :menu-items="registryData" class="w-full" />
+    <div v-else translate="no">
+      <CdxSelect v-model:selected="selectedCodec" :menu-items="registryData" class="w-full" />
+    </div>
     <div v-if="loading" class="px-[0.4em] py-[0.2em]">{{ t('protocol.loading') }}</div>
     <div v-else-if="isVoidProtocol(codecData)" class="italic px-[0.4em] py-[0.2em]">
       {{ t('protocol.type.codec.void') }}
