@@ -282,6 +282,8 @@ span.action-text {
 </style>
 <style scoped>
 .mcw-calc-field {
+  min-width: 100%;
+  width: fit-content;
   background: var(--background-color-base);
 }
 </style>
