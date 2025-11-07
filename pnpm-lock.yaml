@@ -83,6 +83,9 @@ importers:
       d3:
         specifier: ^7.9.0
         version: 7.9.0
+      papaparse:
+        specifier: ^5.5.3
+        version: 5.5.3
       spark-md5:
         specifier: ^3.0.2
         version: 3.0.2
@@ -132,6 +135,9 @@ importers:
       '@types/node':
         specifier: ^24.3.0
         version: 24.3.0
+      '@types/papaparse':
+        specifier: ^5.3.16
+        version: 5.3.16
       '@types/spark-md5':
         specifier: ^3.0.5
         version: 3.0.5
@@ -1899,6 +1905,9 @@ packages:
 
   '@types/oojs@7.0.6':
     resolution: {integrity: sha512-e6UBEoqJ3bLBvxtPnaFmqkK4HzPwrS3sqfB2dORUmAaShp/T7WhMoYjlwhe+7g748qv7eeX/q4WdOaeeVG2LtA==}
+
+  '@types/papaparse@5.3.16':
+    resolution: {integrity: sha512-T3VuKMC2H0lgsjI9buTB3uuKj3EMD2eap1MOuEQuBQ44EnDx/IkGhU6EwiTf9zG3za4SKlmwKAImdDKdNnCsXg==}
 
   '@types/sinonjs__fake-timers@8.1.5':
     resolution: {integrity: sha512-mQkU2jY8jJEF7YHjHvsQO8+3ughTL1mcnn96igfhONmR+fUPSKIkefQYpSe8bsly2Ep7oQbn/6VG5/9/0qcArQ==}
@@ -4935,6 +4944,9 @@ packages:
   pako@1.0.11:
     resolution: {integrity: sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==}
 
+  papaparse@5.5.3:
+    resolution: {integrity: sha512-5QvjGxYVjxO59MGU2lHVYpRWBBtKHnlIAcSe1uNFCkkptUh63NFRj0FJQm7nR67puEruUci/ZkjmEFrjCAyP4A==}
+
   parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
     engines: {node: '>=6'}
@@ -7920,6 +7932,10 @@ snapshots:
       '@types/oojs': 7.0.6
 
   '@types/oojs@7.0.6': {}
+
+  '@types/papaparse@5.3.16':
+    dependencies:
+      '@types/node': 24.3.0
 
   '@types/sinonjs__fake-timers@8.1.5':
     optional: true
@@ -11692,6 +11708,8 @@ snapshots:
 
   pako@1.0.11:
     optional: true
+
+  papaparse@5.5.3: {}
 
   parent-module@1.0.1:
     dependencies:
