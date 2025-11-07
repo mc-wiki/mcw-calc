@@ -3,7 +3,7 @@
   "maceDamage.java": "Édition Java",
   "maceDamage.bedrock": "Édition Bedrock",
   "maceDamage.fallHeight": "Hauteur de chute en blocs :",
-  "maceDamage.densityLevel": "Niveau de l'enchantement Densité :",
+  "maceDamage.densityLevel": "Niveau de l'enchantement [[Densité]] :",
   "maceDamage.critical": "Attaque critique",
   "maceDamage.critical.help": "La masse produit des attaques critiques la plupart du temps, sauf si le temps de recharge de l'attaque n'est pas réinitialisé.",
   "maceDamage.cooldownReset": "Réinitialisation du temps de recharge",
