@@ -6,6 +6,8 @@ import ArrayType from './ArrayType.vue'
 import BitfieldType from './BitfieldType.vue'
 import CodecType from './CodecType.vue'
 import Container from './Container.vue'
+import DirectHolderType from './DirectHolderType.vue'
+import EitherType from './EitherType.vue'
 import EntityMetadataLoopType from './EntityMetadataLoopType.vue'
 import MapperType from './MapperType.vue'
 import OptionType from './OptionType.vue'
@@ -75,6 +77,12 @@ const type = props.type || 'td'
   </component>
   <component :is="type" v-else-if="props.data[0] === 'codec'">
     <CodecType :data="props.data" :version="props.version" />
+  </component>
+  <component :is="type" v-else-if="props.data[0] === 'either'">
+    <EitherType :data="props.data" :version="props.version" />
+  </component>
+  <component :is="type" v-else-if="props.data[0] === 'direct_holder'">
+    <DirectHolderType :data="props.data" :version="props.version" />
   </component>
   <component :is="type" v-else-if="props.data[0] === 'fix_buffer'" class="non-complex">
     {{ t('protocol.type.fix_buffer', { length: props.data[1] }) }}

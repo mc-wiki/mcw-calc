@@ -4,7 +4,8 @@ import { asyncComputed } from '@vueuse/core'
 import { CdxButton, CdxTextInput } from '@wikimedia/codex'
 import { computed, inject, nextTick, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { indexed, isActionKey } from '../constants.ts'
+import { getAsPrimitiveProtocol, indexed, isActionKey } from '../constants.ts'
+import TypeChoice from './TypeChoice.vue'
 
 const props = defineProps<{ data: object; version: number }>()
 const { t } = useI18n()
@@ -12,23 +13,23 @@ const cacheGet = inject('cache-get') as GetOrCache
 const getIndexFor = inject('get-index-for') as IndexerType
 
 const errorState =
-  !Array.isArray(props.data) ||
-  props.data[0] !== 'registry' ||
-  props.data.length > 3 ||
-  props.data.length < 2
-const propData = props.data as any[]
-const content = propData[1] as string
-const offset = propData[2]
+  !Array.isArray(props.data) || props.data[0] !== 'direct_holder' || props.data.length !== 3
+const registry = (props.data as any[])[1] as string
+const content = (props.data as any[])[2] as string | object
+const primitive = getAsPrimitiveProtocol(content)
+const desc = primitive
+  ? t('protocol.type.direct_holder.primitive', { registry, type: t(`protocol.type.${primitive}`) })
+  : t('protocol.type.direct_holder.complex', { registry })
 
-const showSearching = ref(false)
+const showSubType = ref(false)
 const loadingState = ref(true)
 const data = asyncComputed<string[]>(
   async () => {
-    if (!showSearching.value) return Promise.resolve([]) // lazy
-    const index = getIndexFor(props.version, content)
+    if (!showSubType.value) return Promise.resolve([]) // lazy
+    const index = getIndexFor(props.version, registry)
     if (index === -1) return Promise.resolve([])
-    return await cacheGet(props.version, `registry.${content}`, async () => {
-      return (await (await fetch(indexed(index, `registries/${content}.json`))).json()) || []
+    return await cacheGet(props.version, `registry.${registry}`, async () => {
+      return (await (await fetch(indexed(index, `registries/${registry}.json`))).json()) || []
     })
   },
   [],
@@ -59,28 +60,27 @@ function changeMode() {
 <template>
   <div class="complex-padding flex">
     <span v-if="errorState" class="error-state">{{ t('protocol.error.data') }}</span>
-    <span v-else class="flex-1">
-      {{ t(`protocol.type.registry${offset ? '.offset' : ''}`, { type: content, offset }) }}
-    </span>
+    <span v-else class="flex-1">{{ desc }}</span>
     <span
-      v-if="!errorState"
+      v-if="!primitive && !errorState"
       class="action-text"
       tabindex="0"
-      @click="showSearching = !showSearching"
-      @keyup="(e: KeyboardEvent) => isActionKey(e) && (showSearching = !showSearching)"
+      @click="showSubType = !showSubType"
+      @keyup="(e: KeyboardEvent) => isActionKey(e) && (showSubType = !showSubType)"
     >
-      [{{ showSearching ? t('protocol.action.collapse') : t('protocol.action.search_registry') }}]
+      [{{ showSubType ? t('protocol.action.collapse') : t('protocol.action.expand') }}]
     </span>
   </div>
-  <div v-if="loadingState && showSearching" class="px-[0.4em]">{{ t('protocol.loading') }}</div>
-  <div v-else-if="showSearching && writeableRegistry" class="px-[0.4em] pb-[0.2em] italic">
+  <div v-if="loadingState && showSubType" class="px-[0.4em]">{{ t('protocol.loading') }}</div>
+  <div v-else-if="showSubType && writeableRegistry" class="px-[0.4em] pb-[0.2em] italic">
     {{ t('protocol.type.registry.writeable') }}
   </div>
-  <div v-else-if="showSearching" class="sub-type w-full flex flex-row items-center">
+  <div v-else-if="showSubType" class="sub-type w-full flex flex-row items-center">
     <CdxButton @click="changeMode">
       {{ t(`protocol.action.search_registry.${mode ? 'network_id' : 'id_network'}`) }}
     </CdxButton>
     <CdxTextInput v-model="input" :input-type="mode ? 'number' : 'text'" translate="no" />
     <span class="px-[0.4em] py-[0.2em] min-w-16 text-center" translate="no">{{ result }}</span>
   </div>
+  <TypeChoice v-if="showSubType" :data="content" :version="version" type="div" class="sub-type" />
 </template>
