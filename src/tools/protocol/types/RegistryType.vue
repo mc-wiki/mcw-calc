@@ -25,8 +25,9 @@ const loadingState = ref(true)
 const data = asyncComputed<string[]>(
   async () => {
     if (!showSearching.value) return Promise.resolve([]) // lazy
+    const index = getIndexFor(props.version, content)
+    if (index === -1) return Promise.resolve([])
     return await cacheGet(props.version, `registry.${content}`, async () => {
-      const index = getIndexFor(props.version, content)
       return (await (await fetch(indexed(index, `registries/${content}.json`))).json()) || []
     })
   },

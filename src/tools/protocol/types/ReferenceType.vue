@@ -25,7 +25,7 @@ const showSubType = ref(false)
 const loadingState = ref(true)
 const data = asyncComputed<string | object>(
   async () => {
-    if (!showSubType.value) return Promise.resolve([]) // lazy
+    if (!showSubType.value) return Promise.resolve('void') // lazy
     return await cacheGet(props.version, `structure.${content}`, async () => {
       const index = getPacketFor(props.version, content)
       return (await (await fetch(indexed(index, `structures/${content}.json`))).json()) || 'void'
