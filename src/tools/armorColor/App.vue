@@ -6,6 +6,7 @@ import { useI18n } from 'vue-i18n'
 import CalcField from '@/components/CalcField.vue'
 import { colorStringToRgb, imgNames } from '@/utils/color'
 import { getImageLink } from '@/utils/image'
+import { colorIndexMap } from '@/utils/color'
 
 const props = defineProps<{ type: 'normal' | 'horse' | 'wolf' }>()
 
@@ -30,7 +31,7 @@ const colorText = computed({
 })
 const edition = ref<'java' | 'bedrock'>('java')
 const canvasRef = useTemplateRef('canvasRef')
-const sequence = ref<[Color[], number, [number, number, number]]>([['white'], 0, [249, 255, 254]])
+const sequence = ref<[number[][], number, [number, number, number]]>([[[0]], 0, [249, 255, 254]])
 
 function generateDye(color: Color) {
   return getImageLink(`en:Invicon_${imgNames[color]}_Dye.png`)
@@ -160,15 +161,19 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
           :title="t(`armorColor.sequence.help${edition === 'bedrock' ? 'Bedrock' : ''}`)"
         >
           {{ t('armorColor.sequence') }}
-          <div v-for="(item, index) in sequence[0]" :key="index">
-            <img
-              :src="generateDye(item)"
-              :alt="item"
-              :title="generateDyeName(item)"
-              :data-minetip-title="generateDyeName(item)"
-              style="height: 2em; width: 2em"
-              class="explain minetip pixel-image"
-            />
+          <div v-for="(craft, index) in sequence[0]" :key="index">
+            Step {{ index }}:
+            <span v-for="(item, index) in craft" :key="index">
+                <img
+                :src="generateDye(colorIndexMap[item])"
+                :alt="item"
+                :title="generateDyeName(colorIndexMap[item])"
+                :data-minetip-title="generateDyeName(colorIndexMap[item])"
+                style="height: 2em; width: 2em"
+                class="explain minetip pixel-image"
+                />
+            </span>
+            <br>
           </div>
           <span
             id="result-color"
