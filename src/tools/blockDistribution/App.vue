@@ -7,7 +7,7 @@ import { computed, onMounted, onUpdated, ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { parseWikitext } from '@/utils/i18n'
 import { theme } from '@/utils/theme'
-import { endBlockMap, getColor, netherBlockMap, overworldBlockMap } from './data'
+import { computeColors, endBlockMap, netherBlockMap, overworldBlockMap } from './data'
 
 const props = defineProps<{
   blocks: string[]
@@ -16,7 +16,7 @@ const props = defineProps<{
   dimensions: string[]
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const validBlocks = props.blocks
   .slice()
@@ -26,22 +26,16 @@ const validBlocks = props.blocks
       netherBlockMap.some((b) => b.block === block) ||
       endBlockMap.some((b) => b.block === block),
   )
+const blockColors = computed(() => computeColors(validBlocks.slice().sort(), theme.value))
+const totalColor = computed(() => (theme.value === 'light' ? '#FA4EEB' : '#47D14E'))
 const enabledBlocks = ref(validBlocks.slice())
 
 const logarithmicScale = useLocalStorage('mcwBlockDistributionLogarithmicScale', false)
 const showTotal = useLocalStorage('mcwBlockDistributionShowTotal', true)
 const onlyShowTotal = computed(() => enabledBlocks.value.length === 0)
 const selectAll = computed({
-  get() {
-    return enabledBlocks.value.every((block) => !!validBlocks.includes(block))
-  },
-  set(value) {
-    if (value) {
-      enabledBlocks.value = validBlocks.slice()
-    } else {
-      enabledBlocks.value = []
-    }
-  },
+  get: () => enabledBlocks.value.every((block) => validBlocks.includes(block)),
+  set: (value) => (enabledBlocks.value = value ? validBlocks.slice() : []),
 })
 
 const overworldBlockMapFiltered = computed(() => {
@@ -108,9 +102,7 @@ function plot(
       total.push({
         pos: i,
         count: blockMapFiltered.filter((b) => b.pos === i).reduce((a, b) => a + b.count, 0),
-
-        block: 'Total',
-        color: getColor('Total'),
+        block: t('blockDistribution.total'),
       })
     }
     totalPoints.push(...total)
@@ -213,7 +205,7 @@ function plot(
     .data(groups.values())
     .join('path')
     .style('mix-blend-mode', 'multiply')
-    .style('stroke', ({ z }) => getColor(z))
+    .style('stroke', ({ z }) => blockColors.value.get(z) || totalColor.value)
     .attr('d', line as any)
 
   // Add an invisible layer for the interactive tip.
@@ -246,7 +238,7 @@ function plot(
       `<tspan x="0" dy="1.2em">${t('blockDistribution.xInTenThousand', {
         num: formatter(
           blockMapFiltered.find((b) => b.block === k && Math.abs(b.pos - pos) < 1e-7)?.count ??
-          y.invert(y1),
+            y.invert(y1),
         ),
       })}</tspan>
         <tspan x="0" dy="1.2em">Y=${formatter(pos)}</tspan>
@@ -321,7 +313,7 @@ function update() {
           block:
             props.blockNames.length <= 5
               ? Intl.ListFormat // progressive enhancement
-                ? new Intl.ListFormat($i18n.locale).format(props.blockNames)
+                ? new Intl.ListFormat(locale).format(props.blockNames)
                 : props.blockNames.join(', ')
               : props.pageName,
           version: '1.21.7',
@@ -371,7 +363,7 @@ function update() {
           width: '1rem',
           height: '1rem',
           marginRight: '0.3rem',
-          accentColor: getColor('Total'),
+          accentColor: totalColor,
         }"
       />
       <label for="total">{{ t('blockDistribution.total') }}</label>
@@ -396,7 +388,7 @@ function update() {
           width: '1rem',
           height: '1rem',
           marginRight: '0.3rem',
-          accentColor: getColor(block),
+          accentColor: blockColors.get(block),
         }"
         @change="() => onCheckboxChange(block)"
       />
@@ -406,7 +398,7 @@ function update() {
           width: '1rem',
           height: '1rem',
           marginRight: '0.3rem',
-          backgroundColor: getColor(block),
+          backgroundColor: blockColors.get(block),
         }"
       />
       <label :for="`blockLabel_${block}`">{{
