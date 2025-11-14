@@ -1,3 +1,10 @@
 {
-  "protocol.loading": "Laden..."
+  "protocol.loading": "Laden...",
+  "protocol.type.either.true": "Wahr",
+  "protocol.type.either.false": "Falsch",
+  "protocol.type.i16": "16-Bit signierte Ganzzahl",
+  "protocol.type.i32": "32-Bit signierte Ganzzahl",
+  "protocol.type.i64": "64-Bit signierte Ganzzahl",
+  "protocol.type.i8": "8-Bit signierte Ganzzahl",
+  "protocol.type.uuid": "UUID"
 }
