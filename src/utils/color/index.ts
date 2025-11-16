@@ -1,4 +1,55 @@
 
+class MinHeap {
+  private heap: [number, number][] = [] // [value, priority]
+
+  add(item: [number, number]) {
+    this.heap.push(item)
+    this._siftUp(this.heap.length - 1)
+  }
+
+  removeRoot(): [number, number] | undefined {
+    if (this.heap.length === 0) return undefined
+    const root = this.heap[0]
+    const last = this.heap.pop()
+    if (this.heap.length > 0 && last) {
+      this.heap[0] = last
+      this._siftDown(0)
+    }
+    return root
+  }
+
+  isEmpty(): boolean {
+    return this.heap.length === 0
+  }
+
+  private _siftUp(idx: number) {
+    const item = this.heap[idx]
+    while (idx > 0) {
+      const parentIdx = Math.floor((idx - 1) / 2)
+      if (this.heap[parentIdx][1] <= item[1]) break
+      this.heap[idx] = this.heap[parentIdx]
+      idx = parentIdx
+    }
+    this.heap[idx] = item
+  }
+
+  private _siftDown(idx: number) {
+    const item = this.heap[idx]
+    const len = this.heap.length
+    while (true) {
+      let smallest = idx
+      const left = 2 * idx + 1
+      const right = 2 * idx + 2
+      if (left < len && this.heap[left][1] < this.heap[smallest][1]) smallest = left
+      if (right < len && this.heap[right][1] < this.heap[smallest][1]) smallest = right
+      if (smallest === idx) break
+      this.heap[idx] = this.heap[smallest]
+      idx = smallest
+    }
+    this.heap[idx] = item
+  }
+}
+
 /* == Color maps == */
 
 const c_je = [
@@ -620,7 +671,7 @@ function subsearch(mix_u: MixU){
     
     // main loop;
     for(const b_u of ba){
-    const b = b_u ?? 0;
+    const b = b_u ?? NO_ENTRY;
     const L = mix_u.c_e.length;
     
     for(let dye_per = 1; dye_per <= max_dye_per; dye_per++){
@@ -670,9 +721,9 @@ function search(){
     const mix_u = new MixU({c_e: c_je});
     // search for recipes that only use 1 to 2 dyes per craft, 12 dyes total, and up to 4 crafting steps;
     mix_u.ba = [undefined /*no starting color*/];
-    mix_u.dyemax_limit = 6;
-    mix_u.dyec_limit = 12;
-    mix_u.craftc_limit = 4;
+    mix_u.dyemax_limit = 4;
+    mix_u.dyec_limit = 10;
+    mix_u.craftc_limit = 2;
     
     while(mix_u.ba.length){
         subsearch(mix_u);
@@ -683,8 +734,8 @@ function search(){
     // search for recipes that only use 1 to 2 dyes per craft, and up to 6 crafting steps;
     mix_u.ba = [undefined /*no starting color*/];
     mix_u.dyemax_limit = 2;
-    mix_u.dyec_limit = Infinity;
-    mix_u.craftc_limit = 10;
+    mix_u.dyec_limit = 6;
+    mix_u.craftc_limit = 4;
     
     while(mix_u.ba.length){
         subsearch(mix_u);
@@ -767,6 +818,10 @@ export function integerRgbToFloat(rgb: [number, number, number]): [number, numbe
   return rgb.map((v) => Number.parseFloat((v / 255.0).toFixed(2))) as [number, number, number]
 }
 
+export function combineRgb(rgb: [number, number, number]): number {
+  return ((rgb[0] & 0xff) << 16) | ((rgb[1] & 0xff) << 8) | ((rgb[2] & 0xff) << 0)
+}
+
 export function separateRgb(rgb: number): [number, number, number] {
   return [(rgb & 0xff0000) >> 16, (rgb & 0x00ff00) >> 8, (rgb & 0x0000ff) >> 0]
 }
@@ -816,21 +871,49 @@ export function colorToRecipeJava(
   entries: Entries,
   targetRgb: [number, number, number],
 ): [number[][], number, [number, number, number]] {
+  const target = combineRgb(targetRgb)
   const targetLab = rgb2lab(targetRgb)
   
   let minDeltaE = Infinity
   let minIndex = 0
   
-  for (let i = 0; i < 2**24; i++) {
-    if (!entries.g_found(i)) continue
-    
-    const color = separateRgb(i)
-    const lab = rgb2lab(color)
-    const delta = deltaE(lab, targetLab)
-    if (delta < minDeltaE) {
-      minDeltaE = delta
-      minIndex = i
-    }
+  // now grab the recipe closest to the target;
+  const to_find = 4;
+  let found = NO_ENTRY;
+  const try_limit = 100_000;
+  let tries = 0;
+  
+  const q = new MinHeap();
+  q.add([target, 0]);
+  while(found === NO_ENTRY){
+      // the root will always exist, unless there are no saved entries at all;
+      const c = q.removeRoot()?.[0] ?? 0;
+      // check if c is found;
+      if(entries.g_found(c)){
+        found = c;
+      }
+      
+      const lab = rgb2lab(separateRgb(c))
+      const d = deltaE(lab, targetLab)
+      
+      // break c up into its r,g,b components;
+      const cr = (c >> 16) & 0xff;
+      const cg = (c >>  8) & 0xff;
+      const cb = (c >>  0) & 0xff;
+      
+      function a(c: number){
+          q.add([c, deltaE(rgb2lab(separateRgb(c)), lab)]);
+      }
+      // add c's neighbors to the queue;
+      if(cr >   0) a(((cr - 1) << 16) | ((cg) << 8) | (cb));
+      if(cg >   0) a(((cr) << 16) | ((cg - 1) << 8) | (cb));
+      if(cb >   0) a(((cr) << 16) | ((cg) << 8) | (cb - 1));
+      if(cr < 255) a(((cr + 1) << 16) | ((cg) << 8) | (cb));
+      if(cg < 255) a(((cr) << 16) | ((cg + 1) << 8) | (cb));
+      if(cb < 255) a(((cr) << 16) | ((cg) << 8) | (cb + 1));
+      
+      tries++;
+      if(tries > try_limit) break;
   }
   
   // now convert minIndex into  a recipe;

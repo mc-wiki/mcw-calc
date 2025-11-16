@@ -4,7 +4,7 @@ import { CdxButton, CdxTab, CdxTabs, CdxTextInput } from '@wikimedia/codex'
 import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CalcField from '@/components/CalcField.vue'
-import { colorStringToRgb, imgNames } from '@/utils/color'
+import { entries, colorStringToRgb, imgNames } from '@/utils/color'
 import { getImageLink } from '@/utils/image'
 import { colorIndexMap } from '@/utils/color'
 
