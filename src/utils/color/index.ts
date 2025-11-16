@@ -1155,7 +1155,7 @@ export function colorToRecipe(
     const best_rgb = separateRgb(best[0])
     
     // Search in a radius around the best candidate
-    const radius = 32
+    const radius = 8
     for(let r = Math.max(0, best_rgb[0] - radius); r < Math.min(256, best_rgb[0] + radius); r++){
       for(let g = Math.max(0, best_rgb[1] - radius); g < Math.min(256, best_rgb[1] + radius); g++){
         for(let b = Math.max(0, best_rgb[2] - radius); b < Math.min(256, best_rgb[2] + radius); b++){
