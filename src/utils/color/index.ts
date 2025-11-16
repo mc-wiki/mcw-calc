@@ -975,7 +975,6 @@ function search_je(){
   }
   mix_u.entries.reset_checked();
   
-  // search for recipes that only use 1 to 2 dyes per craft, and up to 6 crafting steps;
   mix_u.ba = [undefined /*no starting color*/];
   mix_u.dyemax_limit = 4;
   mix_u.dyec_limit = 18;
