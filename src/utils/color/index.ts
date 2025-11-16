@@ -85,9 +85,9 @@ const c_be = [
   0xF38BAA, // pink       15;
 ];
 
-/* == Mix function == */
+/* == Mix functions == */
 /** @param cs raw color values */
-function mix(...cs: number[]){
+function mix_je(...cs: number[]){
   let tr = 0, tg = 0, tb = 0, tm = 0;
   for(const c of cs){
     tr += (c >> 16) & 0xff;
@@ -112,13 +112,40 @@ function mix(...cs: number[]){
   );
 }
 
+/** Add a dye to existing water. c = water; c_e = dye; */
+function mix_be_step(c: [number, number, number], c_e: number): [number, number, number]{
+    return [
+        (c[0] + ((c_e >> 16) & 0xff) / 0xff) / 2,
+        (c[1] + ((c_e >>  8) & 0xff) / 0xff) / 2,
+        (c[2] + ((c_e >>  0) & 0xff) / 0xff) / 2,
+    ];
+}
+
+/** 
+ * Mix colors, 2 at a time, as floats. Cauldrons do this in BE.
+ * @param cs raw color values
+ **/
+function mix_be(...cs: number[]){
+    let r = ((cs[0] >> 16) & 0xff) / 0xff;
+    let g = ((cs[0] >>  8) & 0xff) / 0xff;
+    let b = ((cs[0] >>  0) & 0xff) / 0xff;
+    for(let i = 1; i < cs.length; i++){
+        r = (r + ((cs[i] >> 16) & 0xff) / 0xff) / 2;
+        g = (g + ((cs[i] >>  8) & 0xff) / 0xff) / 2;
+        b = (b + ((cs[i] >>  0) & 0xff) / 0xff) / 2;
+    }
+    return (
+        (Math.floor(r * 0xff) << 16) |
+        (Math.floor(g * 0xff) <<  8) |
+        (Math.floor(b * 0xff) <<  0)
+    );
+}
+
 /* == Primary data structures == */
 
 const NO_ENTRY = 0xffffffff;
 
-const Uint_8Array = Uint8Array;
-
-class Entries{
+class EntriesJE{
   found0: number;
   found1: Uint32Array<ArrayBuffer>;
   found2: Uint16Array<ArrayBuffer>;
@@ -145,7 +172,7 @@ class Entries{
     /** The number of colors in each      **section** which have recipes found for them. */
     this.found2   = new Uint16Array(64*64);
     /** The number of colors in each   **subsection** which have recipes found for them. */
-    this.found3   = new Uint_8Array(64*64*64);
+    this.found3   = new Uint8Array (64*64*64);
     /** Whether the color has been found. */
     this.found    = new Uint32Array(64*64*64*64/32);
     /** Whether all recipes starting from the color have been checked. */
@@ -153,11 +180,11 @@ class Entries{
     /** Whether the color needs to be checked for the next search cycle. */
     this.to_check = new Uint32Array(64*64*64*64/32);
     /** The total number of crafting cycles used to make the color. */
-    this.craftc   = new Uint_8Array(4*64*64*64*64);
+    this.craftc   = new Uint8Array (4*64*64*64*64);
     /** The total number of dyes used to make the color. */
-    this.dyec     = new Uint_8Array(4*64*64*64*64);
+    this.dyec     = new Uint8Array (4*64*64*64*64);
     /** The maximum number of dyes used in any crafting step to make the color. */
-    this.dyemax   = new Uint_8Array(4*64*64*64*64);
+    this.dyemax   = new Uint8Array (4*64*64*64*64);
     /** Array of the indices of the dyes used in this craft. First value is the length of the array. Max length is 15. */
     this.dyes     = new Uint32Array(4*64*64*64*64 * 16*4/32);
     /** The parent color. i.e. the color the armor needs to have before this craft. */
@@ -521,8 +548,207 @@ class Entries{
   }
 }
 
+class EntriesBE extends Array<number[] | undefined>{
+    found: number = 0;
+}
+
+/* == Search == */
+
+// i should note that the variables in this script are named pretty poorly;
+class MixU_BE{
+  entries: EntriesBE;
+  max_dyes: number = 6;
+  constructor(entries: EntriesBE){
+    this.entries = entries;
+  }
+  // adds a new color, made with the dyes with indices i;
+  update(i: number[]){
+      const c = mix_be(...(i.map(ii => c_be[ii])));
+      if(!this.entries[c]){
+          this.entries.found++;
+          this.entries[c] = i.slice();
+      }
+  }
+  // adds a new color, whose float representation is c_f, made with the dyes with indices c_i; if the color already exists, it will replace the existing indices, if c_i is shorter;
+  add(c_f: [number, number, number], c_i: number[]){
+      const c = (
+          (((c_f[0] * 0xff) & 0xff) << 16) |
+          (((c_f[1] * 0xff) & 0xff) <<  8) |
+          (((c_f[2] * 0xff) & 0xff) <<  0)
+      );
+      if(!this.entries[c]){
+          this.entries.found++;
+      }
+      if(!(this.entries[c] && this.entries[c].length <= c_i.length)){
+          this.entries[c] = c_i;
+      }
+  }
+};
+
+const mix_per_yield = 1_000_000;
+
+function search_be_step(mix_u: MixU_BE){
+  const n = c_be.length;
+  let mix_this_yield = 0;
+  let step = 0;
+  // normal brute force
+  for(let k = 1; k <= mix_u.max_dyes; k++){
+    const using = [];
+    for(let i = 0; i < k; i++){
+      using[i] = 0;
+    }
+    
+    while(using[0] < n){
+      mix_u.update(using);
+      
+      // take a break every now and then;
+      mix_this_yield++;
+      if(mix_this_yield >= mix_per_yield){
+        mix_this_yield = 0;
+        step++;
+      }
+      
+      // the rest of this is just carrying; but apparently i'm STOOPID and can't do that right! idk how this troubled me for even a moment;
+      let j = k - 1;
+      using[j]++;
+      while(j > 0 && using[j] === n){
+        using[j] = 0;
+        j--;
+        using[j]++;
+      }
+    }
+  }
+}
+
+function distance(c1: number, c2: number){
+  return Math.hypot(
+    (((c1 >>  0) & 0xff) - ((c2 >>  0) & 0xff)),
+    (((c1 >>  8) & 0xff) - ((c2 >>  8) & 0xff)),
+    (((c1 >> 16) & 0xff) - ((c2 >> 16) & 0xff))
+  );
+}
+
+function to_wall(p0: [number, number, number], p1: [number, number, number]): [number, number, number]{
+  /**
+  Finds where a ray starting INSIDE the 0-255 bounding box hits a wall.
+  p0: starting point (x0, y0, z0)
+  p1: point the ray travels towards (x1, y1, z1)
+  */
+  const [x0, y0, z0] = p0;
+  const [x1, y1, z1] = p1;
+  
+  // Direction vector d = p1 - p0
+  let [dx, dy, dz] = [x1 - x0, y1 - y0, z1 - z0];
+  
+  // Initialize t_min to infinity; this will hold the smallest positive t value
+  let t_min = Infinity;
+  
+  if(dx > 0)
+    t_min = Math.min(t_min, (255 - x0) / dx);
+  else if(dx < 0)
+    t_min = Math.min(t_min, (0 - x0) / dx);
+  
+  if(dy > 0)
+    t_min = Math.min(t_min, (255 - y0) / dy);
+  else if(dy < 0)
+    t_min = Math.min(t_min, (0 - y0) / dy);
+  
+  if(dz > 0)
+    t_min = Math.min(t_min, (255 - z0) / dz);
+  else if(dz < 0)
+    t_min = Math.min(t_min, (0 - z0) / dz);
+  
+  // make it only go twice the distance if that fits within the walls;
+  t_min = Math.min(t_min, 2);
+  
+  const hit_x = x0 + t_min * dx;
+  const hit_y = y0 + t_min * dy;
+  const hit_z = z0 + t_min * dz;
+  
+  return [hit_x, hit_y, hit_z];
+}
+
+// this controls the recursive branching in one_search_sub;
+const splits = [
+  3, 3, 3, 2, 1,
+  1, 1, 1, 1, 1,
+];
+
+// sort the dyes by how close they are to w;
+function near(c: [number, number, number]): [number, number, number]{
+  const c_b = (
+    (Math.floor(c[0] * 0xff) << 16) |
+    (Math.floor(c[1] * 0xff) <<  8) |
+    (Math.floor(c[2] * 0xff) <<  0)
+  );
+  const c_e = c_be.map((v, i) => [i, distance(v, c_b)]);
+  c_e.sort((a, b) => a[1] - b[1]);
+  const [c_e1, c_e2, c_e3] = c_e.map(v => v[0]);
+  return [c_e1, c_e2, c_e3];
+}
+
+// start at c, look for b; recursive;
+function search_be_one_sub(mix_u: MixU_BE, b: [number, number, number], c: [number, number, number], c_i: number[], i: number){
+  // recursive base case;
+  if(i >= splits.length) return;
+  
+  const w = to_wall(c, b);
+  const ns = near(w).slice(0, splits[i]);
+  for(const n of ns){
+    // add the color index from near;
+    const n_i = c_i.slice();
+    n_i.push(n);
+    // and make the new color;
+    const n_c = mix_be_step(c, c_be[n]);
+    // and update recipes!
+    mix_u.add(n_c, n_i);
+    // recurse!
+    search_be_one_sub(
+      mix_u,
+      b,
+      n_c,
+      n_i,
+      i + 1,
+    );
+  }
+}
+
+function search_be_one(mix_u: MixU_BE, b: number){
+  // b is the color to find a recipe for;
+  // first, search for a recipe for b;
+  for(let i = 0; i < c_be.length; i++){
+    const c = c_be[i];
+    const br = ((b >> 16) & 0xff) / 0xff;
+    const bg = ((b >>  8) & 0xff) / 0xff;
+    const bb = ((b >>  0) & 0xff) / 0xff;
+    const cr = ((c >> 16) & 0xff) / 0xff;
+    const cg = ((c >>  8) & 0xff) / 0xff;
+    const cb = ((c >>  0) & 0xff) / 0xff;
+    search_be_one_sub(
+      mix_u,
+      [br, bg, bb], // just the goal color;
+      [cr, cg, cb], // just the output color;
+      [i], // which dyes make the output color;
+      0, // index of the recursive step;
+    );
+  }
+}
+
+function search_be_filler(mix_u: MixU_BE){
+  for(let i = 0; i < 100 /* use 2**24 in production */; i++){
+    search_be_one(mix_u, i);
+  }
+}
+
+function search_be(){
+  const mix_u = new MixU_BE(new EntriesBE(2**24).fill(undefined));
+  search_be_step(mix_u);
+  search_be_filler(mix_u);
+  return mix_u.entries;
+}
+
 /** Mixes a color and then adds its recipe if it is appropriate. */
-class MixU{
+class MixU_JE{
   // configurable values;
   c_e: number[];
   craftc_limit: number;
@@ -539,7 +765,7 @@ class MixU{
   dyemax_b: number;
   dyelast_b: number;
   // all color recipes;
-  entries: Entries;
+  entries: EntriesJE;
   /* config is required. */
   constructor(config: {
     c_e: number[],
@@ -555,7 +781,7 @@ class MixU{
     this.dyemax_limit  = config.dyemax_limit  ?? Infinity;
     this.ba = [undefined /*no starting color*/];
     this.disallowed_dyes = [/*all allowed*/];
-    this.entries = new Entries();
+    this.entries = new EntriesJE();
     // appease TypeScript;
     this.b = 0;
     this.craftc_b = 0;
@@ -570,8 +796,8 @@ class MixU{
     // the color generated by the recipe;
     const c = (
       b === NO_ENTRY ? 
-      mix(...(i.map(v => this.c_e[v]))) :
-      mix(b, ...(i.map(v => this.c_e[v])))
+      mix_je(...(i.map(v => this.c_e[v]))) :
+      mix_je(b, ...(i.map(v => this.c_e[v])))
     );
     const found = this.entries.g_found(c);
     if(!found){
@@ -681,23 +907,23 @@ class MixU{
 }
 
 /* much of this basically iterates over the combinations with repetition; if you want me to rewrite it do so, contact me; */
-function subsearch(mix_u: MixU){
+function search_je_sub(mix_u_je: MixU_JE){
   // mix_u is life; read config from mix_u;
-  const max_dye_per = mix_u.dyemax_limit ?? 0;
-  const ba = mix_u.ba;
-  const disallowed_dyes = mix_u.disallowed_dyes ?? [];
+  const max_dye_per = mix_u_je.dyemax_limit ?? 0;
+  const ba = mix_u_je.ba;
+  const disallowed_dyes = mix_u_je.disallowed_dyes ?? [];
   // reset ba so mix_u can fill it;
-  mix_u.ba = [];
+  mix_u_je.ba = [];
   
   // main loop;
   for(const b_u of ba){
     const b = b_u ?? NO_ENTRY;
-    const L = mix_u.c_e.length;
+    const L = mix_u_je.c_e.length;
     
     for(let dye_per = 1; dye_per <= max_dye_per; dye_per++){
       // check to see if we should search from here;
       // this also does some other maintenance things;
-      if(!mix_u.init(b, dye_per)){
+      if(!mix_u_je.init(b, dye_per)){
         continue;
       }
       
@@ -705,7 +931,7 @@ function subsearch(mix_u: MixU){
       const i = Array(dye_per).fill(0);
       // this is the "crazy loop";
       while(i[0] < L){
-        mix_u.update(i);
+        mix_u_je.update(i);
         
         // the increment code from the old search;
         let again = true;
@@ -736,8 +962,8 @@ function subsearch(mix_u: MixU){
   }
 }
 
-function search(){
-  const mix_u = new MixU({c_e: c_je});
+function search_je(){
+  const mix_u = new MixU_JE({c_e: c_je});
   // search for recipes that only use 1 to 2 dyes per craft, 12 dyes total, and up to 4 crafting steps;
   mix_u.ba = [undefined /*no starting color*/];
   mix_u.dyemax_limit = 4;
@@ -745,7 +971,7 @@ function search(){
   mix_u.craftc_limit = 2;
   
   while(mix_u.ba.length){
-    subsearch(mix_u);
+    search_je_sub(mix_u);
     mix_u.entries.check_in();
   }
   mix_u.entries.reset_checked();
@@ -757,13 +983,16 @@ function search(){
   mix_u.craftc_limit = 4;
   
   while(mix_u.ba.length){
-    subsearch(mix_u);
+    search_je_sub(mix_u);
     mix_u.entries.check_in();
   }
   return mix_u.entries;
 }
 
-export const entries = search();
+// huge, but uses TypedArrays so it's not too bad;
+export const entries_je = search_je();
+// smaller and uses normal Arrays so we can store variable-length recipes;
+export const entries_be = search_be();
 
 export const imgNames = {
   white: 'White',
@@ -886,65 +1115,107 @@ export function deltaE(labA: number[], labB: number[]) {
   return i < 0 ? 0 : Math.sqrt(i)
 }
 
-export function colorToRecipeJava(
-  entries: Entries,
+// look at how CLEAN this code is!
+export function colorToRecipe(
+  get_found: (c: number) => boolean,
+  get_recipe: (c: number) => number[][],
   targetRgb: [number, number, number],
 ): [number[][], number, [number, number, number]] {
-  const target = combineRgb(targetRgb)
   const targetLab = rgb2lab(targetRgb)
   
-  let minDeltaE = Infinity
-  let minIndex = 0
-  
   // now grab the recipe closest to the target;
-  const to_find = 4
-  let found = [NO_ENTRY, Infinity];
-  let found_c = 0;
-  const try_limit = 100_000
-  let tries = 0
+  let found_color = NO_ENTRY
+  let found_deltaE = Infinity
   
-  const q = new MinHeap()
-  q.add([target, 0])
-  while(found_c < to_find){
-    // the root will always exist, unless there are no saved entries at all;
-    const c_d = q.removeRoot() ?? [NO_ENTRY, Infinity]
-    const c = c_d[0]
-    // check if c is found;
-    if(entries.g_found(c)){
-      found_c++
-      if(c_d[1] < found[1]){
-        found = [c, c_d[1]]
+  // this searching logic was written by copilot;
+  // Collect candidate colors by sampling the RGB space systematically
+  // Start with all 256^3 colors and find ones with recipes, prioritized by LAB distance
+  const candidates: [number, number][] = [] // [color, deltaE]
+  
+  // Sample RGB space in a smart way - use a coarse-to-fine approach
+  // First pass: sample every N pixels to find approximate nearest regions
+  const step = 16
+  for(let r = 0; r < 256; r += step){
+    for(let g = 0; g < 256; g += step){
+      for(let b = 0; b < 256; b += step){
+        const c = (r << 16) | (g << 8) | b
+        if(get_found(c)){
+          const lab = rgb2lab([r, g, b])
+          const de = deltaE(lab, targetLab)
+          candidates.push([c, de])
+        }
       }
     }
+  }
+  
+  // Second pass: fine search around the best candidate found in first pass
+  if(candidates.length > 0){
+    candidates.sort((a, b) => a[1] - b[1])
+    const best = candidates[0]
+    const best_rgb = separateRgb(best[0])
     
-    const lab = rgb2lab(separateRgb(c))
-    const d = deltaE(lab, targetLab)
-    
-    // break c up into its r,g,b components;
-    const cr = (c >> 16) & 0xff
-    const cg = (c >>  8) & 0xff
-    const cb = (c >>  0) & 0xff
-    
-    function a(c: number){
-      q.add([c, deltaE(rgb2lab(separateRgb(c)), lab)]);
+    // Search in a radius around the best candidate
+    const radius = 32
+    for(let r = Math.max(0, best_rgb[0] - radius); r < Math.min(256, best_rgb[0] + radius); r++){
+      for(let g = Math.max(0, best_rgb[1] - radius); g < Math.min(256, best_rgb[1] + radius); g++){
+        for(let b = Math.max(0, best_rgb[2] - radius); b < Math.min(256, best_rgb[2] + radius); b++){
+          const c = (r << 16) | (g << 8) | b
+          if(get_found(c)){
+            const lab = rgb2lab([r, g, b])
+            const de = deltaE(lab, targetLab)
+            candidates.push([c, de])
+          }
+        }
+      }
     }
-    // add c's neighbors to the queue;
-    if(cr >   0) a(((cr - 1) << 16) | ((cg) << 8) | (cb));
-    if(cg >   0) a(((cr) << 16) | ((cg - 1) << 8) | (cb));
-    if(cb >   0) a(((cr) << 16) | ((cg) << 8) | (cb - 1));
-    if(cr < 255) a(((cr + 1) << 16) | ((cg) << 8) | (cb));
-    if(cg < 255) a(((cr) << 16) | ((cg + 1) << 8) | (cb));
-    if(cb < 255) a(((cr) << 16) | ((cg) << 8) | (cb + 1));
-                
-    tries++
-    if(tries > try_limit) break
+  }
+  
+  // Remove duplicates and sort by distance
+  const seen = new Set<number>()
+  const unique_candidates: [number, number][] = []
+  for(const [c, de] of candidates){
+    if(!seen.has(c)){
+      seen.add(c)
+      unique_candidates.push([c, de])
+    }
+  }
+  unique_candidates.sort((a, b) => a[1] - b[1])
+  
+  // Return the closest
+  if(unique_candidates.length > 0){
+    found_color = unique_candidates[0][0]
+    found_deltaE = unique_candidates[0][1]
   }
   
   return [
-    entries.g_recipe(found[0]).least_dyec,
-    minDeltaE, separateRgb(minIndex)
+    get_recipe(found_color),
+    found_deltaE,
+    separateRgb(found_color)
   ]
 }
+
+export function colorToRecipeBE(
+  entries: EntriesBE,
+  targetRgb: [number, number, number],
+): [number[][], number, [number, number, number]] {
+  return colorToRecipe(
+    (c) => entries[c] !== undefined,
+    (c) => [entries[c] ?? []],
+    targetRgb,
+  )
+}
+
+export function colorToRecipeJE(
+  entries: EntriesJE,
+  targetRgb: [number, number, number],
+): [number[][], number, [number, number, number]] {
+  return colorToRecipe(
+    (c) => Boolean(entries.g_found(c)),
+    (c) => entries.g_recipe(c).least_dyec,
+    targetRgb,
+  )
+}
+
 
 export function sequenceToColorFloatAverage(
   c: Color[],

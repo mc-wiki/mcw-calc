@@ -4,7 +4,7 @@ import { CdxButton, CdxTab, CdxTabs, CdxTextInput } from '@wikimedia/codex'
 import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CalcField from '@/components/CalcField.vue'
-import { entries, colorStringToRgb, imgNames } from '@/utils/color'
+import { entries_je, entries_be, colorStringToRgb, imgNames } from '@/utils/color'
 import { getImageLink } from '@/utils/image'
 import { colorIndexMap } from '@/utils/color'
 
@@ -112,6 +112,11 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
   }
   img.crossOrigin = 'anonymous'
 })
+
+console.log({
+    be: entries_be.found,
+    je: entries_je.found0,
+});
 </script>
 
 <template>
