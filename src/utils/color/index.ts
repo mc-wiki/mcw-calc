@@ -964,7 +964,6 @@ function search_je_sub(mix_u_je: MixU_JE){
 
 function search_je(){
   const mix_u = new MixU_JE({c_e: c_je});
-  // search for recipes that only use 1 to 2 dyes per craft, 12 dyes total, and up to 4 crafting steps;
   mix_u.ba = [undefined /*no starting color*/];
   mix_u.dyemax_limit = 8;
   mix_u.dyec_limit = 16;
