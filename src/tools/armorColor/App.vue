@@ -112,11 +112,6 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
   }
   img.crossOrigin = 'anonymous'
 })
-
-console.log({
-    be: entries_be.found,
-    je: entries_je.found0,
-});
 </script>
 
 <template>
@@ -167,7 +162,8 @@ console.log({
         >
           {{ t('armorColor.sequence') }}
           <div v-for="(craft, index) in sequence[0]" :key="index">
-            Step {{ index }}:
+            <!-- Needs translation! -->
+            {{ sequence[0].length > 1 ? "Step " + index + ":" : "" }}
             <span v-for="(item, index) in craft" :key="index">
                 <img
                 :src="generateDye(colorIndexMap[item])"
