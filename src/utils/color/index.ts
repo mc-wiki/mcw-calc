@@ -735,7 +735,7 @@ function search_be_one(mix_u: MixU_BE, b: number){
 }
 
 function search_be_filler(mix_u: MixU_BE){
-  for(let i = 0; i < 100 /* use 2**24 in production */; i++){
+  for(let i = 0; i < 2**24; i++){
     search_be_one(mix_u, i);
   }
 }
