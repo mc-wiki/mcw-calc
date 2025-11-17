@@ -1,19 +1,19 @@
 const magic_numbers = {
   je: [
     {
-      craftc: 4, // the maximum number of crafts a recipe can have;
-      dyec: 12, // the maximum number of dyes a recipe can use total;
-      dyemax: 7 // the maximum number of dyes a recipe can use in any single step;
+      craftc: 3, // the maximum number of crafts a recipe can have;
+      dyec: 8, // the maximum number of dyes a recipe can use total;
+      dyemax: 5 // the maximum number of dyes a recipe can use in any single step;
     },
     { // this is a second search with different settings;
-      craftc: 6,
-      dyec: 15,
-      dyemax: 4
+      craftc: 4,
+      dyec: 10,
+      dyemax: 3
     },
   ],
   be: {
-    dyec: 15, // the maximum number of dyes a recipe can use total;
-    filler_c: 2**10, // the number of searches to do in `search_be_filler`;
+    dyec: 6, // the maximum number of dyes a recipe can use total;
+    filler_c: 2**4, // the number of searches to do in `search_be_filler`;
     filler_bits: 5, // the number of bits to take from each color component in `search_be_filler`; any value 1-8 works;
   }
 };
@@ -501,14 +501,16 @@ class EntriesJE{
     const recipe = [];
     for(let j = 0; j < 4; j++){
       const r = [];
-      do{
-        const l = (this.dyes[(i*4 + j)*2] >>> 28) & 0xf;
+      let current = i;
+      while(current !== NO_ENTRY){
+        const l = (this.dyes[(current*4 + j)*2] >>> 28) & 0xf;
         const rr = [];
         for(let ii = 0; ii < l; ii++) rr.push(
-          (this.dyes[(i*4 + j)*2 + +(ii>6)] >>> (28-4*((ii+1)%8))) & 0xf
+          (this.dyes[(current*4 + j)*2 + +(ii>6)] >>> (28-4*((ii+1)%8))) & 0xf
         );
         r.push(rr);
-      } while(this.color[i*4 + j] !== NO_ENTRY);
+        current = this.color[current*4 + j];
+      }
       recipe.push(r);
     }
     return {
@@ -707,27 +709,35 @@ function search_be_one(mix_u: MixU_BE, b: number){
 }
 
 function search_be_filler(mix_u: MixU_BE){
-  const b = magic_numbers.be.filler_bits;
+  const filler_bits = magic_numbers.be.filler_bits;
   // find out which regions have the most colors already in them;
-  const regions = Array<number>(2**(3*b)).fill(0);
+  const regions = Array<number>(2**(3*filler_bits)).fill(0);
   for(let i = 0; i < 2**24; i++){
     if(!mix_u.entries[i]) continue;
     const [r,g,b] = separateRgb(i);
-    const region = ((r >>> (8-b)) << (2*b)) | ((g >>> (8-b)) << b) | (b >>> (8-b));
+    const region = ((r >>> (8-filler_bits)) << (2*filler_bits)) | ((g >>> (8-filler_bits)) << filler_bits) | (b >>> (8-filler_bits));
     regions[region]++;
   }
-  const r = regions.map((v,i) => [i,v]);
-  r.sort((a,b) => b[1] - a[1]);
+  const sorted_regions = regions.map((v,i) => [i,v]);
+  sorted_regions.sort((a,b) => b[1] - a[1]);
   
   // search for new colors, starting in the most filled regions;
-  const region_size = 2**(24 - 3*b);
-  for(
-    let c = 0, i = 0, j = 0; c < magic_numbers.be.filler_c;
-    c++, i++, i %= region_size, i === 0 && j++
-  ){
-    // skip already found colors;
-    if(!mix_u.entries[i]){c--; continue;}
-    search_be_one(mix_u, r[j][0] * region_size + i);
+  const region_size = 2**(24 - 3*filler_bits);
+  let searches_done = 0;
+  const max_searches = magic_numbers.be.filler_c;
+  
+  // Iterate through sorted regions by population
+  for(let j = 0; j < sorted_regions.length && searches_done < max_searches; j++){
+    const region_index = sorted_regions[j][0];
+    // Search through colors in this region
+    for(let i = 0; i < region_size && searches_done < max_searches; i++){
+      const color = region_index * region_size + i;
+      // Only search if this color has a recipe already
+      if(mix_u.entries[color]){
+        search_be_one(mix_u, color);
+        searches_done++;
+      }
+    }
   }
 }
 
@@ -1166,6 +1176,15 @@ export function colorToRecipe(
   if(unique_candidates.length > 0){
     found_color = unique_candidates[0][0]
     found_deltaE = unique_candidates[0][1]
+  }
+  
+  // If no recipe found, return empty result
+  if(found_color === NO_ENTRY){
+    return [
+      [[]],
+      Infinity,
+      [0, 0, 0]
+    ]
   }
   
   return [
