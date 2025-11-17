@@ -1,50 +1,22 @@
-
-/** written by Copilot, because I was tired of trying to install a library for it; */
-class MinHeap {
-  private heap: [number, number][] = [] // [value, priority]
-  add(item: [number, number]) {
-    this.heap.push(item)
-    this._siftUp(this.heap.length - 1)
+const magic_numbers = {
+  je: [
+    {
+      craftc: 4, // the maximum number of crafts a recipe can have;
+      dyec: 12, // the maximum number of dyes a recipe can use total;
+      dyemax: 7 // the maximum number of dyes a recipe can use in any single step;
+    },
+    { // this is a second search with different settings;
+      craftc: 6,
+      dyec: 15,
+      dyemax: 4
+    },
+  ],
+  be: {
+    dyec: 15, // the maximum number of dyes a recipe can use total;
+    filler_c: 2**10, // the number of searches to do in `search_be_filler`;
+    filler_bits: 5, // the number of bits to take from each color component in `search_be_filler`; any value 1-8 works;
   }
-  removeRoot(): [number, number] | undefined {
-    if (this.heap.length === 0) return undefined
-    const root = this.heap[0]
-    const last = this.heap.pop()
-    if (this.heap.length > 0 && last) {
-      this.heap[0] = last
-      this._siftDown(0)
-    }
-    return root
-  }
-  isEmpty(): boolean {
-    return this.heap.length === 0
-  }
-  private _siftUp(idx: number) {
-    const item = this.heap[idx]
-    while (idx > 0) {
-      const parentIdx = Math.floor((idx - 1) / 2)
-      if (this.heap[parentIdx][1] <= item[1]) break
-      this.heap[idx] = this.heap[parentIdx]
-      idx = parentIdx
-    }
-    this.heap[idx] = item
-  }
-  private _siftDown(idx: number) {
-    const item = this.heap[idx]
-    const len = this.heap.length
-    while (true) {
-      let smallest = idx
-      const left = 2 * idx + 1
-      const right = 2 * idx + 2
-      if (left < len && this.heap[left][1] < this.heap[smallest][1]) smallest = left
-      if (right < len && this.heap[right][1] < this.heap[smallest][1]) smallest = right
-      if (smallest === idx) break
-      this.heap[idx] = this.heap[smallest]
-      idx = smallest
-    }
-    this.heap[idx] = item
-  }
-}
+};
 
 /* == Color maps == */
 
@@ -557,7 +529,7 @@ class EntriesBE extends Array<number[] | undefined>{
 // i should note that the variables in this script are named pretty poorly;
 class MixU_BE{
   entries: EntriesBE;
-  max_dyes: number = 6;
+  max_dyes: number = magic_numbers.be.dyec;
   constructor(entries: EntriesBE){
     this.entries = entries;
   }
@@ -735,8 +707,27 @@ function search_be_one(mix_u: MixU_BE, b: number){
 }
 
 function search_be_filler(mix_u: MixU_BE){
-  for(let i = 0; i < 100 /* use 2**24 in production */; i++){
-    search_be_one(mix_u, i);
+  const b = magic_numbers.be.filler_bits;
+  // find out which regions have the most colors already in them;
+  const regions = Array<number>(2**(3*b)).fill(0);
+  for(let i = 0; i < 2**24; i++){
+    if(!mix_u.entries[i]) continue;
+    const [r,g,b] = separateRgb(i);
+    const region = ((r >>> (8-b)) << (2*b)) | ((g >>> (8-b)) << b) | (b >>> (8-b));
+    regions[region]++;
+  }
+  const r = regions.map((v,i) => [i,v]);
+  r.sort((a,b) => b[1] - a[1]);
+  
+  // search for new colors, starting in the most filled regions;
+  const region_size = 2**(24 - 3*b);
+  for(
+    let c = 0, i = 0, j = 0; c < magic_numbers.be.filler_c;
+    c++, i++, i %= region_size, i === 0 && j++
+  ){
+    // skip already found colors;
+    if(!mix_u.entries[i]){c--; continue;}
+    search_be_one(mix_u, r[j][0] * region_size + i);
   }
 }
 
@@ -964,27 +955,17 @@ function search_je_sub(mix_u_je: MixU_JE){
 
 function search_je(){
   const mix_u = new MixU_JE({c_e: c_je});
-  // search for recipes that only use 1 to 2 dyes per craft, 12 dyes total, and up to 4 crafting steps;
-  mix_u.ba = [undefined /*no starting color*/];
-  mix_u.dyemax_limit = 8;
-  mix_u.dyec_limit = 16;
-  mix_u.craftc_limit = 4;
-  
-  while(mix_u.ba.length){
-    search_je_sub(mix_u);
-    mix_u.entries.check_in();
-  }
-  mix_u.entries.reset_checked();
-  
-  // search for recipes that only use 1 to 2 dyes per craft, and up to 6 crafting steps;
-  mix_u.ba = [undefined /*no starting color*/];
-  mix_u.dyemax_limit = 4;
-  mix_u.dyec_limit = 18;
-  mix_u.craftc_limit = 6;
-  
-  while(mix_u.ba.length){
-    search_je_sub(mix_u);
-    mix_u.entries.check_in();
+  for(const m of magic_numbers.je){
+    mix_u.ba = [undefined /*no starting color*/];
+    mix_u.dyemax_limit = m.dyemax;
+    mix_u.dyec_limit   = m.dyec  ;
+    mix_u.craftc_limit = m.craftc;
+    
+    while(mix_u.ba.length){
+      search_je_sub(mix_u);
+      mix_u.entries.check_in();
+    }
+    mix_u.entries.reset_checked();
   }
   return mix_u.entries;
 }
