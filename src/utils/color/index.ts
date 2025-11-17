@@ -21,10 +21,10 @@ const magic_numbers = {
 /* == Color maps == */
 
 const c_je = [
-  0x1D1D21, // black       0;
-  0x474F52, // gray        1;
-  0x9D9D97, // light_gray  2;
   0xF9FFFE, // white       3;
+  0x9D9D97, // light_gray  2;
+  0x474F52, // gray        1;
+  0x1D1D21, // black       0;
   0x835432, // brown       4;
   0xB02E26, // red         5;
   0xF9801D, // orange      6;
@@ -39,10 +39,10 @@ const c_je = [
   0xF38BAA, // pink       15;
 ];
 const c_be = [
-  0x1D1D21, // black       0;
-  0x474F52, // gray        1;
-  0x9D9D97, // light_gray  2;
   0xF0F0F0, // white       3;
+  0x9D9D97, // light_gray  2;
+  0x474F52, // gray        1;
+  0x1D1D21, // black       0;
   0x835432, // brown       4;
   0xB02E26, // red         5;
   0xF9801D, // orange      6;

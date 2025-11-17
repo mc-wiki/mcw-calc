@@ -112,6 +112,16 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
   }
   img.crossOrigin = 'anonymous'
 })
+
+// useful log;
+console.log(
+  "Found colors:\n* " +
+  entries_je +
+  " in Java Edition\n* " +
+  entries_be +
+  " in Bedrock Edition"
+);
+
 </script>
 
 <template>
