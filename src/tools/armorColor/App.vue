@@ -116,9 +116,9 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
 // useful log;
 console.log(
   "Found colors:\n* " +
-  entries_je +
+  entries_je.found0 +
   " in Java Edition\n* " +
-  entries_be +
+  entries_be.found +
   " in Bedrock Edition"
 );
 
