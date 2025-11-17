@@ -3,18 +3,23 @@ const magic_numbers = {
     {
       craftc: 3, // the maximum number of crafts a recipe can have;
       dyec: 10, // the maximum number of dyes a recipe can use total;
-      dyemax: 6 // the maximum number of dyes a recipe can use in any single step;
+      dyemax: 6, // the maximum number of dyes a recipe can use in any single step;
     },
     { // this is a second search with different settings;
       craftc: 4,
       dyec: 10,
-      dyemax: 4
+      dyemax: 4,
     },
   ],
   be: {
     dyec: 6, // the maximum number of dyes a recipe can use total;
     filler_c: 2**10, // the number of searches to do in `search_be_filler`;
     filler_bits: 5, // the number of bits to take from each color component in `search_be_filler`; any value 1-8 works;
+  },
+  recipe: {
+    step: 10,
+    radius: 5,
+    candidates: 10,
   }
 };
 
@@ -726,13 +731,13 @@ function search_be_filler(mix_u: MixU_BE){
   let searches_done = 0;
   const max_searches = magic_numbers.be.filler_c;
   
-  // Iterate through sorted regions by population
+  // iterate through sorted regions by population;
   for(let j = 0; j < sorted_regions.length && searches_done < max_searches; j++){
     const region_index = sorted_regions[j][0];
-    // Search through colors in this region
+    // search through colors in this region;
     for(let i = 0; i < region_size && searches_done < max_searches; i++){
       const color = region_index * region_size + i;
-      // Only search if this color has a recipe already
+      // only search if this color has a recipe already;
       if(mix_u.entries[color]){
         search_be_one(mix_u, color);
         searches_done++;
@@ -1119,13 +1124,13 @@ export function colorToRecipe(
   let found_deltaE = Infinity
   
   // this searching logic was written by copilot;
-  // Collect candidate colors by sampling the RGB space systematically
-  // Start with all 256^3 colors and find ones with recipes, prioritized by LAB distance
+  // collect candidate colors by sampling the RGB space systematically;
+  // start with all 256^3 colors and find ones with recipes, prioritized by LAB distance;
   const candidates: [number, number][] = [] // [color, deltaE]
   
-  // Sample RGB space in a smart way - use a coarse-to-fine approach
-  // First pass: sample every N pixels to find approximate nearest regions
-  const step = 16
+  // sample RGB space in a smart way - use a coarse-to-fine approach;
+  // first pass: sample every N pixels to find approximate nearest regions;
+  const step = magic_numbers.recipe.step
   for(let r = 0; r < 256; r += step){
     for(let g = 0; g < 256; g += step){
       for(let b = 0; b < 256; b += step){
@@ -1139,14 +1144,15 @@ export function colorToRecipe(
     }
   }
   
-  // Second pass: fine search around the best candidate found in first pass
-  if(candidates.length > 0){
-    candidates.sort((a, b) => a[1] - b[1])
-    const best = candidates[0]
+  const candidates_to_use = Math.min(candidates.length, magic_numbers.recipe.candidates)
+  candidates.splice(candidates_to_use, candidates.length - candidates_to_use)
+  candidates.sort((a, b) => a[1] - b[1])
+  // second pass: fine search around the best candidates found in first pass;
+  for(const best of candidates){
     const best_rgb = separateRgb(best[0])
     
-    // Search in a radius around the best candidate
-    const radius = 8
+    // search in a radius around the best candidate;
+    const radius = magic_numbers.recipe.radius
     for(let r = Math.max(0, best_rgb[0] - radius); r < Math.min(256, best_rgb[0] + radius); r++){
       for(let g = Math.max(0, best_rgb[1] - radius); g < Math.min(256, best_rgb[1] + radius); g++){
         for(let b = Math.max(0, best_rgb[2] - radius); b < Math.min(256, best_rgb[2] + radius); b++){
@@ -1161,7 +1167,7 @@ export function colorToRecipe(
     }
   }
   
-  // Remove duplicates and sort by distance
+  // remove duplicates and sort by distance;
   const seen = new Set<number>()
   const unique_candidates: [number, number][] = []
   for(const [c, de] of candidates){
