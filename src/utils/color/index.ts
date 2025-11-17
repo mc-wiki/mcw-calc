@@ -2,18 +2,18 @@ const magic_numbers = {
   je: [
     {
       craftc: 3, // the maximum number of crafts a recipe can have;
-      dyec: 8, // the maximum number of dyes a recipe can use total;
-      dyemax: 5 // the maximum number of dyes a recipe can use in any single step;
+      dyec: 10, // the maximum number of dyes a recipe can use total;
+      dyemax: 6 // the maximum number of dyes a recipe can use in any single step;
     },
     { // this is a second search with different settings;
       craftc: 4,
       dyec: 10,
-      dyemax: 3
+      dyemax: 4
     },
   ],
   be: {
     dyec: 6, // the maximum number of dyes a recipe can use total;
-    filler_c: 2**4, // the number of searches to do in `search_be_filler`;
+    filler_c: 2**10, // the number of searches to do in `search_be_filler`;
     filler_bits: 5, // the number of bits to take from each color component in `search_be_filler`; any value 1-8 works;
   }
 };
