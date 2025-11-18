@@ -78,7 +78,7 @@
     "babel-preset-typescript-vue3": "^2.1.1",
     "dotenv": "^17.2.1",
     "eslint": "^9.34.0",
-    "glob": "^11.0.3",
+    "glob": "^11.1.0",
     "jsdom": "^26.1.0",
     "leaflet": "^1.9.4",
     "less": "^4.4.1",
