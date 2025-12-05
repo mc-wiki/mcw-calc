@@ -4,7 +4,7 @@
   "blockDistribution.xInTenThousand": "{num} sur 100 000",
   "blockDistribution.title": "Distribution de blocs pour \"{block}\" dans l'[[édition Java {version}]]",
   "blockDistribution.total": "Total",
-  "blockDistribution.overworld": "Monde normal",
+  "blockDistribution.overworld": "La Surface",
   "blockDistribution.theNether": "Le Nether",
   "blockDistribution.theEnd": "L'End",
   "blockDistribution.logarithmicScale": "Échelle logarithmique",
