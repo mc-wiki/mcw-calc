@@ -252,15 +252,7 @@ export const hardCodedRenderers = [
     renderFunc: NOP,
   },
   {
-    block: 'chest',
-    renderFunc: renderChest,
-  },
-  {
-    block: 'ender_chest',
-    renderFunc: renderChest,
-  },
-  {
-    block: 'trapped_chest',
+    block: /.*chest$/,
     renderFunc: renderChest,
   },
   {
