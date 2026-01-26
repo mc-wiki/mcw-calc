@@ -17,5 +17,9 @@ const i18n = createMcwI18n([import.meta.glob('./locale/*.json', { eager: true })
     .safeParse(await getParams())
   const params = handleParseError(parsed, targetEl)
 
-  vue.createApp(App, { icon: params.icon }).use(i18n).use(plugin).mount(targetEl)
+  const app = vue.createApp(App, { icon: params.icon }).use(i18n).use(plugin)
+  app.config.errorHandler = () => {
+    location.reload()
+  }
+  app.mount(targetEl)
 })()
