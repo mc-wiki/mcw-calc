@@ -14,6 +14,7 @@
   "protocol.packet.display": "({hex}, {id}) {name}",
   "protocol.tip": "問題報告について：この計算機のバグは{calc}に、プロトコルデータの誤りは{data}にご報告ください。",
   "protocol.type.array.count_fixed": "固定長：{count}",
+  "protocol.type.array.count_type": "{type}が接頭",
   "protocol.type.array.primitive": "配列（{count}）：{type}",
   "protocol.type.array.complex": "配列（{count}）",
   "protocol.type.bool": "論理値",

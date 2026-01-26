@@ -3,5 +3,5 @@
   "seedHashcode.actual": "실제 시드:",
   "seedHashcode.emptyString": "빈 문자열은 0이 되어야 하지만, 실제로 Minecraft는 난수를 시드로 생성합니다.",
   "seedHashcode.number": "실제로는 입력된 숫자가 시드로 쓰입니다. 위 숫자는 이론적으로 파생된 해시입니다.",
-  "seedHashcode.outOfRange": "이 숫자는 64비트 부호 정수 제한을 초과합니다. 실제로는 위 시드가 사용됩니다."
+  "seedHashcode.outOfRange": "이 숫자는 64비트 부호 있는 정수 제한을 초과합니다. 실제로는 위 시드가 사용됩니다."
 }
