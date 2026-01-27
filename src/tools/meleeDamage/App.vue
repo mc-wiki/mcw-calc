@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import type {MenuItemData} from '@wikimedia/codex';
+import type { MenuItemData } from '@wikimedia/codex'
 import {
   CdxAccordion,
   CdxButton,
   CdxCheckbox,
+  CdxCombobox,
   CdxField,
   CdxIcon,
   CdxSelect,
@@ -11,8 +12,7 @@ import {
   CdxTable,
   CdxTabs,
   CdxTextInput,
-  CdxToggleButtonGroup
-  
+  CdxToggleButtonGroup,
 } from '@wikimedia/codex'
 import { cdxIconAdd, cdxIconTrash } from '@wikimedia/codex-icons'
 import { computed, ref } from 'vue'
@@ -29,6 +29,7 @@ interface ToolData {
   attackDamageJE: number
   attackDamageBE: number
   attackSpeed: number // Only for JE
+  spearMultiplier?: number // Only for spear
 }
 
 interface AttributeModifier {
@@ -45,6 +46,7 @@ const definedToolsData: ToolData[] = [
   { name: 'wooden_sword', attackDamageJE: 3, attackDamageBE: 4, attackSpeed: -2.4 },
   { name: 'golden_sword', attackDamageJE: 3, attackDamageBE: 4, attackSpeed: -2.4 },
   { name: 'stone_sword', attackDamageJE: 4, attackDamageBE: 5, attackSpeed: -2.4 },
+  { name: 'copper_sword', attackDamageJE: 5, attackDamageBE: 6, attackSpeed: -2.4 },
   { name: 'iron_sword', attackDamageJE: 5, attackDamageBE: 6, attackSpeed: -2.4 },
   { name: 'diamond_sword', attackDamageJE: 6, attackDamageBE: 7, attackSpeed: -2.4 },
   { name: 'netherite_sword', attackDamageJE: 7, attackDamageBE: 8, attackSpeed: -2.4 },
@@ -52,6 +54,7 @@ const definedToolsData: ToolData[] = [
   { name: 'wooden_shovel', attackDamageJE: 1.5, attackDamageBE: 1, attackSpeed: -3 },
   { name: 'golden_shovel', attackDamageJE: 1.5, attackDamageBE: 1, attackSpeed: -3 },
   { name: 'stone_shovel', attackDamageJE: 2.5, attackDamageBE: 2, attackSpeed: -3 },
+  { name: 'copper_shovel', attackDamageJE: 2.5, attackDamageBE: 2, attackSpeed: -3 },
   { name: 'iron_shovel', attackDamageJE: 3.5, attackDamageBE: 3, attackSpeed: -3 },
   { name: 'diamond_shovel', attackDamageJE: 4.5, attackDamageBE: 4, attackSpeed: -3 },
   { name: 'netherite_shovel', attackDamageJE: 5.5, attackDamageBE: 5, attackSpeed: -3 },
@@ -59,6 +62,7 @@ const definedToolsData: ToolData[] = [
   { name: 'wooden_pickaxe', attackDamageJE: 1, attackDamageBE: 1, attackSpeed: -2.8 },
   { name: 'golden_pickaxe', attackDamageJE: 1, attackDamageBE: 1, attackSpeed: -2.8 },
   { name: 'stone_pickaxe', attackDamageJE: 2, attackDamageBE: 2, attackSpeed: -2.8 },
+  { name: 'copper_pickaxe', attackDamageJE: 2, attackDamageBE: 2, attackSpeed: -2.8 },
   { name: 'iron_pickaxe', attackDamageJE: 3, attackDamageBE: 3, attackSpeed: -2.8 },
   { name: 'diamond_pickaxe', attackDamageJE: 4, attackDamageBE: 4, attackSpeed: -2.8 },
   { name: 'netherite_pickaxe', attackDamageJE: 5, attackDamageBE: 5, attackSpeed: -2.8 },
@@ -66,6 +70,7 @@ const definedToolsData: ToolData[] = [
   { name: 'wooden_axe', attackDamageJE: 6, attackDamageBE: 3, attackSpeed: -3.2 },
   { name: 'golden_axe', attackDamageJE: 6, attackDamageBE: 3, attackSpeed: -3 },
   { name: 'stone_axe', attackDamageJE: 8, attackDamageBE: 4, attackSpeed: -3.2 },
+  { name: 'copper_axe', attackDamageJE: 8, attackDamageBE: 4, attackSpeed: -3.2 },
   { name: 'iron_axe', attackDamageJE: 8, attackDamageBE: 5, attackSpeed: -3.1 },
   { name: 'diamond_axe', attackDamageJE: 8, attackDamageBE: 6, attackSpeed: -3 },
   { name: 'netherite_axe', attackDamageJE: 9, attackDamageBE: 7, attackSpeed: -3 },
@@ -73,9 +78,60 @@ const definedToolsData: ToolData[] = [
   { name: 'wooden_hoe', attackDamageJE: 0, attackDamageBE: 1, attackSpeed: -3 },
   { name: 'golden_hoe', attackDamageJE: 0, attackDamageBE: 1, attackSpeed: -3 },
   { name: 'stone_hoe', attackDamageJE: 0, attackDamageBE: 2, attackSpeed: -2 },
+  { name: 'copper_hoe', attackDamageJE: 0, attackDamageBE: 2, attackSpeed: -2 },
   { name: 'iron_hoe', attackDamageJE: 0, attackDamageBE: 3, attackSpeed: -1 },
   { name: 'diamond_hoe', attackDamageJE: 0, attackDamageBE: 4, attackSpeed: 0 },
   { name: 'netherite_hoe', attackDamageJE: 0, attackDamageBE: 5, attackSpeed: 0 },
+  // Spear
+  {
+    name: 'wooden_spear',
+    attackDamageJE: 1,
+    attackDamageBE: 2,
+    attackSpeed: -(1 / 0.65),
+    spearMultiplier: 0.7,
+  },
+  {
+    name: 'stone_spear',
+    attackDamageJE: 2,
+    attackDamageBE: 3,
+    attackSpeed: -(1 / 0.75),
+    spearMultiplier: 0.82,
+  },
+  {
+    name: 'copper_spear',
+    attackDamageJE: 2,
+    attackDamageBE: 3,
+    attackSpeed: -(1 / 0.85),
+    spearMultiplier: 0.82,
+  },
+  {
+    name: 'iron_spear',
+    attackDamageJE: 3,
+    attackDamageBE: 4,
+    attackSpeed: -(1 / 0.95),
+    spearMultiplier: 0.95,
+  },
+  {
+    name: 'golden_spear',
+    attackDamageJE: 1,
+    attackDamageBE: 2,
+    attackSpeed: -(1 / 0.95),
+    spearMultiplier: 0.7,
+  },
+  {
+    name: 'diamond_spear',
+    attackDamageJE: 4,
+    attackDamageBE: 5,
+    attackSpeed: -(1 / 1.05),
+    spearMultiplier: 1.075,
+  },
+  {
+    name: 'netherite_spear',
+    attackDamageJE: 5,
+    attackDamageBE: 6,
+    attackSpeed: -(1 / 1.15),
+    spearMultiplier: 1.2,
+  },
   // Others
   { name: 'trident', attackDamageJE: 8, attackDamageBE: 8, attackSpeed: -2.9 },
   { name: 'mace', attackDamageJE: 5, attackDamageBE: 5, attackSpeed: -3.4 },
@@ -102,6 +158,56 @@ const attributeModifierColumns = [
   { id: 'action', label: t('meleeDamage.tool.modifier.action') },
 ]
 
+const speedPresets: MenuItemData[] = [
+  {
+    value: 5.612,
+    label: t('meleeDamage.attackCondition.speed.sprinting'),
+  },
+  {
+    value: 6.7344,
+    label: t('meleeDamage.attackCondition.speed.sprintingSpeedI'),
+  },
+  {
+    value: 7.8568,
+    label: t('meleeDamage.attackCondition.speed.sprintingSpeedII'),
+  },
+  {
+    value: 8,
+    label: t('meleeDamage.attackCondition.speed.camelSprinting'),
+  },
+  {
+    value: 9.16,
+    label: t('meleeDamage.attackCondition.speed.lungeI'),
+  },
+  {
+    value: 18.32,
+    label: t('meleeDamage.attackCondition.speed.lungeII'),
+  },
+  {
+    value: 27.48,
+    label: t('meleeDamage.attackCondition.speed.lungeIII'),
+  },
+  {
+    value: 9.71,
+    label: t('meleeDamage.attackCondition.speed.horseAverage'),
+  },
+  {
+    value: 14.23,
+    label: t('meleeDamage.attackCondition.speed.horseMaximum'),
+  },
+  {
+    value: 22,
+    label: t('meleeDamage.attackCondition.speed.creativeSprintingFlight'),
+  },
+  {
+    value: 33.5,
+    label: t('meleeDamage.attackCondition.speed.fireworkElytra'),
+  },
+].map((item) => ({
+  ...item,
+  supportingText: item.value.toString(),
+}))
+
 // Calculator States -------------------------------------------------------------------------------
 const edition = ref<'java' | 'bedrock'>('java')
 const isJavaEdition = computed(() => edition.value === 'java') // For critical damage and attack cooldown
@@ -114,6 +220,7 @@ const weaknessLevel = ref(0) // Weakness level
 const hasteLevel = ref(0) // Haste level, only for JE
 const miningFatigueLevel = ref(0) // Mining fatigue level, only for JE
 const fallHeight = ref(0) // Fall height, only for mace
+const speed = ref(0) // Relative speed to the victim, only for spear
 
 // Tool states
 const selectedTool = ref('hand') // Selected tool
@@ -129,10 +236,13 @@ const isHand = computed(() => nowSelectedTool.value.name === 'hand') // For hand
 const isMaceItem = computed(
   () => nowSelectedTool.value.name === 'mace' || nowSelectedTool.value.name === 'maceAM',
 ) // For mace additional damage
+const isSpearItem = computed(() => nowSelectedTool.value.name.endsWith('_spear')) // For spear additional damage
 const isTridentItem = computed(() => nowSelectedTool.value.name === 'trident') // For trident additional damage
 const isGeneralWeapon = computed(
   () =>
-    nowSelectedTool.value.name.endsWith('_sword') || nowSelectedTool.value.name.endsWith('_axe'),
+    nowSelectedTool.value.name.endsWith('_sword') ||
+    nowSelectedTool.value.name.endsWith('_axe') ||
+    nowSelectedTool.value.name.endsWith('_spear'),
 ) // For general weapon additional damage
 
 const attributeModifiers = ref([] as AttributeModifier[]) // Attribute modifiers, only for direct attribute modifiers
@@ -150,6 +260,7 @@ const isWaterMob = ref(false) // For impaling damage
 // Attack arguments
 const critical = ref(false) // Critical hit
 const tickAfterLastAttack = ref(5) // For attack cooldown, only for JE
+const stabAttack = ref(false) // For spear stab attack
 
 function getToolsMenuItems() {
   const items: MenuItemData[] = definedToolsData.map((tool) => ({
@@ -203,6 +314,10 @@ const baseMeleeAttackDamage = computed(() => {
       .filter((m) => m.operation === 'add_multiplied_total')
       .map((m) => m.amount)
       .reduce((acc, cur) => acc * (cur + 1), 1)
+  } else if (stabAttack.value && isSpearItem.value) {
+    baseDamage += nowSelectedTool.value.spearMultiplier!
+      ? Math.floor(nowSelectedTool.value.spearMultiplier! * speed.value)
+      : 0
   } else {
     // Compute with tool attack damage
     baseDamage += isJavaEdition.value
@@ -260,16 +375,19 @@ const enchantmentDamage = computed(() => {
 })
 
 const additionalDamage = computed(() => {
-  if (!isMaceItem.value) return 0
-  if (fallHeight.value < 1.5) return 0
+  if (isMaceItem.value) {
+    if (fallHeight.value < 1.5) return 0
 
-  let additionalDamage: number
-  if (fallHeight.value < 3) additionalDamage = 4 * fallHeight.value
-  else if (fallHeight.value < 8) additionalDamage = 2 * fallHeight.value + 6
-  else additionalDamage = fallHeight.value + 14
+    let additionalDamage: number
+    if (fallHeight.value < 3) additionalDamage = 4 * fallHeight.value
+    else if (fallHeight.value < 8) additionalDamage = 2 * fallHeight.value + 6
+    else additionalDamage = fallHeight.value + 14
 
-  additionalDamage += 0.5 * Math.floor(densityLevel.value) * fallHeight.value
-  return additionalDamage
+    additionalDamage += 0.5 * Math.floor(densityLevel.value) * fallHeight.value
+    return additionalDamage
+  }
+
+  return 0
 })
 
 const attackSpeed = computed(() => {
@@ -306,13 +424,14 @@ const attackSpeed = computed(() => {
 })
 
 const cooldownProgress = computed(() => {
-  if (!isJavaEdition.value) return 1
+  if (!isJavaEdition.value || stabAttack.value) return 1
   if (attackSpeed.value === 0) return 0
   return Math.min((Math.floor(tickAfterLastAttack.value) + 0.5) / (20 / attackSpeed.value), 1)
 })
 
 const canCritical = computed(() => {
   if (isMaceItem.value && fallHeight.value === 0) return false
+  if (isSpearItem.value) return false
   return !(isJavaEdition.value && cooldownProgress.value < 0.9)
 })
 
@@ -372,15 +491,11 @@ function sanitizeCanObtainInSurvival() {
   }
 }
 
-function checkEnchantment(
-  checkMace: boolean,
-  otherPredicate: () => boolean,
-  conflictPredicate: () => boolean,
-) {
+function checkEnchantment(otherPredicate: () => boolean, conflictPredicate: () => boolean) {
   if (isHand.value) return false
   if (!otherPredicate()) return false
   if (!canObtainInSurvival.value) return true
-  return (isGeneralWeapon.value || (checkMace && isMaceItem.value)) && conflictPredicate()
+  return (isGeneralWeapon.value || isMaceItem.value) && conflictPredicate()
 }
 
 function sanitizeEnchantmentState() {
@@ -392,7 +507,7 @@ function sanitizeEnchantmentState() {
     densityLevel.value = 0
   }
   if (!canObtainInSurvival.value) return
-  if (isGeneralWeapon.value) {
+  if (isGeneralWeapon.value && !isSpearItem.value) {
     impalingLevel.value = 0
     densityLevel.value = 0
   }
@@ -528,9 +643,9 @@ function selectOutput() {
         </CdxField>
       </div>
 
-      <div class="flex flex-col">
+      <div v-if="isJavaEdition && !stabAttack" class="flex flex-col">
         <div class="flex flex-row flex-wrap items-end gap-4 mt-2">
-          <CdxField v-if="isJavaEdition">
+          <CdxField>
             <template #label>
               {{ t('meleeDamage.attackCondition.tickAfterLastAttack') }}
             </template>
@@ -558,7 +673,7 @@ function selectOutput() {
           </CdxField>
         </div>
 
-        <div v-if="isJavaEdition" class="flex gap-0.5 items-center h-[12px]">
+        <div class="flex gap-0.5 items-center h-[12px]">
           <div
             class="cdx-progress-bar cdx-progress-bar--inline flex-1 max-w-24"
             style="background-color: var(--background-color-progressive-subtle, #eaf3ff)"
@@ -580,6 +695,32 @@ function selectOutput() {
             size="x-small"
           />
           <span class="text-xs font-mono">{{ `${Math.round(cooldownProgress * 100)}%` }}</span>
+        </div>
+      </div>
+
+      <div v-if="isSpearItem" class="flex flex-row flex-wrap items-end gap-4 mt-2">
+        <div class="flex flex-row flex-wrap items-end gap-4 mt-2">
+          <CdxField>
+            <template #label>
+              <span v-html="parseWikitext(t('meleeDamage.attackCondition.speed'))" />
+            </template>
+
+            <CdxCombobox
+              id="relative-speed-input"
+              v-model:selected="speed"
+              :menu-items="speedPresets"
+              input-type="number"
+              step="0.1"
+              min="4.6"
+              default="5.612"
+            />
+          </CdxField>
+
+          <CdxField class="mt-0">
+            <CdxCheckbox id="stab-checkbox" v-model="stabAttack" class="mt-auto mb-[6px]" inline>
+              {{ t('meleeDamage.attackCondition.stabAttack') }}
+            </CdxCheckbox>
+          </CdxField>
         </div>
       </div>
     </CdxAccordion>
@@ -721,7 +862,6 @@ function selectOutput() {
           <CdxField
             v-if="
               checkEnchantment(
-                false,
                 () => true,
                 () => smiteLevel === 0 && baneOfArthropodsLevel === 0,
               )
@@ -746,7 +886,6 @@ function selectOutput() {
           <CdxField
             v-if="
               checkEnchantment(
-                true,
                 () => true,
                 () => sharpnessLevel === 0 && baneOfArthropodsLevel === 0 && densityLevel === 0,
               )
@@ -770,7 +909,6 @@ function selectOutput() {
           <CdxField
             v-if="
               checkEnchantment(
-                true,
                 () => true,
                 () => smiteLevel === 0 && sharpnessLevel === 0 && densityLevel === 0,
               )
@@ -811,7 +949,6 @@ function selectOutput() {
           <CdxField
             v-if="
               checkEnchantment(
-                true,
                 () => isMaceItem,
                 () => smiteLevel === 0 && baneOfArthropodsLevel === 0,
               )
