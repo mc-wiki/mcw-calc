@@ -294,6 +294,21 @@ function getToolsMenuItems() {
 // Formula for melee damage: [[zh:近战攻击]]
 
 const baseMeleeAttackDamage = computed(() => {
+  // Stab Attack only use attribute BASE VALUE, it will not be affected by attribute modifiers
+  if (stabAttack.value && isSpearItem.value) {
+    let baseDamage = baseMeleeDamage.value
+
+    // Sanitize the base damage
+    if (baseDamage < 0) baseDamage = 0
+    if (baseDamage > 2048) baseDamage = 2048
+
+    baseDamage += nowSelectedTool.value.spearMultiplier!
+      ? Math.floor(nowSelectedTool.value.spearMultiplier! * speed.value)
+      : 0
+
+    return baseDamage
+  }
+
   // Base Melee Attack Damage  = Attribute 'generic.attack_damage'
   let baseDamage = baseMeleeDamage.value // Attribute Base Damage
 
@@ -314,10 +329,6 @@ const baseMeleeAttackDamage = computed(() => {
       .filter((m) => m.operation === 'add_multiplied_total')
       .map((m) => m.amount)
       .reduce((acc, cur) => acc * (cur + 1), 1)
-  } else if (stabAttack.value && isSpearItem.value) {
-    baseDamage += nowSelectedTool.value.spearMultiplier!
-      ? Math.floor(nowSelectedTool.value.spearMultiplier! * speed.value)
-      : 0
   } else {
     // Compute with tool attack damage
     baseDamage += isJavaEdition.value
