@@ -249,6 +249,12 @@ const bedrockColors: CodeColor[] = [
     foregroundHex: '#9A5CC6',
     backgroundHex: '#261731',
   },
+  {
+    code: 'v',
+    name: 'material_resin',
+    foregroundHex: '#EB7114',
+    backgroundHex: '#3B1D05',
+  },
 ]
 
 const edition = ref<'java' | 'bedrock'>('java')
