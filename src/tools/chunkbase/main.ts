@@ -7,6 +7,9 @@ import { hashCode } from '@/utils/seed'
 import App from './App.vue'
 import '@/init'
 
+export const JAVA_LATEST = 'java_1_21_9'
+export const BEDROCK_LATEST = 'bedrock_1_21_120'
+
 const targetEl = document.querySelector('#app')!
 
 const i18n = createMcwI18n([import.meta.glob('./locale/*.json', { eager: true })])
@@ -18,15 +21,14 @@ const i18n = createMcwI18n([import.meta.glob('./locale/*.json', { eager: true })
         .preprocess((val) => {
           try {
             return BigInt(val as string)
-            // eslint-disable-next-line unused-imports/no-unused-vars
-          } catch (e) {
+          } catch {
             return hashCode(val as string)
           }
         }, z.bigint())
-        .default(crypto.getRandomValues(new BigInt64Array(1))[0]),
+        .default(crypto.getRandomValues(new BigInt64Array(1))[0]!),
       showBiomes: sz.boolean().default(true),
       terrain: sz.boolean().default(true),
-      platform: sz.string().default('java_1_21_4'),
+      platform: sz.string().default(JAVA_LATEST),
       pois: sz.string().nullable().default(null),
       biomeHeight: sz.string().default('depth0'),
       zoom: sz.number().default(0),

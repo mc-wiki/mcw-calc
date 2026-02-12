@@ -7,6 +7,7 @@ import { useI18n } from 'vue-i18n'
 import CalcField from '@/components/CalcField.vue'
 import { hashCode } from '@/utils/seed'
 import { theme } from '@/utils/theme'
+import { BEDROCK_LATEST, JAVA_LATEST } from './main'
 
 const props = defineProps<AppEmbedProps>()
 
@@ -33,6 +34,12 @@ interface ChunkbaseEmbedParams {
    * Platform can be `java` or `bedrock`, version can be `1_XX`, and type can be `lb` (large biomes).
    */
   platform:
+    | 'java_1_21_9_lb'
+    | 'java_1_21_9'
+    | 'java_1_21_6_lb'
+    | 'java_1_21_6'
+    | 'java_1_21_5_lb'
+    | 'java_1_21_5'
     | 'java_1_21_4_lb'
     | 'java_1_21_4'
     | 'java_1_21_2_lb'
@@ -69,6 +76,11 @@ interface ChunkbaseEmbedParams {
     | 'java_1_8'
     | 'java_1_7_lb'
     | 'java_1_7'
+    | 'bedrock_26_0'
+    | 'bedrock_1_21_120'
+    | 'bedrock_1_21_110'
+    | 'bedrock_1_21_90'
+    | 'bedrock_1_21_60'
     | 'bedrock_1_21_50'
     | 'bedrock_1_21'
     | 'bedrock_1_20_60'
@@ -94,11 +106,13 @@ interface ChunkbaseEmbedParams {
     | 'E'
     | 'Eg'
     | 'F'
+    | 'Fn'
     | 'I'
     | 'IOw'
     | 'J'
     | 'Lp'
     | 'M'
+    | 'Ma'
     | 'N'
     | 'Om'
     | 'Or'
@@ -115,7 +129,6 @@ interface ChunkbaseEmbedParams {
     | 'Tc'
     | 'V'
     | 'Wh'
-    | 'Ma'
     | null
 
   /**
@@ -178,7 +191,7 @@ function getSearchParams() {
   const normalizedParams: Record<string, string> = {}
   for (const [key, value] of Object.entries(params.value)) {
     if (key === 'platform' && params.value.multiplatform === true) {
-      normalizedParams[key] = edition.value === 'java' ? 'java_1_21_4' : 'bedrock_1_21_50'
+      normalizedParams[key] = edition.value === 'java' ? JAVA_LATEST : BEDROCK_LATEST
     } else if (key === 'seed') {
       normalizedParams[key] = seed.value.toString()
     } else if (typeof value === 'string') {
@@ -206,7 +219,7 @@ const iframeUrl = computed(() => {
 
   return new URL(
     `#${searchParams.toString()}`,
-    'https://www.chunkbase.com/seed-map-embed',
+    'https://www.chunkbase.com/seed-map-embed2',
   ).toString()
 })
 
