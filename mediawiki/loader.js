@@ -77,28 +77,16 @@ mw.hook('wikipage.content').add(() => {
       dataset[key] = value
     })
 
-    iframe.addEventListener('load', () => {
+    mw.hook('wgl.themeChanged').add((theme) => {
       iframe.contentWindow.postMessage(
         {
           type: 'mcw-calc-theme-change',
           data: {
-            theme: document.body.classList.contains('wgl-theme-light') ? 'light' : 'dark',
+            theme,
           },
         },
         new URL(iframe.src).origin
       )
-
-      mw.hook('wgl.themeChanged').add((theme) => {
-        iframe.contentWindow.postMessage(
-          {
-            type: 'mcw-calc-theme-change',
-            data: {
-              theme,
-            },
-          },
-          new URL(iframe.src).origin
-        )
-      })
     })
 
     window.addEventListener('message', (event) => {
@@ -112,6 +100,16 @@ mw.hook('wikipage.content').add(() => {
             data: {
               dataset,
               innerHTML: calc.innerHTML,
+            },
+          },
+          new URL(iframe.src).origin
+        )
+
+        event.source.postMessage(
+          {
+            type: 'mcw-calc-theme-change',
+            data: {
+              theme: document.body.classList.contains('wgl-theme-light') ? 'light' : 'dark',
             },
           },
           new URL(iframe.src).origin
