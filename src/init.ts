@@ -50,4 +50,4 @@ postMessageParent('mcw-calc-init-request-styles', {
 const locale =
   new URLSearchParams(window.location.hash.substring(2)).get('locale') ??
   window.navigator.language.split('-')[0]
-document.body.lang = locale
+document.body.lang = locale ?? 'en'

@@ -104,7 +104,7 @@ mw.hook('wikipage.content').add(() => {
           },
           new URL(iframe.src).origin
         )
-
+      } else if (event.data.type === 'mcw-calc-request-styles') {
         event.source.postMessage(
           {
             type: 'mcw-calc-theme-change',
