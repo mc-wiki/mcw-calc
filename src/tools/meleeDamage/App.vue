@@ -634,7 +634,7 @@ function selectOutput() {
             input-type="number"
             min="0"
             :max="canObtainInSurvival ? 3 : 255"
-            step="1"
+            :step="canObtainInSurvival ? 3 : 1"
           />
         </CdxField>
 
