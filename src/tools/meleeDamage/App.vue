@@ -601,7 +601,7 @@ function selectOutput() {
             class="w-20 min-w-20 font-mono"
             input-type="number"
             min="0"
-            :max="canObtainInSurvival ? 2 : 255"
+            :max="canObtainInSurvival ? 1 : 255"
             step="1"
           />
         </CdxField>
