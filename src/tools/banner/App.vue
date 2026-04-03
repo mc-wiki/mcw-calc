@@ -287,8 +287,8 @@ watch(
       ),
     })
 
-    if (type === 'banner') ctx.drawImage(images.base, 1, 1, 20, 40, 0, 0, 20, 40)
-    else ctx.drawImage(images.base, 1, 1, 12, 22, 0, 0, 12, 22)
+    if (type === 'banner') ctx.drawImage(images.base!, 1, 1, 20, 40, 0, 0, 20, 40)
+    else ctx.drawImage(images.base!, 1, 1, 12, 22, 0, 0, 12, 22)
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
     const data = imageData.data
     for (let i = 0; i < data.length; i += 4) {
@@ -498,7 +498,7 @@ onMounted(() => {
               </div>
             </template>
 
-            <template #item-name="{ item, row }: { item: keyof typeof patternName; row: Pattern }">
+            <template #item-name="{ item, row }">
               <CdxSelect
                 class="long-handle"
                 :menu-items="patternMenuItems"

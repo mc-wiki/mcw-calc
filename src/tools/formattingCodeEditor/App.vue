@@ -35,6 +35,7 @@ import {
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CalcField from '@/components/CalcField.vue'
+import { copyToClipboard } from '@/utils/iframe'
 import { ColorClass } from './color-class'
 import { TextClass } from './text-class'
 
@@ -468,7 +469,7 @@ function JSONToFormatCode(json: JSONContent | undefined) {
       <template #label>
         <div style="display: flex; align-items: center">
           {{ t('formattingCodeEditor.output') }}
-          <CdxButton style="margin-left: auto">
+          <CdxButton style="margin-left: auto" @click="copyToClipboard(formatCode)">
             <CdxIcon :icon="cdxIconCopy" /> {{ t('formattingCodeEditor.copy') }}
           </CdxButton>
         </div>

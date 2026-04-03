@@ -8,9 +8,7 @@
       "node",
       "vite/client",
       "vite-plugin-comlink/client",
-      "unplugin-vue-macros/macros-global",
-      "vitest/globals",
-      "@vitest/browser/providers/playwright"
+      "unplugin-vue-macros/macros-global"
     ],
     "noEmit": true
   },

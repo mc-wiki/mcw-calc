@@ -1,5 +1,3 @@
-/// <reference types="@vitest/browser/providers/playwright" />
-
 import { fileURLToPath } from 'node:url'
 import vueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 import tailwindcss from '@tailwindcss/vite'
@@ -29,54 +27,10 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-  test: {
-    globals: true,
-    includeTaskLocation: true,
-    environment: 'jsdom',
-    coverage: {
-      provider: 'istanbul',
-      reportsDirectory: '../coverage',
-    },
-    projects: [
-      {
-        extends: true,
-        test: {
-          setupFiles: ['../vitest.browser.setup.ts'],
-          include: ['**/*.browser.{test,spec}.ts'],
-          name: 'browser',
-          browser: {
-            enabled: true,
-            instances: [{ browser: 'chromium' }],
-            provider: 'playwright',
-          },
-        },
-      },
-      {
-        extends: true,
-        test: {
-          setupFiles: ['./vitest.jsdom.setup.ts'],
-          include: ['**/!(*.browser).{test,spec}.ts'],
-          name: 'unit',
-          environment: 'jsdom',
-        },
-      },
-    ],
-  },
-  server: {
-    port: process.env.VITEST ? 50179 : undefined,
-  },
   build: {
     outDir: '../dist',
     emptyOutDir: true,
     sourcemap: 'hidden',
-    rollupOptions: {
-      input,
-      output: {
-        manualChunks: {
-          three: ['three'],
-        },
-      },
-    },
   },
   plugins: [
     vueMacros({
@@ -84,7 +38,7 @@ export default defineConfig({
         vue: vue(),
       },
     }),
-    process.env.VITEST ? undefined : vueDevTools(),
+    vueDevTools(),
     visualizer(),
     comlink(),
     vueI18nPlugin({
