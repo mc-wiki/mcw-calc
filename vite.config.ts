@@ -31,6 +31,9 @@ export default defineConfig({
     outDir: '../dist',
     emptyOutDir: true,
     sourcemap: 'hidden',
+    rolldownOptions: {
+      input,
+    },
   },
   plugins: [
     vueMacros({
