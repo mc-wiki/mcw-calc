@@ -46,7 +46,7 @@ const definedToolsData: ToolData[] = [
   { name: 'wooden_sword', attackDamageJE: 3, attackDamageBE: 4, attackSpeed: -2.4 },
   { name: 'golden_sword', attackDamageJE: 3, attackDamageBE: 4, attackSpeed: -2.4 },
   { name: 'stone_sword', attackDamageJE: 4, attackDamageBE: 5, attackSpeed: -2.4 },
-  { name: 'copper_sword', attackDamageJE: 5, attackDamageBE: 6, attackSpeed: -2.4 },
+  { name: 'copper_sword', attackDamageJE: 4, attackDamageBE: 5, attackSpeed: -2.4 },
   { name: 'iron_sword', attackDamageJE: 5, attackDamageBE: 6, attackSpeed: -2.4 },
   { name: 'diamond_sword', attackDamageJE: 6, attackDamageBE: 7, attackSpeed: -2.4 },
   { name: 'netherite_sword', attackDamageJE: 7, attackDamageBE: 8, attackSpeed: -2.4 },
