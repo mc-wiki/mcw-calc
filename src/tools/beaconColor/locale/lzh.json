@@ -1,1 +1,26 @@
-{}
+{
+  "beaconColor.title": "算烽火臺色所需琉璃次第",
+  "beaconColor.java": "爪哇版",
+  "beaconColor.bedrock": "基石版",
+  "beaconColor.color": "色：",
+  "beaconColor.calculate": "算",
+  "beaconColor.sequence": "次第：",
+  "beaconColor.dE": "色差",
+  "beaconColor.dE.help": "色差者，量二色之差度也，其值愈小，則色愈近。值低於一，目不能辨。",
+  "beaconColor.glass.white": "白琉璃",
+  "beaconColor.glass.lightGray": "蒼琉璃",
+  "beaconColor.glass.gray": "灰琉璃",
+  "beaconColor.glass.black": "黑琉璃",
+  "beaconColor.glass.brown": "褐琉璃",
+  "beaconColor.glass.red": "赤琉璃",
+  "beaconColor.glass.orange": "橙琉璃",
+  "beaconColor.glass.yellow": "黃琉璃",
+  "beaconColor.glass.lime": "翠琉璃",
+  "beaconColor.glass.green": "綠琉璃",
+  "beaconColor.glass.cyan": "黛琉璃",
+  "beaconColor.glass.lightBlue": "縹琉璃",
+  "beaconColor.glass.blue": "靛琉璃",
+  "beaconColor.glass.purple": "紫琉璃",
+  "beaconColor.glass.magenta": "赬琉璃",
+  "beaconColor.glass.pink": "紅琉璃"
+}
