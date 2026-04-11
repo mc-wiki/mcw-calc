@@ -166,7 +166,7 @@ updatePlayerInfo()
           </template>
 
           <div class="flex flex-row align-center gap-2">
-            <CdxTextInput v-model="playerOfflineUUID" input-type="text" :disabled="true" />
+            <CdxTextInput v-model="playerOfflineUUID" input-type="text" :readonly="true" />
             <CdxButton @click="copyUuid(playerOfflineUUID, 1)">
               {{ copyTextOffline }}
             </CdxButton>
@@ -193,7 +193,7 @@ updatePlayerInfo()
           </template>
 
           <div class="flex flex-row align-center gap-2">
-            <CdxTextInput v-model="playerOnlineUUID" input-type="text" :disabled="true" />
+            <CdxTextInput v-model="playerOnlineUUID" input-type="text" :readonly="true" />
             <CdxButton v-if="playerOnlineUUID !== ''" @click="copyUuid(playerOnlineUUID, 0)">
               {{ copyTextOnline }}
             </CdxButton>
