@@ -34,6 +34,10 @@ interface ChunkbaseEmbedParams {
    * Platform can be `java` or `bedrock`, version can be `1_XX`, and type can be `lb` (large biomes).
    */
   platform:
+    | 'java_26_2'
+    | 'java_26_2_lb'
+    | 'java_26_1'
+    | 'java_26_1_lb'
     | 'java_1_21_9_lb'
     | 'java_1_21_9'
     | 'java_1_21_6_lb'
@@ -76,6 +80,7 @@ interface ChunkbaseEmbedParams {
     | 'java_1_8'
     | 'java_1_7_lb'
     | 'java_1_7'
+    | 'bedrock_26_20'
     | 'bedrock_26_0'
     | 'bedrock_1_21_120'
     | 'bedrock_1_21_110'

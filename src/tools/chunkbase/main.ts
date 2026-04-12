@@ -7,8 +7,8 @@ import { hashCode } from '@/utils/seed'
 import App from './App.vue'
 import '@/init'
 
-export const JAVA_LATEST = 'java_1_21_9'
-export const BEDROCK_LATEST = 'bedrock_1_21_120'
+export const JAVA_LATEST = 'java_26_1'
+export const BEDROCK_LATEST = 'bedrock_26_0'
 
 const targetEl = document.querySelector('#app')!
 
