@@ -1,1 +1,15 @@
-{}
+{
+  "blockStructureRenderer.optionsCamera": "視角",
+  "blockStructureRenderer.optionsExport": "出",
+  "blockStructureRenderer.dragTooltip": "曳以控視角",
+  "blockStructureRenderer.controlHelp": "以滑鼠與鍵盤控視角。擊Esc以去。",
+  "blockStructureRenderer.closePopup": "閉",
+  "blockStructureRenderer.displayMode": "示法",
+  "blockStructureRenderer.displayModes.all": "咸繪塊",
+  "blockStructureRenderer.resetCamera": "復設視角",
+  "blockStructureRenderer.saveImage": "儲圖",
+  "blockStructureRenderer.saveStructureFile": "出之爲結構檔",
+  "blockStructureRenderer.saveLitematic": "出之爲Litematic檔",
+  "blockStructureRenderer.cameraFOV": "視界",
+  "blockStructureRenderer.backgroundAlpha": "背之陰翳"
+}

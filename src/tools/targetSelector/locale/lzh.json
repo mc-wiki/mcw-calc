@@ -1,1 +1,4 @@
-{}
+{
+  "targetSelector.java": "爪哇版",
+  "targetSelector.bedrock": "基石版"
+}
