@@ -8,5 +8,6 @@
   "playerUuid.error.invalid": "이 사용자 이름은 잘못되었습니다!",
   "playerUuid.error.notFound": "이 사용자 이름은 존재하지 않습니다!",
   "playerUuid.copy": "복사",
-  "playerUuid.copied": "복사 완료!"
+  "playerUuid.copied": "복사 완료!",
+  "playerUuid.defaultPlayerName": "MinecraftWiki"
 }

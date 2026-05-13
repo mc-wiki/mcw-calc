@@ -8,5 +8,6 @@
   "playerUuid.error.invalid": "無効なユーザー名です！",
   "playerUuid.error.notFound": "このユーザー名は存在しません！",
   "playerUuid.copy": "コピー",
-  "playerUuid.copied": "コピー完了！"
+  "playerUuid.copied": "コピー完了！",
+  "playerUuid.defaultPlayerName": "MinecraftWiki"
 }
