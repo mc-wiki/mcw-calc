@@ -8,6 +8,5 @@
   "playerUuid.error.invalid": "ชื่อผู้ใช้นี้ไม่ถูกต้อง!",
   "playerUuid.error.notFound": "ไม่มีชื่อผู้ใช้นี้!",
   "playerUuid.copy": "คัดลอก",
-  "playerUuid.copied": "คัดลอกแล้ว!",
-  "playerUuid.defaultPlayerName": "MinecraftWiki"
+  "playerUuid.copied": "คัดลอกแล้ว!"
 }

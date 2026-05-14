@@ -8,6 +8,5 @@
   "playerUuid.error.invalid": "Esse nome de usuário é inválido!",
   "playerUuid.error.notFound": "Esse nome de usuário não existe!",
   "playerUuid.copy": "Copiar",
-  "playerUuid.copied": "Copiado!",
-  "playerUuid.defaultPlayerName": "MinwiMCW"
+  "playerUuid.copied": "Copiado!"
 }

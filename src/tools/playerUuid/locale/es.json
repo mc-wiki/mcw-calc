@@ -8,6 +8,5 @@
   "playerUuid.error.invalid": "¡El nombre de usuario no es válido!",
   "playerUuid.error.notFound": "¡El nombre de usuario no existe!",
   "playerUuid.copy": "Copiar",
-  "playerUuid.copied": "¡Copiado!",
-  "playerUuid.defaultPlayerName": "MinecraftWiki"
+  "playerUuid.copied": "¡Copiado!"
 }
