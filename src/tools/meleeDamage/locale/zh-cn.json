@@ -36,6 +36,7 @@
   "meleeDamage.victim.isInWater": "正在接触水",
   "meleeDamage.attackCondition.critical": "暴击",
   "meleeDamage.attackCondition.tickAfterLastAttack": "自上次攻击后经过的游戏刻数",
+  "meleeDamage.attackCondition.fullCooldown": "完全冷却",
   "meleeDamage.attackCondition.speed": "速度（米每秒）",
   "meleeDamage.attackCondition.speed.sprinting": "疾跑",
   "meleeDamage.attackCondition.speed.sprintingSpeedI": "疾跑（迅捷 I）",
