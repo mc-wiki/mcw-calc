@@ -36,7 +36,7 @@
   "meleeDamage.victim.isInWater": "Is touching water",
   "meleeDamage.attackCondition.critical": "Critical hit",
   "meleeDamage.attackCondition.tickAfterLastAttack": "Ticks since last attack",
-  "meleeDamage.attackCondition.setFullCooldown": "Set to full cooldown",
+  "meleeDamage.attackCondition.fullCooldown": "Full cooldown",
   "meleeDamage.attackCondition.speed": "Speed (m/s)",
   "meleeDamage.attackCondition.speed.sprinting": "Sprinting",
   "meleeDamage.attackCondition.speed.sprintingSpeedI": "Sprinting (Speed I)",

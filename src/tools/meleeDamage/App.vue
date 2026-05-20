@@ -15,7 +15,7 @@ import {
   CdxToggleButtonGroup,
 } from '@wikimedia/codex'
 import { cdxIconAdd, cdxIconTrash } from '@wikimedia/codex-icons'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CalcField from '@/components/CalcField.vue'
 import { parseWikitext } from '@/utils/i18n'
@@ -221,6 +221,7 @@ const hasteLevel = ref(0) // Haste level, only for JE
 const miningFatigueLevel = ref(0) // Mining fatigue level, only for JE
 const fallHeight = ref(0) // Fall height, only for mace
 const speed = ref(0) // Relative speed to the victim, only for spear
+const isFullCooldown = ref(true) // For attack cooldown, only for JE
 
 // Tool states
 const selectedTool = ref('hand') // Selected tool
@@ -482,7 +483,7 @@ function sanitizeCanObtainInSurvival() {
     strengthLevel.value = clamp(strengthLevel.value, 0, 2)
     weaknessLevel.value = clamp(weaknessLevel.value, 0, 2)
     hasteLevel.value = clamp(hasteLevel.value, 0, 2)
-    miningFatigueLevel.value = clamp(miningFatigueLevel.value, 0, 3)
+    if (miningFatigueLevel.value !== 0) miningFatigueLevel.value = 3
     sharpnessLevel.value = clamp(sharpnessLevel.value, 0, 5)
     smiteLevel.value = clamp(smiteLevel.value, 0, 5)
     baneOfArthropodsLevel.value = clamp(baneOfArthropodsLevel.value, 0, 5)
@@ -533,6 +534,12 @@ function sanitizeEnchantmentState() {
     densityLevel.value = 0
   }
 }
+
+watch([isJavaEdition, isFullCooldown, fullCooldown], () => {
+  if (!isJavaEdition.value || stabAttack.value) return
+  if (isFullCooldown.value) tickAfterLastAttack.value = fullCooldown.value
+  else tickAfterLastAttack.value = clamp(tickAfterLastAttack.value, 0, fullCooldown.value)
+})
 
 function selectOutput() {
   const selection = window.getSelection()
@@ -670,10 +677,11 @@ function selectOutput() {
                 min="0"
                 :max="fullCooldown"
                 step="1"
+                :disabled="isFullCooldown"
               />
-              <CdxButton @click="tickAfterLastAttack = fullCooldown">
-                {{ t('meleeDamage.attackCondition.setFullCooldown') }}
-              </CdxButton>
+              <CdxCheckbox id="full-cooldown-checkbox" v-model="isFullCooldown" class="mt-auto mb-[6px]" inline>
+                {{ t('meleeDamage.attackCondition.fullCooldown') }}
+              </CdxCheckbox>
             </div>
           </CdxField>
 
