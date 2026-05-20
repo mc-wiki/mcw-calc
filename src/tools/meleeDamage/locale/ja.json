@@ -36,7 +36,6 @@
   "meleeDamage.victim.isInWater": "水に接触",
   "meleeDamage.attackCondition.critical": "クリティカル攻撃",
   "meleeDamage.attackCondition.tickAfterLastAttack": "直前の攻撃からの経過ティック",
-  "meleeDamage.attackCondition.setFullCooldown": "クールダウン回復済に設定",
   "meleeDamage.attackCondition.speed": "速度（m/秒）",
   "meleeDamage.attackCondition.speed.sprinting": "ダッシュ",
   "meleeDamage.attackCondition.speed.sprintingSpeedI": "ダッシュ（移動速度上昇 I）",

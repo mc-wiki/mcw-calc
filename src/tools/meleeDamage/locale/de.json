@@ -36,7 +36,6 @@
   "meleeDamage.victim.isInWater": "Berührt Wasser",
   "meleeDamage.attackCondition.critical": "Kritischer Treffer",
   "meleeDamage.attackCondition.tickAfterLastAttack": "Ticks seit dem letzten Angriff",
-  "meleeDamage.attackCondition.setFullCooldown": "Auf volle Abklingzeit setzen",
   "meleeDamage.finalDamage": "Verursachter Schaden: {damage}",
   "meleeDamage.defaultTools.hand": "Hand",
   "meleeDamage.defaultTools.wooden_sword": "Holzschwert",

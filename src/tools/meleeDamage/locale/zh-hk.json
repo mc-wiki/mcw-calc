@@ -36,7 +36,6 @@
   "meleeDamage.victim.isInWater": "接觸水",
   "meleeDamage.attackCondition.critical": "暴擊",
   "meleeDamage.attackCondition.tickAfterLastAttack": "自上次攻擊後經過的刻數",
-  "meleeDamage.attackCondition.setFullCooldown": "設定為完全冷卻",
   "meleeDamage.finalDamage": "造成傷害：{damage}",
   "meleeDamage.defaultTools.hand": "空手",
   "meleeDamage.defaultTools.wooden_sword": "木劍",

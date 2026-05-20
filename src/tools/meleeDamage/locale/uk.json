@@ -36,7 +36,6 @@
   "meleeDamage.victim.isInWater": "Торкається води",
   "meleeDamage.attackCondition.critical": "Критичний удар",
   "meleeDamage.attackCondition.tickAfterLastAttack": "Тактів після останньої атаки",
-  "meleeDamage.attackCondition.setFullCooldown": "Встановити повне відновлення",
   "meleeDamage.attackCondition.speed": "Швидкість (м/с)",
   "meleeDamage.attackCondition.speed.sprinting": "Біг",
   "meleeDamage.attackCondition.speed.sprintingSpeedI": "Біг (Швидкість I)",

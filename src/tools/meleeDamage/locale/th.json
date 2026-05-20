@@ -36,7 +36,6 @@
   "meleeDamage.victim.isInWater": "แตะน้ำ",
   "meleeDamage.attackCondition.critical": "การตีคริติคอล",
   "meleeDamage.attackCondition.tickAfterLastAttack": "ติ๊กตั้งแต่การโจมตีล่าสุด",
-  "meleeDamage.attackCondition.setFullCooldown": "ตั้งให้คูลดาวน์เต็มที่",
   "meleeDamage.finalDamage": "ดาเมจที่กระทำ: {damage}",
   "meleeDamage.defaultTools.hand": "มือ",
   "meleeDamage.defaultTools.wooden_sword": "ดาบไม้",
