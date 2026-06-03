@@ -36,6 +36,7 @@
   "meleeDamage.victim.isInWater": "Est en train de toucher l'eau",
   "meleeDamage.attackCondition.critical": "Coup critique",
   "meleeDamage.attackCondition.tickAfterLastAttack": "Ticks depuis la dernière attaque",
+  "meleeDamage.attackCondition.fullCooldown": "Temps de recharge complet",
   "meleeDamage.attackCondition.speed": "Vitesse (m/s)",
   "meleeDamage.attackCondition.speed.sprinting": "Courir",
   "meleeDamage.attackCondition.speed.sprintingSpeedI": "Courir (Rapidité I)",
