@@ -55,7 +55,7 @@ const SKIN_NAME = [
   'Zuri (Wide)',
 ]
 
-const playerName = ref(props.player)
+const playerName = ref(props.player ?? t('playerUuid.defaultPlayerName'))
 const playerOnlineUUID = ref()
 const playerOfflineUUID = ref()
 const playerOnlineAvatar = ref()

@@ -8,5 +8,6 @@
   "playerUuid.error.invalid": "This username is invalid!",
   "playerUuid.error.notFound": "This username does not exist!",
   "playerUuid.copy": "Copy",
-  "playerUuid.copied": "Copied!"
+  "playerUuid.copied": "Copied!",
+  "playerUuid.defaultPlayerName": "MinwiMCW"
 }
