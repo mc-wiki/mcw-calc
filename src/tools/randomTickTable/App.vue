@@ -10,12 +10,12 @@ const { t } = useI18n()
 // ── Types ──────────────────────────────────────────────────────────────────────
 
 interface Entry {
-  name: string            // Display name, also used as link target if link is absent
-  link?: string           // Optional wiki page name; falls back to name if omitted
-  stages?: number | null  // omit or null = single-action block (e.g. lit redstone ore)
-  growthChance?: number   // 0–1 probability of advancing one stage when ticked; defaults to 1.0
-  avgDrops?: number       // Average items dropped per harvest; omit for non-harvestable blocks
-  stackSize?: number      // Stack size for that item; defaults to 64
+  name: string | string[]  // Single name or list of names; all are linked
+  link?: string | string[] // Optional link target(s); if array must match length of name
+  stages?: number | null   // omit or null = single-action block (e.g. lit redstone ore)
+  growthChance?: number    // 0–1 probability of advancing one stage when ticked; defaults to 1.0
+  avgDrops?: number        // Average items dropped per harvest; omit for non-harvestable blocks
+  stackSize?: number       // Stack size for that item; defaults to 64
   notes?: string
 }
 
@@ -100,8 +100,20 @@ function fmtTicks(n: number): string {
 }
 
 function renderLink(entry: Entry): string {
-  const target = entry.link ?? entry.name
-  return parseWikitext(`[[${target}|${entry.name}]]`)
+  const names = Array.isArray(entry.name) ? entry.name : [entry.name]
+  const links = entry.link === undefined
+    ? names
+    : Array.isArray(entry.link) ? entry.link : [entry.link]
+
+  const linkedItems = names.map((name, i) => {
+    const target = links[i] ?? name
+    return parseWikitext(`[[${target}|${name}]]`)
+  })
+
+  if (linkedItems.length === 1) return linkedItems[0]
+  if (linkedItems.length === 2) return `${linkedItems[0]} ${t('randomTickTable.and')} ${linkedItems[1]}`
+  const allButLast = linkedItems.slice(0, -1).join(', ')
+  return `${allButLast}${t('randomTickTable.oxfordComma')} ${t('randomTickTable.and')} ${linkedItems[linkedItems.length - 1]}`
 }
 
 // ── Per-row computed data ──────────────────────────────────────────────────────
@@ -221,7 +233,7 @@ const rows = computed((): RowData[] => {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="row in rows" :key="row.entry.name">
+          <tr v-for="(row, index) in rows" :key="index">
 
             <!-- Name / link -->
             <td v-html="row.renderedLink" />
@@ -277,13 +289,11 @@ const rows = computed((): RowData[] => {
 
             <!-- Notes -->
             <td class="rt-notes">{{ row.entry.notes ?? '' }}</td>
+
           </tr>
         </tbody>
       </table>
     </div>
-    <p class="rt-note mb-3">
-      {{ t('randomTickTable.edit') }}
-    </p>
   </CalcField>
 </template>
 
