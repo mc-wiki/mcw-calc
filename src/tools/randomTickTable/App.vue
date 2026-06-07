@@ -276,11 +276,13 @@ const rows = computed((): RowData[] => {
 
             <!-- Notes -->
             <td class="rt-notes">{{ row.entry.notes ?? '' }}</td>
-
           </tr>
         </tbody>
       </table>
     </div>
+    <p class="rt-note mb-3">
+      {{ t('randomTickTable.edit') }}
+    </p>
   </CalcField>
 </template>
 
