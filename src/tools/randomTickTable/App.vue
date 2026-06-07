@@ -13,7 +13,7 @@ interface Entry {
   name: string            // Display name, also used as link target if link is absent
   link?: string           // Optional wiki page name; falls back to name if omitted
   stages?: number | null  // omit or null = single-action block (e.g. lit redstone ore)
-  growthChance: number    // 0–1 probability of advancing one stage when ticked
+  growthChance?: number   // 0–1 probability of advancing one stage when ticked; defaults to 1.0
   avgDrops?: number       // Average items dropped per harvest; omit for non-harvestable blocks
   stackSize?: number      // Stack size for that item; defaults to 64
   notes?: string
@@ -125,12 +125,13 @@ const rows = computed((): RowData[] => {
 
   return props.entries.map((entry): RowData => {
     const effectiveStages = entry.stages ?? 1
+    const effectiveGrowthChance = entry.growthChance ?? 1
     const isExact = effectiveStages === 1
-    const perAction = avgTicksPerAction(entry.growthChance, rts)
-    const total = avgTicksTotal(effectiveStages, entry.growthChance, rts)
+    const perAction = avgTicksPerAction(effectiveGrowthChance, rts)
+    const total = avgTicksTotal(effectiveStages, effectiveGrowthChance, rts)
     const median = isExact
-      ? exactGeometricMedian(entry.growthChance, rts)
-      : medianTicksTotal(effectiveStages, entry.growthChance, rts)
+      ? exactGeometricMedian(effectiveGrowthChance, rts)
+      : medianTicksTotal(effectiveStages, effectiveGrowthChance, rts)
 
     const avgTicksForTarget = entry.avgDrops !== undefined
       ? (Math.ceil(target / (entry.avgDrops * crops)) * total)
