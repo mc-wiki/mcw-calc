@@ -1,0 +1,28 @@
+{
+  "randomTickTable.title": "Random Tick Reference Table",
+
+  "randomTickTable.rts": "randomTickSpeed",
+  "randomTickTable.rts.explain": "The /gamerule randomTickSpeed value (default: 3)",
+  "randomTickTable.targetItems": "Target items",
+  "randomTickTable.useCropCount": "Use crop count",
+  "randomTickTable.cropCount": "Crops growing",
+
+  "randomTickTable.note": "Median values marked ~ are numerical approximations — no closed-form exists for the negative binomial distribution. Exact medians are shown without ~ for single-stage mechanics. Growth times assume optimal conditions unless noted.",
+
+  "randomTickTable.approx": "~{value}",
+  "randomTickTable.na": "—",
+
+  "randomTickTable.unit.gt": "gt",
+  "randomTickTable.unit.s": "s",
+  "randomTickTable.unit.m": "m",
+  "randomTickTable.unit.h": "h",
+
+  "randomTickTable.col.block": "Block / mechanic",
+  "randomTickTable.col.avgPerAction": "Avg. time per action",
+  "randomTickTable.col.avgTotal": "Avg. total growth time",
+  "randomTickTable.col.medianTotal": "Median total growth time",
+  "randomTickTable.col.avgDrops": "Avg. drops / harvest",
+  "randomTickTable.col.avgTimeForItems": "Avg. time for {n} item | Avg. time for {n} items",
+  "randomTickTable.col.avgTimeForItemsWithCrops": "Avg. time for {n} item ({crops} crop) | Avg. time for {n} items ({crops} crops)",
+  "randomTickTable.col.notes": "Notes"
+}
