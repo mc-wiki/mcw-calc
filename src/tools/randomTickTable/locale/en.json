@@ -7,7 +7,8 @@
   "randomTickTable.useCropCount": "Use crop count",
   "randomTickTable.cropCount": "Crops growing",
 
-  "randomTickTable.note": "Median values marked ~ are numerical approximations — no closed-form exists for the negative binomial distribution. Exact medians are shown without ~ for single-stage mechanics. Growth times assume optimal conditions unless noted.",
+  "randomTickTable.note": "Median values marked ~ are numerical approximations — no closed-form exists for the negative binomial distribution. Exact medians are shown without ~ for single-stage mechanics.\nGrowth times assume optimal conditions unless noted.",
+  "randomTickTable.edit": "To edit this page, go to Template:RandomTickTable, where JSON data is stored.",
 
   "randomTickTable.approx": "~{value}",
   "randomTickTable.na": "—",
@@ -19,8 +20,8 @@
 
   "randomTickTable.col.block": "Block / mechanic",
   "randomTickTable.col.avgPerAction": "Avg. time per action",
-  "randomTickTable.col.avgTotal": "Avg. total growth time",
-  "randomTickTable.col.medianTotal": "Median total growth time",
+  "randomTickTable.col.avgTotal": "Avg. total growth",
+  "randomTickTable.col.medianTotal": "Median total growth",
   "randomTickTable.col.avgDrops": "Avg. drops / harvest",
   "randomTickTable.col.avgTimeForItems": "Avg. time for {n} item | Avg. time for {n} items",
   "randomTickTable.col.avgTimeForItemsWithCrops": "Avg. time for {n} item ({crops} crop) | Avg. time for {n} items ({crops} crops)",
