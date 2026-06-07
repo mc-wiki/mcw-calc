@@ -12,6 +12,8 @@
 
   "randomTickTable.approx": "~{value}",
   "randomTickTable.na": "—",
+  "randomTickTable.and": "and",
+  "randomTickTable.oxfordComma": ",",
 
   "randomTickTable.unit.gt": "gt",
   "randomTickTable.unit.s": "s",
