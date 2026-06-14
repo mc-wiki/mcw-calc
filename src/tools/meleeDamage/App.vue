@@ -661,9 +661,9 @@ function selectOutput() {
         </CdxField>
       </div>
 
-      <div v-if="isJavaEdition && !stabAttack" class="flex flex-col">
+      <div class="flex flex-col">
         <div class="flex flex-row flex-wrap items-end gap-4 mt-2">
-          <CdxField>
+          <CdxField v-if="isJavaEdition && !stabAttack">
             <template #label>
               {{ t('meleeDamage.attackCondition.tickAfterLastAttack') }}
             </template>
@@ -679,7 +679,12 @@ function selectOutput() {
                 step="1"
                 :disabled="isFullCooldown"
               />
-              <CdxCheckbox id="full-cooldown-checkbox" v-model="isFullCooldown" class="mt-auto mb-[6px]" inline>
+              <CdxCheckbox
+                id="full-cooldown-checkbox"
+                v-model="isFullCooldown"
+                class="mt-auto mb-[6px]"
+                inline
+              >
                 {{ t('meleeDamage.attackCondition.fullCooldown') }}
               </CdxCheckbox>
             </div>
@@ -692,7 +697,7 @@ function selectOutput() {
           </CdxField>
         </div>
 
-        <div class="flex gap-0.5 items-center h-[12px]">
+        <div class="flex gap-0.5 items-center h-[12px]" v-if="isJavaEdition && !stabAttack">
           <div
             class="cdx-progress-bar cdx-progress-bar--inline flex-1 max-w-24"
             style="background-color: var(--background-color-progressive-subtle, #eaf3ff)"
