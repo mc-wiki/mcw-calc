@@ -23,6 +23,7 @@ import panoramaOverlay from './panorama_overlay.png'
 const props = defineProps<{
   images: string[]
   endSky: boolean
+  hideOverlayOptions: boolean
 }>()
 
 const { t } = useI18n()
@@ -353,7 +354,11 @@ onMounted(() => {
     <div
       style="position: absolute; bottom: 10px; right: 10px; padding: 0.5em; display: flex; gap: 5px"
     >
-      <BsrPopup :name="t('panoramaRenderer.overlayOptions')" :icon="cdxIconInstance">
+      <BsrPopup
+        v-if="!props.hideOverlayOptions"
+        :name="t('panoramaRenderer.overlayOptions')"
+        :icon="cdxIconInstance"
+      >
         <CdxCheckbox v-model="gradientOverlay">
           {{ t('panoramaRenderer.gradientOverlay') }}
         </CdxCheckbox>

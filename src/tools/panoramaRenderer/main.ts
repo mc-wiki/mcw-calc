@@ -20,6 +20,7 @@ const i18n = createMcwI18n([import.meta.glob('./locale/*.json', { eager: true })
       image4: z.string().default('en:Panorama_4_JE1.png'),
       image5: z.string().default('en:Panorama_5_JE1.png'),
       endSky: z.boolean().default(false),
+      hideOverlayOptions: z.boolean().default(false),
     })
     .safeParse(await getParams())
 
@@ -36,6 +37,7 @@ const i18n = createMcwI18n([import.meta.glob('./locale/*.json', { eager: true })
         params.image5,
       ],
       endSky: params.endSky,
+      hideOverlayOptions: params.hideOverlayOptions,
     })
     .use(i18n)
     .use(plugin)
