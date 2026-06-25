@@ -34,6 +34,8 @@ interface ChunkbaseEmbedParams {
    * Platform can be `java` or `bedrock`, version can be `1_XX`, and type can be `lb` (large biomes).
    */
   platform:
+    | 'java_26_3'
+    | 'java_26_3_lb'
     | 'java_26_2'
     | 'java_26_2_lb'
     | 'java_26_1'
@@ -80,7 +82,8 @@ interface ChunkbaseEmbedParams {
     | 'java_1_8'
     | 'java_1_7_lb'
     | 'java_1_7'
-    | 'bedrock_26_20'
+    | 'bedrock_26_40'
+    | 'bedrock_26_30'
     | 'bedrock_26_0'
     | 'bedrock_1_21_120'
     | 'bedrock_1_21_110'
@@ -100,6 +103,7 @@ interface ChunkbaseEmbedParams {
    * The point of interest to mark on the mark.
    */
   pois:
+    | 'Ab'
     | 'Ag'
     | 'Ac'
     | 'Br'
