@@ -86,7 +86,7 @@ const isPlayer = () => {
 }
 
 const isNotPlayer = () => {
-  return ['@s', '@n', '@e'].includes(type.value)
+  return ['@s', '@n', '@e'].includes(type.value) || edition.value === 'bedrock' && type.value === '@r' // @r[type=...]
 }
 
 function getTargetTypes() {

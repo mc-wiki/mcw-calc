@@ -131,6 +131,7 @@ export const javaEntityTypes = {
   squid: 'EntitySprite_squid.png',
   stray: 'EntitySprite_stray.png',
   strider: 'EntitySprite_strider.png',
+  sulfur_cube: 'EntitySprite_sulfur-cube.png',
   tadpole: 'EntitySprite_tadpole.png',
   text_display: 'BlockSprite_air.png',
   tnt: 'EntitySprite_primed-tnt.png',
