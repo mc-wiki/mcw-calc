@@ -120,7 +120,7 @@ const javaColors: CodeColor[] = [
     code: '6',
     name: 'gold',
     foregroundHex: '#FFAA00',
-    backgroundHex: '#2A2A00',
+    backgroundHex: '#3E2A00',
   },
   {
     code: '7',
@@ -179,10 +179,11 @@ const javaColors: CodeColor[] = [
 ]
 
 const bedrockColors: CodeColor[] = [
-  ...javaColors.filter((c) => c.name !== 'gold'),
+  ...javaColors.filter((c) => c.name !== 'gray'),
   {
-    ...javaColors.find((c) => c.name === 'gold')!,
-    backgroundHex: '#402A00',
+    ...javaColors.find((c) => c.name === 'gray')!,
+    foregroundHex: '#C6C6C6',
+    backgroundHex: '#313131',
   },
   {
     code: 'g',
@@ -229,7 +230,7 @@ const bedrockColors: CodeColor[] = [
   {
     code: 'q',
     name: 'material_emerald',
-    foregroundHex: '#47A036',
+    foregroundHex: '#119F36',
     backgroundHex: '#04280D',
   },
   {
@@ -255,6 +256,12 @@ const bedrockColors: CodeColor[] = [
     name: 'material_resin',
     foregroundHex: '#EB7114',
     backgroundHex: '#3B1D05',
+  },
+  {
+    code: 'w',
+    name: 'party_blue_color',
+    foregroundHex: '#8CB3FF',
+    backgroundHex: '#232D40',
   },
 ]
 

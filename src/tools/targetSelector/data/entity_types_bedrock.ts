@@ -101,6 +101,7 @@ export const bedrockEntityTypes = {
   squid: 'EntitySprite_squid.png',
   stray: 'EntitySprite_stray.png',
   strider: 'EntitySprite_strider.png',
+  sulfur_cube: 'EntitySprite_sulfur-cube.png',
   tadpole: 'EntitySprite_tadpole.png',
   thrown_trident: 'EntitySprite_trident.png',
   tnt: 'EntitySprite_primed-tnt.png',
