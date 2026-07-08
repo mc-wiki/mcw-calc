@@ -1,4 +1,5 @@
 {
+  "armorColor.title": "",
   "armorColor.java": "爪哇版",
   "armorColor.bedrock": "基石版",
   "armorColor.color": "色：",
@@ -6,6 +7,8 @@
   "armorColor.sequence": "次第：",
   "armorColor.sequence.help": "君需咸用染於一時",
   "armorColor.sequence.helpBedrock": "欲染革甲，當從序入染於釜，然後持甲胄按釜以染之。",
+  "armorColor.dE": "ΔE",
+  "armorColor.dE.help": "色差者，量二色之差度也，其值愈小，則色愈近。值低於一，目不能辨。",
   "armorColor.type.normal": "革甲",
   "armorColor.type.horse": "革馬甲",
   "armorColor.type.wolf": "狼甲",

@@ -1,8 +1,12 @@
 {
   "blockDistribution.xAxis": "高 →",
+  "blockDistribution.yAxis": "",
+  "blockDistribution.xInTenThousand": "十萬分之{num}",
   "blockDistribution.title": "[[爪哇版{version}]]中{block}於各層之佈",
   "blockDistribution.total": "總",
   "blockDistribution.overworld": "主界",
   "blockDistribution.theNether": "焱界",
-  "blockDistribution.theEnd": "終界"
+  "blockDistribution.theEnd": "終界",
+  "blockDistribution.logarithmicScale": "對數之度",
+  "blockDistribution.selectAll": "全選"
 }

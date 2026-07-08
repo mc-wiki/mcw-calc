@@ -1,3 +1,6 @@
 {
-  "decimalColor.color": "色"
+  "decimalColor.color": "色",
+  "decimalColor.decimal": "值表示：",
+  "decimalColor.hexadecimal": "十六進制",
+  "decimalColor.random": ""
 }

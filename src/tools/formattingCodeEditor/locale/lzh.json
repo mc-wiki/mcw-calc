@@ -1,4 +1,14 @@
 {
   "formattingCodeEditor.java": "爪哇版",
-  "formattingCodeEditor.bedrock": "基石版"
+  "formattingCodeEditor.bedrock": "基石版",
+  "formattingCodeEditor.color.black": "黑",
+  "formattingCodeEditor.color.gray": "灰",
+  "formattingCodeEditor.color.blue": "藍",
+  "formattingCodeEditor.color.green": "綠",
+  "formattingCodeEditor.color.red": "赤",
+  "formattingCodeEditor.color.yellow": "黃",
+  "formattingCodeEditor.color.white": "白",
+  "formattingCodeEditor.color.none": "無色",
+  "formattingCodeEditor.default.1.underline": "試",
+  "formattingCodeEditor.default.2.color": ""
 }
