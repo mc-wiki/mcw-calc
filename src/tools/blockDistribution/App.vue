@@ -316,7 +316,7 @@ function update() {
                 ? new Intl.ListFormat(locale).format(props.blockNames)
                 : props.blockNames.join(', ')
               : props.pageName,
-          version: '1.21.7',
+          version: '26.2',
         }),
       )
     "
