@@ -41,6 +41,7 @@
     "@wikimedia/codex-icons": "^2.4.0",
     "comlink": "^4.4.2",
     "d3": "^7.9.0",
+    "dompurify": "^3.4.12",
     "papaparse": "^5.5.3",
     "spark-md5": "^3.0.2",
     "three": "^0.162.0",

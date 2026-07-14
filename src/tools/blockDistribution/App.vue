@@ -36,7 +36,9 @@ const VERSION_LZH = VERSION.split('')
   )
   .join('')
 
-const { t, locale } = useI18n()
+const { t, locale } = useI18n({
+  warnHtmlMessage: true,
+})
 
 const validBlocks = props.blocks
   .slice()
