@@ -13,7 +13,7 @@ const i18n = createMcwI18n([import.meta.glob('./locale/*.json', { eager: true })
 ;(async () => {
   const parsed = z
     .object({
-      player: z.string().default('MinwiMCW'),
+      player: z.string().optional(),
     })
     .safeParse(await getParams())
 
