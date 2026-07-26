@@ -62,6 +62,8 @@ const playerOnlineAvatar = ref()
 const playerOfflineSkinLocation = ref(SKIN_LOCATION[6])
 const playerOfflineSkinName = ref(SKIN_NAME[6])
 const isLoading = ref(false)
+const playerOnlineLocatorBarColor = ref()
+const playerOfflineLocatorBarColor = ref()
 
 const errorText = ref()
 
@@ -77,15 +79,15 @@ async function updatePlayerInfo() {
   bytes[8] = (bytes[8] & 0x3f) | 0x80
   const uuid = Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('')
   playerOfflineUUID.value = `${uuid.slice(0, 8)}-${uuid.slice(8, 12)}-${uuid.slice(12, 16)}-${uuid.slice(16, 20)}-${uuid.slice(20, 32)}`
-
-  const mostSigBits = BigInt(`0x${uuid.slice(0, 16)}`)
-  const leastSigBits = BigInt(`0x${uuid.slice(16, 32)}`)
-  const xorBits = mostSigBits ^ leastSigBits
-  const hashUUID = BigInt.asIntN(32, (xorBits ^ ((xorBits >> 32n) & 0xffffffffn)) & 0xffffffffn)
-  const r = hashUUID % 18n
+  const offlineUUIDHash = uuid2HashCode(uuid)
+  const r = offlineUUIDHash % 18n
   const index = (r ^ 18n) < 0 && r !== 0n ? r + 18n : r
   playerOfflineSkinLocation.value = SKIN_LOCATION[Number(index)]
   playerOfflineSkinName.value = SKIN_NAME[Number(index)]
+  playerOfflineLocatorBarColor.value = setBrightness(
+    ((255 & 0xff) << 24) | Number(offlineUUIDHash & 0xffffffn) | 0,
+    0.9,
+  )
 
   if (isValid(playerName.value)) {
     isLoading.value = true
@@ -95,16 +97,121 @@ async function updatePlayerInfo() {
       const data = await response.json()
       playerOnlineUUID.value = data.data.player.id
       playerOnlineAvatar.value = data.data.player.avatar
+      const onlineUUIDHash = uuid2HashCode(playerOnlineUUID.value)
+      playerOnlineLocatorBarColor.value = setBrightness(
+        ((255 & 0xff) << 24) | Number(onlineUUIDHash & 0xffffffn) | 0,
+        0.9,
+      )
     } else {
       errorText.value = t('playerUuid.error.notFound')
       playerOnlineUUID.value = ''
       playerOnlineAvatar.value = ''
+      playerOnlineLocatorBarColor.value = ''
     }
   } else {
     errorText.value = t('playerUuid.error.invalid')
     playerOnlineUUID.value = ''
     playerOnlineAvatar.value = ''
+    playerOnlineLocatorBarColor.value = ''
   }
+}
+
+function uuid2HashCode(uuid: string): bigint {
+  const mostSigBits = BigInt(`0x${uuid.replace(/-/g, '').slice(0, 16)}`)
+  const leastSigBits = BigInt(`0x${uuid.replace(/-/g, '').slice(16, 32)}`)
+  const xorBits = mostSigBits ^ leastSigBits
+  return BigInt.asIntN(32, (xorBits ^ ((xorBits >> 32n) & 0xffffffffn)) & 0xffffffffn)
+}
+
+function setBrightness(colorValue: number, brightness: number): [number, number, number] {
+  let hue: number
+
+  let r = (colorValue >>> 16) & 255
+  let g = (colorValue >>> 8) & 255
+  let b = colorValue & 255
+
+  const rgbMax = Math.max(r, g, b)
+  const rgbMin = Math.min(r, g, b)
+
+  const rgbConstantRange = rgbMax - rgbMin
+
+  const saturation = rgbMax !== 0 ? rgbConstantRange / rgbMax : 0.0
+
+  if (saturation === 0.0) {
+    hue = 0.0
+  } else {
+    const constantRed = (rgbMax - r) / rgbConstantRange
+    const constantGreen = (rgbMax - g) / rgbConstantRange
+    const constantBlue = (rgbMax - b) / rgbConstantRange
+
+    if (r === rgbMax) {
+      hue = constantBlue - constantGreen
+    } else if (g === rgbMax) {
+      hue = 2.0 + constantRed - constantBlue
+    } else {
+      hue = 4.0 + constantGreen - constantRed
+    }
+
+    hue /= 6.0
+
+    if (hue < 0.0) {
+      hue += 1.0
+    }
+  }
+
+  if (saturation === 0.0) {
+    r = g = b = Math.round(brightness * 255.0)
+    return [r, g, b]
+  }
+
+  const colorWheelSegment = (hue - Math.floor(hue)) * 6.0
+  const colorWheelOffset = colorWheelSegment - Math.floor(colorWheelSegment)
+
+  const primaryColor = brightness * (1.0 - saturation)
+
+  const secondaryColor = brightness * (1.0 - saturation * colorWheelOffset)
+
+  const tertiaryColor = brightness * (1.0 - saturation * (1.0 - colorWheelOffset))
+
+  switch (Math.floor(colorWheelSegment)) {
+    case 0:
+      r = Math.round(brightness * 255.0)
+      g = Math.round(tertiaryColor * 255.0)
+      b = Math.round(primaryColor * 255.0)
+      break
+
+    case 1:
+      r = Math.round(secondaryColor * 255.0)
+      g = Math.round(brightness * 255.0)
+      b = Math.round(primaryColor * 255.0)
+      break
+
+    case 2:
+      r = Math.round(primaryColor * 255.0)
+      g = Math.round(brightness * 255.0)
+      b = Math.round(tertiaryColor * 255.0)
+      break
+
+    case 3:
+      r = Math.round(primaryColor * 255.0)
+      g = Math.round(secondaryColor * 255.0)
+      b = Math.round(brightness * 255.0)
+      break
+
+    case 4:
+      r = Math.round(tertiaryColor * 255.0)
+      g = Math.round(primaryColor * 255.0)
+      b = Math.round(brightness * 255.0)
+      break
+
+    case 5:
+      r = Math.round(brightness * 255.0)
+      g = Math.round(primaryColor * 255.0)
+      b = Math.round(secondaryColor * 255.0)
+      break
+  }
+
+  return [r, g, b]
 }
 
 function isValid(username: string) {
@@ -179,6 +286,21 @@ updatePlayerInfo()
           :src="getImageLink(`en:EntitySprite_${playerOfflineSkinLocation}.png`)"
           :title="playerOfflineSkinName"
         />
+        <div>
+          <span v-html="parseWikitext(t('locatorBar.title'))" /><br />
+          <span
+            :style="{
+              borderRadius: '50%',
+              width: '1em',
+              height: '1em',
+              display: 'inline-block',
+              backgroundColor: `rgb(${playerOfflineLocatorBarColor[0]},${playerOfflineLocatorBarColor[1]},${playerOfflineLocatorBarColor[2]})`,
+            }"
+          />
+          &nbsp;#{{ playerOfflineLocatorBarColor[0].toString(16)
+          }}{{ playerOfflineLocatorBarColor[1].toString(16)
+          }}{{ playerOfflineLocatorBarColor[2].toString(16) }}
+        </div>
       </div>
 
       <div class="flex items-center gap-6">
@@ -200,6 +322,21 @@ updatePlayerInfo()
           </div>
         </CdxField>
         <img v-if="playerOnlineUUID !== ''" width="48" height="48" :src="playerOnlineAvatar" />
+        <div v-if="playerOnlineLocatorBarColor !== ''">
+          <span v-html="parseWikitext(t('locatorBar.title'))" /><br />
+          <span
+            :style="{
+              borderRadius: '50%',
+              width: '1em',
+              height: '1em',
+              display: 'inline-block',
+              backgroundColor: `rgb(${playerOnlineLocatorBarColor[0]},${playerOnlineLocatorBarColor[1]},${playerOnlineLocatorBarColor[2]})`,
+            }"
+          />
+          &nbsp;#{{ playerOnlineLocatorBarColor[0].toString(16)
+          }}{{ playerOnlineLocatorBarColor[1].toString(16)
+          }}{{ playerOnlineLocatorBarColor[2].toString(16) }}
+        </div>
       </div>
     </div>
   </CalcField>
