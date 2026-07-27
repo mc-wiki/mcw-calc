@@ -62,8 +62,8 @@ const playerOnlineAvatar = ref()
 const playerOfflineSkinLocation = ref(SKIN_LOCATION[6])
 const playerOfflineSkinName = ref(SKIN_NAME[6])
 const isLoading = ref(false)
-const playerOnlineLocatorBarColor = ref()
-const playerOfflineLocatorBarColor = ref()
+const playerOnlineLocatorBarColor = ref<[number, number, number] | null>()
+const playerOfflineLocatorBarColor = ref<[number, number, number]>([0, 0, 0])
 
 const errorText = ref()
 
@@ -106,14 +106,18 @@ async function updatePlayerInfo() {
       errorText.value = t('playerUuid.error.notFound')
       playerOnlineUUID.value = ''
       playerOnlineAvatar.value = ''
-      playerOnlineLocatorBarColor.value = ''
+      playerOnlineLocatorBarColor.value = null
     }
   } else {
     errorText.value = t('playerUuid.error.invalid')
     playerOnlineUUID.value = ''
     playerOnlineAvatar.value = ''
-    playerOnlineLocatorBarColor.value = ''
+    playerOnlineLocatorBarColor.value = null
   }
+}
+
+function colorToString(color: [number, number, number]) {
+  return color.map((c) => c.toString(16).padStart(2, '0')).join('')
 }
 
 function uuid2HashCode(uuid: string): bigint {
@@ -214,8 +218,9 @@ function setBrightness(colorValue: number, brightness: number): [number, number,
   return [r, g, b]
 }
 
+const VALID_PLAYER_NAME = /^\w{1,16}$/
 function isValid(username: string) {
-  return username.match(/^\w{1,16}$/)
+  return username.match(VALID_PLAYER_NAME)
 }
 
 const copyTextIndex = [copyTextOnline, copyTextOffline]
@@ -294,12 +299,10 @@ updatePlayerInfo()
               width: '1em',
               height: '1em',
               display: 'inline-block',
-              backgroundColor: `rgb(${playerOfflineLocatorBarColor[0]},${playerOfflineLocatorBarColor[1]},${playerOfflineLocatorBarColor[2]})`,
+              backgroundColor: `#${colorToString(playerOfflineLocatorBarColor)}`,
             }"
           />
-          &nbsp;#{{ playerOfflineLocatorBarColor[0].toString(16)
-          }}{{ playerOfflineLocatorBarColor[1].toString(16)
-          }}{{ playerOfflineLocatorBarColor[2].toString(16) }}
+          &nbsp;#{{ colorToString(playerOfflineLocatorBarColor) }}
         </div>
       </div>
 
@@ -322,7 +325,7 @@ updatePlayerInfo()
           </div>
         </CdxField>
         <img v-if="playerOnlineUUID !== ''" width="48" height="48" :src="playerOnlineAvatar" />
-        <div v-if="playerOnlineLocatorBarColor !== ''">
+        <div v-if="playerOnlineLocatorBarColor">
           <span v-html="parseWikitext(t('locatorBar.title'))" /><br />
           <span
             :style="{
@@ -330,12 +333,10 @@ updatePlayerInfo()
               width: '1em',
               height: '1em',
               display: 'inline-block',
-              backgroundColor: `rgb(${playerOnlineLocatorBarColor[0]},${playerOnlineLocatorBarColor[1]},${playerOnlineLocatorBarColor[2]})`,
+              backgroundColor: `#${colorToString(playerOnlineLocatorBarColor)}`,
             }"
           />
-          &nbsp;#{{ playerOnlineLocatorBarColor[0].toString(16)
-          }}{{ playerOnlineLocatorBarColor[1].toString(16)
-          }}{{ playerOnlineLocatorBarColor[2].toString(16) }}
+          &nbsp;#{{ colorToString(playerOnlineLocatorBarColor) }}
         </div>
       </div>
     </div>
