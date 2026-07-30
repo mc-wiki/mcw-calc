@@ -2,9 +2,18 @@
 import type { MenuItemData } from '@wikimedia/codex'
 import type { Color } from '@/utils/color'
 import { useLocalStorage } from '@vueuse/core'
-import { CdxButton, CdxIcon, CdxSelect, CdxTable, CdxToggleButtonGroup } from '@wikimedia/codex'
+import {
+  CdxButton,
+  CdxField,
+  CdxTextInput,
+  CdxIcon,
+  CdxSelect,
+  CdxTable,
+  CdxToggleButtonGroup,
+} from '@wikimedia/codex'
 import {
   cdxIconAlert,
+  cdxIconCopy,
   cdxIconDownTriangle,
   cdxIconError,
   cdxIconHelpNotice,
@@ -27,6 +36,8 @@ const props = defineProps<{ icon: 'banner' | 'shield' }>()
 const { t } = useI18n()
 
 const type = ref<'banner' | 'shield'>(props.icon)
+const shareCodeInput = ref('')
+const shareCodeErr = ref('')
 
 interface Pattern {
   id: number
@@ -137,6 +148,55 @@ const patternItemRequired = [
   'curly_border',
 ]
 
+const patternAbbrMap: Record<keyof typeof patternName, string> = {
+  stripe_bottom: 'sb',
+  stripe_top: 'st',
+  stripe_left: 'sl',
+  stripe_right: 'sr',
+  stripe_center: 'sc',
+  stripe_middle: 'sm',
+  stripe_downright: 'dr',
+  stripe_downleft: 'dl',
+  small_stripes: 'ss',
+  cross: 'cr',
+  straight_cross: 'stc',
+  diagonal_left: 'dl',
+  diagonal_right: 'dr',
+  diagonal_up_left: 'dul',
+  diagonal_up_right: 'dur',
+  half_vertical: 'hv',
+  half_vertical_right: 'hvr',
+  half_horizontal: 'hh',
+  half_horizontal_bottom: 'hhb',
+  square_bottom_left: 'sbl',
+  square_bottom_right: 'sbr',
+  square_top_left: 'stl',
+  square_top_right: 'str',
+  triangle_bottom: 'tb',
+  triangle_top: 'tt',
+  triangles_bottom: 'tbs',
+  triangles_top: 'tts',
+  circle: 'ci',
+  rhombus: 'rh',
+  border: 'b',
+  curly_border: 'cb',
+  bricks: 'bri',
+  gradient: 'g',
+  gradient_up: 'gu',
+  creeper: 'cre',
+  skull: 'sk',
+  flower: 'fl',
+  mojang: 'mo',
+  globe: 'gl',
+  piglin: 'pi',
+  flow: 'fw',
+  guster: 'gs',
+}
+
+const patternAbbrToId = Object.fromEntries(
+  Object.entries(patternAbbrMap).map(([pattern, abbr]) => [abbr, pattern]),
+) as Record<string, keyof typeof patternName>
+
 const activePatterns = useLocalStorage<Pattern[]>('mcwBannerActivePatterns', [
   {
     id: 0,
@@ -223,6 +283,138 @@ function updateColor(index: number, color: Color) {
 }
 
 const baseColor = useLocalStorage<Color>('mcwBannerBaseColor', 'white')
+
+const colorSequence = Object.keys(colorMap) as Color[]
+const colorChars = '0123456789abcdef'
+
+function normalizeShareCodeToken(token: string) {
+  return token.toLowerCase().replace(/[^a-z0-9]/g, '')
+}
+
+function findPatternByToken(token: string) {
+  const normalized = normalizeShareCodeToken(token)
+  if (!normalized) return undefined
+
+  return patternAbbrToId[normalized] ?? undefined
+}
+
+function colorToIndex(color: Color) {
+  const index = colorSequence.indexOf(color)
+  return colorChars[index] ?? '0'
+}
+
+function encodeShareCode() {
+  return [
+    colorToIndex(baseColor.value),
+    ...activePatterns.value.flatMap((pattern) => [
+      patternAbbrMap[pattern.name],
+      colorToIndex(pattern.color),
+    ]),
+  ].join('-')
+}
+
+function formatShareCodeError(error: unknown) {
+  if (!(error instanceof shareCodeError)) {
+    return t('banner.shareCode.error')
+  }
+
+  const mapping = shareCodeErrorMap[error.type]
+  return mapping.detailKey
+    ? t(mapping.key, { [mapping.detailKey]: error.detail ?? '' })
+    : t(mapping.key)
+}
+
+function decodeShareCode(code: string) {
+  const tokens = code.split('-').filter(Boolean)
+  if (tokens.length === 0) throw new shareCodeError('empty')
+
+  if (tokens.length < 3 || (tokens.length - 1) % 2 !== 0) {
+    throw new shareCodeError('invalidFormat')
+  }
+
+  const baseColorIndex = Number.parseInt(tokens[0], 16)
+  if (
+    Number.isNaN(baseColorIndex) ||
+    baseColorIndex < 0 ||
+    baseColorIndex >= colorSequence.length
+  ) {
+    throw new shareCodeError('invalidBaseColor', tokens[0])
+  }
+
+  const patterns: Pattern[] = []
+  for (let i = 1; i < tokens.length; i += 2) {
+    const patternToken = tokens[i]
+    const colorToken = tokens[i + 1]
+    const patternId = findPatternByToken(patternToken)
+    if (!patternId) {
+      throw new shareCodeError('invalidPattern', patternToken)
+    }
+
+    const colorIndex = Number.parseInt(colorToken, 16)
+    if (Number.isNaN(colorIndex) || colorIndex < 0 || colorIndex >= colorSequence.length) {
+      throw new shareCodeError('invalidPatternColor', colorToken)
+    }
+
+    patterns.push({
+      id: patterns.length,
+      name: patternId,
+      color: colorSequence[colorIndex],
+    })
+  }
+
+  return {
+    baseColor: colorSequence[baseColorIndex],
+    patterns,
+  }
+}
+
+type shareCodeErrorType =
+  | 'empty'
+  | 'invalidBaseColor'
+  | 'invalidFormat'
+  | 'invalidPattern'
+  | 'invalidPatternColor'
+
+class shareCodeError extends Error {
+  constructor(
+    public type: shareCodeErrorType,
+    public detail?: string,
+  ) {
+    super(type)
+  }
+}
+
+const shareCodeErrorMap: Record<
+  shareCodeErrorType,
+  { key: string; detailKey?: 'color' | 'pattern' }
+> = {
+  empty: { key: 'banner.shareCode.error.empty' },
+  invalidBaseColor: { key: 'banner.shareCode.error.invalidBaseColor', detailKey: 'color' },
+  invalidFormat: { key: 'banner.shareCode.error.invalidFormat' },
+  invalidPattern: { key: 'banner.shareCode.error.invalidPattern', detailKey: 'pattern' },
+  invalidPatternColor: { key: 'banner.shareCode.error.invalidPatternColor', detailKey: 'color' },
+}
+
+watch(
+  [activePatterns, baseColor],
+  () => {
+    shareCodeInput.value = encodeShareCode()
+    shareCodeErr.value = ''
+  },
+  { deep: true, immediate: true },
+)
+
+function applyShareCode() {
+  shareCodeErr.value = ''
+  try {
+    const parsed = decodeShareCode(shareCodeInput.value.trim())
+    baseColor.value = parsed.baseColor
+    activePatterns.value = parsed.patterns
+    shareCodeInput.value = encodeShareCode()
+  } catch (error) {
+    shareCodeErr.value = formatShareCodeError(error)
+  }
+}
 
 const canvasRef = useTemplateRef('canvasRef')
 
@@ -330,11 +522,14 @@ watch(
   },
 )
 
+function copyShareCode() {
+  copyToClipboard(encodeShareCode())
+}
+
 function copyShareUrl() {
   const url = new URL(t('banner.shareUrl'))
   const searchParams = new URLSearchParams()
-  searchParams.set('activePatterns', JSON.stringify(activePatterns.value))
-  searchParams.set('baseColor', baseColor.value)
+  searchParams.set('shareCode', encodeShareCode())
   url.hash = `?${searchParams.toString()}`
   copyToClipboard(url.href)
 }
@@ -420,13 +615,26 @@ function copyJavaCommand() {
 onMounted(() => {
   const url = parentUrl()
   const params = new URLSearchParams(url.hash.slice(2))
+  const shareCodeParam = params.get('shareCode')
   const activePatternsParam = params.get('activePatterns')
-  if (activePatternsParam) {
-    activePatterns.value = JSON.parse(activePatternsParam)
-  }
   const baseColorParam = params.get('baseColor')
-  if (baseColorParam) {
-    baseColor.value = baseColorParam as Color
+
+  if (shareCodeParam) {
+    try {
+      const parsed = decodeShareCode(shareCodeParam)
+      baseColor.value = parsed.baseColor
+      activePatterns.value = parsed.patterns
+      shareCodeInput.value = encodeShareCode()
+    } catch (error) {
+      shareCodeErr.value = formatShareCodeError(error)
+    }
+  } else {
+    if (activePatternsParam) {
+      activePatterns.value = JSON.parse(activePatternsParam)
+    }
+    if (baseColorParam) {
+      baseColor.value = baseColorParam as Color
+    }
   }
 })
 </script>
@@ -626,13 +834,45 @@ onMounted(() => {
             </template>
           </CdxTable>
         </div>
+        <div class="flex flex-col max-w-full">
+          <CdxField>
+            <template #label> {{ t('banner.shareCode.label') }}</template>
+            <div class="flex flex-row gap-2 flex-wrap w-full">
+              <CdxTextInput
+                v-model="shareCodeInput"
+                input-type="text"
+                :clearable="true"
+                :placeholder="$t('banner.shareCode.placeholder')"
+                class="flex-1"
+                @keydown="
+                  (e: KeyboardEvent) => {
+                    if (e.key === 'Enter') {
+                      applyShareCode()
+                    }
+                  }
+                "
+              />
+              <CdxButton @click="applyShareCode">
+                {{ t('banner.shareCode.apply') }}
+              </CdxButton>
+            </div>
+          </CdxField>
+          <p v-if="shareCodeErr" class="error">
+            <strong>{{ shareCodeErr }}</strong>
+          </p>
+        </div>
 
         <div class="flex gap-2 flex-wrap">
           <CdxButton @click="copyShareUrl">
             <CdxIcon :icon="cdxIconLink" />
             {{ t('banner.copyShareUrl') }}
           </CdxButton>
+          <CdxButton @click="copyShareCode">
+            <CdxIcon :icon="cdxIconCopy" />
+            {{ t('banner.copyShareCode') }}
+          </CdxButton>
           <CdxButton @click="copyJavaCommand">
+            <CdxIcon :icon="cdxIconCopy" />
             {{ t('banner.copyJavaCommand') }}
           </CdxButton>
           <!-- <CdxButton @click="copyBedrockCommand">
@@ -683,5 +923,9 @@ onMounted(() => {
   top: 0;
   background-color: @background-color-base;
   z-index: @z-index-above-content;
+}
+.error {
+  font-size: larger;
+  color: var(--color-error, #bf3c2c);
 }
 </style>
