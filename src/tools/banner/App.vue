@@ -5,10 +5,10 @@ import { useLocalStorage } from '@vueuse/core'
 import {
   CdxButton,
   CdxField,
-  CdxTextInput,
   CdxIcon,
   CdxSelect,
   CdxTable,
+  CdxTextInput,
   CdxToggleButtonGroup,
 } from '@wikimedia/codex'
 import {
@@ -193,6 +193,17 @@ const patternAbbrMap: Record<keyof typeof patternName, string> = {
   guster: 'gs',
 }
 
+const shareCodeErrorMap: Record<
+  shareCodeErrorType,
+  { key: string; detailKey?: 'color' | 'pattern' }
+> = {
+  empty: { key: 'banner.shareCode.error.empty' },
+  invalidBaseColor: { key: 'banner.shareCode.error.invalidBaseColor', detailKey: 'color' },
+  invalidFormat: { key: 'banner.shareCode.error.invalidFormat' },
+  invalidPattern: { key: 'banner.shareCode.error.invalidPattern', detailKey: 'pattern' },
+  invalidPatternColor: { key: 'banner.shareCode.error.invalidPatternColor', detailKey: 'color' },
+}
+
 const patternAbbrToId = Object.fromEntries(
   Object.entries(patternAbbrMap).map(([pattern, abbr]) => [abbr, pattern]),
 ) as Record<string, keyof typeof patternName>
@@ -314,7 +325,7 @@ function encodeShareCode() {
 }
 
 function formatShareCodeError(error: unknown) {
-  if (!(error instanceof shareCodeError)) {
+  if (!(error instanceof ShareCodeError)) {
     return t('banner.shareCode.error')
   }
 
@@ -326,10 +337,10 @@ function formatShareCodeError(error: unknown) {
 
 function decodeShareCode(code: string) {
   const tokens = code.split('-').filter(Boolean)
-  if (tokens.length === 0) throw new shareCodeError('empty')
+  if (tokens.length === 0) throw new ShareCodeError('empty')
 
   if (tokens.length < 3 || (tokens.length - 1) % 2 !== 0) {
-    throw new shareCodeError('invalidFormat')
+    throw new ShareCodeError('invalidFormat')
   }
 
   const baseColorIndex = Number.parseInt(tokens[0], 16)
@@ -338,7 +349,7 @@ function decodeShareCode(code: string) {
     baseColorIndex < 0 ||
     baseColorIndex >= colorSequence.length
   ) {
-    throw new shareCodeError('invalidBaseColor', tokens[0])
+    throw new ShareCodeError('invalidBaseColor', tokens[0])
   }
 
   const patterns: Pattern[] = []
@@ -347,12 +358,12 @@ function decodeShareCode(code: string) {
     const colorToken = tokens[i + 1]
     const patternId = findPatternByToken(patternToken)
     if (!patternId) {
-      throw new shareCodeError('invalidPattern', patternToken)
+      throw new ShareCodeError('invalidPattern', patternToken)
     }
 
     const colorIndex = Number.parseInt(colorToken, 16)
     if (Number.isNaN(colorIndex) || colorIndex < 0 || colorIndex >= colorSequence.length) {
-      throw new shareCodeError('invalidPatternColor', colorToken)
+      throw new ShareCodeError('invalidPatternColor', colorToken)
     }
 
     patterns.push({
@@ -375,24 +386,13 @@ type shareCodeErrorType =
   | 'invalidPattern'
   | 'invalidPatternColor'
 
-class shareCodeError extends Error {
+class ShareCodeError extends Error {
   constructor(
     public type: shareCodeErrorType,
     public detail?: string,
   ) {
     super(type)
   }
-}
-
-const shareCodeErrorMap: Record<
-  shareCodeErrorType,
-  { key: string; detailKey?: 'color' | 'pattern' }
-> = {
-  empty: { key: 'banner.shareCode.error.empty' },
-  invalidBaseColor: { key: 'banner.shareCode.error.invalidBaseColor', detailKey: 'color' },
-  invalidFormat: { key: 'banner.shareCode.error.invalidFormat' },
-  invalidPattern: { key: 'banner.shareCode.error.invalidPattern', detailKey: 'pattern' },
-  invalidPatternColor: { key: 'banner.shareCode.error.invalidPatternColor', detailKey: 'color' },
 }
 
 watch(
