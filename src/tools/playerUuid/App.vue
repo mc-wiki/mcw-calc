@@ -14,53 +14,14 @@ const { t } = useI18n()
 
 const API_URL = 'https://playerdb.co/api/player/minecraft/'
 const OFFLINE_PLAYER_PREFIX = 'OfflinePlayer:'
-const SKIN_LOCATION = [
-  'alex',
-  'ari',
-  'efe',
-  'kai',
-  'makena',
-  'noor',
-  'steve',
-  'sunny',
-  'zuri',
-  'alex',
-  'ari',
-  'efe',
-  'kai',
-  'makena',
-  'noor',
-  'steve',
-  'sunny',
-  'zuri',
-]
-const SKIN_NAME = [
-  'Alex (Slim)',
-  'Ari (Slim)',
-  'Efe (Slim)',
-  'Kai (Slim)',
-  'Makena (Slim)',
-  'Noor (Slim)',
-  'Steve (Slim)',
-  'Sunny (Slim)',
-  'Zuri (Slim)',
-  'Alex (Wide)',
-  'Ari (Wide)',
-  'Efe (Wide)',
-  'Kai (Wide)',
-  'Makena (Wide)',
-  'Noor (Wide)',
-  'Steve (Wide)',
-  'Sunny (Wide)',
-  'Zuri (Wide)',
-]
+const SKIN_LOCATION = ['alex', 'ari', 'efe', 'kai', 'makena', 'noor', 'steve', 'sunny', 'zuri']
 
 const playerName = ref(props.player)
 const playerOnlineUUID = ref()
 const playerOfflineUUID = ref()
 const playerOnlineAvatar = ref()
 const playerOfflineSkinLocation = ref(SKIN_LOCATION[6])
-const playerOfflineSkinName = ref(SKIN_NAME[6])
+const playerOfflineSkinName = ref(t('playerUuid.offlineSkinName.6'))
 const isLoading = ref(false)
 const playerOnlineLocatorBarColor = ref<[number, number, number] | null>()
 const playerOfflineLocatorBarColor = ref<[number, number, number]>([0, 0, 0])
@@ -82,8 +43,8 @@ async function updatePlayerInfo() {
   const offlineUUIDHash = uuid2HashCode(uuid)
   const r = offlineUUIDHash % 18n
   const index = (r ^ 18n) < 0 && r !== 0n ? r + 18n : r
-  playerOfflineSkinLocation.value = SKIN_LOCATION[Number(index)]
-  playerOfflineSkinName.value = SKIN_NAME[Number(index)]
+  playerOfflineSkinLocation.value = SKIN_LOCATION[Number(index) % 9]
+  playerOfflineSkinName.value = t(`playerUuid.offlineSkinName.${index}`)
   playerOfflineLocatorBarColor.value = setBrightness(
     ((255 & 0xff) << 24) | Number(offlineUUIDHash & 0xffffffn) | 0,
     0.9,
