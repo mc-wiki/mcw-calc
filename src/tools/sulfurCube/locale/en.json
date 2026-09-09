@@ -132,7 +132,7 @@
   "sulfurCube.attack.effectiveSpeed": "Attack speed",
   "sulfurCube.attack.recoveryTicks": "Full recovery period (ticks)",
   "sulfurCube.attack.attackStrength": "Recovery (%)",
-  "sulfurCube.attack.attackStrengthHelp": "Recovery after the attack cooldown.",
+  "sulfurCube.attack.attackStrengthHelp": "Recovery after the attack cooldown. Sprinting knockback and critical hits require more than 90% recovery.",
   "sulfurCube.attack.attackStrengthHelpLabel": "About attack recovery",
   "sulfurCube.attack.knockback": "Knockback",
   "sulfurCube.attack.sharpness": "Sharpness",

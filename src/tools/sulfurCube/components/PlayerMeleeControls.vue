@@ -92,19 +92,33 @@ const survivalAvailability = computed(() => {
       : { enabled: false },
   })
 })
-const criticalHitSelectable = computed(() => {
+const fullStrengthConditionSelectable = computed(() => {
   const strength = parseNumericInput(props.modelValue.attackStrengthPercent)
-  return strength !== null && strength > 90 && !props.modelValue.sprinting
+  return strength !== null && strength > 90
 })
+const sprintingSelectable = computed(
+  () => fullStrengthConditionSelectable.value && !props.modelValue.criticalHitConditions,
+)
+const criticalHitSelectable = computed(
+  () => fullStrengthConditionSelectable.value && !props.modelValue.sprinting,
+)
 
 function selectedLevel(enabled: boolean, value: NumericFormValue): number {
   return enabled ? (parseNumericInput(value) ?? 0) : 0
 }
 
 function update(fields: Partial<PlayerMeleeFormState>): void {
-  const next = { ...props.modelValue, ...fields }
+  let next = { ...props.modelValue, ...fields }
   const strength = parseNumericInput(next.attackStrengthPercent)
-  if (strength === null || strength <= 90 || next.sprinting) next.criticalHitConditions = false
+
+  if (strength === null || strength <= 90) {
+    next = { ...next, sprinting: false, criticalHitConditions: false }
+  } else if (fields.sprinting === true) {
+    next = { ...next, criticalHitConditions: false }
+  } else if (fields.criticalHitConditions === true) {
+    next = { ...next, sprinting: false }
+  }
+
   emit('update:modelValue', next)
 }
 
@@ -327,13 +341,16 @@ function warningKey(code: string): string {
       </CdxCheckbox>
 
       <div class="player-attack__conditions">
-        <CdxCheckbox
-          :model-value="modelValue.sprinting"
-          @update:model-value="update({ sprinting: $event })"
-        >
-          {{ t('sulfurCube.attack.sprinting') }}
-        </CdxCheckbox>
-        <span :class="{ 'player-attack__critical--unavailable': !criticalHitSelectable }">
+        <span :class="{ 'player-attack__condition--unavailable': !sprintingSelectable }">
+          <CdxCheckbox
+            :model-value="modelValue.sprinting"
+            :disabled="!sprintingSelectable"
+            @update:model-value="update({ sprinting: $event })"
+          >
+            {{ t('sulfurCube.attack.sprinting') }}
+          </CdxCheckbox>
+        </span>
+        <span :class="{ 'player-attack__condition--unavailable': !criticalHitSelectable }">
           <CdxCheckbox
             :model-value="modelValue.criticalHitConditions"
             :disabled="!criticalHitSelectable"
@@ -486,7 +503,7 @@ function warningKey(code: string): string {
   gap: 0.5rem 1rem;
   margin-left: auto;
 }
-.player-attack__critical--unavailable {
+.player-attack__condition--unavailable {
   opacity: 0.55;
 }
 .player-attack__survival-warning {
