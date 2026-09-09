@@ -40,6 +40,15 @@ const numberFormatter = computed(
     }),
 )
 
+const endpointCoordinateFormatter = computed(
+  () =>
+    new Intl.NumberFormat('en-US', {
+      maximumFractionDigits: 6,
+      minimumFractionDigits: 6,
+      useGrouping: false,
+    }),
+)
+
 function formatNumber(value: number): string {
   const normalized = Object.is(value, -0) ? 0 : value
 
@@ -76,6 +85,13 @@ function formatPair(first: number, second: number): string {
 
 function formatVector(x: number, y: number, z: number): string {
   return `(${formatNumber(x)}, ${formatNumber(y)}, ${formatNumber(z)})`
+}
+
+function formatEndpointCoordinateVector(x: number, y: number, z: number): string {
+  const format = (value: number) =>
+    endpointCoordinateFormatter.value.format(Object.is(value, -0) ? 0 : value)
+
+  return `(${format(x)}, ${format(y)}, ${format(z)})`
 }
 
 const summaryRows = computed<readonly ReadoutRow[]>(() => {
@@ -407,6 +423,14 @@ const trajectoryRows = computed<readonly ReadoutRow[]>(() => {
       value: formatNumber(trajectory.bounceEventCount),
     },
     { label: t('sulfurCube.readout.arcCount'), value: formatNumber(trajectory.arcCount) },
+    {
+      label: t('sulfurCube.readout.endpointCoordinates'),
+      value: formatEndpointCoordinateVector(
+        endpoint.feetPosition.x,
+        endpoint.feetPosition.y,
+        endpoint.feetPosition.z,
+      ),
+    },
     {
       label: t('sulfurCube.readout.finalVelocity'),
       value: formatVector(endpoint.velocity.x, endpoint.velocity.y, endpoint.velocity.z),
