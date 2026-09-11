@@ -40,6 +40,11 @@ export const je26_2Constants = {
   maximumDecodedMeleeEnchantmentLevel: sourcedValue(255, ['playerMeleeSharpness']),
   ordinarySurvivalSharpnessMaximum: sourcedValue(5, ['playerMeleeEnchantmentAvailability']),
   ordinarySurvivalKnockbackMaximum: sourcedValue(2, ['playerMeleeEnchantmentAvailability']),
+  commandFacingRadiansToDegreesFloat: sourcedValue(
+    Math.fround(Math.fround(180) / Math.fround(Math.PI)),
+    ['commandFacingPlayerAim'],
+    'Float32 result of 180F / PI, loaded by Entity.lookAt bytecode as a double constant.',
+  ),
   degreesToRadiansFloat: sourcedValue(0.01745329238474369, ['playerMeleeKnockback']),
   ordinarySurvivalPlayerMeleeReach: sourcedValue(3, ['playerMeleeReach']),
   entityRayClipTolerance: sourcedValue(1e-7, ['playerMeleeReach']),

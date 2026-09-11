@@ -263,7 +263,7 @@ export const provenance = {
     locator:
       'calculateViewVector and lookAt (local lines 1972-1980 and 3662-3673); Mth helpers are recorded by javaPrecisionTrigonometry',
     notes:
-      'Reproduces the validation protocol execute anchored-eyes facing conversion from the distinct eye and aim-point inputs into float pitch/yaw and a quantized view vector.',
+      'Reproduces the validation protocol execute anchored-eyes facing conversion from the distinct eye and aim-point inputs into float pitch/yaw and a quantized view vector. Entity.lookAt bytecode multiplies Mth.atan2 by the pre-rounded Float32 RAD_TO_DEG value loaded as double 57.2957763671875 before d2f.',
   },
   meleeEndpointValidation: {
     edition: 'Java Edition',

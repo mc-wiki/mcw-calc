@@ -11,6 +11,7 @@ import {
   deriveJe26_2PlayerAim,
   minecraftAtan2,
   minecraftWrapDegreesFloat,
+  radiansToDegreesFloat,
 } from '../numerics/je26_2PlayerAim'
 import { standardNumerics } from '../numerics/standard'
 import {
@@ -298,6 +299,10 @@ describe('java-precision numerics for JE 26.2', () => {
   it('keeps the Mth atan2 approximation inside the command-facing adapter', () => {
     expect(minecraftAtan2(1, 1)).toBe(0.7853981366411399)
     expect(javaPrecisionNumerics.atan2(1, 1)).toBe(Math.PI / 4)
+  })
+
+  it("uses Entity.lookAt bytecode's pre-rounded radians-to-degrees factor", () => {
+    expect(radiansToDegreesFloat).toBe(57.2957763671875)
   })
 
   it('reconstructs Entity lookAt rotation and calculateViewVector', () => {

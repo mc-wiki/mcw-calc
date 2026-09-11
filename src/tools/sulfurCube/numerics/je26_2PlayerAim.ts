@@ -1,4 +1,5 @@
 import type { Vec3 } from '../model/types'
+import { je26_2Constants } from '../data/je26_2/constants'
 import { minecraftCos, minecraftSin } from './javaPrecision'
 
 export interface Je26_2PlayerAim {
@@ -8,7 +9,7 @@ export interface Je26_2PlayerAim {
 }
 
 const degreesToRadiansFloat = Math.fround(Math.PI / 180)
-const piFloat = Math.fround(Math.PI)
+export const radiansToDegreesFloat = je26_2Constants.commandFacingRadiansToDegreesFloat.value
 const halfPi = Math.PI / 2
 const oneSixth = 1 / 6
 const fractionBiasBits = 4805340802404319232n
@@ -130,10 +131,10 @@ export function deriveJe26_2PlayerAim(eyePosition: Vec3, aimPoint: Vec3): Je26_2
   const horizontalDistance = Math.sqrt(xDifference * xDifference + zDifference * zDifference)
 
   const pitchBeforeWrap = Math.fround(
-    -(minecraftAtan2(yDifference, horizontalDistance) * Math.fround(180)) / piFloat,
+    -minecraftAtan2(yDifference, horizontalDistance) * radiansToDegreesFloat,
   )
   const yawBeforeOffset = Math.fround(
-    (minecraftAtan2(zDifference, xDifference) * Math.fround(180)) / piFloat,
+    minecraftAtan2(zDifference, xDifference) * radiansToDegreesFloat,
   )
   const yawBeforeWrap = Math.fround(yawBeforeOffset - Math.fround(90))
   const pitchDegrees = minecraftWrapDegreesFloat(pitchBeforeWrap)
