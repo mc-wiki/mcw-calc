@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 import { je26_2UniformFloorProfiles } from '../data/je26_2'
 import {
   advanceUniformFloorState,
+  shouldCommitResolvedMovement,
   simulateRepeatedUniformFloorTrajectory,
 } from '../model/trajectory'
 import { standardNumerics } from '../numerics/standard'
@@ -309,6 +310,64 @@ function expectVectorClose(
   expect(actual.y).toBeCloseTo(expected[1], 9)
   expect(actual.z).toBeCloseTo(expected[2], 9)
 }
+
+describe('entity movement position-commit gate', () => {
+  it('uses strict resolved-length and removed-length comparisons', () => {
+    expect(
+      shouldCommitResolvedMovement({ x: 2, y: 0, z: 0 }, { x: Math.sqrt(0.5), y: 0, z: 0 }, 1),
+    ).toBe(false)
+    expect(shouldCommitResolvedMovement({ x: 2, y: 0, z: 0 }, { x: 1, y: 0, z: 0 }, 1)).toBe(false)
+    expect(
+      shouldCommitResolvedMovement({ x: 2, y: 0, z: 0 }, { x: Math.sqrt(2), y: 0, z: 0 }, 1),
+    ).toBe(true)
+
+    expect(
+      shouldCommitResolvedMovement({ x: Math.sqrt(0.5), y: 0, z: 0 }, { x: 0, y: 0, z: 0 }, 1),
+    ).toBe(true)
+    expect(shouldCommitResolvedMovement({ x: 1, y: 0, z: 0 }, { x: 0, y: 0, z: 0 }, 1)).toBe(false)
+    expect(
+      shouldCommitResolvedMovement({ x: Math.sqrt(2), y: 0, z: 0 }, { x: 0, y: 0, z: 0 }, 1),
+    ).toBe(false)
+  })
+
+  it('retains position while continuing collision and fixed-point processing', () => {
+    const feetY = 0.000286935569256741
+    const assumptions = createUniformFloorTrajectoryAssumptions(0, {
+      bounciness: 0,
+      frictionModifier: 1,
+      airDragModifier: 1,
+    })
+    const initialState: UniformFloorState = {
+      tick: 0,
+      feetPosition: { x: 0, y: feetY, z: 0 },
+      velocity: { x: 0, y: -0.01, z: 0 },
+      onGround: false,
+      supportingFloor: false,
+    }
+    const tick = advanceUniformFloorState(initialState, assumptions, sourceFloatNumerics)
+
+    expect(tick.appliedMovement.y).toBeCloseTo(-feetY, 15)
+    expect(tick.commitsPosition).toBe(false)
+    expect(tick.collision).toMatchObject({
+      floorCollision: true,
+      verticalCollision: true,
+      verticalCollisionBelow: true,
+    })
+    expect(tick.end.feetPosition).toEqual(initialState.feetPosition)
+    expect(tick.end.onGround).toBe(true)
+    expect(tick.end.velocity.y).toBeLessThan(0)
+
+    const trajectory = simulateRepeatedUniformFloorTrajectory(
+      initialState,
+      2,
+      assumptions,
+      sourceFloatNumerics,
+    )
+    expect(trajectory.status).toBe('settled')
+    expect(trajectory.ticks).toHaveLength(1)
+    expect(trajectory.endpoint.feetPosition).toEqual(initialState.feetPosition)
+  })
+})
 
 describe('repeated uniform-floor trajectory for JE 26.2', () => {
   it.each(acceptedFixtures)('matches the accepted $id summary fixture', (fixture) => {

@@ -137,6 +137,7 @@ export function createUniformFloorTrajectoryAssumptions(
     gravity: je26_2Constants.defaultGravity.value,
     baseAirDrag: je26_2Constants.baseAirDrag.value,
     movementCutoff: je26_2Constants.movementCutoff.value,
+    positionCommitThreshold: je26_2Constants.entityMovementPositionCommitThreshold.value,
     movementBlockSampleOffset: je26_2Constants.movementBlockSampleOffset.value,
     floorY,
     cube: { ...properties },

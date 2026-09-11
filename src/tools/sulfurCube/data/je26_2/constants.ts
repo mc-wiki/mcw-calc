@@ -11,6 +11,7 @@ export const je26_2Constants = {
   vectorNormalizationThreshold: sourcedValue(1e-5, ['vectorNormalization']),
   movementCutoff: sourcedValue(0.003, ['airTravel']),
   baseAirDrag: sourcedValue(0.91, ['airTravel']),
+  entityMovementPositionCommitThreshold: sourcedValue(1e-7, ['repeatedUniformFloorMotion']),
   movementBlockSampleOffset: sourcedValue(0.5000010132789612, ['repeatedUniformFloorMotion']),
   ordinaryFullBlockFriction: sourcedValue(0.6000000238418579, ['flatFloorContact']),
   defaultGravity: sourcedValue(0.08, ['attributeDefaults']),

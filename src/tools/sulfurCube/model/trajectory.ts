@@ -26,6 +26,23 @@ function cutMovementComponent(value: number, cutoff: number): number {
   return Math.abs(value) < cutoff ? 0 : value
 }
 
+function squaredLength(vector: Vec3): number {
+  return vector.x * vector.x + vector.y * vector.y + vector.z * vector.z
+}
+
+export function shouldCommitResolvedMovement(
+  requestedMovement: Vec3,
+  resolvedMovement: Vec3,
+  threshold: number,
+): boolean {
+  const requestedLengthSquared = squaredLength(requestedMovement)
+  const resolvedLengthSquared = squaredLength(resolvedMovement)
+
+  return (
+    resolvedLengthSquared > threshold || requestedLengthSquared - resolvedLengthSquared < threshold
+  )
+}
+
 export function computeModifiedFriction(
   friction: number,
   modifier: number,
@@ -292,6 +309,7 @@ function assertUniformFloorAssumptions(
     gravity: assumptions.gravity,
     baseAirDrag: assumptions.baseAirDrag,
     movementCutoff: assumptions.movementCutoff,
+    positionCommitThreshold: assumptions.positionCommitThreshold,
     movementBlockSampleOffset: assumptions.movementBlockSampleOffset,
     floorY: assumptions.floorY,
     cubeBounciness: assumptions.cube.bounciness,
@@ -310,6 +328,9 @@ function assertUniformFloorAssumptions(
   }
   if (assumptions.movementCutoff < 0) {
     throw new RangeError('movementCutoff must not be negative')
+  }
+  if (assumptions.positionCommitThreshold < 0) {
+    throw new RangeError('positionCommitThreshold must not be negative')
   }
   if (assumptions.gravity < 0) {
     throw new RangeError('gravity must not be negative')
@@ -402,7 +423,14 @@ export function advanceUniformFloorState(
     y: floorCollision ? assumptions.floorY - state.feetPosition.y : effectiveVelocity.y,
     z: effectiveVelocity.z,
   }
-  const endFeetPosition = addVec3(state.feetPosition, appliedMovement)
+  const commitsPosition = shouldCommitResolvedMovement(
+    effectiveVelocity,
+    appliedMovement,
+    assumptions.positionCommitThreshold,
+  )
+  const endFeetPosition = commitsPosition
+    ? addVec3(state.feetPosition, appliedMovement)
+    : { ...state.feetPosition }
   const verticalMovementFraction = floorCollision ? appliedMovement.y / effectiveVelocity.y : null
   const eligible =
     floorCollision &&
@@ -474,6 +502,7 @@ export function advanceUniformFloorState(
     airDrag,
     horizontalTravelFactor,
     appliedMovement,
+    commitsPosition,
     endBlockSpeedFactor,
     collision: {
       geometricTouch,

@@ -288,6 +288,7 @@ export interface UniformFloorTrajectoryAssumptions {
   readonly gravity: number
   readonly baseAirDrag: number
   readonly movementCutoff: number
+  readonly positionCommitThreshold: number
   readonly movementBlockSampleOffset: number
   readonly floorY: number
   readonly cube: CubeMotionProperties
@@ -336,6 +337,7 @@ export interface UniformFloorTick {
   readonly airDrag: number
   readonly horizontalTravelFactor: number
   readonly appliedMovement: Vec3
+  readonly commitsPosition: boolean
   readonly endBlockSpeedFactor: number
   readonly collision: UniformFloorCollisionDiagnostics
   readonly rebound: UniformFloorReboundDiagnostics

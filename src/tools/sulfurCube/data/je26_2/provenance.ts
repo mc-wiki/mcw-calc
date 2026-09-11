@@ -313,7 +313,7 @@ export const provenance = {
     locator:
       'move, collide, updateSupportingBlock, applyEffectsFromBlocks, pushEntities and checkFallDamage (local lines 717-862 and 1143-1268); LivingEntity.travelInAir and computeModifiedFriction (local lines 2460-2492)',
     notes:
-      'Defines strict per-component movement cutoff, movement/collision ordering, retained onGround state on a rebound tick, floor speed-factor sampling, gravity and omnidirectional drag. The reader model is intentionally restricted to an infinite uniform horizontal floor.',
+      'Defines strict per-component movement cutoff, the separate 1.0e-7 squared-length position-commit gate, movement/collision ordering, retained onGround state on a rebound tick, floor speed-factor sampling, gravity and omnidirectional drag. The reader model is intentionally restricted to an infinite uniform horizontal floor.',
   },
   uniformFloorProperties: {
     edition: 'Java Edition',
