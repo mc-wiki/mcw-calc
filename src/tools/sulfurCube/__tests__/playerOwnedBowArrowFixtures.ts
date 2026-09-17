@@ -1,13 +1,13 @@
 import type { SulfurCubeKnockbackContext, Vec3 } from '../model/types'
 import type { PlayerOwnedBowArrowAttackConfiguration } from '../resolution'
-import { je26_2KnockbackMechanics } from '../data/je26_2'
+import { je26_3KnockbackMechanics } from '../data/je26_3'
 
 export const playerOwnedBowArrowFixtureProvenance = {
   edition: 'Java Edition',
   version: '26.2',
   source:
     'versions/26.2/decompiled/src/net/minecraft/world/entity/projectile/arrow/AbstractArrow.java',
-  sourceLedger: 'src/tools/sulfurCube/data/je26_2/provenance.ts',
+  sourceLedger: 'src/tools/sulfurCube/data/je26_3/provenance.ts',
   notes: 'Frozen player-owned arrow results derived from the recorded JE 26.2 source paths.',
 } as const
 
@@ -27,7 +27,7 @@ export function createAcceptedPlayerOwnedBowArrowContext(): SulfurCubeKnockbackC
       verticalPower: 0.10499999672174454,
       knockbackResistance: -2,
     },
-    mechanics: je26_2KnockbackMechanics,
+    mechanics: je26_3KnockbackMechanics,
   }
 }
 

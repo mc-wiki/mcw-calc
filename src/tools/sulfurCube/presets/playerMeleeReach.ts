@@ -1,6 +1,6 @@
 import type { ClearRayEntityReachResult } from '../model/reach'
 import type { SulfurCubeKnockbackContext } from '../model/types'
-import { je26_2OrdinaryPlayerMeleeReach } from '../data/je26_2'
+import { je26_3OrdinaryPlayerMeleeReach } from '../data/je26_3'
 import { resolveCubeClearRayReach } from '../model/reach'
 
 /**
@@ -14,9 +14,9 @@ export function resolveOrdinarySurvivalPlayerMeleeReach(
   return resolveCubeClearRayReach(
     context.attacker,
     context.cube,
-    je26_2OrdinaryPlayerMeleeReach.strictMaximumReach,
-    je26_2OrdinaryPlayerMeleeReach.sulfurCubePickRadius,
-    je26_2OrdinaryPlayerMeleeReach.absorbedSulfurCubeCanBePickedFromInside,
-    je26_2OrdinaryPlayerMeleeReach.clipTolerance,
+    je26_3OrdinaryPlayerMeleeReach.strictMaximumReach,
+    je26_3OrdinaryPlayerMeleeReach.sulfurCubePickRadius,
+    je26_3OrdinaryPlayerMeleeReach.absorbedSulfurCubeCanBePickedFromInside,
+    je26_3OrdinaryPlayerMeleeReach.clipTolerance,
   )
 }

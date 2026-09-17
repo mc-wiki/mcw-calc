@@ -1,18 +1,18 @@
-import type { Je26_2ToolMaterialId, Je26_2UniformFloorProfileId } from '../data/je26_2'
+import type { Je26_3ToolMaterialId, Je26_3UniformFloorProfileId } from '../data/je26_3'
 import type { DiagnosticInputs } from '../presets/diagnostic'
 import type { PlayerMeleeEvaluation, PlayerMeleeInputs } from '../presets/playerMelee'
 import fs from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { je26_2Constants } from '../data/je26_2'
+import { je26_3Constants } from '../data/je26_3'
 import { normalizeVec3 } from '../model/vectors'
 import { javaPrecisionNumerics, minecraftCos, minecraftSin } from '../numerics/javaPrecision'
 import {
-  calculateJe26_2ViewVector,
-  deriveJe26_2PlayerAim,
+  calculateJe26_3ViewVector,
+  deriveJe26_3PlayerAim,
   minecraftAtan2,
   minecraftWrapDegreesFloat,
   radiansToDegreesFloat,
-} from '../numerics/je26_2PlayerAim'
+} from '../numerics/je26_3PlayerAim'
 import { standardNumerics } from '../numerics/standard'
 import {
   deriveMinecraftYawDegreesFromAim,
@@ -151,7 +151,7 @@ const numericEdgeFixtures = JSON.parse(
   fs.readFileSync(numericEdgeFixtureUrl, 'utf8'),
 ) as NumericEdgeFixture
 
-function floorProfile(blockId: string): Je26_2UniformFloorProfileId {
+function floorProfile(blockId: string): Je26_3UniformFloorProfileId {
   if (blockId === 'minecraft:slime_block') return 'slime_block'
   if (blockId === 'minecraft:honey_block') return 'honey_block'
   if (blockId === 'minecraft:packed_ice') return 'ice_0_98'
@@ -171,7 +171,7 @@ function weaponChoice(itemId: string): PlayerMeleeInputs['weapon'] {
 
   return {
     type: match[2] as 'sword' | 'axe',
-    material: match[1] as Je26_2ToolMaterialId,
+    material: match[1] as Je26_3ToolMaterialId,
   }
 }
 
@@ -235,13 +235,13 @@ function evaluationFor(fixture: EndpointFixture, mode: 'standard' | 'java'): Pla
   const numerics = mode === 'java' ? javaPrecisionNumerics : standardNumerics
   const eyeHeight =
     mode === 'java'
-      ? Math.fround(je26_2Constants.standingPlayerEyeHeight.value)
-      : je26_2Constants.standingPlayerEyeHeight.value
+      ? Math.fround(je26_3Constants.standingPlayerEyeHeight.value)
+      : je26_3Constants.standingPlayerEyeHeight.value
   const { diagnostic, melee } = createEvaluationInputs(fixture, eyeHeight)
   const properties = resolvedProperties(fixture.absorbedBlock)
   const javaAim =
     mode === 'java'
-      ? deriveJe26_2PlayerAim(diagnostic.attackerEyePosition, diagnostic.aimPoint)
+      ? deriveJe26_3PlayerAim(diagnostic.attackerEyePosition, diagnostic.aimPoint)
       : null
   const yaw =
     javaAim?.yawDegrees ?? deriveMinecraftYawDegreesFromAim(diagnostic, 0, standardNumerics)
@@ -271,7 +271,7 @@ function vectorTuple(vector: { readonly x: number; readonly y: number; readonly 
   return [vector.x, vector.y, vector.z]
 }
 
-describe('java-precision numerics for JE 26.2', () => {
+describe('java-precision numerics for JE 26.3', () => {
   it('uses source Float32 boundaries without changing Java double primitives', () => {
     expect(javaPrecisionNumerics.sourceFloat(1 / 3)).toBe(Math.fround(1 / 3))
     expect(javaPrecisionNumerics.sqrt(2)).toBe(Math.sqrt(2))
@@ -309,7 +309,7 @@ describe('java-precision numerics for JE 26.2', () => {
     const fixture = numericEdgeFixtures.entityLookAt.find(({ name }) => name === 'general')!
     const eyePosition = fixture.eyePosition!
     const aimPoint = fixture.aimPoint!
-    const result = deriveJe26_2PlayerAim(
+    const result = deriveJe26_3PlayerAim(
       { x: eyePosition[0], y: eyePosition[1], z: eyePosition[2] },
       { x: aimPoint[0], y: aimPoint[1], z: aimPoint[2] },
     )
@@ -317,7 +317,7 @@ describe('java-precision numerics for JE 26.2', () => {
     expect(result.pitchDegrees).toBe(fixture.expected.pitch)
     expect(result.yawDegrees).toBe(fixture.expected.yaw)
     expect(result.lookDirection).toEqual(fixture.expected.look)
-    expect(calculateJe26_2ViewVector(result.pitchDegrees, result.yawDegrees)).toEqual(
+    expect(calculateJe26_3ViewVector(result.pitchDegrees, result.yawDegrees)).toEqual(
       result.lookDirection,
     )
   })
@@ -328,7 +328,7 @@ describe('java-precision numerics for JE 26.2', () => {
     const aimPoint = vertical.aimPoint!
 
     expect(
-      deriveJe26_2PlayerAim(
+      deriveJe26_3PlayerAim(
         { x: eyePosition[0], y: eyePosition[1], z: eyePosition[2] },
         { x: aimPoint[0], y: aimPoint[1], z: aimPoint[2] },
       ),
@@ -341,7 +341,7 @@ describe('java-precision numerics for JE 26.2', () => {
     const signedZero = numericEdgeFixtures.entityLookAt.find(
       ({ name }) => name === 'signed-zero-horizontal-components',
     )!
-    const signedZeroResult = deriveJe26_2PlayerAim(
+    const signedZeroResult = deriveJe26_3PlayerAim(
       { x: 0, y: Math.fround(1.62), z: 0 },
       { x: -0, y: Math.fround(1.62), z: -0 },
     )
@@ -400,9 +400,9 @@ describe('in-game melee endpoint validation for JE 26.2', () => {
     const fixture = endpointFixtures[Number(extreme.testId.slice(1)) - 1]!
     const { diagnostic } = createEvaluationInputs(
       fixture,
-      Math.fround(je26_2Constants.standingPlayerEyeHeight.value),
+      Math.fround(je26_3Constants.standingPlayerEyeHeight.value),
     )
-    const aim = deriveJe26_2PlayerAim(diagnostic.attackerEyePosition, diagnostic.aimPoint)
+    const aim = deriveJe26_3PlayerAim(diagnostic.attackerEyePosition, diagnostic.aimPoint)
     const evaluation = evaluationFor(fixture, 'java')
 
     expect(vectorTuple(diagnostic.attackerEyePosition)).toEqual(extreme.commandDerived.eyePosition)

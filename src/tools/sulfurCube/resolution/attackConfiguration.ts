@@ -14,7 +14,7 @@ import type {
   PlayerOwnedBowArrowAttackResolution,
   SuccessfulPlayerOwnedBowArrowAttackResolution,
 } from './playerOwnedBowArrow'
-import { je26_2PlayerMeleeMechanics } from '../data/je26_2'
+import { je26_3PlayerMeleeMechanics } from '../data/je26_3'
 import { addFiniteIssue, validateSulfurCubeKnockbackContext } from './attackValidation'
 import { resolveDirectionProvider } from './directionProvider'
 import { resolvePlayerOwnedBowArrowAttack } from './playerOwnedBowArrow'
@@ -533,7 +533,7 @@ export function resolveAttackConfiguration(
   configuration: AttackConfiguration,
   context: SulfurCubeKnockbackContext,
   numerics: NumericBackend,
-  mechanics: PlayerMeleeMechanicsParameters = je26_2PlayerMeleeMechanics,
+  mechanics: PlayerMeleeMechanicsParameters = je26_3PlayerMeleeMechanics,
 ): AttackResolution {
   if (configuration.family === 'primaryPlayerMelee') {
     return resolvePrimaryPlayerMeleeAttack(configuration, context, mechanics, numerics)

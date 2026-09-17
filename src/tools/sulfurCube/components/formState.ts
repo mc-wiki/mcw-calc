@@ -3,7 +3,7 @@ import type { NumericBackend } from '../numerics/types'
 import type { DiagnosticInputs } from '../presets/diagnostic'
 import type { PlayerMeleeInputs } from '../presets/playerMelee'
 import type { DiagnosticFormState, NumericFormValue, PlayerMeleeFormState } from './types'
-import { je26_2Constants, je26_2PlayerMeleeMechanics } from '../data/je26_2'
+import { je26_3Constants, je26_3PlayerMeleeMechanics } from '../data/je26_3'
 import { parseNumericInput } from '../input/numericInput'
 import { standardNumerics } from '../numerics/standard'
 
@@ -24,9 +24,9 @@ export function createPlayerMeleeFormState(inputs: PlayerMeleeInputs): PlayerMel
     knockbackLevel: inputs.knockback.enabled ? stringifyNumber(inputs.knockback.level) : '1',
     allowNonVanillaEnchantmentLevels:
       (inputs.sharpness.enabled &&
-        inputs.sharpness.level > je26_2PlayerMeleeMechanics.ordinarySurvivalSharpnessMaximum) ||
+        inputs.sharpness.level > je26_3PlayerMeleeMechanics.ordinarySurvivalSharpnessMaximum) ||
       (inputs.knockback.enabled &&
-        inputs.knockback.level > je26_2PlayerMeleeMechanics.ordinarySurvivalKnockbackMaximum),
+        inputs.knockback.level > je26_3PlayerMeleeMechanics.ordinarySurvivalKnockbackMaximum),
   }
 }
 
@@ -48,10 +48,10 @@ export function parsePlayerMeleeFormState(state: PlayerMeleeFormState): PlayerMe
     if (
       !Number.isInteger(level) ||
       level < 1 ||
-      level > je26_2PlayerMeleeMechanics.maximumDecodedEnchantmentLevel
+      level > je26_3PlayerMeleeMechanics.maximumDecodedEnchantmentLevel
     ) {
       throw new RangeError(
-        `${field} must be an integer from 1 to ${je26_2PlayerMeleeMechanics.maximumDecodedEnchantmentLevel}`,
+        `${field} must be an integer from 1 to ${je26_3PlayerMeleeMechanics.maximumDecodedEnchantmentLevel}`,
       )
     }
     return { enabled: true, level }
@@ -151,7 +151,7 @@ export function resetAttackerEyeToStandingPresetInFormState(
   numerics: NumericBackend = standardNumerics,
 ): DiagnosticFormState {
   const inputs = parseDiagnosticFormState(state)
-  const eyeHeight = numerics.sourceFloat(je26_2Constants.standingPlayerEyeHeight.value)
+  const eyeHeight = numerics.sourceFloat(je26_3Constants.standingPlayerEyeHeight.value)
 
   return {
     ...state,

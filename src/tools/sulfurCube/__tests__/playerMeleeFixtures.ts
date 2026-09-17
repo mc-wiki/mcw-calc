@@ -3,16 +3,16 @@ import type {
   PlayerCriticalEligibilityState,
   PrimaryPlayerMeleeAttackConfiguration,
 } from '../resolution'
-import { je26_2KnockbackMechanics } from '../data/je26_2'
+import { je26_3KnockbackMechanics } from '../data/je26_3'
 
 export const playerMeleeFixtureProvenance = {
   edition: 'Java Edition',
-  version: '26.2',
-  source: 'versions/26.2/decompiled/src/net/minecraft/world/entity/player/Player.java',
+  version: '26.3',
+  source: 'versions/26.3/decompiled/src/net/minecraft/world/entity/player/Player.java',
   independentDirectionSource:
-    'versions/26.2/decompiled/src/net/minecraft/world/entity/monster/cubemob/SulfurCube.java',
+    'versions/26.3/decompiled/src/net/minecraft/world/entity/monster/cubemob/SulfurCube.java',
   notes:
-    'Frozen primary-player-melee results derived from the source paths recorded in data/je26_2/provenance.ts.',
+    'Frozen primary-player-melee results derived from the source paths recorded in data/je26_3/provenance.ts.',
 } as const
 
 export const groundedCriticalEligibility: PlayerCriticalEligibilityState = {
@@ -55,7 +55,7 @@ export function createAcceptedPlayerMeleeContext(): SulfurCubeKnockbackContext {
       verticalPower: 0.10499999672174454,
       knockbackResistance: -2,
     },
-    mechanics: je26_2KnockbackMechanics,
+    mechanics: je26_3KnockbackMechanics,
   }
 }
 

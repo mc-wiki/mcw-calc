@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import type { MenuItemData } from '@wikimedia/codex'
-import type { Je26_2PlayerMeleeWeaponPresetId } from '../data/je26_2'
+import type { Je26_3PlayerMeleeWeaponPresetId } from '../data/je26_3'
 import type { NumericFormValue, PlayerMeleeFormState } from './types'
 import { CdxButton, CdxCheckbox, CdxField, CdxSelect, CdxTextInput } from '@wikimedia/codex'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getImageLink } from '@/utils/image'
 import {
-  je26_2PlayerMeleeMechanics,
-  je26_2PlayerMeleeWeaponPresets,
-  je26_2ToolMaterialOrder,
-  resolveJe26_2PlayerMeleeWeaponPreset,
-} from '../data/je26_2'
+  je26_3PlayerMeleeMechanics,
+  je26_3PlayerMeleeWeaponPresets,
+  je26_3ToolMaterialOrder,
+  resolveJe26_3PlayerMeleeWeaponPreset,
+} from '../data/je26_3'
 import { parseNumericInput, sanitizeNumericInput } from '../input/numericInput'
 import { resolvePlayerMeleeVanillaSurvivalAvailability } from '../presets/playerMelee'
 import InfoTooltip from './InfoTooltip.vue'
@@ -25,9 +25,9 @@ const emit = defineEmits<{
   reset: []
 }>()
 const { t } = useI18n()
-const maximumEnchantmentLevel = je26_2PlayerMeleeMechanics.maximumDecodedEnchantmentLevel
-const ordinarySharpnessMaximum = je26_2PlayerMeleeMechanics.ordinarySurvivalSharpnessMaximum
-const ordinaryKnockbackMaximum = je26_2PlayerMeleeMechanics.ordinarySurvivalKnockbackMaximum
+const maximumEnchantmentLevel = je26_3PlayerMeleeMechanics.maximumDecodedEnchantmentLevel
+const ordinarySharpnessMaximum = je26_3PlayerMeleeMechanics.ordinarySurvivalSharpnessMaximum
+const ordinaryKnockbackMaximum = je26_3PlayerMeleeMechanics.ordinarySurvivalKnockbackMaximum
 
 function createLevelItems(maximum: number): MenuItemData[] {
   return Array.from({ length: maximum + 1 }, (_, level) => ({ value: level, label: String(level) }))
@@ -36,17 +36,17 @@ function createLevelItems(maximum: number): MenuItemData[] {
 const ordinarySharpnessItems = createLevelItems(ordinarySharpnessMaximum)
 const ordinaryKnockbackItems = createLevelItems(ordinaryKnockbackMaximum)
 const weaponChoices = computed(() => {
-  const ids: Je26_2PlayerMeleeWeaponPresetId[] = [
-    ...je26_2ToolMaterialOrder.map(
-      (material) => `${material}Axe` as Je26_2PlayerMeleeWeaponPresetId,
+  const ids: Je26_3PlayerMeleeWeaponPresetId[] = [
+    ...je26_3ToolMaterialOrder.map(
+      (material) => `${material}Axe` as Je26_3PlayerMeleeWeaponPresetId,
     ),
-    ...je26_2ToolMaterialOrder.map(
-      (material) => `${material}Sword` as Je26_2PlayerMeleeWeaponPresetId,
+    ...je26_3ToolMaterialOrder.map(
+      (material) => `${material}Sword` as Je26_3PlayerMeleeWeaponPresetId,
     ),
   ]
 
   return ids.map((id) => {
-    const preset = je26_2PlayerMeleeWeaponPresets[id]
+    const preset = je26_3PlayerMeleeWeaponPresets[id]
     const itemName = preset.itemId.value!.replace('minecraft:', '').replace(/_/g, '-')
 
     return {
@@ -60,7 +60,7 @@ const weaponChoices = computed(() => {
 })
 const selectedWeaponId = computed(
   () =>
-    resolveJe26_2PlayerMeleeWeaponPreset(
+    resolveJe26_3PlayerMeleeWeaponPreset(
       props.modelValue.weaponType === 'bareHand'
         ? { type: 'bareHand' }
         : {
@@ -69,7 +69,7 @@ const selectedWeaponId = computed(
           },
     ).id,
 )
-const weaponPreset = computed(() => je26_2PlayerMeleeWeaponPresets[selectedWeaponId.value])
+const weaponPreset = computed(() => je26_3PlayerMeleeWeaponPresets[selectedWeaponId.value])
 const survivalAvailability = computed(() => {
   const levelSelection = (value: NumericFormValue) => ({
     enabled: true as const,
@@ -122,8 +122,8 @@ function update(fields: Partial<PlayerMeleeFormState>): void {
   emit('update:modelValue', next)
 }
 
-function updateWeapon(id: Je26_2PlayerMeleeWeaponPresetId): void {
-  const preset = je26_2PlayerMeleeWeaponPresets[id]
+function updateWeapon(id: Je26_3PlayerMeleeWeaponPresetId): void {
+  const preset = je26_3PlayerMeleeWeaponPresets[id]
   update({
     weaponType: preset.weaponType,
     ...(preset.material === null ? {} : { weaponMaterial: preset.material }),

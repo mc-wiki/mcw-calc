@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import {
-  je26_2ArchetypeRegistryOrder,
-  je26_2ArchetypesById,
-  je26_2BlockMembershipIndex,
-} from '../data/je26_2'
+  je26_3ArchetypeRegistryOrder,
+  je26_3ArchetypesById,
+  je26_3BlockMembershipIndex,
+} from '../data/je26_3'
 import { standardNumerics } from '../numerics/standard'
 import { createDefaultDiagnosticInputs, evaluateDiagnosticInputs } from '../presets/diagnostic'
 import {
   copyCurrentResolvedCubeProperties,
   createDefaultCubePropertySelectionState,
-  je26_2ArchetypeRepresentativeBlocks,
+  je26_3ArchetypeRepresentativeBlocks,
   resolveArchetype,
   resolveCubePropertySelection,
   selectCubePropertyArchetype,
@@ -22,7 +22,7 @@ describe('cube property selection modes', () => {
   it('starts in Block mode with Oak Planks and preserves the Bouncy result', () => {
     const state = createDefaultCubePropertySelectionState()
     const resolved = resolveCubePropertySelection(state)
-    const bouncy = resolveArchetype(je26_2ArchetypesById['minecraft:bouncy'])
+    const bouncy = resolveArchetype(je26_3ArchetypesById['minecraft:bouncy'])
 
     expect(state).toMatchObject({
       mode: 'block',
@@ -75,14 +75,14 @@ describe('cube property selection modes', () => {
   })
 
   it('assigns every archetype its stable representative block without selecting one in Custom mode', () => {
-    for (const archetypeId of je26_2ArchetypeRegistryOrder) {
+    for (const archetypeId of je26_3ArchetypeRegistryOrder) {
       const state = selectCubePropertyArchetype(
         selectCubePropertyMode(createDefaultCubePropertySelectionState(), 'archetype'),
         archetypeId,
       )
 
-      expect(state.selectedBlockId).toBe(je26_2ArchetypeRepresentativeBlocks[archetypeId])
-      expect(je26_2BlockMembershipIndex[state.selectedBlockId]).toBeDefined()
+      expect(state.selectedBlockId).toBe(je26_3ArchetypeRepresentativeBlocks[archetypeId])
+      expect(je26_3BlockMembershipIndex[state.selectedBlockId]).toBeDefined()
     }
 
     expect(selectCubePropertyMode(createDefaultCubePropertySelectionState(), 'custom').mode).toBe(
@@ -202,16 +202,16 @@ describe('cube property selection modes', () => {
     expect(resolveCubePropertySelection(state).values?.horizontalPower).toBe(0)
   })
 
-  it('rejects identifiers outside each fixed JE 26.2 selector universe', () => {
+  it('rejects identifiers outside each fixed JE 26.3 selector universe', () => {
     expect(() =>
       selectCubePropertyBlock(createDefaultCubePropertySelectionState(), 'minecraft:stone_stairs'),
-    ).toThrow(/unknown JE 26\.2 swallowable block item/)
+    ).toThrow(/unknown JE 26\.3 swallowable block item/)
     expect(() =>
       selectCubePropertyArchetype(
         createDefaultCubePropertySelectionState(),
         'minecraft:not_real' as 'minecraft:bouncy',
       ),
-    ).toThrow(/unknown JE 26\.2 sulfur cube archetype/)
+    ).toThrow(/unknown JE 26\.3 sulfur cube archetype/)
   })
 
   it('feeds selected launch and air-drag values into evaluation', () => {

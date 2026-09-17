@@ -1,12 +1,12 @@
 import type { DirectionProviderConfiguration } from '../resolution'
 import { describe, expect, it } from 'vitest'
-import { je26_2PlayerMeleeMechanics } from '../data/je26_2'
+import { je26_3PlayerMeleeMechanics } from '../data/je26_3'
 import { standardNumerics } from '../numerics/standard'
 import { resolveDirectionProvider } from '../resolution'
 
-const mechanics = je26_2PlayerMeleeMechanics
+const mechanics = je26_3PlayerMeleeMechanics
 
-describe('horizontal base-direction provider resolution for JE 26.2', () => {
+describe('horizontal base-direction provider resolution for JE 26.3', () => {
   it.each([
     {
       id: 'non-projectile source position',
@@ -72,7 +72,7 @@ describe('horizontal base-direction provider resolution for JE 26.2', () => {
       expect(result.horizontalBaseDirection.z).toBeCloseTo(expectedDirection.z, 7)
       expect(result.diagnostics.formula).toBe(expectedFormula)
       expect(result.diagnostics.providerId).toBe(configuration.providerId)
-      expect(result.diagnostics.sourceVersion).toBe('Java Edition 26.2')
+      expect(result.diagnostics.sourceVersion).toBe('Java Edition 26.3')
       expect(result.diagnostics.collisionPointUsed).toBe(false)
     },
   )

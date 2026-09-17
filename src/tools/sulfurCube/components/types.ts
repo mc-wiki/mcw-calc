@@ -1,8 +1,8 @@
 import type {
-  Je26_2PlayerMeleeWeaponType,
-  Je26_2ToolMaterialId,
-  Je26_2UniformFloorProfileId,
-} from '../data/je26_2'
+  Je26_3PlayerMeleeWeaponType,
+  Je26_3ToolMaterialId,
+  Je26_3UniformFloorProfileId,
+} from '../data/je26_3'
 
 export type NumericFormValue = string | number
 
@@ -21,13 +21,13 @@ export interface DiagnosticFormState {
   readonly aimZ: NumericFormValue
   readonly damageArgument: NumericFormValue
   readonly trajectoryTicks: NumericFormValue
-  readonly floorProfileId: Je26_2UniformFloorProfileId
+  readonly floorProfileId: Je26_3UniformFloorProfileId
 }
 
 export interface PlayerMeleeFormState {
-  readonly weaponType: Je26_2PlayerMeleeWeaponType
+  readonly weaponType: Je26_3PlayerMeleeWeaponType
   /** Preserved while Bare hand is selected so changing back restores the material. */
-  readonly weaponMaterial: Je26_2ToolMaterialId
+  readonly weaponMaterial: Je26_3ToolMaterialId
   readonly attackStrengthPercent: NumericFormValue
   readonly sprinting: boolean
   readonly criticalHitConditions: boolean

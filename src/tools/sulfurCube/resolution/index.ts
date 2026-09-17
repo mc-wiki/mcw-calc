@@ -18,8 +18,8 @@ export type {
   UnsupportedAttackResolution,
 } from './attackConfiguration'
 export type { AttackConfigurationIssue } from './attackValidation'
-export { foldAttributeModifiers, je26_2AttributeDefinitions } from './attributes'
-export { matchBlockDefinitions, resolveBlock, resolveJe26_2Block } from './blockResolution'
+export { foldAttributeModifiers, je26_3AttributeDefinitions } from './attributes'
+export { matchBlockDefinitions, resolveBlock, resolveJe26_3Block } from './blockResolution'
 export type {
   BlockDefinitionMatchResult,
   BlockEligibility,
@@ -75,7 +75,7 @@ export type {
 export {
   copyCurrentResolvedCubeProperties,
   createDefaultCubePropertySelectionState,
-  je26_2ArchetypeRepresentativeBlocks,
+  je26_3ArchetypeRepresentativeBlocks,
   resolveCubePropertySelection,
   selectCubePropertyArchetype,
   selectCubePropertyBlock,

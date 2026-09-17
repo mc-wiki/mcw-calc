@@ -1,6 +1,6 @@
 import type { NumericBackend } from '../numerics/types'
 import { describe, expect, it } from 'vitest'
-import { je26_2PlayerOwnedBowArrowMechanics, provenance } from '../data/je26_2'
+import { je26_3PlayerOwnedBowArrowMechanics, provenance } from '../data/je26_3'
 import { applyVelocityOperations } from '../model/velocityOperations'
 import { standardNumerics } from '../numerics/standard'
 import { resolveAttackConfiguration, resolvePlayerOwnedBowArrowAttack } from '../resolution'
@@ -314,7 +314,7 @@ describe('player-owned bow-arrow attack resolution', () => {
     })
   })
 
-  it('keeps accepted evidence and mechanics constants traceable to JE 26.2 sources', () => {
+  it('keeps accepted evidence and mechanics constants traceable to their source versions', () => {
     expect(playerOwnedBowArrowFixtureProvenance).toMatchObject({
       edition: 'Java Edition',
       version: '26.2',
@@ -322,7 +322,7 @@ describe('player-owned bow-arrow attack resolution', () => {
     expect(provenance.playerBowArrowShot.sourcePath).toContain('BowItem.java')
     expect(provenance.playerBowArrowDamage.sourcePath).toContain('AbstractArrow.java')
     expect(provenance.playerBowArrowPunch.sourcePath).toContain('AbstractArrow.java')
-    expect(je26_2PlayerOwnedBowArrowMechanics).toMatchObject({
+    expect(je26_3PlayerOwnedBowArrowMechanics).toMatchObject({
       minimumDrawTicks: 3,
       nominalSpeedScale: 3,
       storedBaseDamage: 2,

@@ -7,7 +7,7 @@ import type {
 } from '../model/types'
 import type { DiagnosticEvaluation } from '../presets/diagnostic'
 import type { PlanePoint, WorldBounds } from './types'
-import { je26_2Constants } from '../data/je26_2'
+import { je26_3Constants } from '../data/je26_3'
 import {
   aimArrowLength,
   launchVectorDisplayLength,
@@ -351,7 +351,7 @@ export function createTopDownScenePresentation(
     cube: { center: cubeCenter, width: context.cube.dimensions.width },
     attacker: {
       center: attackerCenter,
-      width: je26_2Constants.standingPlayerDimensions.value.width,
+      width: je26_3Constants.standingPlayerDimensions.value.width,
     },
     aimPoint,
     aimArrowEnd,

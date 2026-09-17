@@ -1,6 +1,6 @@
-import type { Je26_2ArchetypeDefinition } from '../data/je26_2'
+import type { Je26_3ArchetypeDefinition } from '../data/je26_3'
 import type { ResolvableCubeDefinition, ResolvedCubeProfile } from './types'
-import { je26_2Archetypes, je26_2BlockMembershipIndex } from '../data/je26_2'
+import { je26_3Archetypes, je26_3BlockMembershipIndex } from '../data/je26_3'
 import { foldMatchingDefinitions } from './cubeProperties'
 
 export type BlockItemClassification =
@@ -42,7 +42,7 @@ export type BlockResolutionDiagnostic =
       readonly itemClassification: 'known_non_block_item' | 'block_without_usable_item_stack'
     }
 
-type CandidateDefinition = ResolvableCubeDefinition | Je26_2ArchetypeDefinition
+type CandidateDefinition = ResolvableCubeDefinition | Je26_3ArchetypeDefinition
 
 export interface BlockDefinitionMatchResult {
   readonly itemId: string
@@ -167,9 +167,9 @@ export function resolveBlock(
   }
 }
 
-export function resolveJe26_2Block(
+export function resolveJe26_3Block(
   itemId: string,
   itemClassification: BlockItemClassification = 'unknown',
 ): BlockResolutionResult {
-  return resolveBlock(itemId, je26_2BlockMembershipIndex, je26_2Archetypes, itemClassification)
+  return resolveBlock(itemId, je26_3BlockMembershipIndex, je26_3Archetypes, itemClassification)
 }

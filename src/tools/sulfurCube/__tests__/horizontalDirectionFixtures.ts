@@ -76,7 +76,7 @@ export const horizontalProviderSharedGeometry = Object.freeze({
   expectedAngleDelta: 0.3738119602203369,
 })
 
-/** Isolates each verified in-scope JE 26.2 base-direction provider at one geometry. */
+/** Isolates each verified in-scope JE 26.3 base-direction provider at one geometry. */
 export const horizontalProviderFixtures = [
   {
     id: 'horizontal_non_projectile_source_position',

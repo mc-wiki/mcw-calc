@@ -1,8 +1,8 @@
 import type {
-  Je26_2PlayerMeleeWeaponPreset,
-  Je26_2PlayerMeleeWeaponPresetId,
+  Je26_3PlayerMeleeWeaponPreset,
+  Je26_3PlayerMeleeWeaponPresetId,
   PlayerMeleeWeaponChoice,
-} from '../data/je26_2'
+} from '../data/je26_3'
 import type { CubeLaunchProperties, Vec3, VelocityOperationSequenceResult } from '../model/types'
 import type { NumericBackend } from '../numerics/types'
 import type {
@@ -12,11 +12,11 @@ import type {
 } from '../resolution'
 import type { DiagnosticEvaluation, DiagnosticInputs } from './diagnostic'
 import {
-  je26_2KnockbackMechanics,
-  je26_2PlayerMeleeMechanics,
-  je26_2UniformFloorProfiles,
-  resolveJe26_2PlayerMeleeWeaponPreset,
-} from '../data/je26_2'
+  je26_3KnockbackMechanics,
+  je26_3PlayerMeleeMechanics,
+  je26_3UniformFloorProfiles,
+  resolveJe26_3PlayerMeleeWeaponPreset,
+} from '../data/je26_3'
 import { summarizeLaunchVelocity } from '../model/launchSummary'
 import { simulateRepeatedUniformFloorTrajectory } from '../model/trajectory'
 import { subtractVec3 } from '../model/vectors'
@@ -49,7 +49,7 @@ export interface PlayerMeleeInputs {
 export interface PlayerMeleeEvaluation extends DiagnosticEvaluation {
   readonly kind: 'primaryPlayerMelee'
   readonly playerMeleeInputs: PlayerMeleeInputs
-  readonly weaponPreset: Je26_2PlayerMeleeWeaponPreset
+  readonly weaponPreset: Je26_3PlayerMeleeWeaponPreset
   readonly resolvedEnchantments: ResolvedOrdinaryMeleeEnchantments
   readonly availability: PlayerMeleeVanillaSurvivalAvailability
   readonly attackConfiguration: PrimaryPlayerMeleeAttackConfiguration
@@ -74,7 +74,7 @@ export interface PlayerMeleeVanillaSurvivalIssue {
     | 'aboveVanillaSurvivalMaximum'
     | 'invalidEnchantmentLevel'
   readonly enchantment: 'sharpness' | 'knockback'
-  readonly weaponPresetId: Je26_2PlayerMeleeWeaponPresetId
+  readonly weaponPresetId: Je26_3PlayerMeleeWeaponPresetId
   readonly selectedLevel: number
   readonly maximumLevel: number
 }
@@ -120,11 +120,11 @@ export function createDefaultPlayerMeleeInputs(): PlayerMeleeInputs {
 export function resolvePlayerMeleeVanillaSurvivalAvailability(
   inputs: Pick<PlayerMeleeInputs, 'weapon' | 'sharpness' | 'knockback'>,
 ): PlayerMeleeVanillaSurvivalAvailability {
-  const weapon = resolveJe26_2PlayerMeleeWeaponPreset(inputs.weapon)
+  const weapon = resolveJe26_3PlayerMeleeWeaponPreset(inputs.weapon)
   const issues: PlayerMeleeVanillaSurvivalIssue[] = []
   const declaredMaximumLevels = {
-    sharpness: je26_2PlayerMeleeMechanics.ordinarySurvivalSharpnessMaximum,
-    knockback: je26_2PlayerMeleeMechanics.ordinarySurvivalKnockbackMaximum,
+    sharpness: je26_3PlayerMeleeMechanics.ordinarySurvivalSharpnessMaximum,
+    knockback: je26_3PlayerMeleeMechanics.ordinarySurvivalKnockbackMaximum,
   } as const
 
   for (const enchantment of ['sharpness', 'knockback'] as const) {
@@ -135,7 +135,7 @@ export function resolvePlayerMeleeVanillaSurvivalAvailability(
     if (
       !Number.isInteger(selected.level) ||
       selected.level < 1 ||
-      selected.level > je26_2PlayerMeleeMechanics.maximumDecodedEnchantmentLevel
+      selected.level > je26_3PlayerMeleeMechanics.maximumDecodedEnchantmentLevel
     ) {
       issues.push({
         code: 'invalidEnchantmentLevel',
@@ -192,9 +192,9 @@ export function resolveSharpnessDamageBonus(
   assertValidEnabledEnchantment(selection, 'Sharpness')
 
   return numerics.sourceFloat(
-    je26_2PlayerMeleeMechanics.sharpnessFirstLevelDamageAddition +
+    je26_3PlayerMeleeMechanics.sharpnessFirstLevelDamageAddition +
       numerics.sourceFloat(
-        je26_2PlayerMeleeMechanics.sharpnessAdditionalLevelDamageAddition * (selection.level - 1),
+        je26_3PlayerMeleeMechanics.sharpnessAdditionalLevelDamageAddition * (selection.level - 1),
       ),
   )
 }
@@ -207,10 +207,10 @@ function assertValidEnabledEnchantment(
   if (
     !Number.isInteger(selection.level) ||
     selection.level < 1 ||
-    selection.level > je26_2PlayerMeleeMechanics.maximumDecodedEnchantmentLevel
+    selection.level > je26_3PlayerMeleeMechanics.maximumDecodedEnchantmentLevel
   ) {
     throw new RangeError(
-      `enabled ${name} level must be an integer from 1 to ${je26_2PlayerMeleeMechanics.maximumDecodedEnchantmentLevel}`,
+      `enabled ${name} level must be an integer from 1 to ${je26_3PlayerMeleeMechanics.maximumDecodedEnchantmentLevel}`,
     )
   }
 }
@@ -233,7 +233,7 @@ export function resolveOrdinaryMeleeEnchantments(
       knockbackLevel === null
         ? 0
         : numerics.sourceFloat(
-            knockbackLevel * je26_2PlayerMeleeMechanics.knockbackPerEnchantmentLevel,
+            knockbackLevel * je26_3PlayerMeleeMechanics.knockbackPerEnchantmentLevel,
           ),
   }
 }
@@ -252,7 +252,7 @@ export function deriveMinecraftYawDegreesFromAim(
   const horizontalLength = numerics.sqrt(horizontalX * horizontalX + horizontalZ * horizontalZ)
 
   if (
-    horizontalLength < numerics.sourceFloat(je26_2KnockbackMechanics.vectorNormalizationThreshold)
+    horizontalLength < numerics.sourceFloat(je26_3KnockbackMechanics.vectorNormalizationThreshold)
   ) {
     return fallbackYawDegrees
   }
@@ -265,11 +265,11 @@ export function createPrimaryPlayerMeleeConfiguration(
   attackerYawDegrees: number,
   numerics: NumericBackend = standardNumerics,
 ): PrimaryPlayerMeleeAttackConfiguration {
-  const weapon = resolveJe26_2PlayerMeleeWeaponPreset(inputs.weapon)
+  const weapon = resolveJe26_3PlayerMeleeWeaponPreset(inputs.weapon)
   const availability = resolvePlayerMeleeVanillaSurvivalAvailability(inputs)
   if (availability.status === 'invalid') {
     throw new RangeError(
-      `enabled enchantment levels must be integers from 1 to ${je26_2PlayerMeleeMechanics.maximumDecodedEnchantmentLevel}`,
+      `enabled enchantment levels must be integers from 1 to ${je26_3PlayerMeleeMechanics.maximumDecodedEnchantmentLevel}`,
     )
   }
   const enchantments = resolveOrdinaryMeleeEnchantments(inputs, numerics)
@@ -338,7 +338,7 @@ export function evaluatePlayerMeleeInputs(
     createUniformFloorTrajectoryAssumptions(
       context.cube.feetPosition.y,
       properties,
-      je26_2UniformFloorProfiles[diagnosticInputs.floorProfileId],
+      je26_3UniformFloorProfiles[diagnosticInputs.floorProfileId],
     ),
     numerics,
   )
@@ -362,11 +362,11 @@ export function evaluatePlayerMeleeInputs(
     trajectory,
     launchSummary: summarizeLaunchVelocity(
       launchVelocity,
-      numerics.sourceFloat(je26_2KnockbackMechanics.vectorNormalizationThreshold),
+      numerics.sourceFloat(je26_3KnockbackMechanics.vectorNormalizationThreshold),
       numerics,
     ),
     playerMeleeInputs: { ...playerMeleeInputs },
-    weaponPreset: resolveJe26_2PlayerMeleeWeaponPreset(playerMeleeInputs.weapon),
+    weaponPreset: resolveJe26_3PlayerMeleeWeaponPreset(playerMeleeInputs.weapon),
     resolvedEnchantments: resolveOrdinaryMeleeEnchantments(playerMeleeInputs, numerics),
     availability: resolvePlayerMeleeVanillaSurvivalAvailability(playerMeleeInputs),
     attackConfiguration,

@@ -1,5 +1,5 @@
 import type { ProvenanceRecord, SourcedValue } from './provenance'
-import { je26_2Constants } from './constants'
+import { je26_3Constants } from './constants'
 import { provenance, sourcedValue } from './provenance'
 
 export type AttributeModifierOperation =
@@ -66,8 +66,8 @@ export interface VersionedSoundSettings {
   readonly pushSoundCooldown: VersionedNumericField
 }
 
-export interface Je26_2ArchetypeDefinition {
-  readonly id: Je26_2ArchetypeId
+export interface Je26_3ArchetypeDefinition {
+  readonly id: Je26_3ArchetypeId
   readonly registryIndex: number
   readonly source: DefinitionFieldSource
   readonly items: DefinitionField<string>
@@ -79,7 +79,7 @@ export interface Je26_2ArchetypeDefinition {
   readonly soundSettings: VersionedSoundSettings
 }
 
-export const je26_2ArchetypeRegistryOrder = [
+export const je26_3ArchetypeRegistryOrder = [
   'minecraft:bouncy',
   'minecraft:explosive',
   'minecraft:fast_flat',
@@ -94,7 +94,7 @@ export const je26_2ArchetypeRegistryOrder = [
   'minecraft:sticky',
 ] as const
 
-export type Je26_2ArchetypeId = (typeof je26_2ArchetypeRegistryOrder)[number]
+export type Je26_3ArchetypeId = (typeof je26_3ArchetypeRegistryOrder)[number]
 
 type AttributeAmounts = readonly [number, number, number, number, number]
 type FloatValueSpec = readonly [sourceDecimal: number, decodedFloat32: number]
@@ -235,7 +235,7 @@ const archetypeSpecs = {
     pushSoundImpulseThreshold: [0.05, 0.05000000074505806],
     pushSoundCooldown: [0.5, 0.5],
   },
-} as const satisfies Record<Je26_2ArchetypeId, ArchetypeSpec>
+} as const satisfies Record<Je26_3ArchetypeId, ArchetypeSpec>
 
 const attributeFields = [
   {
@@ -325,12 +325,12 @@ function integerField(
 }
 
 function createArchetypeDefinition(
-  id: Je26_2ArchetypeId,
+  id: Je26_3ArchetypeId,
   registryIndex: number,
-): Je26_2ArchetypeDefinition {
+): Je26_3ArchetypeDefinition {
   const spec: ArchetypeSpec = archetypeSpecs[id]
   const name = id.slice('minecraft:'.length)
-  const sourcePath = `versions/26.2/extracted/data/minecraft/sulfur_cube_archetype/${name}.json`
+  const sourcePath = `versions/26.3/extracted/data/minecraft/sulfur_cube_archetype/${name}.json`
   const attributeModifiers = attributeFields.map((definition, index) => ({
     id: field(
       `minecraft:${name}_${definition.idSuffix}`,
@@ -420,18 +420,18 @@ function createArchetypeDefinition(
   }
 }
 
-export const je26_2Archetypes: readonly Je26_2ArchetypeDefinition[] = Object.freeze(
-  je26_2ArchetypeRegistryOrder.map(createArchetypeDefinition),
+export const je26_3Archetypes: readonly Je26_3ArchetypeDefinition[] = Object.freeze(
+  je26_3ArchetypeRegistryOrder.map(createArchetypeDefinition),
 )
 
-export const je26_2ArchetypesById = Object.freeze(
-  Object.fromEntries(je26_2Archetypes.map((definition) => [definition.id, definition])) as Record<
-    Je26_2ArchetypeId,
-    Je26_2ArchetypeDefinition
+export const je26_3ArchetypesById = Object.freeze(
+  Object.fromEntries(je26_3Archetypes.map((definition) => [definition.id, definition])) as Record<
+    Je26_3ArchetypeId,
+    Je26_3ArchetypeDefinition
   >,
 )
 
-export const bouncyArchetypeDefinition = je26_2ArchetypesById['minecraft:bouncy']
+export const bouncyArchetypeDefinition = je26_3ArchetypesById['minecraft:bouncy']
 
 const bouncyAttributeModifiers: readonly {
   readonly id: string
@@ -478,12 +478,12 @@ export const bouncyArchetype = {
       'Default 0 plus the Bouncy add_value modifier.',
     ),
     frictionModifier: sourcedValue(
-      je26_2Constants.defaultFrictionModifier.value * (1 - 0.699999988079071),
+      je26_3Constants.defaultFrictionModifier.value * (1 - 0.699999988079071),
       ['attributeDefaults', 'attributeFolding', 'bouncyArchetype'],
       'Default 1 multiplied by (1 + the Bouncy add_multiplied_total amount).',
     ),
     airDragModifier: sourcedValue(
-      je26_2Constants.defaultAirDragModifier.value * (1 - 0.9900000002235174),
+      je26_3Constants.defaultAirDragModifier.value * (1 - 0.9900000002235174),
       ['attributeDefaults', 'attributeFolding', 'bouncyArchetype'],
       'Default 1 multiplied by (1 + the Bouncy add_multiplied_total amount).',
     ),

@@ -1,4 +1,4 @@
-import type { Je26_2UniformFloorProfileId } from '../data/je26_2'
+import type { Je26_3UniformFloorProfileId } from '../data/je26_3'
 import type { ClearRayEntityReachResult } from '../model/reach'
 import type {
   CubeLaunchProperties,
@@ -10,10 +10,10 @@ import type {
 } from '../model/types'
 import type { NumericBackend } from '../numerics/types'
 import {
-  je26_2Constants,
-  je26_2KnockbackMechanics,
-  je26_2UniformFloorProfiles,
-} from '../data/je26_2'
+  je26_3Constants,
+  je26_3KnockbackMechanics,
+  je26_3UniformFloorProfiles,
+} from '../data/je26_3'
 import { applySulfurCubeKnockbackCall } from '../model/knockbackCall'
 import { summarizeLaunchVelocity } from '../model/launchSummary'
 import { simulateRepeatedUniformFloorTrajectory } from '../model/trajectory'
@@ -34,7 +34,7 @@ export interface DiagnosticInputs {
   readonly aimPoint: Vec3
   readonly damageArgument: number
   readonly trajectoryTicks: number
-  readonly floorProfileId: Je26_2UniformFloorProfileId
+  readonly floorProfileId: Je26_3UniformFloorProfileId
 }
 
 export interface DiagnosticEvaluation {
@@ -54,7 +54,7 @@ export interface DiagnosticEvaluation {
 
 /** Hard safety limit for complete uniform-floor settlement calculations. */
 export const maximumTrajectoryTicks = 6000
-export const defaultUniformFloorProfileId: Je26_2UniformFloorProfileId = 'ordinary_full_block'
+export const defaultUniformFloorProfileId: Je26_3UniformFloorProfileId = 'ordinary_full_block'
 
 export function createDefaultDiagnosticInputs(
   numerics: NumericBackend = standardNumerics,
@@ -67,7 +67,7 @@ export function createDefaultDiagnosticInputs(
       x: attackerFeetPosition.x,
       y:
         attackerFeetPosition.y +
-        numerics.sourceFloat(je26_2Constants.standingPlayerEyeHeight.value),
+        numerics.sourceFloat(je26_3Constants.standingPlayerEyeHeight.value),
       z: attackerFeetPosition.z,
     },
     aimPoint: { x: 0, y: 0.4, z: 1.7 },
@@ -112,13 +112,13 @@ export function createDiagnosticKnockbackContext(
     throw new RangeError(`trajectoryTicks must be an integer from 0 to ${maximumTrajectoryTicks}`)
   }
 
-  if (je26_2UniformFloorProfiles[inputs.floorProfileId] === undefined) {
-    throw new RangeError(`unknown JE 26.2 uniform floor profile: ${inputs.floorProfileId}`)
+  if (je26_3UniformFloorProfiles[inputs.floorProfileId] === undefined) {
+    throw new RangeError(`unknown JE 26.3 uniform floor profile: ${inputs.floorProfileId}`)
   }
 
   const eyeToAim = subtractVec3(inputs.aimPoint, inputs.attackerEyePosition)
   const vectorNormalizationThreshold = numerics.sourceFloat(
-    je26_2KnockbackMechanics.vectorNormalizationThreshold,
+    je26_3KnockbackMechanics.vectorNormalizationThreshold,
   )
   const sourceLookDirection = attackerLookDirection ?? eyeToAim
 
@@ -187,7 +187,7 @@ export function evaluateDiagnosticInputs(
     createUniformFloorTrajectoryAssumptions(
       context.cube.feetPosition.y,
       properties,
-      je26_2UniformFloorProfiles[inputs.floorProfileId],
+      je26_3UniformFloorProfiles[inputs.floorProfileId],
     ),
     numerics,
   )
@@ -210,7 +210,7 @@ export function evaluateDiagnosticInputs(
     trajectory,
     launchSummary: summarizeLaunchVelocity(
       callResult.resultingVelocity,
-      numerics.sourceFloat(je26_2KnockbackMechanics.vectorNormalizationThreshold),
+      numerics.sourceFloat(je26_3KnockbackMechanics.vectorNormalizationThreshold),
       numerics,
     ),
     reach: resolveOrdinarySurvivalPlayerMeleeReach(context),

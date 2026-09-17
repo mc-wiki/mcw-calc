@@ -1,7 +1,7 @@
 import type { UniformFloorState } from '../model/types'
 import type { NumericBackend } from '../numerics/types'
 import { describe, expect, it } from 'vitest'
-import { je26_2UniformFloorProfiles } from '../data/je26_2'
+import { je26_3UniformFloorProfiles } from '../data/je26_3'
 import {
   advanceUniformFloorState,
   shouldCommitResolvedMovement,
@@ -19,7 +19,7 @@ const sourceFloatNumerics: NumericBackend = Object.freeze({
 interface AcceptedFixture {
   readonly id: string
   readonly cube: readonly [number, number, number, boolean]
-  readonly floor: keyof typeof je26_2UniformFloorProfiles
+  readonly floor: keyof typeof je26_3UniformFloorProfiles
   readonly maximumTicks: number
   readonly status: 'settled' | 'truncated'
   readonly tickCount: number
@@ -192,7 +192,7 @@ const acceptedFixtures: readonly AcceptedFixture[] = [
   ...(
     [
       ['gravity_threshold_below', -0.079999999, 1, 0, 1],
-      ['gravity_threshold_exact', -0.08, 3, 1, 2],
+      ['gravity_threshold_exact', -0.08, 1, 0, 1],
       ['gravity_threshold_above', -0.080000001, 3, 1, 2],
     ] as const
   ).map(
@@ -205,7 +205,7 @@ const acceptedFixtures: readonly AcceptedFixture[] = [
       tickCount,
       airborneContacts,
       floorCollisions,
-      bounceEvents: id === 'gravity_threshold_below' ? 0 : 1,
+      bounceEvents: id === 'gravity_threshold_above' ? 1 : 0,
       maximumFeetY: 0,
       horizontalDisplacement: 0,
       endpoint: [0, 0, 0],
@@ -369,7 +369,7 @@ describe('entity movement position-commit gate', () => {
   })
 })
 
-describe('repeated uniform-floor trajectory for JE 26.2', () => {
+describe('repeated uniform-floor trajectory for JE 26.3', () => {
   it.each(acceptedFixtures)('matches the accepted $id summary fixture', (fixture) => {
     const [bounciness, frictionModifier, airDragModifier, entitySuppressesBounce] = fixture.cube
     const initialState: UniformFloorState = {
@@ -391,7 +391,7 @@ describe('repeated uniform-floor trajectory for JE 26.2', () => {
       ...createUniformFloorTrajectoryAssumptions(
         0,
         { bounciness, frictionModifier, airDragModifier },
-        je26_2UniformFloorProfiles[fixture.floor],
+        je26_3UniformFloorProfiles[fixture.floor],
       ),
       entitySuppressesBounce,
     }
@@ -477,7 +477,7 @@ describe('repeated uniform-floor trajectory for JE 26.2', () => {
         frictionModifier: 0.30000001192092896,
         airDragModifier: 0.009999999776482582,
       },
-      je26_2UniformFloorProfiles.slime_block,
+      je26_3UniformFloorProfiles.slime_block,
     )
     const initialState: UniformFloorState = {
       tick: 0,

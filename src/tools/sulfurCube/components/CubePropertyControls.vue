@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { MenuItemData } from '@wikimedia/codex'
-import type { Je26_2ArchetypeId } from '../data/je26_2'
+import type { Je26_3ArchetypeId } from '../data/je26_3'
 import type {
   CubePropertySelectionResolution,
   CubePropertySelectionState,
@@ -21,10 +21,10 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getImageLink } from '@/utils/image'
 import {
-  je26_2ArchetypeRegistryOrder,
-  je26_2BlockMembershipIndex,
-  je26_2SwallowableItemIds,
-} from '../data/je26_2'
+  je26_3ArchetypeRegistryOrder,
+  je26_3BlockMembershipIndex,
+  je26_3SwallowableItemIds,
+} from '../data/je26_3'
 import { sanitizeNumericInput } from '../input/numericInput'
 import {
   blockGridNavigationTargetIndex,
@@ -59,7 +59,7 @@ const { t } = useI18n()
 const blockSearch = ref('')
 const blockFilterElement = ref<HTMLDetailsElement | null>(null)
 const blockKeyboardFocusId = ref<string | null>(props.modelValue.selectedBlockId)
-const selectedBlockArchetypeIds = ref<Je26_2ArchetypeId[]>([...je26_2ArchetypeRegistryOrder])
+const selectedBlockArchetypeIds = ref<Je26_3ArchetypeId[]>([...je26_3ArchetypeRegistryOrder])
 const activeBlockTooltip = ref<{
   readonly label: string
   readonly left: number
@@ -76,17 +76,17 @@ interface BlockSelectorItem {
   readonly label: string
   readonly searchText: string
   readonly spriteUrl: string
-  readonly archetypeIds: readonly Je26_2ArchetypeId[]
+  readonly archetypeIds: readonly Je26_3ArchetypeId[]
 }
 
-const allBlockItems: BlockSelectorItem[] = [...je26_2SwallowableItemIds]
+const allBlockItems: BlockSelectorItem[] = [...je26_3SwallowableItemIds]
   .map(
     (itemId): BlockSelectorItem => ({
       id: itemId,
       label: humanizeIdentifier(itemId),
       searchText: blockSelectorSearchText(itemId),
       spriteUrl: getImageLink(`en:${blockSpriteFileName(itemId)}`),
-      archetypeIds: je26_2BlockMembershipIndex[itemId]!.orderedCandidateIds,
+      archetypeIds: je26_3BlockMembershipIndex[itemId]!.orderedCandidateIds,
     }),
   )
   .sort((a, b) => a.label.localeCompare(b.label))
@@ -179,15 +179,15 @@ watch(filteredBlockItems, (items) => {
 })
 
 const allBlockArchetypesSelected = computed(
-  () => selectedBlockArchetypeIds.value.length === je26_2ArchetypeRegistryOrder.length,
+  () => selectedBlockArchetypeIds.value.length === je26_3ArchetypeRegistryOrder.length,
 )
 const someBlockArchetypesSelected = computed(
   () =>
     selectedBlockArchetypeIds.value.length > 0 &&
-    selectedBlockArchetypeIds.value.length < je26_2ArchetypeRegistryOrder.length,
+    selectedBlockArchetypeIds.value.length < je26_3ArchetypeRegistryOrder.length,
 )
 
-const archetypeItems: MenuItemData[] = je26_2ArchetypeRegistryOrder.map((archetypeId) => ({
+const archetypeItems: MenuItemData[] = je26_3ArchetypeRegistryOrder.map((archetypeId) => ({
   value: archetypeId,
   label: humanizeIdentifier(archetypeId),
 }))
@@ -204,7 +204,7 @@ const modeButtons = computed(() => [
 const customFormState = computed(() => props.modelValue.customWorkingCopy?.formState ?? null)
 const currentLockedArchetypeIds = computed<readonly string[]>(() => {
   if (props.modelValue.lastLockedMode === 'block') {
-    return je26_2BlockMembershipIndex[props.modelValue.selectedBlockId]?.orderedCandidateIds ?? []
+    return je26_3BlockMembershipIndex[props.modelValue.selectedBlockId]?.orderedCandidateIds ?? []
   }
 
   return [props.modelValue.selectedArchetypeId]
@@ -275,10 +275,10 @@ function updateBlock(value: string): void {
 
 function toggleAllBlockArchetypes(selected: boolean): void {
   hideBlockTooltip()
-  selectedBlockArchetypeIds.value = selected ? [...je26_2ArchetypeRegistryOrder] : []
+  selectedBlockArchetypeIds.value = selected ? [...je26_3ArchetypeRegistryOrder] : []
 }
 
-function toggleBlockArchetype(archetypeId: Je26_2ArchetypeId, selected: boolean): void {
+function toggleBlockArchetype(archetypeId: Je26_3ArchetypeId, selected: boolean): void {
   hideBlockTooltip()
   const nextIds = new Set(selectedBlockArchetypeIds.value)
 
@@ -288,19 +288,19 @@ function toggleBlockArchetype(archetypeId: Je26_2ArchetypeId, selected: boolean)
     nextIds.delete(archetypeId)
   }
 
-  selectedBlockArchetypeIds.value = je26_2ArchetypeRegistryOrder.filter((id) => nextIds.has(id))
+  selectedBlockArchetypeIds.value = je26_3ArchetypeRegistryOrder.filter((id) => nextIds.has(id))
 }
 
 function updateArchetype(value: string | number | null): void {
   if (
     typeof value === 'string' &&
-    je26_2ArchetypeRegistryOrder.includes(value as (typeof je26_2ArchetypeRegistryOrder)[number])
+    je26_3ArchetypeRegistryOrder.includes(value as (typeof je26_3ArchetypeRegistryOrder)[number])
   ) {
     emit(
       'update:modelValue',
       selectCubePropertyArchetype(
         props.modelValue,
-        value as (typeof je26_2ArchetypeRegistryOrder)[number],
+        value as (typeof je26_3ArchetypeRegistryOrder)[number],
       ),
     )
   }
@@ -467,7 +467,7 @@ function hideBlockTooltip(): void {
               {{
                 t('sulfurCube.properties.blockArchetypeFilterSummary', {
                   selected: selectedBlockArchetypeIds.length,
-                  total: je26_2ArchetypeRegistryOrder.length,
+                  total: je26_3ArchetypeRegistryOrder.length,
                 })
               }}
             </summary>
@@ -483,8 +483,8 @@ function hideBlockTooltip(): void {
               <CdxCheckbox
                 v-for="item in archetypeItems"
                 :key="item.value"
-                :model-value="selectedBlockArchetypeIds.includes(item.value as Je26_2ArchetypeId)"
-                @update:model-value="toggleBlockArchetype(item.value as Je26_2ArchetypeId, $event)"
+                :model-value="selectedBlockArchetypeIds.includes(item.value as Je26_3ArchetypeId)"
+                @update:model-value="toggleBlockArchetype(item.value as Je26_3ArchetypeId, $event)"
               >
                 {{ item.label }}
               </CdxCheckbox>

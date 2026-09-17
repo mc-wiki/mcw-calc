@@ -1,7 +1,7 @@
 import type { NumericBackend } from './types'
 
-// JE 26.2: net.minecraft.util.Mth.SIN_SCALE and its 65,536-entry float table.
-// Source: versions/26.2/decompiled/src/net/minecraft/util/Mth.java
+// JE 26.3: net.minecraft.util.Mth.SIN_SCALE and its 65,536-entry float table.
+// Source: versions/26.3/decompiled/src/net/minecraft/util/Mth.java
 const sineTableScale = 10430.378350470453
 const sineTableMask = 65535
 const cosineTableOffset = 16384
@@ -24,7 +24,7 @@ export function minecraftCos(angleRadians: number): number {
 }
 
 /**
- * Backend for source-relevant JE 26.2 float boundaries.
+ * Backend for source-relevant JE 26.3 float boundaries.
  *
  * This deliberately is not a blanket Float32 mode. Positions, Vec3 lengths,
  * normalization, stored Motion, and movement remain Java doubles. Mechanics

@@ -1,7 +1,7 @@
 import type { SourcedValue } from './provenance'
 import { sourcedValue } from './provenance'
 
-export const je26_2ToolMaterialOrder = [
+export const je26_3ToolMaterialOrder = [
   'wooden',
   'stone',
   'copper',
@@ -11,36 +11,36 @@ export const je26_2ToolMaterialOrder = [
   'netherite',
 ] as const
 
-export type Je26_2ToolMaterialId = (typeof je26_2ToolMaterialOrder)[number]
-export type Je26_2PlayerMeleeWeaponType = 'bareHand' | 'sword' | 'axe'
-export type Je26_2PlayerMeleeWeaponPresetId =
+export type Je26_3ToolMaterialId = (typeof je26_3ToolMaterialOrder)[number]
+export type Je26_3PlayerMeleeWeaponType = 'bareHand' | 'sword' | 'axe'
+export type Je26_3PlayerMeleeWeaponPresetId =
   | 'bareHand'
-  | `${Je26_2ToolMaterialId}Sword`
-  | `${Je26_2ToolMaterialId}Axe`
+  | `${Je26_3ToolMaterialId}Sword`
+  | `${Je26_3ToolMaterialId}Axe`
 
 export type PlayerMeleeWeaponChoice =
   | { readonly type: 'bareHand' }
-  | { readonly type: 'sword' | 'axe'; readonly material: Je26_2ToolMaterialId }
+  | { readonly type: 'sword' | 'axe'; readonly material: Je26_3ToolMaterialId }
 
-export interface Je26_2WeaponEnchantmentAvailability {
+export interface Je26_3WeaponEnchantmentAvailability {
   readonly tablePrimary: SourcedValue<boolean>
   readonly anvilSupported: SourcedValue<boolean>
   readonly ordinarySurvivalMaximumLevel: SourcedValue<number>
 }
 
-export interface Je26_2PlayerMeleeWeaponPreset {
-  readonly id: Je26_2PlayerMeleeWeaponPresetId
+export interface Je26_3PlayerMeleeWeaponPreset {
+  readonly id: Je26_3PlayerMeleeWeaponPresetId
   readonly itemId: SourcedValue<`minecraft:${string}` | null>
-  readonly weaponType: Je26_2PlayerMeleeWeaponType
-  readonly material: Je26_2ToolMaterialId | null
+  readonly weaponType: Je26_3PlayerMeleeWeaponType
+  readonly material: Je26_3ToolMaterialId | null
   readonly effectiveAttackDamage: SourcedValue<number>
   readonly effectiveAttackSpeed: SourcedValue<number>
   readonly recoveryPeriodTicks: SourcedValue<number>
   readonly effectiveAttackKnockback: SourcedValue<0>
   readonly itemDamagePerAttack: SourcedValue<0 | 1 | 2>
   readonly disableBlockingForSeconds: SourcedValue<0 | 5>
-  readonly sharpness: Je26_2WeaponEnchantmentAvailability
-  readonly knockback: Je26_2WeaponEnchantmentAvailability
+  readonly sharpness: Je26_3WeaponEnchantmentAvailability
+  readonly knockback: Je26_3WeaponEnchantmentAvailability
 }
 
 interface WeaponNumbers {
@@ -49,7 +49,7 @@ interface WeaponNumbers {
 }
 
 const weaponNumbers: Readonly<
-  Record<'sword' | 'axe', Readonly<Record<Je26_2ToolMaterialId, WeaponNumbers>>>
+  Record<'sword' | 'axe', Readonly<Record<Je26_3ToolMaterialId, WeaponNumbers>>>
 > = Object.freeze({
   sword: Object.freeze({
     wooden: { damage: 4, speed: 1.6 },
@@ -79,7 +79,7 @@ function makeAvailability(
   tablePrimary: boolean,
   anvilSupported: boolean,
   maximumLevel: number,
-): Je26_2WeaponEnchantmentAvailability {
+): Je26_3WeaponEnchantmentAvailability {
   return Object.freeze({
     tablePrimary: sourcedValue(tablePrimary, ['playerMeleeEnchantmentAvailability']),
     anvilSupported: sourcedValue(anvilSupported, ['playerMeleeEnchantmentAvailability']),
@@ -91,10 +91,10 @@ function makeAvailability(
 
 function makeItemPreset(
   weaponType: 'sword' | 'axe',
-  material: Je26_2ToolMaterialId,
-): Je26_2PlayerMeleeWeaponPreset {
+  material: Je26_3ToolMaterialId,
+): Je26_3PlayerMeleeWeaponPreset {
   const numbers = weaponNumbers[weaponType][material]
-  const id = `${material}${capitalize(weaponType)}` as Je26_2PlayerMeleeWeaponPresetId
+  const id = `${material}${capitalize(weaponType)}` as Je26_3PlayerMeleeWeaponPresetId
   const itemId = `minecraft:${material}_${weaponType}` as const
   const isSword = weaponType === 'sword'
 
@@ -135,41 +135,41 @@ const bareHand = Object.freeze({
   disableBlockingForSeconds: sourcedValue<0>(0, ['playerMeleeWeaponPresets']),
   sharpness: makeAvailability(false, false, 0),
   knockback: makeAvailability(false, false, 0),
-} satisfies Je26_2PlayerMeleeWeaponPreset)
+} satisfies Je26_3PlayerMeleeWeaponPreset)
 
-export const je26_2PlayerMeleeWeaponPresetOrder = [
+export const je26_3PlayerMeleeWeaponPresetOrder = [
   'bareHand',
-  ...je26_2ToolMaterialOrder.map((material) => `${material}Sword` as const),
-  ...je26_2ToolMaterialOrder.map((material) => `${material}Axe` as const),
+  ...je26_3ToolMaterialOrder.map((material) => `${material}Sword` as const),
+  ...je26_3ToolMaterialOrder.map((material) => `${material}Axe` as const),
 ] as const
 
-export const je26_2PlayerMeleeWeaponPresets = Object.freeze(
+export const je26_3PlayerMeleeWeaponPresets = Object.freeze(
   Object.fromEntries([
     ['bareHand', bareHand],
-    ...je26_2ToolMaterialOrder.map((material) => {
+    ...je26_3ToolMaterialOrder.map((material) => {
       const preset = makeItemPreset('sword', material)
       return [preset.id, preset] as const
     }),
-    ...je26_2ToolMaterialOrder.map((material) => {
+    ...je26_3ToolMaterialOrder.map((material) => {
       const preset = makeItemPreset('axe', material)
       return [preset.id, preset] as const
     }),
   ]),
-) as Readonly<Record<Je26_2PlayerMeleeWeaponPresetId, Je26_2PlayerMeleeWeaponPreset>>
+) as Readonly<Record<Je26_3PlayerMeleeWeaponPresetId, Je26_3PlayerMeleeWeaponPreset>>
 
-export function resolveJe26_2PlayerMeleeWeaponPreset(
+export function resolveJe26_3PlayerMeleeWeaponPreset(
   choice: PlayerMeleeWeaponChoice,
-): Je26_2PlayerMeleeWeaponPreset {
-  if (choice.type === 'bareHand') return je26_2PlayerMeleeWeaponPresets.bareHand
+): Je26_3PlayerMeleeWeaponPreset {
+  if (choice.type === 'bareHand') return je26_3PlayerMeleeWeaponPresets.bareHand
 
-  const id = `${choice.material}${capitalize(choice.type)}` as Je26_2PlayerMeleeWeaponPresetId
+  const id = `${choice.material}${capitalize(choice.type)}` as Je26_3PlayerMeleeWeaponPresetId
   const preset = (
-    je26_2PlayerMeleeWeaponPresets as Partial<
-      Record<Je26_2PlayerMeleeWeaponPresetId, Je26_2PlayerMeleeWeaponPreset>
+    je26_3PlayerMeleeWeaponPresets as Partial<
+      Record<Je26_3PlayerMeleeWeaponPresetId, Je26_3PlayerMeleeWeaponPreset>
     >
   )[id]
   if (preset === undefined) {
-    throw new RangeError(`unknown JE 26.2 player melee weapon choice: ${id}`)
+    throw new RangeError(`unknown JE 26.3 player melee weapon choice: ${id}`)
   }
   return preset
 }

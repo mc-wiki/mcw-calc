@@ -3,7 +3,7 @@ import type { Vec2 } from '../model/types'
 import type { DiagnosticEvaluation } from '../presets/diagnostic'
 import type { RadialAttackerSide } from './radialPlane'
 import type { PlanePoint, RadialProjection, WorldBounds } from './types'
-import { je26_2Constants } from '../data/je26_2'
+import { je26_3Constants } from '../data/je26_3'
 import { maximumTrajectoryTicks } from '../presets/diagnostic'
 import {
   createRadialProjection,
@@ -263,7 +263,7 @@ export function createRadialScenePresentation(
   const cubeBottom = projectPointToRadialPlane(callResult.diagnostics.cubeBottom, projection)
   const attackerFeet = projectPointToRadialPlane(context.attacker.feetPosition, projection)
   const attackerEyes = projectPointToRadialPlane(context.attacker.eyePosition, projection)
-  const standingPlayerDimensions = je26_2Constants.standingPlayerDimensions.value
+  const standingPlayerDimensions = je26_3Constants.standingPlayerDimensions.value
   const attackerHitbox = {
     bottomLeft: {
       x: attackerFeet.x - standingPlayerDimensions.width / 2,

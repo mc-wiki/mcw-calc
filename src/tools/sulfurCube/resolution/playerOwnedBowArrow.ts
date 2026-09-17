@@ -8,7 +8,7 @@ import type {
 import type { NumericBackend } from '../numerics/types'
 import type { AttackConfigurationIssue } from './attackValidation'
 import type { SuccessfulDirectionProviderResolution } from './directionProvider'
-import { je26_2PlayerOwnedBowArrowMechanics } from '../data/je26_2'
+import { je26_3PlayerOwnedBowArrowMechanics } from '../data/je26_3'
 import { lengthVec3, normalizeHorizontalVector } from '../model/vectors'
 import {
   addFiniteIssue,
@@ -459,7 +459,7 @@ export function resolvePlayerOwnedBowArrowAttack(
   configuration: PlayerOwnedBowArrowAttackConfiguration,
   context: SulfurCubeKnockbackContext,
   numerics: NumericBackend,
-  mechanics: PlayerOwnedBowArrowMechanicsParameters = je26_2PlayerOwnedBowArrowMechanics,
+  mechanics: PlayerOwnedBowArrowMechanicsParameters = je26_3PlayerOwnedBowArrowMechanics,
 ): PlayerOwnedBowArrowAttackResolution {
   const issues = validateConfiguration(configuration, context, mechanics)
 

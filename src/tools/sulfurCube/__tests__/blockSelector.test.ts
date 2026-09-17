@@ -29,6 +29,15 @@ describe('block selector presentation', () => {
     expect(blockSpriteFileName('minecraft:stripped_acacia_wood')).toBe(
       'BlockSprite_stripped-acacia-log.png',
     )
+    expect(blockSpriteFileName('minecraft:poplar_planks')).toBe('BlockSprite_poplar-planks.png')
+    expect(blockSpriteFileName('minecraft:poplar_log')).toBe('BlockSprite_poplar-log.png')
+    expect(blockSpriteFileName('minecraft:poplar_wood')).toBe('BlockSprite_poplar-log.png')
+    expect(blockSpriteFileName('minecraft:stripped_poplar_log')).toBe(
+      'BlockSprite_stripped-poplar-log.png',
+    )
+    expect(blockSpriteFileName('minecraft:stripped_poplar_wood')).toBe(
+      'BlockSprite_stripped-poplar-log.png',
+    )
     expect(blockSpriteFileName('minecraft:stripped_warped_stem')).toBe(
       'BlockSprite_stripped-warped-stem-top.png',
     )

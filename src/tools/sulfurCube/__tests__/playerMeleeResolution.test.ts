@@ -257,7 +257,7 @@ describe('primary player melee attack resolution', () => {
   it('keeps fixture provenance explicit', () => {
     expect(playerMeleeFixtureProvenance).toMatchObject({
       edition: 'Java Edition',
-      version: '26.2',
+      version: '26.3',
     })
   })
 })

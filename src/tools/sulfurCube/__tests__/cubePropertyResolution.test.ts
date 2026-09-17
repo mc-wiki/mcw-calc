@@ -2,10 +2,10 @@ import type {
   AttributeModifierOperation,
   DefinitionField,
   VersionedNumericField,
-} from '../data/je26_2'
+} from '../data/je26_3'
 import type { ResolvableAttributeModifier, ResolvableCubeDefinition } from '../resolution'
 import { describe, expect, it } from 'vitest'
-import { je26_2Archetypes, je26_2ArchetypesById } from '../data/je26_2'
+import { je26_3Archetypes, je26_3ArchetypesById } from '../data/je26_3'
 import { standardNumerics } from '../numerics/standard'
 import { createBouncyTrajectoryAssumptions } from '../presets/defaults'
 import {
@@ -109,7 +109,7 @@ const expectedVanillaAttributes = [
   ['minecraft:sticky', -2, 0, 0, 2, 0.009999999776482582],
 ] as const
 
-describe('attribute folding for JE 26.2', () => {
+describe('attribute folding for JE 26.3', () => {
   it('applies add, multiplied-base, and multiplied-total operations in source order', () => {
     const result = foldAttributeModifiers([
       {
@@ -225,10 +225,10 @@ describe('attribute folding for JE 26.2', () => {
   })
 })
 
-describe('cube property folding for JE 26.2', () => {
+describe('cube property folding for JE 26.3', () => {
   it('resolves the source-audited effective attributes for every vanilla archetype', () => {
     expect(
-      je26_2Archetypes.map((definition) => {
+      je26_3Archetypes.map((definition) => {
         const profile = resolveArchetype(definition)
         return [
           definition.id,
@@ -270,8 +270,8 @@ describe('cube property folding for JE 26.2', () => {
   })
 
   it('preserves explosion and contact data from their source candidates', () => {
-    const explosive = resolveArchetype(je26_2ArchetypesById['minecraft:explosive'])
-    const hot = resolveArchetype(je26_2ArchetypesById['minecraft:hot'])
+    const explosive = resolveArchetype(je26_3ArchetypesById['minecraft:explosive'])
+    const hot = resolveArchetype(je26_3ArchetypesById['minecraft:hot'])
 
     expect(explosive.explosion).toMatchObject({
       sourceCandidateId: 'minecraft:explosive',
@@ -294,8 +294,8 @@ describe('cube property folding for JE 26.2', () => {
   })
 
   it('combines an ordered overlap with OR, append, last-present, and last-wins behavior', () => {
-    const bouncy = je26_2ArchetypesById['minecraft:bouncy']
-    const explosive = je26_2ArchetypesById['minecraft:explosive']
+    const bouncy = je26_3ArchetypesById['minecraft:bouncy']
+    const explosive = je26_3ArchetypesById['minecraft:explosive']
     const profile = foldMatchingDefinitions([bouncy, explosive])
 
     expect(profile.orderedCandidateIds).toEqual(['minecraft:bouncy', 'minecraft:explosive'])
@@ -327,8 +327,8 @@ describe('cube property folding for JE 26.2', () => {
   })
 
   it('retains an earlier present explosion while later knockback and sounds overwrite', () => {
-    const explosive = je26_2ArchetypesById['minecraft:explosive']
-    const regular = je26_2ArchetypesById['minecraft:regular']
+    const explosive = je26_3ArchetypesById['minecraft:explosive']
+    const regular = je26_3ArchetypesById['minecraft:regular']
     const profile = foldMatchingDefinitions([explosive, regular])
 
     expect(profile.explosion?.sourceCandidateId).toBe('minecraft:explosive')
@@ -338,7 +338,7 @@ describe('cube property folding for JE 26.2', () => {
   })
 
   it('appends every present contact-damage entry in candidate order', () => {
-    const hot = toResolvableCubeDefinition(je26_2ArchetypesById['minecraft:hot'])
+    const hot = toResolvableCubeDefinition(je26_3ArchetypesById['minecraft:hot'])
     const second = syntheticDefinition('test:second-hot', [], {
       contactDamage: hot.contactDamage,
     })
@@ -385,7 +385,7 @@ describe('cube property folding for JE 26.2', () => {
   })
 
   it('projects source-decimal or decoded-float properties without changing the profile', () => {
-    const profile = resolveArchetype(je26_2ArchetypesById['minecraft:bouncy'])
+    const profile = resolveArchetype(je26_3ArchetypesById['minecraft:bouncy'])
     const before = structuredClone(profile)
 
     expect(toCubeMechanicsProperties(profile)).toEqual({

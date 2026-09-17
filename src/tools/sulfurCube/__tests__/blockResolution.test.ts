@@ -2,27 +2,32 @@ import type { BlockMembershipIndex } from '../resolution'
 import { createHash } from 'node:crypto'
 import { describe, expect, it } from 'vitest'
 import {
-  je26_2ArchetypeRegistryOrder,
-  je26_2Archetypes,
-  je26_2ArchetypesById,
-  je26_2BlockMembershipEntries,
-  je26_2BlockMembershipGroups,
-  je26_2BlockMembershipIndex,
-  je26_2RecursiveItemTagSources,
-  je26_2SwallowableItemIds,
-  je26_2SwallowableTagSource,
-} from '../data/je26_2'
+  je26_3ArchetypeRegistryOrder,
+  je26_3Archetypes,
+  je26_3ArchetypesById,
+  je26_3BlockMembershipEntries,
+  je26_3BlockMembershipGroups,
+  je26_3BlockMembershipIndex,
+  je26_3RecursiveItemTagSources,
+  je26_3SwallowableItemIds,
+  je26_3SwallowableTagSource,
+} from '../data/je26_3'
 import {
   matchBlockDefinitions,
   resolveArchetype,
   resolveBlock,
-  resolveJe26_2Block,
+  resolveJe26_3Block,
 } from '../resolution'
 
-const expectedGroupCounts = [59, 1, 26, 3, 2, 1, 16, 27, 145, 46, 7, 1]
+const expectedGroupCounts = [64, 1, 26, 3, 2, 1, 16, 27, 145, 46, 7, 1]
 
 const representativeBlocks = [
   ['minecraft:oak_planks', 'minecraft:bouncy'],
+  ['minecraft:poplar_planks', 'minecraft:bouncy'],
+  ['minecraft:poplar_log', 'minecraft:bouncy'],
+  ['minecraft:poplar_wood', 'minecraft:bouncy'],
+  ['minecraft:stripped_poplar_log', 'minecraft:bouncy'],
+  ['minecraft:stripped_poplar_wood', 'minecraft:bouncy'],
   ['minecraft:tnt', 'minecraft:explosive'],
   ['minecraft:sponge', 'minecraft:fast_flat'],
   ['minecraft:blue_ice', 'minecraft:fast_sliding'],
@@ -37,7 +42,7 @@ const representativeBlocks = [
 ] as const
 
 function membershipDigest(): string {
-  const serialized = je26_2BlockMembershipEntries
+  const serialized = je26_3BlockMembershipEntries
     .map(({ itemId, orderedCandidateIds }) => `${itemId}=${orderedCandidateIds.join(',')}`)
     .sort()
     .join('\n')
@@ -46,7 +51,7 @@ function membershipDigest(): string {
 }
 
 function recursiveSourceDigest(): string {
-  const serialized = je26_2RecursiveItemTagSources
+  const serialized = je26_3RecursiveItemTagSources
     .map(
       ({ tagId, sourcePath, lineStart, lineEnd }) =>
         `${tagId}=${sourcePath}:${lineStart}-${lineEnd}`,
@@ -57,31 +62,31 @@ function recursiveSourceDigest(): string {
   return createHash('sha256').update(serialized).digest('hex')
 }
 
-describe('sulfur cube block membership data for JE 26.2', () => {
+describe('sulfur cube block membership data for JE 26.3', () => {
   it('preserves the audited registry order and per-archetype counts', () => {
-    expect(je26_2BlockMembershipGroups.map(({ archetypeId }) => archetypeId)).toEqual(
-      je26_2ArchetypeRegistryOrder,
+    expect(je26_3BlockMembershipGroups.map(({ archetypeId }) => archetypeId)).toEqual(
+      je26_3ArchetypeRegistryOrder,
     )
-    expect(je26_2BlockMembershipGroups.map(({ itemIds }) => itemIds.length)).toEqual(
+    expect(je26_3BlockMembershipGroups.map(({ itemIds }) => itemIds.length)).toEqual(
       expectedGroupCounts,
     )
-    expect(expectedGroupCounts.reduce((sum, count) => sum + count, 0)).toBe(334)
+    expect(expectedGroupCounts.reduce((sum, count) => sum + count, 0)).toBe(339)
   })
 
-  it('contains the exact audited 334 item-to-candidate expansion', () => {
-    expect(je26_2BlockMembershipEntries).toHaveLength(334)
-    expect(je26_2SwallowableItemIds).toHaveLength(334)
-    expect(new Set(je26_2SwallowableItemIds)).toHaveProperty('size', 334)
-    expect(Object.keys(je26_2BlockMembershipIndex)).toHaveLength(334)
+  it('contains the exact audited 339 item-to-candidate expansion', () => {
+    expect(je26_3BlockMembershipEntries).toHaveLength(339)
+    expect(je26_3SwallowableItemIds).toHaveLength(339)
+    expect(new Set(je26_3SwallowableItemIds)).toHaveProperty('size', 339)
+    expect(Object.keys(je26_3BlockMembershipIndex)).toHaveLength(339)
     expect(membershipDigest()).toBe(
-      '12fd894daa8d2510ddd8c0051085d8961d1ebd725fcff009d93d33047171c11f',
+      '22a4d2ca1fb41b73d625805a935f9bccc9d1a8786be0ddfce00cb66f727d8050',
     )
   })
 
   it('retains one candidate and its root tag for every vanilla member', () => {
-    for (const group of je26_2BlockMembershipGroups) {
+    for (const group of je26_3BlockMembershipGroups) {
       for (const itemId of group.itemIds) {
-        expect(je26_2BlockMembershipIndex[itemId]).toEqual({
+        expect(je26_3BlockMembershipIndex[itemId]).toEqual({
           itemId,
           orderedCandidateIds: [group.archetypeId],
           rootTagIds: [group.rootTag.tagId],
@@ -91,31 +96,31 @@ describe('sulfur cube block membership data for JE 26.2', () => {
   })
 
   it.each(representativeBlocks)('maps %s to %s', (itemId, archetypeId) => {
-    expect(je26_2BlockMembershipIndex[itemId]?.orderedCandidateIds).toEqual([archetypeId])
+    expect(je26_3BlockMembershipIndex[itemId]?.orderedCandidateIds).toEqual([archetypeId])
   })
 
-  it('records the swallowable source and all 43 recursively visited tags', () => {
-    expect(je26_2SwallowableTagSource).toEqual({
+  it('records the swallowable source and all 44 recursively visited tags', () => {
+    expect(je26_3SwallowableTagSource).toEqual({
       tagId: 'minecraft:sulfur_cube_swallowable',
-      sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_swallowable.json',
+      sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_swallowable.json',
       lineStart: 1,
       lineEnd: 15,
     })
-    expect(je26_2RecursiveItemTagSources).toHaveLength(43)
-    expect(new Set(je26_2RecursiveItemTagSources.map(({ tagId }) => tagId))).toHaveProperty(
+    expect(je26_3RecursiveItemTagSources).toHaveLength(44)
+    expect(new Set(je26_3RecursiveItemTagSources.map(({ tagId }) => tagId))).toHaveProperty(
       'size',
-      43,
+      44,
     )
     expect(recursiveSourceDigest()).toBe(
-      'aa2e84941b63bd5d81aaee327d0ff1ac465e1465a54067e27490d03313c988ee',
+      '0192395894a2040c9c78be2ca4fc7f626eb51a4d7c34bc9a03472a9e33647cc9',
     )
 
-    for (const group of je26_2BlockMembershipGroups) {
-      expect(je26_2RecursiveItemTagSources).toContainEqual(group.rootTag)
+    for (const group of je26_3BlockMembershipGroups) {
+      expect(je26_3RecursiveItemTagSources).toContainEqual(group.rootTag)
     }
-    for (const source of je26_2RecursiveItemTagSources) {
+    for (const source of je26_3RecursiveItemTagSources) {
       expect(source.sourcePath).toMatch(
-        /^versions\/26\.2\/extracted\/data\/minecraft\/tags\/item\//,
+        /^versions\/26\.3\/extracted\/data\/minecraft\/tags\/item\//,
       )
       expect(source.lineStart).toBe(1)
       expect(source.lineEnd).toBeGreaterThanOrEqual(source.lineStart)
@@ -124,10 +129,10 @@ describe('sulfur cube block membership data for JE 26.2', () => {
 })
 
 describe('block definition matching and resolution', () => {
-  it('resolves all 334 vanilla members to their exact archetype profiles', () => {
-    for (const entry of je26_2BlockMembershipEntries) {
+  it('resolves all 339 vanilla members to their exact archetype profiles', () => {
+    for (const entry of je26_3BlockMembershipEntries) {
       const candidateId = entry.orderedCandidateIds[0]
-      const result = resolveJe26_2Block(entry.itemId)
+      const result = resolveJe26_3Block(entry.itemId)
 
       expect(result).toMatchObject({
         eligibility: 'swallowable',
@@ -137,14 +142,14 @@ describe('block definition matching and resolution', () => {
         referencedCandidateIds: [candidateId],
         orderedCandidateIds: [candidateId],
       })
-      expect(result.profile).toEqual(resolveArchetype(je26_2ArchetypesById[candidateId]))
+      expect(result.profile).toEqual(resolveArchetype(je26_3ArchetypesById[candidateId]))
     }
   })
 
   it.each(representativeBlocks)(
     'resolves representative %s block behavior through %s',
     (itemId, archetypeId) => {
-      const result = resolveJe26_2Block(itemId)
+      const result = resolveJe26_3Block(itemId)
 
       expect(result.profile.orderedCandidateIds).toEqual([archetypeId])
       expect(result.profile.knockbackModifiers.horizontalPower.sourceCandidateId).toBe(archetypeId)
@@ -160,11 +165,11 @@ describe('block definition matching and resolution', () => {
       },
     }
 
-    const match = matchBlockDefinitions('test:overlap', membershipIndex, je26_2Archetypes)
+    const match = matchBlockDefinitions('test:overlap', membershipIndex, je26_3Archetypes)
     const result = resolveBlock(
       'test:overlap',
       membershipIndex,
-      je26_2Archetypes,
+      je26_3Archetypes,
       'known_block_item',
     )
 
@@ -181,7 +186,7 @@ describe('block definition matching and resolution', () => {
     ['minecraft:stick', 'known_non_block_item'],
     ['minecraft:water', 'block_without_usable_item_stack'],
   ] as const)('reports a faithful forced no-match for %s', (itemId, itemClassification) => {
-    const result = resolveJe26_2Block(itemId, itemClassification)
+    const result = resolveJe26_3Block(itemId, itemClassification)
 
     expect(result).toMatchObject({
       itemClassification,
@@ -197,7 +202,7 @@ describe('block definition matching and resolution', () => {
   })
 
   it('does not misreport an unknown identifier as a known no-match', () => {
-    const result = resolveJe26_2Block('example:not_in_the_audited_index')
+    const result = resolveJe26_3Block('example:not_in_the_audited_index')
 
     expect(result).toMatchObject({
       eligibility: 'unknown',
@@ -227,7 +232,7 @@ describe('block definition matching and resolution', () => {
     }
 
     expect(
-      resolveBlock('test:missing', membershipIndex, je26_2Archetypes, 'known_block_item'),
+      resolveBlock('test:missing', membershipIndex, je26_3Archetypes, 'known_block_item'),
     ).toMatchObject({
       eligibility: 'swallowable',
       outcome: 'incomplete_membership',
@@ -241,7 +246,7 @@ describe('block definition matching and resolution', () => {
       ],
     })
     expect(
-      resolveBlock('test:empty', membershipIndex, je26_2Archetypes, 'known_block_item'),
+      resolveBlock('test:empty', membershipIndex, je26_3Archetypes, 'known_block_item'),
     ).toMatchObject({
       eligibility: 'swallowable',
       outcome: 'incomplete_membership',
@@ -251,7 +256,7 @@ describe('block definition matching and resolution', () => {
   })
 
   it('diagnoses caller knowledge that contradicts audited membership', () => {
-    const result = resolveJe26_2Block('minecraft:stone', 'known_non_block_item')
+    const result = resolveJe26_3Block('minecraft:stone', 'known_non_block_item')
 
     expect(result).toMatchObject({
       eligibility: 'swallowable',

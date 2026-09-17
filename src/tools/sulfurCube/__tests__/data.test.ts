@@ -2,13 +2,13 @@ import type { NumericBackend } from '../numerics/types'
 import { describe, expect, it } from 'vitest'
 import {
   bouncyArchetype,
-  je26_2ArchetypesById,
-  je26_2Constants,
-  je26_2KnockbackMechanics,
-  je26_2UniformFloorProfileDefinitions,
-  je26_2UniformFloorProfiles,
+  je26_3ArchetypesById,
+  je26_3Constants,
+  je26_3KnockbackMechanics,
+  je26_3UniformFloorProfileDefinitions,
+  je26_3UniformFloorProfiles,
   provenance,
-} from '../data/je26_2'
+} from '../data/je26_3'
 import { standardNumerics } from '../numerics/standard'
 import {
   createAdultSulfurCubeGeometry,
@@ -25,7 +25,7 @@ const sourceFloatNumerics: NumericBackend = Object.freeze({
   sourceFloat: Math.fround,
 })
 
-describe('source data for Java Edition 26.2', () => {
+describe('source data for Java Edition 26.3', () => {
   it('transcribes the Bouncy archetype without discarding later physical properties', () => {
     expect(bouncyArchetype.knockbackModifiers.horizontalPower.value).toBe(0.4125)
     expect(bouncyArchetype.knockbackModifiers.verticalPower.value).toBe(0.105)
@@ -54,16 +54,16 @@ describe('source data for Java Edition 26.2', () => {
   })
 
   it('materializes the exact final formula parameters separately', () => {
-    expect(je26_2KnockbackMechanics.horizontalResultScale).toBe(0.4)
-    expect(je26_2KnockbackMechanics.verticalResultScale).toBe(1.2)
-    expect(je26_2KnockbackMechanics.resultClampMinimum).toBe(-128)
-    expect(je26_2KnockbackMechanics.resultClampMaximum).toBe(128)
-    expect(je26_2Constants.standingPlayerEyeHeight.value).toBe(1.62)
-    expect(je26_2Constants.standingPlayerDimensions.value).toEqual({ width: 0.6, height: 1.8 })
+    expect(je26_3KnockbackMechanics.horizontalResultScale).toBe(0.4)
+    expect(je26_3KnockbackMechanics.verticalResultScale).toBe(1.2)
+    expect(je26_3KnockbackMechanics.resultClampMinimum).toBe(-128)
+    expect(je26_3KnockbackMechanics.resultClampMaximum).toBe(128)
+    expect(je26_3Constants.standingPlayerEyeHeight.value).toBe(1.62)
+    expect(je26_3Constants.standingPlayerDimensions.value).toEqual({ width: 0.6, height: 1.8 })
   })
 
   it('keeps source-backed uniform floor properties separate from cube properties', () => {
-    expect(je26_2UniformFloorProfiles.ordinary_full_block).toMatchObject({
+    expect(je26_3UniformFloorProfiles.ordinary_full_block).toMatchObject({
       surfaceHeightWithinBlock: 1,
       friction: 0.6000000238418579,
       bounceRestitution: 0,
@@ -71,23 +71,23 @@ describe('source data for Java Edition 26.2', () => {
       suppressesBounce: false,
       afterTravel: 'none',
     })
-    expect(je26_2UniformFloorProfiles.slime_block).toMatchObject({
+    expect(je26_3UniformFloorProfiles.slime_block).toMatchObject({
       friction: 0.800000011920929,
       bounceRestitution: 1,
       afterTravel: 'slimeStepOn',
     })
-    expect(je26_2UniformFloorProfiles.honey_block).toMatchObject({
+    expect(je26_3UniformFloorProfiles.honey_block).toMatchObject({
       surfaceHeightWithinBlock: 0.9375,
       speedFactor: 0.4000000059604645,
       suppressesBounce: true,
     })
-    expect(je26_2UniformFloorProfileDefinitions.bed.bounceRestitution.provenance).toContain(
+    expect(je26_3UniformFloorProfileDefinitions.bed.bounceRestitution.provenance).toContain(
       'uniformFloorProperties',
     )
   })
 
   it('derives archetype-sensitive resting-ground Motion with Java float operations', () => {
-    const hot = resolveArchetype(je26_2ArchetypesById['minecraft:hot'])
+    const hot = resolveArchetype(je26_3ArchetypesById['minecraft:hot'])
 
     expect(
       createRestingGroundVelocity(
@@ -122,9 +122,17 @@ describe('source data for Java Edition 26.2', () => {
   })
 
   it('uses repository-relative provenance for every source ledger entry', () => {
-    for (const record of Object.values(provenance)) {
+    const historical26_2Records = new Set([
+      'meleeEndpointValidation',
+      'playerBowArrowShot',
+      'playerBowArrowDamage',
+      'playerBowArrowPunch',
+      'playerBowArrowEnchantments',
+    ])
+
+    for (const [id, record] of Object.entries(provenance)) {
       expect(record.edition).toBe('Java Edition')
-      expect(record.version).toBe('26.2')
+      expect(record.version).toBe(historical26_2Records.has(id) ? '26.2' : '26.3')
       expect(record.sourcePath).not.toMatch(/^\//)
       expect(record.sourcePath).not.toContain('fandom')
       expect(record.locator.length).toBeGreaterThan(0)

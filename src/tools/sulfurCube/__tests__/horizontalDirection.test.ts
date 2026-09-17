@@ -56,7 +56,7 @@ function createHorizontalFixtureContext(
   return context
 }
 
-describe('horizontal sulfur-cube direction for JE 26.2', () => {
+describe('horizontal sulfur-cube direction for JE 26.3', () => {
   it.each(directHorizontalDirectionFixtures)('matches $id in standard math', (fixture) => {
     const result = applySulfurCubeKnockbackCall(
       { x: 0, y: 0, z: 0 },

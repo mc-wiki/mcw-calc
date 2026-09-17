@@ -2,7 +2,7 @@ import type { UniformFloorAfterTravel, UniformFloorProfile } from '../../model/t
 import type { SourcedValue } from './provenance'
 import { sourcedValue } from './provenance'
 
-export type Je26_2UniformFloorProfileId =
+export type Je26_3UniformFloorProfileId =
   | 'ordinary_full_block'
   | 'slime_block'
   | 'honey_block'
@@ -11,8 +11,8 @@ export type Je26_2UniformFloorProfileId =
   | 'soul_sand'
   | 'bed'
 
-export interface Je26_2UniformFloorProfileDefinition {
-  readonly id: Je26_2UniformFloorProfileId
+export interface Je26_3UniformFloorProfileDefinition {
+  readonly id: Je26_3UniformFloorProfileId
   readonly representatives: readonly string[]
   readonly surfaceHeightWithinBlock: SourcedValue<number>
   readonly friction: SourcedValue<number>
@@ -25,7 +25,7 @@ export interface Je26_2UniformFloorProfileDefinition {
 
 const floorSource = ['uniformFloorProperties'] as const
 
-export const je26_2UniformFloorProfileOrder = [
+export const je26_3UniformFloorProfileOrder = [
   'ordinary_full_block',
   'slime_block',
   'honey_block',
@@ -33,9 +33,9 @@ export const je26_2UniformFloorProfileOrder = [
   'blue_ice',
   'soul_sand',
   'bed',
-] as const satisfies readonly Je26_2UniformFloorProfileId[]
+] as const satisfies readonly Je26_3UniformFloorProfileId[]
 
-export const je26_2UniformFloorProfileDefinitions = Object.freeze({
+export const je26_3UniformFloorProfileDefinitions = Object.freeze({
   ordinary_full_block: {
     id: 'ordinary_full_block',
     representatives: ['minecraft:stone', 'minecraft:oak_planks'],
@@ -120,10 +120,10 @@ export const je26_2UniformFloorProfileDefinitions = Object.freeze({
     afterTravel: sourcedValue('none', floorSource),
     scopeNote: 'The bed fall-damage adjustment does not change sulfur-cube motion.',
   },
-} as const satisfies Record<Je26_2UniformFloorProfileId, Je26_2UniformFloorProfileDefinition>)
+} as const satisfies Record<Je26_3UniformFloorProfileId, Je26_3UniformFloorProfileDefinition>)
 
 export function toUniformFloorProfile(
-  definition: Je26_2UniformFloorProfileDefinition,
+  definition: Je26_3UniformFloorProfileDefinition,
 ): UniformFloorProfile {
   return {
     id: definition.id,
@@ -136,11 +136,11 @@ export function toUniformFloorProfile(
   }
 }
 
-export const je26_2UniformFloorProfiles = Object.freeze(
+export const je26_3UniformFloorProfiles = Object.freeze(
   Object.fromEntries(
-    je26_2UniformFloorProfileOrder.map((id) => [
+    je26_3UniformFloorProfileOrder.map((id) => [
       id,
-      toUniformFloorProfile(je26_2UniformFloorProfileDefinitions[id]),
+      toUniformFloorProfile(je26_3UniformFloorProfileDefinitions[id]),
     ]),
-  ) as Record<Je26_2UniformFloorProfileId, UniformFloorProfile>,
+  ) as Record<Je26_3UniformFloorProfileId, UniformFloorProfile>,
 )

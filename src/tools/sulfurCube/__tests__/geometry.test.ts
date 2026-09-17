@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { je26_2Constants } from '../data/je26_2'
+import { je26_3Constants } from '../data/je26_3'
 import { deriveCubeGeometry, deriveKnockbackGeometry } from '../model/geometry'
 import { standardNumerics } from '../numerics/standard'
 import { createAdultSulfurCubeGeometry } from '../presets/defaults'
 import { createStandingPlayerGeometry } from '../presets/standingPlayer'
 
-const threshold = je26_2Constants.vectorNormalizationThreshold.value
+const threshold = je26_3Constants.vectorNormalizationThreshold.value
 
 describe('sulfur cube geometry', () => {
   it('derives center, top, and bottom from feet and dimensions', () => {

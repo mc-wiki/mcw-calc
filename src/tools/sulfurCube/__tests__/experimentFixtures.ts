@@ -1,5 +1,5 @@
 import type { KnockbackCall, Vec3 } from '../model/types'
-import { je26_2Constants } from '../data/je26_2'
+import { je26_3Constants } from '../data/je26_3'
 import { createSulfurCubeContext } from '../presets/defaults'
 import { createStandingPlayerGeometry } from '../presets/standingPlayer'
 
@@ -155,7 +155,7 @@ function directionBetween(from: Vec3, to: Vec3): Vec3 {
 export function createFixtureInputs(fixture: DirectMeleeExperimentFixture) {
   const eyePosition = {
     x: fixture.attackerFeetPosition.x,
-    y: fixture.attackerFeetPosition.y + je26_2Constants.standingPlayerEyeHeight.value,
+    y: fixture.attackerFeetPosition.y + je26_3Constants.standingPlayerEyeHeight.value,
     z: fixture.attackerFeetPosition.z,
   }
   const attacker = createStandingPlayerGeometry(

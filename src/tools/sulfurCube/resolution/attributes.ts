@@ -1,4 +1,4 @@
-import type { AttributeModifierOperation, SulfurCubeAttributeId } from '../data/je26_2'
+import type { AttributeModifierOperation, SulfurCubeAttributeId } from '../data/je26_3'
 import type {
   ActiveModifiersByOperation,
   AttributeCandidateInput,
@@ -9,7 +9,7 @@ import type {
   AttributeResolution,
   SourcedAttributeModifier,
 } from './types'
-import { je26_2CubeAttributeDefinitions } from '../data/je26_2'
+import { je26_3CubeAttributeDefinitions } from '../data/je26_3'
 
 const operationOrder = [
   'add_value',
@@ -17,9 +17,9 @@ const operationOrder = [
   'add_multiplied_total',
 ] as const satisfies readonly AttributeModifierOperation[]
 
-export const je26_2AttributeDefinitions = Object.freeze(
+export const je26_3AttributeDefinitions = Object.freeze(
   Object.fromEntries(
-    Object.entries(je26_2CubeAttributeDefinitions).map(([id, definition]) => [
+    Object.entries(je26_3CubeAttributeDefinitions).map(([id, definition]) => [
       id,
       {
         id,
@@ -142,7 +142,7 @@ export function foldAttributeModifiers(
   candidates: readonly AttributeCandidateInput[],
   definitions: Readonly<
     Record<SulfurCubeAttributeId, AttributeDefinition>
-  > = je26_2AttributeDefinitions,
+  > = je26_3AttributeDefinitions,
 ): AttributeFoldResult {
   const states = Object.fromEntries(
     Object.values(definitions).map((definition) => [definition.id, createMutableState(definition)]),

@@ -1,6 +1,6 @@
-import type { Je26_2ArchetypeId } from './archetypes'
+import type { Je26_3ArchetypeId } from './archetypes'
 
-/** Source location in the locally extracted JE 26.2 vanilla item-tag data. */
+/** Source location in the locally extracted JE 26.3 vanilla item-tag data. */
 export interface ExtractedItemTagSource {
   readonly tagId: string
   readonly sourcePath: string
@@ -8,297 +8,303 @@ export interface ExtractedItemTagSource {
   readonly lineEnd: number
 }
 
-export interface Je26_2ArchetypeMembershipGroup {
-  readonly archetypeId: Je26_2ArchetypeId
+export interface Je26_3ArchetypeMembershipGroup {
+  readonly archetypeId: Je26_3ArchetypeId
   readonly rootTag: ExtractedItemTagSource
   readonly itemIds: readonly string[]
 }
 
-export interface Je26_2BlockMembershipEntry {
+export interface Je26_3BlockMembershipEntry {
   readonly itemId: string
   /** Candidate ids remain an array because data packs can introduce overlaps. */
-  readonly orderedCandidateIds: readonly Je26_2ArchetypeId[]
+  readonly orderedCandidateIds: readonly Je26_3ArchetypeId[]
   readonly rootTagIds: readonly string[]
 }
 
 /**
- * Every recursively visited tag that contributes to the vanilla JE 26.2
+ * Every recursively visited tag that contributes to the vanilla JE 26.3
  * sulfur-cube archetype membership expansion.
  */
-export const je26_2RecursiveItemTagSources: readonly ExtractedItemTagSource[] = [
+export const je26_3RecursiveItemTagSources: readonly ExtractedItemTagSource[] = [
   {
     tagId: 'minecraft:acacia_logs',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/acacia_logs.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/acacia_logs.json',
     lineStart: 1,
     lineEnd: 7,
   },
   {
     tagId: 'minecraft:bamboo_blocks',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/bamboo_blocks.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/bamboo_blocks.json',
     lineStart: 1,
     lineEnd: 5,
   },
   {
     tagId: 'minecraft:birch_logs',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/birch_logs.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/birch_logs.json',
     lineStart: 1,
     lineEnd: 7,
   },
   {
     tagId: 'minecraft:cherry_logs',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/cherry_logs.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/cherry_logs.json',
     lineStart: 1,
     lineEnd: 7,
   },
   {
     tagId: 'minecraft:coal_ores',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/coal_ores.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/coal_ores.json',
     lineStart: 1,
     lineEnd: 5,
   },
   {
     tagId: 'minecraft:concrete',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/concrete.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/concrete.json',
     lineStart: 1,
     lineEnd: 19,
   },
   {
     tagId: 'minecraft:concrete_powders',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/concrete_powders.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/concrete_powders.json',
     lineStart: 1,
     lineEnd: 19,
   },
   {
     tagId: 'minecraft:copper_ores',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/copper_ores.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/copper_ores.json',
     lineStart: 1,
     lineEnd: 5,
   },
   {
     tagId: 'minecraft:crimson_stems',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/crimson_stems.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/crimson_stems.json',
     lineStart: 1,
     lineEnd: 7,
   },
   {
     tagId: 'minecraft:dark_oak_logs',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/dark_oak_logs.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/dark_oak_logs.json',
     lineStart: 1,
     lineEnd: 7,
   },
   {
     tagId: 'minecraft:diamond_ores',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/diamond_ores.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/diamond_ores.json',
     lineStart: 1,
     lineEnd: 5,
   },
   {
     tagId: 'minecraft:emerald_ores',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/emerald_ores.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/emerald_ores.json',
     lineStart: 1,
     lineEnd: 5,
   },
   {
     tagId: 'minecraft:glazed_terracotta',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/glazed_terracotta.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/glazed_terracotta.json',
     lineStart: 1,
     lineEnd: 19,
   },
   {
     tagId: 'minecraft:gold_ores',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/gold_ores.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/gold_ores.json',
     lineStart: 1,
     lineEnd: 6,
   },
   {
     tagId: 'minecraft:iron_ores',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/iron_ores.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/iron_ores.json',
     lineStart: 1,
     lineEnd: 5,
   },
   {
     tagId: 'minecraft:jungle_logs',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/jungle_logs.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/jungle_logs.json',
     lineStart: 1,
     lineEnd: 7,
   },
   {
     tagId: 'minecraft:lapis_ores',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/lapis_ores.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/lapis_ores.json',
     lineStart: 1,
     lineEnd: 5,
   },
   {
     tagId: 'minecraft:logs',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/logs.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/logs.json',
     lineStart: 1,
     lineEnd: 6,
   },
   {
     tagId: 'minecraft:logs_that_burn',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/logs_that_burn.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/logs_that_burn.json',
     lineStart: 1,
-    lineEnd: 12,
+    lineEnd: 13,
   },
   {
     tagId: 'minecraft:mangrove_logs',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/mangrove_logs.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/mangrove_logs.json',
     lineStart: 1,
     lineEnd: 7,
   },
   {
     tagId: 'minecraft:moss_blocks',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/moss_blocks.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/moss_blocks.json',
     lineStart: 1,
     lineEnd: 5,
   },
   {
     tagId: 'minecraft:oak_logs',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/oak_logs.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/oak_logs.json',
     lineStart: 1,
     lineEnd: 7,
   },
   {
     tagId: 'minecraft:pale_oak_logs',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/pale_oak_logs.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/pale_oak_logs.json',
     lineStart: 1,
     lineEnd: 7,
   },
   {
     tagId: 'minecraft:planks',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/planks.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/planks.json',
     lineStart: 1,
-    lineEnd: 15,
+    lineEnd: 16,
+  },
+  {
+    tagId: 'minecraft:poplar_logs',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/poplar_logs.json',
+    lineStart: 1,
+    lineEnd: 8,
   },
   {
     tagId: 'minecraft:redstone_ores',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/redstone_ores.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/redstone_ores.json',
     lineStart: 1,
     lineEnd: 5,
   },
   {
     tagId: 'minecraft:spruce_logs',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/spruce_logs.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/spruce_logs.json',
     lineStart: 1,
     lineEnd: 7,
   },
   {
     tagId: 'minecraft:sulfur_cube_archetype/bouncy',
     sourcePath:
-      'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/bouncy.json',
+      'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/bouncy.json',
     lineStart: 1,
     lineEnd: 7,
   },
   {
     tagId: 'minecraft:sulfur_cube_archetype/explosive',
     sourcePath:
-      'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/explosive.json',
+      'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/explosive.json',
     lineStart: 1,
     lineEnd: 4,
   },
   {
     tagId: 'minecraft:sulfur_cube_archetype/fast_flat',
     sourcePath:
-      'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/fast_flat.json',
+      'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/fast_flat.json',
     lineStart: 1,
     lineEnd: 28,
   },
   {
     tagId: 'minecraft:sulfur_cube_archetype/fast_sliding',
     sourcePath:
-      'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/fast_sliding.json',
+      'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/fast_sliding.json',
     lineStart: 1,
     lineEnd: 6,
   },
   {
     tagId: 'minecraft:sulfur_cube_archetype/high_resistance',
     sourcePath:
-      'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/high_resistance.json',
+      'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/high_resistance.json',
     lineStart: 1,
     lineEnd: 5,
   },
   {
     tagId: 'minecraft:sulfur_cube_archetype/hot',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/hot.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/hot.json',
     lineStart: 1,
     lineEnd: 4,
   },
   {
     tagId: 'minecraft:sulfur_cube_archetype/light',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/light.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/light.json',
     lineStart: 1,
     lineEnd: 4,
   },
   {
     tagId: 'minecraft:sulfur_cube_archetype/regular',
     sourcePath:
-      'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/regular.json',
+      'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/regular.json',
     lineStart: 1,
     lineEnd: 15,
   },
   {
     tagId: 'minecraft:sulfur_cube_archetype/slow_bouncy',
     sourcePath:
-      'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/slow_bouncy.json',
+      'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/slow_bouncy.json',
     lineStart: 1,
     lineEnd: 97,
   },
   {
     tagId: 'minecraft:sulfur_cube_archetype/slow_flat',
     sourcePath:
-      'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/slow_flat.json',
+      'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/slow_flat.json',
     lineStart: 1,
     lineEnd: 45,
   },
   {
     tagId: 'minecraft:sulfur_cube_archetype/slow_sliding',
     sourcePath:
-      'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/slow_sliding.json',
+      'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/slow_sliding.json',
     lineStart: 1,
     lineEnd: 9,
   },
   {
     tagId: 'minecraft:sulfur_cube_archetype/sticky',
     sourcePath:
-      'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/sticky.json',
+      'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/sticky.json',
     lineStart: 1,
     lineEnd: 4,
   },
   {
     tagId: 'minecraft:sulfur_cube_swallowable',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_swallowable.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_swallowable.json',
     lineStart: 1,
     lineEnd: 15,
   },
   {
     tagId: 'minecraft:terracotta',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/terracotta.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/terracotta.json',
     lineStart: 1,
     lineEnd: 20,
   },
   {
     tagId: 'minecraft:warped_stems',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/warped_stems.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/warped_stems.json',
     lineStart: 1,
     lineEnd: 7,
   },
   {
     tagId: 'minecraft:wart_blocks',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/wart_blocks.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/wart_blocks.json',
     lineStart: 1,
     lineEnd: 5,
   },
   {
     tagId: 'minecraft:wool',
-    sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/wool.json',
+    sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/wool.json',
     lineStart: 1,
     lineEnd: 19,
   },
 ]
 
-export const je26_2SwallowableTagSource: ExtractedItemTagSource = {
+export const je26_3SwallowableTagSource: ExtractedItemTagSource = {
   tagId: 'minecraft:sulfur_cube_swallowable',
-  sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_swallowable.json',
+  sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_swallowable.json',
   lineStart: 1,
   lineEnd: 15,
 }
@@ -309,13 +315,13 @@ export const je26_2SwallowableTagSource: ExtractedItemTagSource = {
  * Membership is keyed by the absorbed BlockItem identity; block state is not
  * part of this lookup.
  */
-export const je26_2BlockMembershipGroups: readonly Je26_2ArchetypeMembershipGroup[] = [
+export const je26_3BlockMembershipGroups: readonly Je26_3ArchetypeMembershipGroup[] = [
   {
     archetypeId: 'minecraft:bouncy',
     rootTag: {
       tagId: 'minecraft:sulfur_cube_archetype/bouncy',
       sourcePath:
-        'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/bouncy.json',
+        'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/bouncy.json',
       lineStart: 1,
       lineEnd: 7,
     },
@@ -332,6 +338,7 @@ export const je26_2BlockMembershipGroups: readonly Je26_2ArchetypeMembershipGrou
       'minecraft:mangrove_planks',
       'minecraft:bamboo_planks',
       'minecraft:cherry_planks',
+      'minecraft:poplar_planks',
       'minecraft:bamboo_mosaic',
       'minecraft:dark_oak_log',
       'minecraft:dark_oak_wood',
@@ -369,6 +376,10 @@ export const je26_2BlockMembershipGroups: readonly Je26_2ArchetypeMembershipGrou
       'minecraft:cherry_wood',
       'minecraft:stripped_cherry_log',
       'minecraft:stripped_cherry_wood',
+      'minecraft:poplar_log',
+      'minecraft:poplar_wood',
+      'minecraft:stripped_poplar_log',
+      'minecraft:stripped_poplar_wood',
       'minecraft:crimson_stem',
       'minecraft:stripped_crimson_stem',
       'minecraft:crimson_hyphae',
@@ -386,7 +397,7 @@ export const je26_2BlockMembershipGroups: readonly Je26_2ArchetypeMembershipGrou
     rootTag: {
       tagId: 'minecraft:sulfur_cube_archetype/explosive',
       sourcePath:
-        'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/explosive.json',
+        'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/explosive.json',
       lineStart: 1,
       lineEnd: 4,
     },
@@ -397,7 +408,7 @@ export const je26_2BlockMembershipGroups: readonly Je26_2ArchetypeMembershipGrou
     rootTag: {
       tagId: 'minecraft:sulfur_cube_archetype/fast_flat',
       sourcePath:
-        'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/fast_flat.json',
+        'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/fast_flat.json',
       lineStart: 1,
       lineEnd: 28,
     },
@@ -435,7 +446,7 @@ export const je26_2BlockMembershipGroups: readonly Je26_2ArchetypeMembershipGrou
     rootTag: {
       tagId: 'minecraft:sulfur_cube_archetype/fast_sliding',
       sourcePath:
-        'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/fast_sliding.json',
+        'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/fast_sliding.json',
       lineStart: 1,
       lineEnd: 6,
     },
@@ -446,7 +457,7 @@ export const je26_2BlockMembershipGroups: readonly Je26_2ArchetypeMembershipGrou
     rootTag: {
       tagId: 'minecraft:sulfur_cube_archetype/high_resistance',
       sourcePath:
-        'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/high_resistance.json',
+        'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/high_resistance.json',
       lineStart: 1,
       lineEnd: 5,
     },
@@ -456,7 +467,7 @@ export const je26_2BlockMembershipGroups: readonly Je26_2ArchetypeMembershipGrou
     archetypeId: 'minecraft:hot',
     rootTag: {
       tagId: 'minecraft:sulfur_cube_archetype/hot',
-      sourcePath: 'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/hot.json',
+      sourcePath: 'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/hot.json',
       lineStart: 1,
       lineEnd: 4,
     },
@@ -467,7 +478,7 @@ export const je26_2BlockMembershipGroups: readonly Je26_2ArchetypeMembershipGrou
     rootTag: {
       tagId: 'minecraft:sulfur_cube_archetype/light',
       sourcePath:
-        'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/light.json',
+        'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/light.json',
       lineStart: 1,
       lineEnd: 4,
     },
@@ -495,7 +506,7 @@ export const je26_2BlockMembershipGroups: readonly Je26_2ArchetypeMembershipGrou
     rootTag: {
       tagId: 'minecraft:sulfur_cube_archetype/regular',
       sourcePath:
-        'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/regular.json',
+        'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/regular.json',
       lineStart: 1,
       lineEnd: 15,
     },
@@ -534,7 +545,7 @@ export const je26_2BlockMembershipGroups: readonly Je26_2ArchetypeMembershipGrou
     rootTag: {
       tagId: 'minecraft:sulfur_cube_archetype/slow_bouncy',
       sourcePath:
-        'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/slow_bouncy.json',
+        'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/slow_bouncy.json',
       lineStart: 1,
       lineEnd: 97,
     },
@@ -691,7 +702,7 @@ export const je26_2BlockMembershipGroups: readonly Je26_2ArchetypeMembershipGrou
     rootTag: {
       tagId: 'minecraft:sulfur_cube_archetype/slow_flat',
       sourcePath:
-        'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/slow_flat.json',
+        'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/slow_flat.json',
       lineStart: 1,
       lineEnd: 45,
     },
@@ -749,7 +760,7 @@ export const je26_2BlockMembershipGroups: readonly Je26_2ArchetypeMembershipGrou
     rootTag: {
       tagId: 'minecraft:sulfur_cube_archetype/slow_sliding',
       sourcePath:
-        'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/slow_sliding.json',
+        'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/slow_sliding.json',
       lineStart: 1,
       lineEnd: 9,
     },
@@ -768,7 +779,7 @@ export const je26_2BlockMembershipGroups: readonly Je26_2ArchetypeMembershipGrou
     rootTag: {
       tagId: 'minecraft:sulfur_cube_archetype/sticky',
       sourcePath:
-        'versions/26.2/extracted/data/minecraft/tags/item/sulfur_cube_archetype/sticky.json',
+        'versions/26.3/extracted/data/minecraft/tags/item/sulfur_cube_archetype/sticky.json',
       lineStart: 1,
       lineEnd: 4,
     },
@@ -777,13 +788,13 @@ export const je26_2BlockMembershipGroups: readonly Je26_2ArchetypeMembershipGrou
 ]
 
 function expandMembershipGroups(
-  groups: readonly Je26_2ArchetypeMembershipGroup[],
-): readonly Je26_2BlockMembershipEntry[] {
+  groups: readonly Je26_3ArchetypeMembershipGroup[],
+): readonly Je26_3BlockMembershipEntry[] {
   const entriesByItemId = new Map<
     string,
     {
       readonly itemId: string
-      readonly orderedCandidateIds: Je26_2ArchetypeId[]
+      readonly orderedCandidateIds: Je26_3ArchetypeId[]
       readonly rootTagIds: string[]
     }
   >()
@@ -807,12 +818,12 @@ function expandMembershipGroups(
   return [...entriesByItemId.values()]
 }
 
-export const je26_2BlockMembershipEntries: readonly Je26_2BlockMembershipEntry[] =
-  expandMembershipGroups(je26_2BlockMembershipGroups)
+export const je26_3BlockMembershipEntries: readonly Je26_3BlockMembershipEntry[] =
+  expandMembershipGroups(je26_3BlockMembershipGroups)
 
-export const je26_2SwallowableItemIds: readonly string[] = je26_2BlockMembershipEntries.map(
+export const je26_3SwallowableItemIds: readonly string[] = je26_3BlockMembershipEntries.map(
   ({ itemId }) => itemId,
 )
 
-export const je26_2BlockMembershipIndex: Readonly<Record<string, Je26_2BlockMembershipEntry>> =
-  Object.fromEntries(je26_2BlockMembershipEntries.map((entry) => [entry.itemId, entry]))
+export const je26_3BlockMembershipIndex: Readonly<Record<string, Je26_3BlockMembershipEntry>> =
+  Object.fromEntries(je26_3BlockMembershipEntries.map((entry) => [entry.itemId, entry]))

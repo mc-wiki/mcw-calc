@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import type { MenuItemData } from '@wikimedia/codex'
-import type { Je26_2UniformFloorProfileId } from '../data/je26_2'
+import type { Je26_3UniformFloorProfileId } from '../data/je26_3'
 import type { CubePropertySelectionResolution, CubePropertySelectionState } from '../resolution'
 import type { DiagnosticFormState, NumericFormValue, PlayerMeleeFormState } from './types'
 import { CdxAccordion, CdxButton, CdxField, CdxSelect, CdxTextInput } from '@wikimedia/codex'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
-  je26_2UniformFloorProfileDefinitions,
-  je26_2UniformFloorProfileOrder,
-} from '../data/je26_2'
+  je26_3UniformFloorProfileDefinitions,
+  je26_3UniformFloorProfileOrder,
+} from '../data/je26_3'
 import { sanitizeNumericInput } from '../input/numericInput'
 import CubePropertyControls from './CubePropertyControls.vue'
 import InfoTooltip from './InfoTooltip.vue'
@@ -41,12 +41,12 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
-const floorItems: MenuItemData[] = je26_2UniformFloorProfileOrder.map((id) => ({
+const floorItems: MenuItemData[] = je26_3UniformFloorProfileOrder.map((id) => ({
   value: id,
   label: t(`sulfurCube.floor.${id}`),
 }))
 const selectedFloorDefinition = computed(
-  () => je26_2UniformFloorProfileDefinitions[props.modelValue.floorProfileId],
+  () => je26_3UniformFloorProfileDefinitions[props.modelValue.floorProfileId],
 )
 const selectedFloorScopeNote = computed(() => {
   const floor = selectedFloorDefinition.value
@@ -97,11 +97,11 @@ function updateField(
 function updateFloor(value: string | number | null): void {
   if (
     typeof value === 'string' &&
-    je26_2UniformFloorProfileOrder.includes(value as Je26_2UniformFloorProfileId)
+    je26_3UniformFloorProfileOrder.includes(value as Je26_3UniformFloorProfileId)
   ) {
     emit('update:modelValue', {
       ...props.modelValue,
-      floorProfileId: value as Je26_2UniformFloorProfileId,
+      floorProfileId: value as Je26_3UniformFloorProfileId,
     })
   }
 }

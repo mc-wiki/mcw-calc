@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { createFeetAnchoredAabb, resolveClearRayEntityReach } from '../model/reach'
 import { adultCubeReachFixtureAabb, playerMeleeClearRayFixtures } from './playerMeleeReachFixtures'
 
-describe('ordinary JE 26.2 player-melee clear-ray reach', () => {
+describe('ordinary JE 26.3 player-melee clear-ray reach', () => {
   it.each(playerMeleeClearRayFixtures)('reproduces $id', (fixture) => {
     const result = resolveClearRayEntityReach({
       eye: fixture.eye,

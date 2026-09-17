@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest'
 import {
   bouncyArchetype,
   bouncyArchetypeDefinition,
-  je26_2ArchetypeRegistryOrder,
-  je26_2Archetypes,
-  je26_2ArchetypesById,
-} from '../data/je26_2'
+  je26_3ArchetypeRegistryOrder,
+  je26_3Archetypes,
+  je26_3ArchetypesById,
+} from '../data/je26_3'
 
 const expectedArchetypes = [
   {
@@ -138,18 +138,18 @@ const expectedAttributes = [
   ['minecraft:air_drag_modifier', 'mul_air_drag_modifier', 'add_multiplied_total'],
 ] as const
 
-describe('sulfur cube archetype definitions for Java Edition 26.2', () => {
+describe('sulfur cube archetype definitions for Java Edition 26.3', () => {
   it('preserves the verified identifier-sorted runtime registry order', () => {
-    expect(je26_2Archetypes.map(({ id }) => id)).toEqual(je26_2ArchetypeRegistryOrder)
-    expect(je26_2Archetypes.map(({ registryIndex }) => registryIndex)).toEqual(
-      je26_2Archetypes.map((_, index) => index),
+    expect(je26_3Archetypes.map(({ id }) => id)).toEqual(je26_3ArchetypeRegistryOrder)
+    expect(je26_3Archetypes.map(({ registryIndex }) => registryIndex)).toEqual(
+      je26_3Archetypes.map((_, index) => index),
     )
-    expect(Object.keys(je26_2ArchetypesById)).toEqual(je26_2ArchetypeRegistryOrder)
+    expect(Object.keys(je26_3ArchetypesById)).toEqual(je26_3ArchetypeRegistryOrder)
   })
 
   it('transcribes every non-pattern value from the accepted source inventory', () => {
     expect(
-      je26_2Archetypes.map((definition) => ({
+      je26_3Archetypes.map((definition) => ({
         id: definition.id,
         amounts: definition.attributeModifiers.map(({ amount }) => amount.sourceDecimal),
         buoyant: definition.buoyant.value,
@@ -195,7 +195,7 @@ describe('sulfur cube archetype definitions for Java Edition 26.2', () => {
   })
 
   it('preserves every vanilla attribute entry and required holder/sound field', () => {
-    for (const definition of je26_2Archetypes) {
+    for (const definition of je26_3Archetypes) {
       const name = definition.id.slice('minecraft:'.length)
 
       expect(definition.items.value).toBe(`#minecraft:sulfur_cube_archetype/${name}`)
@@ -222,7 +222,7 @@ describe('sulfur cube archetype definitions for Java Edition 26.2', () => {
   })
 
   it('keeps source decimals and Java codec values at an explicit numerical seam', () => {
-    for (const definition of je26_2Archetypes) {
+    for (const definition of je26_3Archetypes) {
       for (const modifier of definition.attributeModifiers) {
         expect(modifier.amount.numericSourceType).toBe('double')
         expect(modifier.amount.decodedValue).toBe(modifier.amount.sourceDecimal)
@@ -248,10 +248,10 @@ describe('sulfur cube archetype definitions for Java Edition 26.2', () => {
   })
 
   it('carries repository-relative source paths and exact field locators', () => {
-    for (const definition of je26_2Archetypes) {
+    for (const definition of je26_3Archetypes) {
       const extractedPath = definition.source.sourcePath
       expect(extractedPath).toMatch(
-        /^versions\/26\.2\/extracted\/data\/minecraft\/sulfur_cube_archetype\/.+\.json$/,
+        /^versions\/26\.3\/extracted\/data\/minecraft\/sulfur_cube_archetype\/.+\.json$/,
       )
       expect(definition.source.locator).toMatch(/^complete extracted definition/)
 

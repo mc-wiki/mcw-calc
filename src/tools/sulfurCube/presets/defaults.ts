@@ -14,10 +14,10 @@ import type {
 import type { NumericBackend } from '../numerics/types'
 import {
   bouncyArchetype,
-  je26_2Constants,
-  je26_2KnockbackMechanics,
-  je26_2UniformFloorProfiles,
-} from '../data/je26_2'
+  je26_3Constants,
+  je26_3KnockbackMechanics,
+  je26_3UniformFloorProfiles,
+} from '../data/je26_3'
 import { computeModifiedFriction } from '../model/trajectory'
 import { standardNumerics } from '../numerics/standard'
 
@@ -31,8 +31,8 @@ export function createAdultSulfurCubeGeometry(
   feetPosition: Vec3,
   numerics: NumericBackend = standardNumerics,
 ): CubeGeometry {
-  const baseDimensions = je26_2Constants.sulfurCubeBaseDimensions.value
-  const runtimeSize = numerics.sourceFloat(je26_2Constants.adultSulfurCubeRuntimeSize.value)
+  const baseDimensions = je26_3Constants.sulfurCubeBaseDimensions.value
+  const runtimeSize = numerics.sourceFloat(je26_3Constants.adultSulfurCubeRuntimeSize.value)
 
   return {
     feetPosition: { ...feetPosition },
@@ -53,7 +53,7 @@ export function createSulfurCubeContext(
     attacker,
     cube: createAdultSulfurCubeGeometry(cubeFeetPosition, numerics),
     properties: { ...properties },
-    mechanics: je26_2KnockbackMechanics,
+    mechanics: je26_3KnockbackMechanics,
   }
 }
 
@@ -87,14 +87,14 @@ export function createRestingGroundVelocity(
   numerics: NumericBackend = standardNumerics,
 ): Vec3 {
   const airDrag = computeModifiedFriction(
-    je26_2Constants.baseAirDrag.value,
+    je26_3Constants.baseAirDrag.value,
     properties.airDragModifier,
     numerics,
   )
 
   return {
     x: 0,
-    y: -je26_2Constants.defaultGravity.value * airDrag,
+    y: -je26_3Constants.defaultGravity.value * airDrag,
     z: 0,
   }
 }
@@ -115,9 +115,9 @@ export function createTrajectoryAssumptions(
   numerics: NumericBackend,
 ): TrajectoryAssumptions {
   return {
-    gravity: je26_2Constants.defaultGravity.value,
-    drag: computeModifiedFriction(je26_2Constants.baseAirDrag.value, airDragModifier, numerics),
-    movementCutoff: je26_2Constants.movementCutoff.value,
+    gravity: je26_3Constants.defaultGravity.value,
+    drag: computeModifiedFriction(je26_3Constants.baseAirDrag.value, airDragModifier, numerics),
+    movementCutoff: je26_3Constants.movementCutoff.value,
   }
 }
 
@@ -131,14 +131,14 @@ export function createBouncyTrajectoryAssumptions(numerics: NumericBackend): Tra
 export function createUniformFloorTrajectoryAssumptions(
   floorY: number,
   properties: Pick<CubeLaunchProperties, 'bounciness' | 'airDragModifier' | 'frictionModifier'>,
-  floor: UniformFloorProfile = je26_2UniformFloorProfiles.ordinary_full_block,
+  floor: UniformFloorProfile = je26_3UniformFloorProfiles.ordinary_full_block,
 ): UniformFloorTrajectoryAssumptions {
   return {
-    gravity: je26_2Constants.defaultGravity.value,
-    baseAirDrag: je26_2Constants.baseAirDrag.value,
-    movementCutoff: je26_2Constants.movementCutoff.value,
-    positionCommitThreshold: je26_2Constants.entityMovementPositionCommitThreshold.value,
-    movementBlockSampleOffset: je26_2Constants.movementBlockSampleOffset.value,
+    gravity: je26_3Constants.defaultGravity.value,
+    baseAirDrag: je26_3Constants.baseAirDrag.value,
+    movementCutoff: je26_3Constants.movementCutoff.value,
+    positionCommitThreshold: je26_3Constants.entityMovementPositionCommitThreshold.value,
+    movementBlockSampleOffset: je26_3Constants.movementBlockSampleOffset.value,
     floorY,
     cube: { ...properties },
     floor,

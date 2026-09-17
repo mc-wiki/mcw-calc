@@ -1,15 +1,15 @@
 import type { Vec3 } from '../model/types'
-import { je26_2Constants } from '../data/je26_2/constants'
+import { je26_3Constants } from '../data/je26_3/constants'
 import { minecraftCos, minecraftSin } from './javaPrecision'
 
-export interface Je26_2PlayerAim {
+export interface Je26_3PlayerAim {
   readonly pitchDegrees: number
   readonly yawDegrees: number
   readonly lookDirection: Vec3
 }
 
 const degreesToRadiansFloat = Math.fround(Math.PI / 180)
-export const radiansToDegreesFloat = je26_2Constants.commandFacingRadiansToDegreesFloat.value
+export const radiansToDegreesFloat = je26_3Constants.commandFacingRadiansToDegreesFloat.value
 const halfPi = Math.PI / 2
 const oneSixth = 1 / 6
 const fractionBiasBits = 4805340802404319232n
@@ -37,7 +37,7 @@ const fractionBias = longBitsToDouble(fractionBiasBits)
 const asinTable = Array.from({ length: 257 }, (_, index) => Math.asin(index / 256))
 const cosineTable = asinTable.map(Math.cos)
 
-/** JE 26.2's deprecated-but-still-used Mth.fastInvSqrt(double). */
+/** JE 26.3's deprecated-but-still-used Mth.fastInvSqrt(double). */
 export function minecraftFastInverseSqrt(value: number): number {
   const half = 0.5 * value
   let bits = doubleToRawLongBits(value)
@@ -47,7 +47,7 @@ export function minecraftFastInverseSqrt(value: number): number {
 }
 
 /**
- * JE 26.2's lookup-assisted Mth.atan2(double, double).
+ * JE 26.3's lookup-assisted Mth.atan2(double, double).
  *
  * SulfurCube's own power angles use Math.atan2 through NumericBackend. This
  * approximation belongs only to the command-facing Entity.lookAt conversion.
@@ -88,7 +88,7 @@ export function minecraftAtan2(yInput: number, xInput: number): number {
   return theta
 }
 
-/** JE 26.2's Mth.wrapDegrees(float), preserving Float32 operation boundaries. */
+/** JE 26.3's Mth.wrapDegrees(float), preserving Float32 operation boundaries. */
 export function minecraftWrapDegreesFloat(angleDegrees: number): number {
   let normalized = Math.fround(Math.fround(angleDegrees) % Math.fround(360))
 
@@ -102,8 +102,8 @@ export function minecraftWrapDegreesFloat(angleDegrees: number): number {
   return normalized
 }
 
-/** JE 26.2's Entity.calculateViewVector(float, float). */
-export function calculateJe26_2ViewVector(pitchDegrees: number, yawDegrees: number): Vec3 {
+/** JE 26.3's Entity.calculateViewVector(float, float). */
+export function calculateJe26_3ViewVector(pitchDegrees: number, yawDegrees: number): Vec3 {
   const pitchRadians = Math.fround(Math.fround(pitchDegrees) * degreesToRadiansFloat)
   const yawRadians = Math.fround(Math.fround(-yawDegrees) * degreesToRadiansFloat)
   const yawCosine = minecraftCos(yawRadians)
@@ -122,9 +122,9 @@ export function calculateJe26_2ViewVector(pitchDegrees: number, yawDegrees: numb
  * Reproduces `execute ... anchored eyes run tp ... facing ...` for the tool's
  * distinct eye-position and target-point inputs, then reconstructs getLookAngle.
  *
- * Source: JE 26.2 Entity.lookAt and Entity.calculateViewVector.
+ * Source: JE 26.3 Entity.lookAt and Entity.calculateViewVector.
  */
-export function deriveJe26_2PlayerAim(eyePosition: Vec3, aimPoint: Vec3): Je26_2PlayerAim {
+export function deriveJe26_3PlayerAim(eyePosition: Vec3, aimPoint: Vec3): Je26_3PlayerAim {
   const xDifference = aimPoint.x - eyePosition.x
   const yDifference = aimPoint.y - eyePosition.y
   const zDifference = aimPoint.z - eyePosition.z
@@ -143,6 +143,6 @@ export function deriveJe26_2PlayerAim(eyePosition: Vec3, aimPoint: Vec3): Je26_2
   return {
     pitchDegrees,
     yawDegrees,
-    lookDirection: calculateJe26_2ViewVector(pitchDegrees, yawDegrees),
+    lookDirection: calculateJe26_3ViewVector(pitchDegrees, yawDegrees),
   }
 }

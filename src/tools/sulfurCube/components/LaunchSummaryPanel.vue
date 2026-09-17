@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { MenuItemData } from '@wikimedia/codex'
 import type {
-  Je26_2ArchetypeId,
-  Je26_2PlayerMeleeWeaponPresetId,
-  Je26_2UniformFloorProfileId,
-} from '../data/je26_2'
+  Je26_3ArchetypeId,
+  Je26_3PlayerMeleeWeaponPresetId,
+  Je26_3UniformFloorProfileId,
+} from '../data/je26_3'
 import type { CubePropertySelectionResolution, CubePropertySelectionState } from '../resolution'
 import type {
   DiagnosticFormState,
@@ -17,18 +17,18 @@ import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getImageLink } from '@/utils/image'
 import {
-  je26_2ArchetypeRegistryOrder,
-  je26_2PlayerMeleeMechanics,
-  je26_2PlayerMeleeWeaponPresetOrder,
-  je26_2PlayerMeleeWeaponPresets,
-  je26_2UniformFloorProfileOrder,
-  resolveJe26_2PlayerMeleeWeaponPreset,
-} from '../data/je26_2'
+  je26_3ArchetypeRegistryOrder,
+  je26_3PlayerMeleeMechanics,
+  je26_3PlayerMeleeWeaponPresetOrder,
+  je26_3PlayerMeleeWeaponPresets,
+  je26_3UniformFloorProfileOrder,
+  resolveJe26_3PlayerMeleeWeaponPreset,
+} from '../data/je26_3'
 import { parseNumericInput, sanitizeNumericInput } from '../input/numericInput'
 import { blockSpriteFileName, humanizeIdentifier } from '../presentation/blockSelector'
 import { maximumTrajectoryTicks } from '../presets/diagnostic'
 import {
-  je26_2ArchetypeRepresentativeBlocks,
+  je26_3ArchetypeRepresentativeBlocks,
   selectCubePropertyArchetype,
   selectCubePropertyMode,
 } from '../resolution'
@@ -70,23 +70,23 @@ const radialDisplayOptionKeys = [
   'floor',
 ] as const satisfies readonly (keyof RadialSceneDisplayOptions)[]
 
-const archetypeItems: MenuItemData[] = je26_2ArchetypeRegistryOrder.map((id) => ({
+const archetypeItems: MenuItemData[] = je26_3ArchetypeRegistryOrder.map((id) => ({
   value: id,
   label: humanizeIdentifier(id),
   thumbnail: {
-    url: getImageLink(`en:${blockSpriteFileName(je26_2ArchetypeRepresentativeBlocks[id])}`),
+    url: getImageLink(`en:${blockSpriteFileName(je26_3ArchetypeRepresentativeBlocks[id])}`),
   },
 }))
 const weaponItems = computed<MenuItemData[]>(() =>
-  je26_2PlayerMeleeWeaponPresetOrder.map((id) => ({
+  je26_3PlayerMeleeWeaponPresetOrder.map((id) => ({
     value: id,
     label: t(`sulfurCube.attack.weapon.${id}`),
-    ...(je26_2PlayerMeleeWeaponPresets[id].itemId.value === null
+    ...(je26_3PlayerMeleeWeaponPresets[id].itemId.value === null
       ? { thumbnail: { url: transparentThumbnailUrl } }
       : {
           thumbnail: {
             url: getImageLink(
-              `en:ItemSprite_${je26_2PlayerMeleeWeaponPresets[id].itemId
+              `en:ItemSprite_${je26_3PlayerMeleeWeaponPresets[id].itemId
                 .value!.replace('minecraft:', '')
                 .replace(/_/g, '-')}.png`,
             ),
@@ -95,15 +95,15 @@ const weaponItems = computed<MenuItemData[]>(() =>
   })),
 )
 const sharpnessItems: MenuItemData[] = Array.from(
-  { length: je26_2PlayerMeleeMechanics.ordinarySurvivalSharpnessMaximum + 1 },
+  { length: je26_3PlayerMeleeMechanics.ordinarySurvivalSharpnessMaximum + 1 },
   (_, level) => ({ value: level, label: String(level) }),
 )
 const knockbackItems: MenuItemData[] = Array.from(
-  { length: je26_2PlayerMeleeMechanics.ordinarySurvivalKnockbackMaximum + 1 },
+  { length: je26_3PlayerMeleeMechanics.ordinarySurvivalKnockbackMaximum + 1 },
   (_, level) => ({ value: level, label: String(level) }),
 )
 const floorItems = computed<MenuItemData[]>(() =>
-  je26_2UniformFloorProfileOrder.map((id) => ({
+  je26_3UniformFloorProfileOrder.map((id) => ({
     value: id,
     label: t(`sulfurCube.floor.${id}`),
   })),
@@ -116,7 +116,7 @@ const selectedArchetype = computed(
 )
 const selectedWeapon = computed(
   () =>
-    resolveJe26_2PlayerMeleeWeaponPreset(
+    resolveJe26_3PlayerMeleeWeaponPreset(
       props.playerMelee.weaponType === 'bareHand'
         ? { type: 'bareHand' }
         : {
@@ -144,7 +144,7 @@ watch(
   selectedSharpness,
   (level) => {
     sharpnessNumericInputValue.value = String(
-      Math.min(je26_2PlayerMeleeMechanics.maximumDecodedEnchantmentLevel, Math.max(0, level)),
+      Math.min(je26_3PlayerMeleeMechanics.maximumDecodedEnchantmentLevel, Math.max(0, level)),
     )
   },
   { immediate: true },
@@ -153,7 +153,7 @@ watch(
   selectedKnockback,
   (level) => {
     knockbackNumericInputValue.value = String(
-      Math.min(je26_2PlayerMeleeMechanics.maximumDecodedEnchantmentLevel, Math.max(0, level)),
+      Math.min(je26_3PlayerMeleeMechanics.maximumDecodedEnchantmentLevel, Math.max(0, level)),
     )
   },
   { immediate: true },
@@ -175,13 +175,13 @@ watch(
 
     if (
       (parseNumericInput(sharpnessLevel) ?? 0) >
-      je26_2PlayerMeleeMechanics.ordinarySurvivalSharpnessMaximum
+      je26_3PlayerMeleeMechanics.ordinarySurvivalSharpnessMaximum
     ) {
       sharpnessUsesNumericInput.value = true
     }
     if (
       (parseNumericInput(knockbackLevel) ?? 0) >
-      je26_2PlayerMeleeMechanics.ordinarySurvivalKnockbackMaximum
+      je26_3PlayerMeleeMechanics.ordinarySurvivalKnockbackMaximum
     ) {
       knockbackUsesNumericInput.value = true
     }
@@ -192,7 +192,7 @@ watch(
 function updateArchetype(value: string | number | null): void {
   if (
     typeof value !== 'string' ||
-    !je26_2ArchetypeRegistryOrder.includes(value as Je26_2ArchetypeId)
+    !je26_3ArchetypeRegistryOrder.includes(value as Je26_3ArchetypeId)
   ) {
     return
   }
@@ -201,7 +201,7 @@ function updateArchetype(value: string | number | null): void {
     'update:propertySelection',
     selectCubePropertyArchetype(
       selectCubePropertyMode(props.propertySelection, 'archetype'),
-      value as Je26_2ArchetypeId,
+      value as Je26_3ArchetypeId,
     ),
   )
 }
@@ -209,12 +209,12 @@ function updateArchetype(value: string | number | null): void {
 function updateWeapon(value: string | number | null): void {
   if (
     typeof value !== 'string' ||
-    !je26_2PlayerMeleeWeaponPresetOrder.includes(value as Je26_2PlayerMeleeWeaponPresetId)
+    !je26_3PlayerMeleeWeaponPresetOrder.includes(value as Je26_3PlayerMeleeWeaponPresetId)
   ) {
     return
   }
 
-  const preset = je26_2PlayerMeleeWeaponPresets[value as Je26_2PlayerMeleeWeaponPresetId]
+  const preset = je26_3PlayerMeleeWeaponPresets[value as Je26_3PlayerMeleeWeaponPresetId]
   emit('update:playerMelee', {
     ...props.playerMelee,
     weaponType: preset.weaponType,
@@ -231,9 +231,9 @@ function updateEnchantment(
   const enabled = value > 0
   const nonVanilla =
     (enchantment === 'sharpness' &&
-      value > je26_2PlayerMeleeMechanics.ordinarySurvivalSharpnessMaximum) ||
+      value > je26_3PlayerMeleeMechanics.ordinarySurvivalSharpnessMaximum) ||
     (enchantment === 'knockback' &&
-      value > je26_2PlayerMeleeMechanics.ordinarySurvivalKnockbackMaximum)
+      value > je26_3PlayerMeleeMechanics.ordinarySurvivalKnockbackMaximum)
 
   emit('update:playerMelee', {
     ...props.playerMelee,
@@ -251,7 +251,7 @@ function updateNumericEnchantment(
 ): void {
   const parsed = parseNumericInput(sanitizeNumericInput(value))
   const level = Math.min(
-    je26_2PlayerMeleeMechanics.maximumDecodedEnchantmentLevel,
+    je26_3PlayerMeleeMechanics.maximumDecodedEnchantmentLevel,
     Math.max(0, Math.trunc(parsed ?? 0)),
   )
 
@@ -264,11 +264,11 @@ function updateNumericEnchantment(
 function updateFloor(value: string | number | null): void {
   if (
     typeof value === 'string' &&
-    je26_2UniformFloorProfileOrder.includes(value as Je26_2UniformFloorProfileId)
+    je26_3UniformFloorProfileOrder.includes(value as Je26_3UniformFloorProfileId)
   ) {
     emit('update:formValue', {
       ...props.formValue,
-      floorProfileId: value as Je26_2UniformFloorProfileId,
+      floorProfileId: value as Je26_3UniformFloorProfileId,
     })
   }
 }
@@ -364,7 +364,7 @@ function toggleRadialDisplayOption(option: keyof RadialSceneDisplayOptions): voi
             :model-value="sharpnessNumericInputValue"
             input-type="number"
             min="0"
-            :max="je26_2PlayerMeleeMechanics.maximumDecodedEnchantmentLevel"
+            :max="je26_3PlayerMeleeMechanics.maximumDecodedEnchantmentLevel"
             step="1"
             @update:model-value="updateNumericEnchantment('sharpness', $event)"
           />
@@ -383,7 +383,7 @@ function toggleRadialDisplayOption(option: keyof RadialSceneDisplayOptions): voi
             :model-value="knockbackNumericInputValue"
             input-type="number"
             min="0"
-            :max="je26_2PlayerMeleeMechanics.maximumDecodedEnchantmentLevel"
+            :max="je26_3PlayerMeleeMechanics.maximumDecodedEnchantmentLevel"
             step="1"
             @update:model-value="updateNumericEnchantment('knockback', $event)"
           />

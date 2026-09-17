@@ -19,7 +19,7 @@ export const adultCubeReachFixtureAabb: Aabb = {
   max: { x: halfWidth, y: height, z: halfWidth },
 }
 
-/** Boundary cases derived from the JE 26.2 client entity-picking path. */
+/** Boundary cases derived from the JE 26.3 client entity-picking path. */
 export const playerMeleeClearRayFixtures: readonly PlayerMeleeClearRayFixture[] = [
   {
     id: 'survival_face_hit_2_99',

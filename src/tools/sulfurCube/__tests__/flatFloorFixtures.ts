@@ -13,7 +13,7 @@ export interface FlatFloorFixture {
   }
 }
 
-/** JE 26.2 flat-floor contact cases, evaluated with an absolute tolerance of 1e-9. */
+/** JE 26.3 flat-floor contact cases, evaluated with an absolute tolerance of 1e-9. */
 export const flatFloorFixtures: readonly FlatFloorFixture[] = [
   {
     id: 'immediate_zero_vertical_velocity',

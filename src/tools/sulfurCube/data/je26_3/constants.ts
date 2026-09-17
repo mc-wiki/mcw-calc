@@ -1,6 +1,6 @@
 import { sourcedValue } from './provenance'
 
-export const je26_2Constants = {
+export const je26_3Constants = {
   horizontalHitAngleScale: sourcedValue(1.6, ['sulfurCubeKnockback']),
   verticalHitAngleScale: sourcedValue(0.5, ['sulfurCubeKnockback']),
   verticalPositionAngleScale: sourcedValue(0.8, ['sulfurCubeKnockback']),
@@ -67,84 +67,84 @@ export const je26_2Constants = {
   punchVerticalAddition: sourcedValue(0.1, ['playerBowArrowPunch']),
 } as const
 
-export const je26_2CubeAttributeDefinitions = Object.freeze({
+export const je26_3CubeAttributeDefinitions = Object.freeze({
   'minecraft:knockback_resistance': {
-    defaultValue: je26_2Constants.defaultKnockbackResistance,
+    defaultValue: je26_3Constants.defaultKnockbackResistance,
     minimum: sourcedValue(-2, ['attributeDefaults']),
     maximum: sourcedValue(1, ['attributeDefaults']),
   },
   'minecraft:explosion_knockback_resistance': {
-    defaultValue: je26_2Constants.defaultExplosionKnockbackResistance,
+    defaultValue: je26_3Constants.defaultExplosionKnockbackResistance,
     minimum: sourcedValue(0, ['attributeDefaults']),
     maximum: sourcedValue(1, ['attributeDefaults']),
   },
   'minecraft:bounciness': {
-    defaultValue: je26_2Constants.defaultBounciness,
+    defaultValue: je26_3Constants.defaultBounciness,
     minimum: sourcedValue(0, ['attributeDefaults']),
     maximum: sourcedValue(1, ['attributeDefaults']),
   },
   'minecraft:friction_modifier': {
-    defaultValue: je26_2Constants.defaultFrictionModifier,
+    defaultValue: je26_3Constants.defaultFrictionModifier,
     minimum: sourcedValue(0, ['attributeDefaults']),
     maximum: sourcedValue(2048, ['attributeDefaults']),
   },
   'minecraft:air_drag_modifier': {
-    defaultValue: je26_2Constants.defaultAirDragModifier,
+    defaultValue: je26_3Constants.defaultAirDragModifier,
     minimum: sourcedValue(0, ['attributeDefaults']),
     maximum: sourcedValue(2048, ['attributeDefaults']),
   },
 })
 
-export const je26_2KnockbackMechanics = Object.freeze({
-  horizontalHitAngleScale: je26_2Constants.horizontalHitAngleScale.value,
-  verticalHitAngleScale: je26_2Constants.verticalHitAngleScale.value,
-  verticalPositionAngleScale: je26_2Constants.verticalPositionAngleScale.value,
-  horizontalResultScale: je26_2Constants.horizontalResultScale.value,
-  verticalResultScale: je26_2Constants.verticalResultScale.value,
-  resultClampMinimum: je26_2Constants.resultClampMinimum.value,
-  resultClampMaximum: je26_2Constants.resultClampMaximum.value,
-  vectorNormalizationThreshold: je26_2Constants.vectorNormalizationThreshold.value,
+export const je26_3KnockbackMechanics = Object.freeze({
+  horizontalHitAngleScale: je26_3Constants.horizontalHitAngleScale.value,
+  verticalHitAngleScale: je26_3Constants.verticalHitAngleScale.value,
+  verticalPositionAngleScale: je26_3Constants.verticalPositionAngleScale.value,
+  horizontalResultScale: je26_3Constants.horizontalResultScale.value,
+  verticalResultScale: je26_3Constants.verticalResultScale.value,
+  resultClampMinimum: je26_3Constants.resultClampMinimum.value,
+  resultClampMaximum: je26_3Constants.resultClampMaximum.value,
+  vectorNormalizationThreshold: je26_3Constants.vectorNormalizationThreshold.value,
 })
 
-export const je26_2PlayerMeleeMechanics = Object.freeze({
-  baseDamageScale: je26_2Constants.playerMeleeBaseDamageScale.value,
-  strengthDamageScale: je26_2Constants.playerMeleeStrengthDamageScale.value,
-  fullStrengthThreshold: je26_2Constants.playerMeleeFullStrengthThreshold.value,
-  criticalMultiplier: je26_2Constants.playerMeleeCriticalMultiplier.value,
-  knockbackDivisor: je26_2Constants.playerMeleeKnockbackDivisor.value,
-  sprintKnockbackBonus: je26_2Constants.playerMeleeSprintKnockbackBonus.value,
-  knockbackPerEnchantmentLevel: je26_2Constants.playerMeleeKnockbackPerEnchantmentLevel.value,
-  sharpnessFirstLevelDamageAddition: je26_2Constants.sharpnessFirstLevelDamageAddition.value,
+export const je26_3PlayerMeleeMechanics = Object.freeze({
+  baseDamageScale: je26_3Constants.playerMeleeBaseDamageScale.value,
+  strengthDamageScale: je26_3Constants.playerMeleeStrengthDamageScale.value,
+  fullStrengthThreshold: je26_3Constants.playerMeleeFullStrengthThreshold.value,
+  criticalMultiplier: je26_3Constants.playerMeleeCriticalMultiplier.value,
+  knockbackDivisor: je26_3Constants.playerMeleeKnockbackDivisor.value,
+  sprintKnockbackBonus: je26_3Constants.playerMeleeSprintKnockbackBonus.value,
+  knockbackPerEnchantmentLevel: je26_3Constants.playerMeleeKnockbackPerEnchantmentLevel.value,
+  sharpnessFirstLevelDamageAddition: je26_3Constants.sharpnessFirstLevelDamageAddition.value,
   sharpnessAdditionalLevelDamageAddition:
-    je26_2Constants.sharpnessAdditionalLevelDamageAddition.value,
-  maximumDecodedEnchantmentLevel: je26_2Constants.maximumDecodedMeleeEnchantmentLevel.value,
-  ordinarySurvivalSharpnessMaximum: je26_2Constants.ordinarySurvivalSharpnessMaximum.value,
-  ordinarySurvivalKnockbackMaximum: je26_2Constants.ordinarySurvivalKnockbackMaximum.value,
-  degreesToRadians: je26_2Constants.degreesToRadiansFloat.value,
+    je26_3Constants.sharpnessAdditionalLevelDamageAddition.value,
+  maximumDecodedEnchantmentLevel: je26_3Constants.maximumDecodedMeleeEnchantmentLevel.value,
+  ordinarySurvivalSharpnessMaximum: je26_3Constants.ordinarySurvivalSharpnessMaximum.value,
+  ordinarySurvivalKnockbackMaximum: je26_3Constants.ordinarySurvivalKnockbackMaximum.value,
+  degreesToRadians: je26_3Constants.degreesToRadiansFloat.value,
 })
 
-export const je26_2OrdinaryPlayerMeleeReach = Object.freeze({
-  strictMaximumReach: je26_2Constants.ordinarySurvivalPlayerMeleeReach.value,
-  clipTolerance: je26_2Constants.entityRayClipTolerance.value,
-  sulfurCubePickRadius: je26_2Constants.sulfurCubePickRadius.value,
+export const je26_3OrdinaryPlayerMeleeReach = Object.freeze({
+  strictMaximumReach: je26_3Constants.ordinarySurvivalPlayerMeleeReach.value,
+  clipTolerance: je26_3Constants.entityRayClipTolerance.value,
+  sulfurCubePickRadius: je26_3Constants.sulfurCubePickRadius.value,
   absorbedSulfurCubeCanBePickedFromInside:
-    je26_2Constants.absorbedSulfurCubeCanBePickedFromInside.value,
+    je26_3Constants.absorbedSulfurCubeCanBePickedFromInside.value,
 })
 
-export const je26_2PlayerOwnedBowArrowMechanics = Object.freeze({
-  minimumDrawTicks: je26_2Constants.bowMinimumDrawTicks.value,
-  drawTimeDivisor: je26_2Constants.bowDrawTimeDivisor.value,
-  drawLinearFactor: je26_2Constants.bowDrawLinearFactor.value,
-  drawCurveDivisor: je26_2Constants.bowDrawCurveDivisor.value,
-  maximumBowPower: je26_2Constants.bowMaximumPower.value,
-  nominalSpeedScale: je26_2Constants.bowNominalSpeedScale.value,
-  storedBaseDamage: je26_2Constants.bowArrowStoredBaseDamage.value,
-  maximumIntegerDamage: je26_2Constants.bowArrowMaximumIntegerDamage.value,
-  firstPowerLevelDamageAddition: je26_2Constants.powerFirstLevelDamageAddition.value,
-  additionalPowerLevelDamageAddition: je26_2Constants.powerAdditionalLevelDamageAddition.value,
-  maximumDecodedEnchantmentLevel: je26_2Constants.maximumDecodedItemEnchantmentLevel.value,
-  ordinarySurvivalPowerMaximum: je26_2Constants.ordinarySurvivalPowerMaximum.value,
-  ordinarySurvivalPunchMaximum: je26_2Constants.ordinarySurvivalPunchMaximum.value,
-  punchHorizontalScale: je26_2Constants.punchHorizontalScale.value,
-  punchVerticalAddition: je26_2Constants.punchVerticalAddition.value,
+export const je26_3PlayerOwnedBowArrowMechanics = Object.freeze({
+  minimumDrawTicks: je26_3Constants.bowMinimumDrawTicks.value,
+  drawTimeDivisor: je26_3Constants.bowDrawTimeDivisor.value,
+  drawLinearFactor: je26_3Constants.bowDrawLinearFactor.value,
+  drawCurveDivisor: je26_3Constants.bowDrawCurveDivisor.value,
+  maximumBowPower: je26_3Constants.bowMaximumPower.value,
+  nominalSpeedScale: je26_3Constants.bowNominalSpeedScale.value,
+  storedBaseDamage: je26_3Constants.bowArrowStoredBaseDamage.value,
+  maximumIntegerDamage: je26_3Constants.bowArrowMaximumIntegerDamage.value,
+  firstPowerLevelDamageAddition: je26_3Constants.powerFirstLevelDamageAddition.value,
+  additionalPowerLevelDamageAddition: je26_3Constants.powerAdditionalLevelDamageAddition.value,
+  maximumDecodedEnchantmentLevel: je26_3Constants.maximumDecodedItemEnchantmentLevel.value,
+  ordinarySurvivalPowerMaximum: je26_3Constants.ordinarySurvivalPowerMaximum.value,
+  ordinarySurvivalPunchMaximum: je26_3Constants.ordinarySurvivalPunchMaximum.value,
+  punchHorizontalScale: je26_3Constants.punchHorizontalScale.value,
+  punchVerticalAddition: je26_3Constants.punchVerticalAddition.value,
 })

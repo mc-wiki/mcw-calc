@@ -6,7 +6,7 @@ import type {
   RadialSceneDisplayOptions,
   SceneAttackSummary,
 } from './components/types'
-import type { Je26_2ArchetypeId, Je26_2UniformFloorProfileId } from './data/je26_2'
+import type { Je26_3ArchetypeId, Je26_3UniformFloorProfileId } from './data/je26_3'
 import type { Vec3 } from './model/types'
 import type {
   SulfurCubeSectionColumn,
@@ -53,10 +53,10 @@ import MechanicsReadout from './components/MechanicsReadout.vue'
 import PowerSpaceDiagram from './components/PowerSpaceDiagram.vue'
 import TopDownScene from './components/TopDownScene.vue'
 import VerticalScene from './components/VerticalScene.vue'
-import { je26_2ArchetypeRegistryOrder, je26_2UniformFloorProfileOrder } from './data/je26_2'
+import { je26_3ArchetypeRegistryOrder, je26_3UniformFloorProfileOrder } from './data/je26_3'
 import { parseNumericInput } from './input/numericInput'
 import { javaPrecisionNumerics } from './numerics/javaPrecision'
-import { deriveJe26_2PlayerAim } from './numerics/je26_2PlayerAim'
+import { deriveJe26_3PlayerAim } from './numerics/je26_3PlayerAim'
 import { blockSpriteFileName, humanizeIdentifier } from './presentation/blockSelector'
 import {
   defaultSulfurCubeSectionLayouts,
@@ -187,17 +187,17 @@ const selectedCubeVisual = computed(() => {
   }
 })
 const fullToolUrl = computed(() => createFullSulfurCubeToolUrl(window.location.href, theme.value))
-const compactArchetypeItems: MenuItemData[] = je26_2ArchetypeRegistryOrder.map((archetypeId) => ({
+const compactArchetypeItems: MenuItemData[] = je26_3ArchetypeRegistryOrder.map((archetypeId) => ({
   value: archetypeId,
   label: humanizeIdentifier(archetypeId),
 }))
-const compactFloorItems: MenuItemData[] = je26_2UniformFloorProfileOrder.map((floorProfileId) => ({
+const compactFloorItems: MenuItemData[] = je26_3UniformFloorProfileOrder.map((floorProfileId) => ({
   value: floorProfileId,
   label: t(`sulfurCube.floor.${floorProfileId}`),
 }))
 const selectedFloorLabel = computed(() => t(`sulfurCube.floor.${formState.value.floorProfileId}`))
 const selectedFloorSpriteUrl = computed(() => {
-  const blockIds: Record<Je26_2UniformFloorProfileId, string> = {
+  const blockIds: Record<Je26_3UniformFloorProfileId, string> = {
     ordinary_full_block: 'minecraft:grass_block',
     slime_block: 'minecraft:slime_block',
     honey_block: 'minecraft:honey_block',
@@ -281,7 +281,7 @@ const playerMeleeEvaluation = computed<PlayerMeleeEvaluation | null>(() => {
 
   try {
     const inputs = parseFullTrajectoryInputs()
-    const playerAim = deriveJe26_2PlayerAim(inputs.attackerEyePosition, inputs.aimPoint)
+    const playerAim = deriveJe26_3PlayerAim(inputs.attackerEyePosition, inputs.aimPoint)
 
     return evaluatePlayerMeleeInputs(
       inputs,
@@ -344,7 +344,7 @@ const evaluation = computed<DiagnosticEvaluation | null>(() => {
 
   try {
     const inputs = parseFullTrajectoryInputs()
-    const playerAim = deriveJe26_2PlayerAim(inputs.attackerEyePosition, inputs.aimPoint)
+    const playerAim = deriveJe26_3PlayerAim(inputs.attackerEyePosition, inputs.aimPoint)
     return evaluateDiagnosticInputs(inputs, toolNumerics, properties, playerAim.lookDirection)
   } catch {
     return null
@@ -754,7 +754,7 @@ function refreshDefaultTrajectoryTicks(): void {
 
   try {
     const inputs = parseDiagnosticFormState(formState.value)
-    const playerAim = deriveJe26_2PlayerAim(inputs.attackerEyePosition, inputs.aimPoint)
+    const playerAim = deriveJe26_3PlayerAim(inputs.attackerEyePosition, inputs.aimPoint)
     trajectoryTicks = isCompactView
       ? findDefaultTrajectoryTicks(inputs, toolNumerics, properties, playerAim.lookDirection)
       : findDefaultPlayerMeleeTrajectoryTicks(
@@ -814,28 +814,28 @@ function translateCube(delta: Vec3): void {
 function updateCompactArchetype(value: string | number | null): void {
   if (
     typeof value !== 'string' ||
-    !je26_2ArchetypeRegistryOrder.includes(value as Je26_2ArchetypeId)
+    !je26_3ArchetypeRegistryOrder.includes(value as Je26_3ArchetypeId)
   ) {
     return
   }
 
   propertySelection.value = selectCubePropertyArchetype(
     selectCubePropertyMode(propertySelection.value, 'archetype'),
-    value as Je26_2ArchetypeId,
+    value as Je26_3ArchetypeId,
   )
 }
 
 function updateCompactFloor(value: string | number | null): void {
   if (
     typeof value !== 'string' ||
-    !je26_2UniformFloorProfileOrder.includes(value as Je26_2UniformFloorProfileId)
+    !je26_3UniformFloorProfileOrder.includes(value as Je26_3UniformFloorProfileId)
   ) {
     return
   }
 
   updateFormState({
     ...formState.value,
-    floorProfileId: value as Je26_2UniformFloorProfileId,
+    floorProfileId: value as Je26_3UniformFloorProfileId,
   })
 }
 

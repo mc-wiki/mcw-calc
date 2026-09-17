@@ -351,7 +351,7 @@ function bounceSuppressionReason(
   assumptions: UniformFloorTrajectoryAssumptions,
   effectiveRestitution: number,
 ): BounceSuppressionReason | null {
-  if (-effectiveVerticalVelocity < assumptions.gravity) {
+  if (-effectiveVerticalVelocity <= assumptions.gravity) {
     return 'belowGravityThreshold'
   }
   if (assumptions.entitySuppressesBounce) {
@@ -383,7 +383,7 @@ function usesEndingFloorSpeedFactor(
 }
 
 /**
- * Advances one JE 26.2 movement tick over an infinite, uniform horizontal floor.
+ * Advances one JE 26.3 movement tick over an infinite, uniform horizontal floor.
  * The optional numbering fields are presentation diagnostics supplied by the
  * trajectory wrapper; they do not affect the transition.
  */
@@ -434,7 +434,7 @@ export function advanceUniformFloorState(
   const verticalMovementFraction = floorCollision ? appliedMovement.y / effectiveVelocity.y : null
   const eligible =
     floorCollision &&
-    -effectiveVelocity.y >= assumptions.gravity &&
+    -effectiveVelocity.y > assumptions.gravity &&
     !assumptions.entitySuppressesBounce &&
     !assumptions.floor.suppressesBounce
   const restitution = eligible

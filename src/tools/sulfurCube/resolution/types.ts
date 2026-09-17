@@ -8,7 +8,7 @@ import type {
   VersionedKnockbackModifiers,
   VersionedNumericField,
   VersionedSoundSettings,
-} from '../data/je26_2'
+} from '../data/je26_3'
 
 export interface AttributeDefinition {
   readonly id: SulfurCubeAttributeId

@@ -1,9 +1,9 @@
 import type {
   DefinitionField,
   DefinitionFieldSource,
-  Je26_2ArchetypeDefinition,
+  Je26_3ArchetypeDefinition,
   VersionedNumericField,
-} from '../data/je26_2'
+} from '../data/je26_3'
 import type { CubeMechanicsProperties, TrajectoryAssumptions } from '../model/types'
 import type { NumericBackend } from '../numerics/types'
 import type {
@@ -14,7 +14,7 @@ import type {
   ResolvedKnockbackModifiers,
   ResolvedSoundSettings,
 } from './types'
-import { je26_2Constants, provenance } from '../data/je26_2'
+import { je26_3Constants, provenance } from '../data/je26_3'
 import { computeModifiedFriction } from '../model/trajectory'
 import { foldAttributeModifiers } from './attributes'
 
@@ -71,13 +71,13 @@ const defaultSoundSettings: ResolvedSoundSettings = {
 }
 
 function isVersionedDefinition(
-  definition: ResolvableCubeDefinition | Je26_2ArchetypeDefinition,
-): definition is Je26_2ArchetypeDefinition {
+  definition: ResolvableCubeDefinition | Je26_3ArchetypeDefinition,
+): definition is Je26_3ArchetypeDefinition {
   return 'registryIndex' in definition
 }
 
 export function toResolvableCubeDefinition(
-  definition: Je26_2ArchetypeDefinition,
+  definition: Je26_3ArchetypeDefinition,
 ): ResolvableCubeDefinition {
   return {
     id: definition.id,
@@ -104,7 +104,7 @@ function valueForRepresentation(
 }
 
 export function foldMatchingDefinitions(
-  matches: readonly (ResolvableCubeDefinition | Je26_2ArchetypeDefinition)[],
+  matches: readonly (ResolvableCubeDefinition | Je26_3ArchetypeDefinition)[],
 ): ResolvedCubeProfile {
   const definitions = matches.map((definition) =>
     isVersionedDefinition(definition) ? toResolvableCubeDefinition(definition) : definition,
@@ -185,7 +185,7 @@ export function foldMatchingDefinitions(
   }
 }
 
-export function resolveArchetype(definition: Je26_2ArchetypeDefinition): ResolvedCubeProfile {
+export function resolveArchetype(definition: Je26_3ArchetypeDefinition): ResolvedCubeProfile {
   return foldMatchingDefinitions([definition])
 }
 
@@ -211,12 +211,12 @@ export function toTrajectoryAssumptions(
   numerics: NumericBackend,
 ): TrajectoryAssumptions {
   return {
-    gravity: je26_2Constants.defaultGravity.value,
+    gravity: je26_3Constants.defaultGravity.value,
     drag: computeModifiedFriction(
-      je26_2Constants.baseAirDrag.value,
+      je26_3Constants.baseAirDrag.value,
       profile.attributes['minecraft:air_drag_modifier'].effectiveValue,
       numerics,
     ),
-    movementCutoff: je26_2Constants.movementCutoff.value,
+    movementCutoff: je26_3Constants.movementCutoff.value,
   }
 }

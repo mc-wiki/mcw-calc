@@ -1,6 +1,6 @@
 {
   "sulfurCube.title": "Sulfur Cube Launch Mechanics",
-  "sulfurCube.scope": "Java Edition 26.2",
+  "sulfurCube.scope": "Java Edition 26.3",
   "sulfurCube.titleThemes": "Archetypes · Player and cube positions · Aim · Launch velocity · Bounce trajectory",
   "sulfurCube.summary.title": "Build a launch",
   "sulfurCube.summary.intro": "Choose a common setup here, then explore the scenes or open the detailed inputs for finer control.",
@@ -70,7 +70,7 @@
   "sulfurCube.properties.mode.archetype": "Archetype",
   "sulfurCube.properties.mode.custom": "Custom",
   "sulfurCube.properties.absorbedBlock": "Choose an absorbed block",
-  "sulfurCube.properties.absorbedBlockHelp": "Search through the 334 block items accepted by the sulfur cube.",
+  "sulfurCube.properties.absorbedBlockHelp": "Search through the 339 block items accepted by the sulfur cube.",
   "sulfurCube.properties.absorbedBlockHelpLabel": "About the absorbed-block choices",
   "sulfurCube.properties.blockSearchLabel": "Search absorbed blocks",
   "sulfurCube.properties.blockSearchPlaceholder": "Search blocks",
@@ -389,5 +389,5 @@
   "sulfurCube.readout.provenance": "Mechanics provenance",
   "sulfurCube.readout.provenanceBehavior": "Knockback and repeated uniform-floor motion are derived from locally decompiled game code.",
   "sulfurCube.readout.provenanceData": "Resolved cube properties, dimensions, and uniform-floor profiles are derived from game data and runtime initialization; Custom mode clearly separates reader-edited cube values.",
-  "sulfurCube.readout.standardMath": "Calculations use audited JE 26.2 float boundaries, Minecraft's quantized sine table, and source-relevant aim conversion while retaining Java double precision for positions and stored Motion."
+  "sulfurCube.readout.standardMath": "Calculations use audited JE 26.3 float boundaries, Minecraft's quantized sine table, and source-relevant aim conversion while retaining Java double precision for positions and stored Motion."
 }

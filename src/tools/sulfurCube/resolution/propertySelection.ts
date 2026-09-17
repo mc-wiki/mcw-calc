@@ -1,10 +1,10 @@
-import type { Je26_2ArchetypeId } from '../data/je26_2'
+import type { Je26_3ArchetypeId } from '../data/je26_3'
 import type { CubeLaunchProperties } from '../model/types'
 import type { BlockResolutionDiagnostic } from './blockResolution'
 import type { AttributeFoldDiagnostic, ResolvedCubeProfile } from './types'
-import { je26_2ArchetypesById, je26_2BlockMembershipIndex } from '../data/je26_2'
+import { je26_3ArchetypesById, je26_3BlockMembershipIndex } from '../data/je26_3'
 import { parseNumericInput } from '../input/numericInput'
-import { resolveJe26_2Block } from './blockResolution'
+import { resolveJe26_3Block } from './blockResolution'
 import { resolveArchetype, toCubeMechanicsProperties } from './cubeProperties'
 
 export type CubePropertyMode = 'block' | 'archetype' | 'custom'
@@ -29,7 +29,7 @@ export type CubePropertySelectionSource =
     }
   | {
       readonly kind: 'archetype'
-      readonly archetypeId: Je26_2ArchetypeId
+      readonly archetypeId: Je26_3ArchetypeId
       readonly candidateIds: readonly string[]
     }
 
@@ -43,7 +43,7 @@ export interface CubePropertySelectionState {
   readonly mode: CubePropertyMode
   readonly lastLockedMode: LockedCubePropertyMode
   readonly selectedBlockId: string
-  readonly selectedArchetypeId: Je26_2ArchetypeId
+  readonly selectedArchetypeId: Je26_3ArchetypeId
   readonly customWorkingCopy: CustomCubePropertyWorkingCopy | null
 }
 
@@ -80,7 +80,7 @@ export interface CubePropertySelectionResolution {
 const defaultBlockId = 'minecraft:oak_planks'
 const defaultArchetypeId = 'minecraft:bouncy'
 
-export const je26_2ArchetypeRepresentativeBlocks = {
+export const je26_3ArchetypeRepresentativeBlocks = {
   'minecraft:bouncy': 'minecraft:oak_planks',
   'minecraft:explosive': 'minecraft:tnt',
   'minecraft:fast_flat': 'minecraft:carved_pumpkin',
@@ -93,7 +93,7 @@ export const je26_2ArchetypeRepresentativeBlocks = {
   'minecraft:slow_flat': 'minecraft:cut_copper',
   'minecraft:slow_sliding': 'minecraft:red_mushroom_block',
   'minecraft:sticky': 'minecraft:honeycomb_block',
-} as const satisfies Record<Je26_2ArchetypeId, string>
+} as const satisfies Record<Je26_3ArchetypeId, string>
 
 function toFormState(values: CubeLaunchProperties): CustomCubePropertyFormState {
   return {
@@ -119,7 +119,7 @@ function resolveLockedSelection(
   state: CubePropertySelectionState,
 ): CubePropertySelectionResolution {
   if (state.lastLockedMode === 'block') {
-    const result = resolveJe26_2Block(state.selectedBlockId, 'known_block_item')
+    const result = resolveJe26_3Block(state.selectedBlockId, 'known_block_item')
 
     return {
       mode: 'block',
@@ -137,7 +137,7 @@ function resolveLockedSelection(
     }
   }
 
-  const profile = resolveArchetype(je26_2ArchetypesById[state.selectedArchetypeId])
+  const profile = resolveArchetype(je26_3ArchetypesById[state.selectedArchetypeId])
 
   return {
     mode: 'archetype',
@@ -280,8 +280,8 @@ export function selectCubePropertyBlock(
   state: CubePropertySelectionState,
   itemId: string,
 ): CubePropertySelectionState {
-  if (je26_2BlockMembershipIndex[itemId] === undefined) {
-    throw new RangeError(`unknown JE 26.2 swallowable block item: ${itemId}`)
+  if (je26_3BlockMembershipIndex[itemId] === undefined) {
+    throw new RangeError(`unknown JE 26.3 swallowable block item: ${itemId}`)
   }
 
   return {
@@ -293,16 +293,16 @@ export function selectCubePropertyBlock(
 
 export function selectCubePropertyArchetype(
   state: CubePropertySelectionState,
-  archetypeId: Je26_2ArchetypeId,
+  archetypeId: Je26_3ArchetypeId,
 ): CubePropertySelectionState {
-  if (je26_2ArchetypesById[archetypeId] === undefined) {
-    throw new RangeError(`unknown JE 26.2 sulfur cube archetype: ${archetypeId}`)
+  if (je26_3ArchetypesById[archetypeId] === undefined) {
+    throw new RangeError(`unknown JE 26.3 sulfur cube archetype: ${archetypeId}`)
   }
 
   return {
     ...state,
     selectedArchetypeId: archetypeId,
-    selectedBlockId: je26_2ArchetypeRepresentativeBlocks[archetypeId],
+    selectedBlockId: je26_3ArchetypeRepresentativeBlocks[archetypeId],
     ...(state.mode === 'archetype' ? { lastLockedMode: 'archetype' as const } : {}),
   }
 }

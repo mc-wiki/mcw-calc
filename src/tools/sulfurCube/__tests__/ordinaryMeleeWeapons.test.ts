@@ -3,11 +3,11 @@ import type { PlayerMeleeInputs } from '../presets/playerMelee'
 import { describe, expect, it } from 'vitest'
 import { createPlayerMeleeFormState, parsePlayerMeleeFormState } from '../components/formState'
 import {
-  je26_2PlayerMeleeMechanics,
-  je26_2PlayerMeleeWeaponPresetOrder,
-  je26_2PlayerMeleeWeaponPresets,
-  resolveJe26_2PlayerMeleeWeaponPreset,
-} from '../data/je26_2'
+  je26_3PlayerMeleeMechanics,
+  je26_3PlayerMeleeWeaponPresetOrder,
+  je26_3PlayerMeleeWeaponPresets,
+  resolveJe26_3PlayerMeleeWeaponPreset,
+} from '../data/je26_3'
 import { standardNumerics } from '../numerics/standard'
 import { createDefaultDiagnosticInputs } from '../presets/diagnostic'
 import {
@@ -47,12 +47,12 @@ function inputs(overrides: Partial<PlayerMeleeInputs>): PlayerMeleeInputs {
   return { ...createDefaultPlayerMeleeInputs(), ...overrides }
 }
 
-describe('audited JE 26.2 ordinary melee weapon data', () => {
+describe('audited JE 26.3 ordinary melee weapon data', () => {
   it('contains the accepted 15-item catalogue in reader order', () => {
-    expect(je26_2PlayerMeleeWeaponPresetOrder).toEqual(presetAssertions.map(([id]) => id))
+    expect(je26_3PlayerMeleeWeaponPresetOrder).toEqual(presetAssertions.map(([id]) => id))
 
     for (const [id, damage, speed, recovery] of presetAssertions) {
-      const preset = je26_2PlayerMeleeWeaponPresets[id]
+      const preset = je26_3PlayerMeleeWeaponPresets[id]
       expect(preset.effectiveAttackDamage.value).toBe(damage)
       expect(preset.effectiveAttackSpeed.value).toBe(speed)
       expect(preset.recoveryPeriodTicks.value).toBe(recovery)
@@ -65,17 +65,17 @@ describe('audited JE 26.2 ordinary melee weapon data', () => {
   })
 
   it('resolves the reader-facing type and material choice without UI logic', () => {
-    expect(resolveJe26_2PlayerMeleeWeaponPreset({ type: 'bareHand' }).id).toBe('bareHand')
-    expect(resolveJe26_2PlayerMeleeWeaponPreset({ type: 'sword', material: 'copper' }).id).toBe(
+    expect(resolveJe26_3PlayerMeleeWeaponPreset({ type: 'bareHand' }).id).toBe('bareHand')
+    expect(resolveJe26_3PlayerMeleeWeaponPreset({ type: 'sword', material: 'copper' }).id).toBe(
       'copperSword',
     )
-    expect(resolveJe26_2PlayerMeleeWeaponPreset({ type: 'axe', material: 'netherite' }).id).toBe(
+    expect(resolveJe26_3PlayerMeleeWeaponPreset({ type: 'axe', material: 'netherite' }).id).toBe(
       'netheriteAxe',
     )
   })
 })
 
-describe('audited JE 26.2 ordinary melee enchantments', () => {
+describe('audited JE 26.3 ordinary melee enchantments', () => {
   it.each([
     [1, 1],
     [2, 1.5],
@@ -90,7 +90,7 @@ describe('audited JE 26.2 ordinary melee enchantments', () => {
   })
 
   it('keeps decoded and ordinary enchantment maxima in versioned mechanics data', () => {
-    expect(je26_2PlayerMeleeMechanics).toMatchObject({
+    expect(je26_3PlayerMeleeMechanics).toMatchObject({
       maximumDecodedEnchantmentLevel: 255,
       ordinarySurvivalSharpnessMaximum: 5,
       ordinarySurvivalKnockbackMaximum: 2,

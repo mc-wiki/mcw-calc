@@ -63,7 +63,7 @@ export type DirectionProviderFormula =
   | 'callerYaw'
 
 export interface DirectionProviderDiagnostics {
-  readonly sourceVersion: 'Java Edition 26.2'
+  readonly sourceVersion: 'Java Edition 26.3'
   readonly providerId: ImplementedPlayerDirectionProviderId
   readonly formula: DirectionProviderFormula
   readonly sampledConfiguration: ImplementedDirectionProviderConfiguration
@@ -266,7 +266,7 @@ export function resolveDirectionProvider(
     providerId: configuration.providerId,
     horizontalBaseDirection: resolved.direction,
     diagnostics: {
-      sourceVersion: 'Java Edition 26.2',
+      sourceVersion: 'Java Edition 26.3',
       providerId: configuration.providerId,
       formula: resolved.formula,
       sampledConfiguration: cloneConfiguration(configuration),
