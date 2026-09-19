@@ -1,5 +1,13 @@
 {
-  "maceDamage.title": "חשב את נזק האלת מחץ",
+  "maceDamage.title": "מחשב את נזק האלת מחץ",
   "maceDamage.java": "Java Edition",
-  "maceDamage.bedrock": "Bedrock Edition"
+  "maceDamage.bedrock": "Bedrock Edition",
+  "maceDamage.fallHeight": "גובה נפילה בבלוקים:",
+  "maceDamage.densityLevel": "רמת כישוף [[צפיפות]]:",
+  "maceDamage.critical": "התקפה קריטית",
+  "maceDamage.critical.help": "פגיעה בישות באמצעות האלה תניב לרוב התקפות קריטיות, אלא אם כן לא מתקיימים תנאים אחרים – למשל, אם זמן ההמתנה של ההתקפה טרם התאפס.",
+  "maceDamage.cooldownReset": "איפוס זמן צינון",
+  "maceDamage.cooldownReset.help": "בטל את הסימון בתיבה זו אם זמן ההמתנה של ההתקפה אינו מתאפס לפני ההתקפה.",
+  "maceDamage.damage": "נזק שנגרם:",
+  "maceDamage.densityLevelWarning": "ניתן להשיג רק רמות צפיפות שבין 0 ל-5 במצב הישרדות."
 }
