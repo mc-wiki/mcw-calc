@@ -1,0 +1,21 @@
+{
+  "randomTick.growth.title": "Random Tick Growth Calculator",
+  "randomTick.growth.rts": "randomTickSpeed",
+  "randomTick.growth.rts.explain": "The /gamerule randomTickSpeed value (default: 3)",
+  "randomTick.growth.stages": "Growth stages",
+  "randomTick.growth.chance": "Growth chance %",
+  "randomTick.growth.chance.explain": "Probability that a ticked block actually advances one stage",
+  "randomTick.growth.drops": "Avg. drops/harvest",
+  "randomTick.growth.drops.explain": "Average number of items dropped per harvest",
+  "randomTick.growth.stackSize": "Stack size",
+  "randomTick.growth.metric": "Metric",
+  "randomTick.growth.ticks": "Game ticks",
+  "randomTick.growth.realTime": "Real time (20 TPS)",
+  "randomTick.growth.avgPerStage": "Average time per stage",
+  "randomTick.growth.avgTotal": "Average total growth time",
+  "randomTick.growth.medianTotal": "Median total growth time",
+  "randomTick.growth.medianExplain": "Approximated numerically from the negative binomial CDF; no closed-form median exists for this distribution.",
+  "randomTick.growth.harvestsForStack": "Harvests needed for stack of {n}",
+  "randomTick.growth.avgTimeForStack": "Avg. time for stack of {n}",
+  "randomTick.growth.optimalNote": "Growth chance assumes optimal conditions (hydrated farmland, alternating rows, etc.) unless otherwise specified."
+}
