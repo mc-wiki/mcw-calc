@@ -8,7 +8,7 @@ import App from './App.vue'
 import '@/init'
 
 export const JAVA_LATEST = 'java_26_3'
-export const BEDROCK_LATEST = 'bedrock_26_40'
+export const BEDROCK_LATEST = 'bedrock_26_50'
 
 const targetEl = document.querySelector('#app')!
 
