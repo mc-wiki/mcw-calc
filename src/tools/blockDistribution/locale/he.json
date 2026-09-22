@@ -5,7 +5,7 @@
   "blockDistribution.title": "חלוקת בלוקים עבור {block} ב-[[Java Edition {version}]]",
   "blockDistribution.total": "סה\"כ",
   "blockDistribution.overworld": "העולם העליון",
-  "blockDistribution.theNether": "הנת'ר",
+  "blockDistribution.theNether": "הנד'ר",
   "blockDistribution.theEnd": "האנד",
   "blockDistribution.logarithmicScale": "סולם לוגריתמי",
   "blockDistribution.logarithmicScaleHelp": "הבדל קל בקואורדינטת ה-Y מייצג שינוי גדול בתדירות היחסית של סוג בלוק, מה שהופך אותו לשימושי לראות שינויים קטנים בגרף כאשר יש עלייה גדולה.",
