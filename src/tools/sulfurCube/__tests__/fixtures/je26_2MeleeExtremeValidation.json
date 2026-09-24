@@ -1,0 +1,115 @@
+{
+  "schema": "mcw-calc-je26_2-melee-extreme-fixture-v1",
+  "rows": [
+    {
+      "name": "extreme-row-44",
+      "testId": "r044",
+      "configuration": {
+        "absorbedBlock": "minecraft:mushroom_stem",
+        "weapon": "minecraft:iron_sword",
+        "sharpnessLevel": 3,
+        "knockbackLevel": 255,
+        "floorSurface": "minecraft:andesite",
+        "cubeFeet": [0.5, -60, 0.5],
+        "playerFeet": [0.242, -60.174, -1.354],
+        "aimPoint": [0.435, -60.191, 1.153]
+      },
+      "commandDerived": {
+        "eyePosition": [0.242, -58.55399999523163, -1.354],
+        "pitchDegrees": 33.06604766845703,
+        "yawDegrees": -4.4023284912109375,
+        "reconstructedLookVector": [0.06429610401391983, -0.5455660820007324, 0.835597813129425]
+      },
+      "postHitMotion": [0.228310348164654, 1.928538172841072, 1.2768623342842746],
+      "observedFinalEndpoint": [21.94703060725239, -60, 121.09173249544935]
+    },
+    {
+      "name": "extreme-row-85",
+      "testId": "r085",
+      "configuration": {
+        "absorbedBlock": "minecraft:dark_oak_log",
+        "weapon": "minecraft:diamond_axe",
+        "sharpnessLevel": 5,
+        "knockbackLevel": 1,
+        "floorSurface": "minecraft:bricks",
+        "cubeFeet": [0.5, -60, 0.5],
+        "playerFeet": [-1.294, -59.551, 0.114],
+        "aimPoint": [0.841, -59.991, 0.56]
+      },
+      "commandDerived": {
+        "eyePosition": [-1.294, -57.93099999523163, 0.114],
+        "pitchDegrees": 43.36466979980469,
+        "yawDegrees": -78.20063781738281,
+        "reconstructedLookVector": [0.7116414904594421, -0.6866186261177063, 0.1487320065498352]
+      },
+      "postHitMotion": [1.515307322160239, 0.8774241173267364, 0.33990365392773936],
+      "observedFinalEndpoint": [137.0381480105832, -60, 31.108848600586388]
+    },
+    {
+      "name": "extreme-row-93",
+      "testId": "r093",
+      "configuration": {
+        "absorbedBlock": "minecraft:carved_pumpkin",
+        "weapon": "minecraft:stone_sword",
+        "sharpnessLevel": 255,
+        "knockbackLevel": 2,
+        "floorSurface": "minecraft:stone_bricks",
+        "cubeFeet": [0.5, -60, 0.5],
+        "playerFeet": [0.715, -60.531, -1.65],
+        "aimPoint": [0.508, -59.823, 1.2]
+      },
+      "commandDerived": {
+        "eyePosition": [0.715, -58.91099999523163, -1.65],
+        "pitchDegrees": 17.701007843017578,
+        "yawDegrees": 4.1542205810546875,
+        "reconstructedLookVector": [-0.06898941844701767, -0.30401602387428284, 0.9501590728759766]
+      },
+      "postHitMotion": [-0.42791486623047625, 3.033863821029663, 3.0887806848895494],
+      "observedFinalEndpoint": [-53.294560621113924, -60, 389.01768069047796]
+    },
+    {
+      "name": "extreme-row-94",
+      "testId": "r094",
+      "configuration": {
+        "absorbedBlock": "minecraft:magma_block",
+        "weapon": "minecraft:golden_sword",
+        "sharpnessLevel": 4,
+        "knockbackLevel": 32,
+        "floorSurface": "minecraft:andesite",
+        "cubeFeet": [0.5, -60, 0.5],
+        "playerFeet": [2.525, -59.755, 0.285],
+        "aimPoint": [0.128, -59.92, 0.551]
+      },
+      "commandDerived": {
+        "eyePosition": [2.525, -58.13499999523163, 0.285],
+        "pitchDegrees": 36.50643539428711,
+        "yawDegrees": 83.66773986816406,
+        "reconstructedLookVector": [-0.7989290356636047, -0.5948519110679626, 0.08860050141811371]
+      },
+      "postHitMotion": [-3.400262850361087, 2.279952425956726, 0.3487459505331928],
+      "observedFinalEndpoint": [-189.1752072162929, -60, 19.933701067896806]
+    },
+    {
+      "name": "extreme-row-97",
+      "testId": "r097",
+      "configuration": {
+        "absorbedBlock": "minecraft:stripped_cherry_wood",
+        "weapon": "minecraft:wooden_axe",
+        "sharpnessLevel": 1,
+        "knockbackLevel": 1,
+        "floorSurface": "minecraft:granite",
+        "cubeFeet": [0.5, -60, 0.5],
+        "playerFeet": [2.007, -59.631, -0.587],
+        "aimPoint": [0.03, -59.861, 0.705]
+      },
+      "commandDerived": {
+        "eyePosition": [2.007, -58.01099999523163, -0.587],
+        "pitchDegrees": 38.07243347167969,
+        "yawDegrees": 56.83476257324219,
+        "reconstructedLookVector": [-0.6590135097503662, -0.6165911555290222, 0.4306531548500061]
+      },
+      "postHitMotion": [-1.187264501357573, 0.4664046609401702, 0.9867009470596598],
+      "observedFinalEndpoint": [-59.78179228113147, -60, 50.59563760740901]
+    }
+  ]
+}

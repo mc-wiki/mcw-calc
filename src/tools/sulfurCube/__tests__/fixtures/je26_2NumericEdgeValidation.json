@@ -1,0 +1,179 @@
+{
+  "schema": "mcw-calc-je26_2-numeric-edge-fixture-v1",
+  "sineTable": [
+    {
+      "name": "positive-one-radian",
+      "radians": 1,
+      "expected": 0.8414514064788818
+    },
+    {
+      "name": "negative-one-radian",
+      "radians": -1,
+      "expected": -0.8414514064788818
+    },
+    {
+      "name": "immediately-before-positive-table-wrap",
+      "radians": 6.283135307179586,
+      "expected": -0.0000958738019107841
+    },
+    {
+      "name": "immediately-after-positive-table-wrap",
+      "radians": 6.283235307179586,
+      "expected": 0
+    }
+  ],
+  "wrapDegreesFloat": [
+    {
+      "name": "positive-180",
+      "input": 180,
+      "expected": -180
+    },
+    {
+      "name": "negative-180",
+      "input": -180,
+      "expected": -180
+    },
+    {
+      "name": "float-immediately-below-positive-180",
+      "input": 179.99998474121094,
+      "expected": 179.99998474121094
+    },
+    {
+      "name": "float-immediately-above-positive-180",
+      "input": 180.00001525878906,
+      "expected": -179.99998474121094
+    },
+    {
+      "name": "float-immediately-below-negative-180",
+      "input": -180.00001525878906,
+      "expected": 179.99998474121094
+    },
+    {
+      "name": "float-immediately-above-negative-180",
+      "input": -179.99998474121094,
+      "expected": -179.99998474121094
+    }
+  ],
+  "entityLookAt": [
+    {
+      "name": "general",
+      "eyePosition": [0, 1.6200000047683716, 0],
+      "aimPoint": [1, 0.4, 2],
+      "expected": {
+        "eye": {
+          "x": 0,
+          "y": 1.6200000047683716,
+          "z": 0
+        },
+        "pitch": 28.616657257080078,
+        "yaw": -26.565032958984375,
+        "look": {
+          "x": 0.39259248971939087,
+          "y": -0.47890472412109375,
+          "z": 0.7851887941360474
+        }
+      }
+    },
+    {
+      "name": "vertical-up",
+      "eyePosition": [0, 1.6200000047683716, 0],
+      "aimPoint": [0, 4, 0],
+      "expected": {
+        "eye": {
+          "x": 0,
+          "y": 1.6200000047683716,
+          "z": 0
+        },
+        "pitch": -89.99999237060547,
+        "yaw": -90,
+        "look": {
+          "x": 0,
+          "y": 1,
+          "z": 0
+        }
+      }
+    },
+    {
+      "name": "signed-zero-horizontal-components",
+      "inputExpression": {
+        "eyePosition": ["0", "Math.fround(1.62)", "0"],
+        "aimPoint": ["-0", "Math.fround(1.62)", "-0"]
+      },
+      "expected": {
+        "eye": {
+          "x": 0,
+          "y": 1.6200000047683716,
+          "z": 0
+        },
+        "pitch": 0,
+        "yaw": -90,
+        "look": {
+          "x": 1,
+          "y": 0,
+          "z": 1.2246468525851679e-16
+        }
+      },
+      "signedZeroChecks": {
+        "atan2NegativeZeroPositiveOneIsPositiveZero": true,
+        "atan2PositiveZeroNegativeZeroIsPositiveZero": true
+      }
+    }
+  ],
+  "mthSqrtFloat": {
+    "input": 2,
+    "inputAfterFloatParameterConversion": 2,
+    "expected": 1.4142135381698608
+  },
+  "vec3NormalizeCutoff": {
+    "sourceLiteral": 0.00001,
+    "floatCutoff": 0.000009999999747378752,
+    "strictComparison": "length < cutoff",
+    "cases": [
+      {
+        "name": "immediately-below",
+        "component": 0.00000999999883788405,
+        "result": [0, 0, 0]
+      },
+      {
+        "name": "at",
+        "component": 0.000009999999747378752,
+        "result": [1, 0, 0]
+      },
+      {
+        "name": "immediately-above",
+        "component": 0.000010000000656873453,
+        "result": [1, 0, 0]
+      }
+    ]
+  },
+  "twoCallOrderedMelee": {
+    "fixture": "extreme-row-44",
+    "initialVelocity": [0, -0.07992800235748292, 0],
+    "operations": [
+      {
+        "kind": "sulfurCubeKnockbackCall",
+        "existingVelocity": [0, -0.07992800235748292, 0],
+        "resultingVelocity": [0.00924671252568716, -0.018833977580070507, 0.038359368080063044]
+      },
+      {
+        "kind": "sulfurCubeKnockbackCall",
+        "existingVelocity": [0.00924671252568716, -0.018833977580070507, 0.038359368080063044],
+        "resultingVelocity": [0.228310348164654, 1.928538172841072, 1.2768623342842746]
+      }
+    ],
+    "finalVelocity": [0.228310348164654, 1.928538172841072, 1.2768623342842746]
+  },
+  "repeatedUniformFloor": {
+    "fixture": "extreme-row-44",
+    "initialPostHitMotion": [0.228310348164654, 1.928538172841072, 1.2768623342842746],
+    "status": "settled",
+    "simulatedTickCount": 337,
+    "arcCount": 2,
+    "airborneContactCount": 2,
+    "floorCollisionTickCount": 286,
+    "bounceEventCount": 2,
+    "endpointFeetPosition": [21.94703060725239, -60, 121.09173249544935],
+    "endpointVelocity": [0, -0.07992800235748292, 0],
+    "endpointOnGround": true
+  }
+}

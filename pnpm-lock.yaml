@@ -219,6 +219,9 @@ importers:
       vite-plugin-vue-devtools:
         specifier: ^8.2.1
         version: 8.2.1(vite@8.2.2(@types/node@26.4.1)(esbuild@0.28.2)(jiti@2.7.0)(less@4.9.1)(terser@5.34.1)(tsx@4.23.13)(yaml@2.9.0))(vue@3.5.42(typescript@7.0.2))
+      vitest:
+        specifier: ^4.1.2
+        version: 4.1.2(@types/node@26.4.1)(@vitest/ui@4.1.2)(jsdom@30.0.1)(msw@2.7.3(@types/node@26.4.1)(typescript@7.0.2))(vite@8.2.2(@types/node@26.4.1)(esbuild@0.28.2)(jiti@2.7.0)(less@4.9.1)(terser@5.34.1)(tsx@4.23.13)(yaml@2.9.0))
       vue-tsc:
         specifier: ^3.3.11
         version: 3.3.11(typescript@7.0.2)
@@ -1225,9 +1228,6 @@ packages:
 
   '@jridgewell/sourcemap-codec@1.5.0':
     resolution: {integrity: sha512-gv3ZRaISU3fjPAgNsriBRqGWQL6quFx04YMPW/zD8XMLsU32mhCCbfbO6KZFLjvYpCZ8zyDEgqsgf+PwPaM7GQ==}
-
-  '@jridgewell/sourcemap-codec@1.5.4':
-    resolution: {integrity: sha512-VT2+G1VQs/9oz078bLrYbecdZKs912zQlkelYpuf+SXF+QvZDYJlbx/LSx+meSAwdDFnF8FVXW92AVjjkVmgFw==}
 
   '@jridgewell/sourcemap-codec@1.5.5':
     resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
@@ -6409,7 +6409,7 @@ snapshots:
 
   '@jridgewell/gen-mapping@0.3.12':
     dependencies:
-      '@jridgewell/sourcemap-codec': 1.5.4
+      '@jridgewell/sourcemap-codec': 1.5.5
       '@jridgewell/trace-mapping': 0.3.29
 
   '@jridgewell/gen-mapping@0.3.13':
@@ -6432,14 +6432,12 @@ snapshots:
 
   '@jridgewell/sourcemap-codec@1.5.0': {}
 
-  '@jridgewell/sourcemap-codec@1.5.4': {}
-
   '@jridgewell/sourcemap-codec@1.5.5': {}
 
   '@jridgewell/trace-mapping@0.3.29':
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
-      '@jridgewell/sourcemap-codec': 1.5.4
+      '@jridgewell/sourcemap-codec': 1.5.5
 
   '@jridgewell/trace-mapping@0.3.31':
     dependencies:
@@ -6703,8 +6701,7 @@ snapshots:
 
   '@sindresorhus/base62@1.0.0': {}
 
-  '@standard-schema/spec@1.1.0':
-    optional: true
+  '@standard-schema/spec@1.1.0': {}
 
   '@stylistic/eslint-plugin@5.10.0(eslint@10.10.0(jiti@2.7.0))':
     dependencies:
@@ -6902,7 +6899,6 @@ snapshots:
     dependencies:
       '@types/deep-eql': 4.0.2
       assertion-error: 2.0.1
-    optional: true
 
   '@types/cookie@0.6.0':
     optional: true
@@ -7028,8 +7024,7 @@ snapshots:
     dependencies:
       '@types/ms': 2.1.0
 
-  '@types/deep-eql@4.0.2':
-    optional: true
+  '@types/deep-eql@4.0.2': {}
 
   '@types/esrecurse@4.3.1': {}
 
@@ -7325,7 +7320,6 @@ snapshots:
       '@vitest/utils': 4.1.2
       chai: 6.2.2
       tinyrainbow: 3.1.1
-    optional: true
 
   '@vitest/mocker@4.1.2(msw@2.7.3(@types/node@26.4.1)(typescript@7.0.2))(vite@8.2.2(@types/node@26.4.1)(esbuild@0.28.2)(jiti@2.7.0)(less@4.9.1)(terser@5.34.1)(tsx@4.23.13)(yaml@2.9.0))':
     dependencies:
@@ -7335,18 +7329,15 @@ snapshots:
     optionalDependencies:
       msw: 2.7.3(@types/node@26.4.1)(typescript@7.0.2)
       vite: 8.2.2(@types/node@26.4.1)(esbuild@0.28.2)(jiti@2.7.0)(less@4.9.1)(terser@5.34.1)(tsx@4.23.13)(yaml@2.9.0)
-    optional: true
 
   '@vitest/pretty-format@4.1.2':
     dependencies:
       tinyrainbow: 3.1.1
-    optional: true
 
   '@vitest/runner@4.1.2':
     dependencies:
       '@vitest/utils': 4.1.2
       pathe: 2.0.3
-    optional: true
 
   '@vitest/snapshot@4.1.2':
     dependencies:
@@ -7354,10 +7345,8 @@ snapshots:
       '@vitest/utils': 4.1.2
       magic-string: 0.30.21
       pathe: 2.0.3
-    optional: true
 
-  '@vitest/spy@4.1.2':
-    optional: true
+  '@vitest/spy@4.1.2': {}
 
   '@vitest/ui@4.1.2(vitest@4.1.2)':
     dependencies:
@@ -7376,7 +7365,6 @@ snapshots:
       '@vitest/pretty-format': 4.1.2
       convert-source-map: 2.0.0
       tinyrainbow: 3.1.1
-    optional: true
 
   '@volar/language-core@2.4.23':
     dependencies:
@@ -7994,8 +7982,7 @@ snapshots:
       pvutils: 1.2.0
       tslib: 2.8.1
 
-  assertion-error@2.0.1:
-    optional: true
+  assertion-error@2.0.1: {}
 
   ast-kit@1.4.0:
     dependencies:
@@ -8129,8 +8116,7 @@ snapshots:
 
   ccount@2.0.1: {}
 
-  chai@6.2.2:
-    optional: true
+  chai@6.2.2: {}
 
   chalk-template@0.4.0:
     dependencies:
@@ -8524,8 +8510,7 @@ snapshots:
 
   es-errors@1.3.0: {}
 
-  es-module-lexer@2.3.2:
-    optional: true
+  es-module-lexer@2.3.2: {}
 
   es-object-atoms@1.1.1:
     dependencies:
@@ -8901,7 +8886,6 @@ snapshots:
   estree-walker@3.0.3:
     dependencies:
       '@types/estree': 1.0.9
-    optional: true
 
   esutils@2.0.3: {}
 
@@ -8917,8 +8901,7 @@ snapshots:
       signal-exit: 3.0.7
       strip-final-newline: 2.0.0
 
-  expect-type@1.4.0:
-    optional: true
+  expect-type@1.4.0: {}
 
   exsolve@1.1.1: {}
 
@@ -9935,8 +9918,7 @@ snapshots:
 
   object-deep-merge@2.0.1: {}
 
-  obug@2.1.4:
-    optional: true
+  obug@2.1.4: {}
 
   ohash@2.0.11: {}
 
@@ -10398,8 +10380,7 @@ snapshots:
 
   shebang-regex@3.0.0: {}
 
-  siginfo@2.0.0:
-    optional: true
+  siginfo@2.0.0: {}
 
   signal-exit@3.0.7: {}
 
@@ -10440,14 +10421,12 @@ snapshots:
 
   spdx-license-ids@3.0.23: {}
 
-  stackback@0.0.2:
-    optional: true
+  stackback@0.0.2: {}
 
   statuses@2.0.2:
     optional: true
 
-  std-env@4.2.0:
-    optional: true
+  std-env@4.2.0: {}
 
   stream-parser@0.3.1:
     dependencies:
@@ -10534,8 +10513,7 @@ snapshots:
     dependencies:
       convert-hrtime: 5.0.0
 
-  tinybench@2.9.0:
-    optional: true
+  tinybench@2.9.0: {}
 
   tinyexec@1.3.1: {}
 
@@ -10544,8 +10522,7 @@ snapshots:
       fdir: 6.5.0(picomatch@4.0.7)
       picomatch: 4.0.7
 
-  tinyrainbow@3.1.1:
-    optional: true
+  tinyrainbow@3.1.1: {}
 
   tldts-core@7.4.11: {}
 
@@ -10716,7 +10693,7 @@ snapshots:
   unplugin-utils@0.3.1:
     dependencies:
       pathe: 2.0.3
-      picomatch: 4.0.3
+      picomatch: 4.0.7
 
   unplugin-utils@0.3.2:
     dependencies:
@@ -10922,7 +10899,6 @@ snapshots:
       jsdom: 30.0.1
     transitivePeerDependencies:
       - msw
-    optional: true
 
   vscode-uri@3.1.0: {}
 
@@ -11012,7 +10988,6 @@ snapshots:
     dependencies:
       siginfo: 2.0.0
       stackback: 0.0.2
-    optional: true
 
   widest-line@4.0.1:
     dependencies:

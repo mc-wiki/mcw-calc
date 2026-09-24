@@ -10,20 +10,21 @@ const props = defineProps<{
 
 const { t } = useI18n()
 
-const button = useTemplateRef('button')
+const buttonAnchor = useTemplateRef<HTMLElement>('button-anchor')
 const popupOpen = ref(false)
 </script>
 
 <template>
-  <CdxButton
-    ref="button"
-    weight="quiet"
-    :aria-label="t(`banner.${props.type}`)"
-    @click="popupOpen = !popupOpen"
-  >
-    <CdxIcon size="small" :icon="props.icon" :class="`${props.type}-icon`" />
-  </CdxButton>
-  <CdxPopover v-model:open="popupOpen" :anchor="button" placement="top-start">
+  <span ref="button-anchor" class="inline-flex">
+    <CdxButton
+      weight="quiet"
+      :aria-label="t(`banner.${props.type}`)"
+      @click="popupOpen = !popupOpen"
+    >
+      <CdxIcon size="small" :icon="props.icon" :class="`${props.type}-icon`" />
+    </CdxButton>
+  </span>
+  <CdxPopover v-model:open="popupOpen" :anchor="buttonAnchor" placement="top-start">
     <slot />
   </CdxPopover>
 </template>

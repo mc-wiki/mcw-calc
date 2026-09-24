@@ -1,7 +1,10 @@
 import { postMessageParent } from './utils/iframe'
-import { theme as themeRef } from './utils/theme'
+import { applyTheme } from './utils/theme'
 import './common.css'
 import './common.less'
+
+const trustedWikiOriginPattern =
+  /^(?:https?:\/\/)?(?:www\.)?(?:minecraft\.wiki|.*\.minecraft\.wiki)$/
 
 function sendHeightChange() {
   return () => {
@@ -20,21 +23,13 @@ for (const child of document.body.children) {
 }
 
 window.addEventListener('message', (event) => {
-  if (!/^(?:https?:\/\/)?(?:www\.)?(?:minecraft\.wiki|.*\.minecraft\.wiki)$/.test(event.origin)) {
+  if (!trustedWikiOriginPattern.test(event.origin)) {
     return
   }
 
   if (event.data.type === 'mcw-calc-theme-change') {
     const { theme } = event.data.data
-    const { classList } = document.body
-
-    if (theme === 'dark') {
-      classList.add('dark')
-      themeRef.value = 'dark'
-    } else {
-      classList.remove('dark')
-      themeRef.value = 'light'
-    }
+    applyTheme(theme === 'dark' ? 'dark' : 'light')
   } else if (event.data.type === 'mcw-calc-styles') {
     const { styles } = event.data.data
     const styleEl = document.createElement('style')
