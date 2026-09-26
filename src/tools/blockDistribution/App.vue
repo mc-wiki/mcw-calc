@@ -16,7 +16,7 @@ const props = defineProps<{
   dimensions: string[]
 }>()
 
-const VERSION = '26.2'
+const VERSION = '26.3'
 const VERSION_LZH = VERSION.split('')
   .map(
     (c) =>
