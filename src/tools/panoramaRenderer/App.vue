@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useFullscreen } from '@vueuse/core'
+import { useFullscreen, useIntersectionObserver, useEventListener } from '@vueuse/core'
 import { CdxButton, CdxCheckbox, CdxIcon } from '@wikimedia/codex'
 import {
   cdxIconExitFullscreen,
@@ -14,7 +14,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js'
-import { onMounted, ref, useTemplateRef } from 'vue'
+import { onUnmounted, ref, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getImageLink } from '@/utils/image'
 import BsrPopup from '../blockStructureRenderer/BsrPopup.vue'
@@ -206,12 +206,7 @@ function setupRenderer() {
   // Call updateSize initially and whenever the window resizes
   updateSize()
 
-  window.addEventListener('resize', updateSize)
-
-  // Clean up the event listener when the component is unmounted
-  onMounted(() => {
-    window.removeEventListener('resize', updateSize)
-  })
+  useEventListener('resize', updateSize)
 
   renderTarget.value.addEventListener('mousedown', () => {
     autoRotate = false
@@ -278,28 +273,31 @@ function animate() {
   }
 }
 
-onMounted(() => {
-  if (rendererAvailable && renderTarget.value) {
-    setupRenderer()
-    loadPanoramaImages()
+const { stop } = useIntersectionObserver(wrapper, ([entry]) => {
+  if (entry?.isIntersecting) {
+    if (rendererAvailable && renderTarget.value) {
+      setupRenderer()
+      loadPanoramaImages()
 
-    // Observe the render target to check if it's in view
-    const observer = new IntersectionObserver((entries) => {
-      isInView.value = entries.some((entry) => entry.isIntersecting)
-    })
-    observer.observe(renderTarget.value)
+      // Observe the render target to check if it's in view
+      const observer = new IntersectionObserver((entries) => {
+        isInView.value = entries.some((entry) => entry.isIntersecting)
+      })
+      observer.observe(renderTarget.value)
 
-    // Check if the window is focused
-    window.addEventListener('focus', () => {
-      isWindowFocused.value = true
-    })
-    window.addEventListener('blur', () => {
-      isWindowFocused.value = false
-    })
+      // Check if the window is focused
+      window.addEventListener('focus', () => {
+        isWindowFocused.value = true
+      })
+      window.addEventListener('blur', () => {
+        isWindowFocused.value = false
+      })
 
-    animate()
-  } else {
-    renderTarget.value?.appendChild(WebGL.getWebGLErrorMessage())
+      animate()
+    } else {
+      renderTarget.value?.appendChild(WebGL.getWebGLErrorMessage())
+    }
+    stop()
   }
 })
 </script>
