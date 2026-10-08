@@ -625,48 +625,60 @@ function JSONToFormatCode(json: JSONContent | undefined) {
   }
 
   &.bedrock {
+    .color-blue {
+      color: #447fff;
+    }
+
     .color-minecoin_gold {
       color: #ddd605;
     }
 
     .color-material_quartz {
-      color: #e3d4d1;
+      color: #d9ccb8;
     }
 
     .color-material_iron {
-      color: #cecaca;
+      color: #a9b4b7;
     }
 
     .color-material_netherite {
-      color: #443a3b;
+      color: #8f727d;
     }
 
     .color-material_redstone {
-      color: #971607;
+      color: #ee222c;
     }
 
     .color-material_copper {
-      color: #b4684d;
+      color: #c87363;
     }
 
     .color-material_gold {
-      color: #deb12d;
+      color: #ffbf1e;
     }
 
     .color-material_emerald {
-      color: #47a036;
+      color: #13a045;
     }
 
     .color-material_diamond {
-      color: #2cbaa8;
+      color: #5fecff;
     }
 
     .color-material_lapis {
-      color: #21497b;
+      color: #577bff;
     }
 
     .color-material_amethyst {
-      color: #9a5cc6;
+      color: #b66cdd;
+    }
+
+    .color-material_resin {
+      color: #ff6a00;
+    }
+
+    .color-party_blue_color {
+      color: #8cb3ff;
     }
 
     s {
