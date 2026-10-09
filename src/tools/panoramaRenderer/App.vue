@@ -14,7 +14,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js'
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js'
-import { onUnmounted, ref, useTemplateRef } from 'vue'
+import { onMounted, onUnmounted, ref, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getImageLink } from '@/utils/image'
 import BsrPopup from '../blockStructureRenderer/BsrPopup.vue'
@@ -273,8 +273,9 @@ function animate() {
   }
 }
 
-const { stop } = useIntersectionObserver(wrapper, ([entry]) => {
+const outerObserver = new IntersectionObserver(([entry]) => {
   if (entry?.isIntersecting) {
+    console.log('PanoramaRenderer is in view, initializing renderer...')
     if (rendererAvailable && renderTarget.value) {
       setupRenderer()
       loadPanoramaImages()
@@ -297,7 +298,13 @@ const { stop } = useIntersectionObserver(wrapper, ([entry]) => {
     } else {
       renderTarget.value?.appendChild(WebGL.getWebGLErrorMessage())
     }
-    stop()
+    outerObserver.unobserve(wrapper.value!)
+  }
+})
+
+onMounted(() => {
+  if (wrapper.value) {
+    outerObserver.observe(wrapper.value)
   }
 })
 </script>
