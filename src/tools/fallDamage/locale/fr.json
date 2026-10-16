@@ -1,4 +1,23 @@
 {
+  "fallDamage.title": "Calculateur de dégâts de chute",
+  "fallDamage.height": "Hauteur de chute :",
+  "fallDamage.mob": "Créature en chute :",
+  "fallDamage.mob.fox": "Renard",
+  "fallDamage.mob.goat": "Chèvre",
+  "fallDamage.mob.frog": "Grenouille",
+  "fallDamage.block.hay": "Botte de paille ou bloc de miel",
+  "fallDamage.block.bed": "Lit",
+  "fallDamage.block.dripstone": "Spéléothème pointu",
+  "fallDamage.block.lava": "Lave",
+  "fallDamage.resistance": "Niveau de [[Résistance]] :",
+  "fallDamage.jump": "Niveau de [[Sauts améliorés]] :",
+  "fallDamage.featherFalling": "Niveau de [[Chute amortie]] sur les bottes :",
+  "fallDamage.protection.helmet": "Niveau de [[Protection]] sur le [[casque]] :",
+  "fallDamage.protection.chestplate": "Niveau de Protection sur le [[plastron]] :",
+  "fallDamage.protection.leggings": "Niveau de Protection sur les [[jambières]] :",
+  "fallDamage.protection.boots": "Niveau de Protection sur les [[bottes]] :",
   "fallDamage.damage": "Dégâts infligés :",
+  "fallDamage.lavaAir": "Air",
+  "fallDamage.lavaDepth": "Lave",
   "fallDamage.removeLayer": "Supprimer la couche"
 }
