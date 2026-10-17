@@ -17,7 +17,7 @@
   "fallDamage.protection.boots": "Protection level on the [[Boots]]:",
   "fallDamage.featherFalling": "[[Feather Falling]] level on the Boots:",
   "fallDamage.damage": "Damage done:",
-  "fallDamage.levelHint": "The value must be a integer between 0 and 255",
+  "fallDamage.levelHint": "The value must be an integer between 0 and 255",
   "fallDamage.zeroReverseNote": "The fall height calculated here is the highest height at which fall damage is fully negated with the current configuration.",
   "fallDamage.immuneNote": "With the current configuration, fall damage is completely negated; any fall height results in 0 fall damage.",
   "fallDamage.lavaPath": "Fall path (Air, then Lava, in order from top to bottom; the ground lies directly below the last Lava layer):",
