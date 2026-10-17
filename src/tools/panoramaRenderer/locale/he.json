@@ -1,0 +1,9 @@
+{
+  "panoramaRenderer.pause": "השהה",
+  "panoramaRenderer.play": "הפעל",
+  "panoramaRenderer.fullscreen": "מסך מלא",
+  "panoramaRenderer.exitFullscreen": "צא ממסך מלא",
+  "panoramaRenderer.overlayOptions": "אפשרויות שכבת-על",
+  "panoramaRenderer.blurOverlay": "שכבת טשטוש",
+  "panoramaRenderer.gradientOverlay": "שכבת גרדיאנט"
+}

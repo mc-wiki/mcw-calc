@@ -1,4 +1,17 @@
 {
   "protocol.action.collapse": "Свернуть",
-  "protocol.loading": "Загрузка..."
+  "protocol.action.expand": "Развернуть",
+  "protocol.action.search_registry": "Поиск ID",
+  "protocol.action.search_registry.network_id": "Сеть в ID",
+  "protocol.action.search_registry.id_network": "ID в сеть",
+  "protocol.error.data": "Произошла ошибка при парсинге данных протокола",
+  "protocol.error.loading": "Ошибка при получении данных протокола",
+  "protocol.loading": "Загрузка...",
+  "protocol.title": "Средство просмотра протоколов",
+  "protocol.version": "Выбрать версию протокола: ",
+  "protocol.version.display": "{name} (протокол: {protocol}, данные: {data})",
+  "protocol.packet": "Выбрать пакет: ",
+  "protocol.packet.display": "({hex}, {id}) {name}",
+  "protocol.tip": "Примечание: о найденных ошибках сообщайте на {calc} (для этого калькулятора) или {data} (для данных протокола).",
+  "protocol.type.uuid": "UUID"
 }

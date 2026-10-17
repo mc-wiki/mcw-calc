@@ -46,6 +46,7 @@ export default defineConfig({
     comlink(),
     vueI18nPlugin({
       include: fileURLToPath(new URL('./src/tools/*/locale/*.json', import.meta.url)),
+      strictMessage: false,
     }),
     tailwindcss(),
   ],

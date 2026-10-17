@@ -25,8 +25,19 @@
 
   "banner.shareUrl": "https://minecraft.wiki/w/Calculators/Banner",
   "banner.copyShareUrl": "Copy shareable link",
+  "banner.copyShareCode": "Copy shareable code",
   "banner.copyJavaCommand": "Copy Java command",
   "banner.copyBedrockCommand": "Copy Bedrock command",
+
+  "banner.shareCode.label": "Shareable code",
+  "banner.shareCode.placeholder": "Insert shareable code here...",
+  "banner.shareCode.apply": "Apply shareable code",
+  "banner.shareCode.error": "Error: Unknown error.",
+  "banner.shareCode.error.empty": "Error: Shareable code cannot be empty.",
+  "banner.shareCode.error.invalidBaseColor": "Error: Invalid base color code: {color}.",
+  "banner.shareCode.error.invalidFormat": "Error: Invalid shareable code format.",
+  "banner.shareCode.error.invalidPattern": "Error: Invalid pattern code: {pattern}.",
+  "banner.shareCode.error.invalidPatternColor": "Error: Invalid color code: {color}.",
 
   "banner.bedrockCommandHelpButton": "Bedrock?",
   "banner.bedrockCommandHelpTooltip": "Bedrock Edition does not support adding patterns to banners using commands.",

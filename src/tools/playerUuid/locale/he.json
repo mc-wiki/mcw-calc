@@ -1,0 +1,13 @@
+{
+  "playerUuid.title": "המרת שם שחקן ל-UUID",
+  "playerUuid.name": "שם שחקן",
+  "playerUuid.get": "קבל UUID",
+  "playerUuid.loading": "טוען...",
+  "playerUuid.uuid": "[[UUID]]",
+  "playerUuid.uuidOffline": "[[UUID]] לא מקוון",
+  "playerUuid.error.invalid": "שם משתמש זה אינו חוקי!",
+  "playerUuid.error.notFound": "שם משתמש זה לא קיים!",
+  "playerUuid.copy": "העתק",
+  "playerUuid.copied": "הועתק!",
+  "locatorBar.title": "צבע [[סרגל מיקום]]"
+}

@@ -1,1 +1,22 @@
-{}
+{
+  "transport.distance": "去",
+  "transport.speed": "速度",
+  "transport.time": "時間",
+  "transport.coordinate1": "始位",
+  "transport.coordinate2": "終位",
+  "transport.angle": "角度",
+  "transport.facing": "面{direction}（沿{axis}）（{angle}）",
+  "transport.direction.north": "北",
+  "transport.direction.east": "東",
+  "transport.direction.south": "南",
+  "transport.direction.west": "西",
+  "transport.axis.x.positive": "X軸正",
+  "transport.axis.x.negative": "X軸負",
+  "transport.axis.z.positive": "Z軸正",
+  "transport.axis.z.negative": "Z軸負",
+  "transport.unit.degrees": "{angle} 度",
+  "transport.unit.meters": "{distance} 角分",
+  "transport.unit.seconds": "{time} 角秒",
+  "transport.unit.metersPerSecond": "{speed} 米突每秒",
+  "transport.plot.south": ""
+}

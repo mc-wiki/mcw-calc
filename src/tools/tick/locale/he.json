@@ -1,0 +1,16 @@
+{
+  "tick.title": "מחשבון טיקים",
+  "tick.gt": "טיק משחק",
+  "tick.rt": "טיק רדסטון",
+  "tick.inGameDay": "יום במשחק",
+  "tick.millisecond": "מילישנייה",
+  "tick.second": "שנייה",
+  "tick.minute": "דקה",
+  "tick.hour": "שעה",
+  "tick.day": "יום",
+  "tick.runningAt": "עם מהירות טיק",
+  "tick.tps": "TPS",
+  "tick.tps.explain": "טיקים לשנייה, מספר טיקי המשחק שרצים לשנייה",
+  "tick.mspt": "MSPT",
+  "tick.mspt.explain": "מילישניות לכל טיק, זמן הנדרש במילישניות לעיבוד טיק בודד"
+}

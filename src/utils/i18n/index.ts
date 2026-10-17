@@ -1,4 +1,5 @@
 import { createI18n } from 'vue-i18n'
+import DOMPurify from 'dompurify'
 import { parentOrigin } from '../iframe'
 
 const FALLBACK_CHAIN = new Map(
@@ -36,16 +37,20 @@ export function createMcwI18n(files: Record<string, { default: Record<string, st
     locale,
     fallbackLocale: fallback,
     messages,
+    warningHtmlInMessage: 'off',
   })
 
   return finalI18n
 }
 
 export function parseWikitext(wikitext: string) {
+  console.log('wikitext before parsing:', wikitext)
   // convert ''italic'' or '''bold''' to <i>italic</i> or <b>bold</b>
   wikitext = wikitext.replace(/'''''(.*?)'''''/g, '<b><i>$1</i></b>')
   wikitext = wikitext.replace(/'''(.*?)'''/g, '<b>$1</b>')
   wikitext = wikitext.replace(/''(.*?)''/g, '<i>$1</i>')
+
+  console.log('wikitext after parsing:', wikitext)
 
   // convert [[wiki links]] or [[wiki links|with text]]
   // to <a href="/w/wiki links">with text</a>
@@ -54,33 +59,42 @@ export function parseWikitext(wikitext: string) {
     (_, link, text) =>
       `<a href="${parentOrigin()}/w/${encodeURIComponent(link)}">${text ?? link}</a>`,
   )
+  console.log('wikitext after parsing:', wikitext)
 
-  // Escape HTML tags except those in whitelist
-  const whitelisted = [
-    'a',
-    'b',
-    'i',
-    'br',
-    'div',
-    'span',
-    'strong',
-    'em',
-    'u',
-    's',
-    'sub',
-    'sup',
-    'del',
-    'ins',
-    'p',
-  ]
-  wikitext = wikitext.replace(/<([^>]+)>/g, (match, tag: string) => {
-    const [tagNameRaw] = tag.split(/\s+/)
-    const tagName = tagNameRaw.toLowerCase().replace(/^\//, '')
-    if (whitelisted.includes(tagName)) {
-      return match
-    }
-    return `&lt;${tag}&gt;`
+  return DOMPurify.sanitize(wikitext, {
+    ALLOWED_TAGS: [
+      'a',
+      'abbr',
+      'b',
+      'br',
+      'caption',
+      'i',
+      'div',
+      'span',
+      'strong',
+      'em',
+      'u',
+      's',
+      'sub',
+      'sup',
+      'del',
+      'ins',
+      'p',
+      'code',
+      'kbd',
+      'pre',
+    ],
+    ALLOWED_ATTR: [
+      'href',
+      'id',
+      'class',
+      'style',
+      'title',
+      'target',
+      'rel',
+      'lang',
+      'dir',
+      'tabindex',
+    ],
   })
-
-  return wikitext
 }

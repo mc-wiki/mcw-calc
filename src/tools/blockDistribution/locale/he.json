@@ -1,0 +1,13 @@
+{
+  "blockDistribution.xAxis": "רמת Y →",
+  "blockDistribution.yAxis": "↑ מספר X שנמצא בין 100,000 בלוקים",
+  "blockDistribution.xInTenThousand": "{num} ב-100,000",
+  "blockDistribution.title": "חלוקת בלוקים עבור {block} ב-[[Java Edition {version}]]",
+  "blockDistribution.total": "סה\"כ",
+  "blockDistribution.overworld": "העולם העליון",
+  "blockDistribution.theNether": "הנד'ר",
+  "blockDistribution.theEnd": "האנד",
+  "blockDistribution.logarithmicScale": "סולם לוגריתמי",
+  "blockDistribution.logarithmicScaleHelp": "הבדל קל בקואורדינטת ה-Y מייצג שינוי גדול בתדירות היחסית של סוג בלוק, מה שהופך אותו לשימושי לראות שינויים קטנים בגרף כאשר יש עלייה גדולה.",
+  "blockDistribution.selectAll": "בחר הכל"
+}

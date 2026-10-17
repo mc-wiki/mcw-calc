@@ -36,7 +36,6 @@
   "meleeDamage.victim.isInWater": "물 속",
   "meleeDamage.attackCondition.critical": "치명타",
   "meleeDamage.attackCondition.tickAfterLastAttack": "마지막 공격으로부터 흐른 틱",
-  "meleeDamage.attackCondition.setFullCooldown": "최대 쿨타임으로 설정",
   "meleeDamage.attackCondition.speed": "속도 (m/s)",
   "meleeDamage.attackCondition.speed.sprinting": "달리기",
   "meleeDamage.attackCondition.speed.sprintingSpeedI": "달리기 (속도 I)",

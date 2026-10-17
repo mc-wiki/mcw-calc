@@ -8,5 +8,6 @@
   "playerUuid.error.invalid": "該玩家名稱無效！",
   "playerUuid.error.notFound": "不存在指定名稱的玩家！",
   "playerUuid.copy": "複製",
-  "playerUuid.copied": "已複製！"
+  "playerUuid.copied": "已複製！",
+  "locatorBar.title": "[[定位栏{'|'}定位條]]顏色"
 }

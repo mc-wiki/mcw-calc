@@ -16,7 +16,29 @@ const props = defineProps<{
   dimensions: string[]
 }>()
 
-const { t, locale } = useI18n()
+const VERSION = '26.3'
+const VERSION_LZH = VERSION.split('')
+  .map(
+    (c) =>
+      ({
+        '0': '〇',
+        '1': '一',
+        '2': '二',
+        '3': '三',
+        '4': '四',
+        '5': '五',
+        '6': '六',
+        '7': '七',
+        '8': '八',
+        '9': '九',
+        '.': '點',
+      })[c],
+  )
+  .join('')
+
+const { t, locale } = useI18n({
+  warnHtmlMessage: true,
+})
 
 const validBlocks = props.blocks
   .slice()
@@ -316,7 +338,7 @@ function update() {
                 ? new Intl.ListFormat(locale).format(props.blockNames)
                 : props.blockNames.join(', ')
               : props.pageName,
-          version: '1.21.7',
+          version: locale === 'lzh' ? VERSION_LZH : VERSION,
         }),
       )
     "

@@ -1,1 +1,15 @@
-{}
+{
+  "tick.title": "刻之算械",
+  "tick.gt": "戲刻",
+  "tick.rt": "紅石刻",
+  "tick.inGameDay": "戲日",
+  "tick.millisecond": "毫秒",
+  "tick.second": "秒",
+  "tick.minute": "分",
+  "tick.hour": "時",
+  "tick.day": "日",
+  "tick.tps": "刻每秒",
+  "tick.tps.explain": "每秒运戲刻者幾何",
+  "tick.mspt": "毫秒每刻",
+  "tick.mspt.explain": "每刻用時幾何，單位毫秒"
+}

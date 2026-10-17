@@ -120,7 +120,7 @@ const javaColors: CodeColor[] = [
     code: '6',
     name: 'gold',
     foregroundHex: '#FFAA00',
-    backgroundHex: '#2A2A00',
+    backgroundHex: '#3E2A00',
   },
   {
     code: '7',
@@ -179,10 +179,17 @@ const javaColors: CodeColor[] = [
 ]
 
 const bedrockColors: CodeColor[] = [
-  ...javaColors.filter((c) => c.name !== 'gold'),
+  ...javaColors.filter((c) => c.name !== 'gray'),
   {
-    ...javaColors.find((c) => c.name === 'gold')!,
-    backgroundHex: '#402A00',
+    ...javaColors.find((c) => c.name === 'gray')!,
+    foregroundHex: '#C6C6C6',
+    backgroundHex: '#313131',
+  },
+  {
+    code: '9',
+    name: 'blue',
+    foregroundHex: '#447FFF',
+    backgroundHex: '#15153F',
   },
   {
     code: 'g',
@@ -193,68 +200,74 @@ const bedrockColors: CodeColor[] = [
   {
     code: 'h',
     name: 'material_quartz',
-    foregroundHex: '#E3D4D1',
+    foregroundHex: '#D9CCB8',
     backgroundHex: '#383534',
   },
   {
     code: 'i',
     name: 'material_iron',
-    foregroundHex: '#CECACA',
+    foregroundHex: '#A9B4B7',
     backgroundHex: '#333232',
   },
   {
     code: 'j',
     name: 'material_netherite',
-    foregroundHex: '#443A3B',
+    foregroundHex: '#8F727D',
     backgroundHex: '#110E0E',
   },
   {
     code: 'm',
     name: 'material_redstone',
-    foregroundHex: '#971607',
+    foregroundHex: '#EE222C',
     backgroundHex: '#250501',
   },
   {
     code: 'n',
     name: 'material_copper',
-    foregroundHex: '#B4684D',
+    foregroundHex: '#C87363',
     backgroundHex: '#2D1A13',
   },
   {
     code: 'p',
     name: 'material_gold',
-    foregroundHex: '#DEB12D',
+    foregroundHex: '#FFBF1E',
     backgroundHex: '#372C0B',
   },
   {
     code: 'q',
     name: 'material_emerald',
-    foregroundHex: '#47A036',
+    foregroundHex: '#13A045',
     backgroundHex: '#04280D',
   },
   {
     code: 's',
     name: 'material_diamond',
-    foregroundHex: '#2CBAA8',
+    foregroundHex: '#5FECFF',
     backgroundHex: '#0B2E2A',
   },
   {
     code: 't',
     name: 'material_lapis',
-    foregroundHex: '#21497B',
+    foregroundHex: '#577BFF',
     backgroundHex: '#08121E',
   },
   {
     code: 'u',
     name: 'material_amethyst',
-    foregroundHex: '#9A5CC6',
+    foregroundHex: '#B66CDD',
     backgroundHex: '#261731',
   },
   {
     code: 'v',
     name: 'material_resin',
-    foregroundHex: '#EB7114',
+    foregroundHex: '#FF6A00',
     backgroundHex: '#3B1D05',
+  },
+  {
+    code: 'w',
+    name: 'party_blue_color',
+    foregroundHex: '#8CB3FF',
+    backgroundHex: '#232D40',
   },
 ]
 
@@ -612,48 +625,60 @@ function JSONToFormatCode(json: JSONContent | undefined) {
   }
 
   &.bedrock {
+    .color-blue {
+      color: #447fff;
+    }
+
     .color-minecoin_gold {
       color: #ddd605;
     }
 
     .color-material_quartz {
-      color: #e3d4d1;
+      color: #d9ccb8;
     }
 
     .color-material_iron {
-      color: #cecaca;
+      color: #a9b4b7;
     }
 
     .color-material_netherite {
-      color: #443a3b;
+      color: #8f727d;
     }
 
     .color-material_redstone {
-      color: #971607;
+      color: #ee222c;
     }
 
     .color-material_copper {
-      color: #b4684d;
+      color: #c87363;
     }
 
     .color-material_gold {
-      color: #deb12d;
+      color: #ffbf1e;
     }
 
     .color-material_emerald {
-      color: #47a036;
+      color: #13a045;
     }
 
     .color-material_diamond {
-      color: #2cbaa8;
+      color: #5fecff;
     }
 
     .color-material_lapis {
-      color: #21497b;
+      color: #577bff;
     }
 
     .color-material_amethyst {
-      color: #9a5cc6;
+      color: #b66cdd;
+    }
+
+    .color-material_resin {
+      color: #ff6a00;
+    }
+
+    .color-party_blue_color {
+      color: #8cb3ff;
     }
 
     s {
