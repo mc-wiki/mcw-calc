@@ -16,7 +16,7 @@ const API_URL = 'https://playerdb.co/api/player/minecraft/'
 const OFFLINE_PLAYER_PREFIX = 'OfflinePlayer:'
 const SKIN_LOCATION = ['alex', 'ari', 'efe', 'kai', 'makena', 'noor', 'steve', 'sunny', 'zuri']
 
-const playerName = ref(props.player)
+const playerName = ref(props.player ?? t('playerUuid.defaultPlayerName'))
 const playerOnlineUUID = ref()
 const playerOfflineUUID = ref()
 const playerOnlineAvatar = ref()
