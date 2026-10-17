@@ -17,7 +17,7 @@
   "fallDamage.protection.boots": "[[靴子]]的保护魔咒等级：",
   "fallDamage.featherFalling": "靴子的[[摔落缓冲]]魔咒等级：",
   "fallDamage.damage": "造成伤害：",
-  "fallDamage.levelHint": "值必须是介于0到255的整数",
+  "fallDamage.zeroReverseNote": "在当前配置下，计算出的高度是完全免疫摔落伤害的最高高度。",
   "fallDamage.immuneNote": "在当前配置下，摔落伤害已被完全减免，任意高度摔落伤害都为0。",
   "fallDamage.lavaPath": "下落路径（自上而下依次为空气、熔岩，最后一层熔岩之下就是地面）：",
   "fallDamage.lavaAir": "空气",
