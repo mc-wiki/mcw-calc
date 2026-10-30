@@ -10,12 +10,12 @@ const { t } = useI18n()
 // ── Types ──────────────────────────────────────────────────────────────────────
 
 interface Entry {
-  name: string | string[]  // Single name or list of names; all are linked
+  name: string | string[] // Single name or list of names; all are linked
   link?: string | string[] // Optional link target(s); if array must match length of name
-  stages?: number | null   // omit or null = single-action block (e.g. lit redstone ore)
-  growthChance?: number    // 0–1 probability of advancing one stage when ticked; defaults to 1.0
-  avgDrops?: number        // Average items dropped per harvest; omit for non-harvestable blocks
-  stackSize?: number       // Stack size for that item; defaults to 64
+  stages?: number | null // omit or null = single-action block (e.g. lit redstone ore)
+  growthChance?: number // 0–1 probability of advancing one stage when ticked; defaults to 1.0
+  avgDrops?: number // Average items dropped per harvest; omit for non-harvestable blocks
+  stackSize?: number // Stack size for that item; defaults to 64
   notes?: string
 }
 
@@ -85,9 +85,10 @@ function fmtTime(ticks: number): string {
   if (totalSeconds < 60) return `${totalSeconds.toFixed(1)}${t('randomTickTable.unit.s')}`
   const totalMinutes = Math.floor(totalSeconds / 60)
   const secs = Math.round(totalSeconds % 60)
-  if (totalMinutes < 60) return secs > 0
-    ? `${totalMinutes}${t('randomTickTable.unit.m')} ${secs}${t('randomTickTable.unit.s')}`
-    : `${totalMinutes}${t('randomTickTable.unit.m')}`
+  if (totalMinutes < 60)
+    return secs > 0
+      ? `${totalMinutes}${t('randomTickTable.unit.m')} ${secs}${t('randomTickTable.unit.s')}`
+      : `${totalMinutes}${t('randomTickTable.unit.m')}`
   const hours = Math.floor(totalMinutes / 60)
   const mins = totalMinutes % 60
   return mins > 0
@@ -101,9 +102,8 @@ function fmtTicks(n: number): string {
 
 function renderLink(entry: Entry): string {
   const names = Array.isArray(entry.name) ? entry.name : [entry.name]
-  const links = entry.link === undefined
-    ? names
-    : Array.isArray(entry.link) ? entry.link : [entry.link]
+  const links =
+    entry.link === undefined ? names : Array.isArray(entry.link) ? entry.link : [entry.link]
 
   const linkedItems = names.map((name, i) => {
     const target = links[i] ?? name
@@ -111,7 +111,8 @@ function renderLink(entry: Entry): string {
   })
 
   if (linkedItems.length === 1) return linkedItems[0]
-  if (linkedItems.length === 2) return `${linkedItems[0]} ${t('randomTickTable.and')} ${linkedItems[1]}`
+  if (linkedItems.length === 2)
+    return `${linkedItems[0]} ${t('randomTickTable.and')} ${linkedItems[1]}`
   const allButLast = linkedItems.slice(0, -1).join(', ')
   return `${allButLast}${t('randomTickTable.oxfordComma')} ${t('randomTickTable.and')} ${linkedItems[linkedItems.length - 1]}`
 }
@@ -145,9 +146,8 @@ const rows = computed((): RowData[] => {
       ? exactGeometricMedian(effectiveGrowthChance, rts)
       : medianTicksTotal(effectiveStages, effectiveGrowthChance, rts)
 
-    const avgTicksForTarget = entry.avgDrops !== undefined
-      ? (Math.ceil(target / (entry.avgDrops * crops)) * total)
-      : null
+    const avgTicksForTarget =
+      entry.avgDrops !== undefined ? Math.ceil(target / (entry.avgDrops * crops)) * total : null
 
     return {
       entry,
@@ -170,7 +170,6 @@ const rows = computed((): RowData[] => {
 
     <!-- ── Controls ── -->
     <div class="flex flex-wrap gap-4 mb-4 items-end">
-
       <div class="input-input">
         <CdxTextInput
           v-model="randomTickSpeed"
@@ -208,7 +207,6 @@ const rows = computed((): RowData[] => {
           <span>{{ t('randomTickTable.cropCount') }}</span>
         </div>
       </div>
-
     </div>
 
     <p class="rt-note mb-3">
@@ -225,16 +223,22 @@ const rows = computed((): RowData[] => {
             <th>{{ t('randomTickTable.col.avgTotal') }}</th>
             <th>{{ t('randomTickTable.col.medianTotal') }}</th>
             <th>{{ t('randomTickTable.col.avgDrops') }}</th>
-            <th>{{ useCropCount
-              ? t('randomTickTable.col.avgTimeForItemsWithCrops', targetItems, { named: { n: targetItems, crops: cropCount } })
-              : t('randomTickTable.col.avgTimeForItems', targetItems, { named: { n: targetItems } })
-            }}</th>
+            <th>
+              {{
+                useCropCount
+                  ? t('randomTickTable.col.avgTimeForItemsWithCrops', targetItems, {
+                      named: { n: targetItems, crops: cropCount },
+                    })
+                  : t('randomTickTable.col.avgTimeForItems', targetItems, {
+                      named: { n: targetItems },
+                    })
+              }}
+            </th>
             <th>{{ t('randomTickTable.col.notes') }}</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(row, index) in rows" :key="index">
-
             <!-- Name / link -->
             <td v-html="row.renderedLink" />
 
@@ -265,7 +269,9 @@ const rows = computed((): RowData[] => {
                 </template>
                 <template v-else>
                   {{ t('randomTickTable.approx', { value: fmtTime(row.medianTotal) }) }}
-                  <span class="rt-ticks">{{ t('randomTickTable.approx', { value: fmtTicks(row.medianTotal) }) }}</span>
+                  <span class="rt-ticks">{{
+                    t('randomTickTable.approx', { value: fmtTicks(row.medianTotal) })
+                  }}</span>
                 </template>
               </template>
               <template v-else>{{ t('randomTickTable.na') }}</template>
@@ -273,9 +279,11 @@ const rows = computed((): RowData[] => {
 
             <!-- Avg drops -->
             <td class="rt-center">
-              {{ row.avgDrops !== undefined
-                ? (row.avgDrops * (useCropCount ? cropCount : 1))
-                : t('randomTickTable.na') }}
+              {{
+                row.avgDrops !== undefined
+                  ? row.avgDrops * (useCropCount ? cropCount : 1)
+                  : t('randomTickTable.na')
+              }}
             </td>
 
             <!-- Avg time for target items -->
@@ -289,7 +297,6 @@ const rows = computed((): RowData[] => {
 
             <!-- Notes -->
             <td class="rt-notes">{{ row.entry.notes ?? '' }}</td>
-
           </tr>
         </tbody>
       </table>
@@ -314,26 +321,6 @@ const rows = computed((): RowData[] => {
 }
 
 .rt-table {
-  border-collapse: collapse;
-  width: 100%;
-  font-size: 0.9rem;
-
-  th, td {
-    padding: 5px 10px;
-    border: 1px solid var(--border-color-base, #a2a9b1);
-    vertical-align: middle;
-  }
-
-  th {
-    background: var(--background-color-neutral, #eaecf0);
-    font-weight: bold;
-    white-space: nowrap;
-  }
-
-  tr:nth-child(even) td {
-    background: var(--background-color-neutral-subtle, #f8f9fa);
-  }
-
   .rt-center {
     text-align: center;
   }

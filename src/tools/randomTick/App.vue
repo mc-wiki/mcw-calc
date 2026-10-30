@@ -10,7 +10,7 @@ const { t } = useI18n()
 
 const randomTickSpeed = ref(3)
 const stages = ref(7)
-const growthChancePct = ref(100)   // user enters as percentage, e.g. 10 for 10%
+const growthChancePct = ref(100) // user enters as percentage, e.g. 10 for 10%
 const avgDropsPerHarvest = ref(1)
 const stackSize = ref(64)
 
@@ -71,7 +71,7 @@ const medianTicksTotal = computed((): number | null => {
   let logPmf = r * logProb
   let cdf = Math.exp(logPmf)
 
-  if (cdf >= 0.5) return r   // degenerate case (p very close to 1)
+  if (cdf >= 0.5) return r // degenerate case (p very close to 1)
 
   const MAX_ITER = 10_000_000
   for (let n = r + 1; n <= r + MAX_ITER; n++) {
@@ -81,11 +81,11 @@ const medianTicksTotal = computed((): number | null => {
     if (cdf >= 0.5) return n
   }
 
-  return null   // exceeded practical limit
+  return null // exceeded practical limit
 })
 
 const medianSecondsTotal = computed(() =>
-  medianTicksTotal.value !== null ? medianTicksTotal.value / 20 : null
+  medianTicksTotal.value !== null ? medianTicksTotal.value / 20 : null,
 )
 
 // ── Stack calculator ───────────────────────────────────────────────────────────
@@ -96,7 +96,7 @@ const harvestsForStack = computed(() => {
 })
 
 const avgTicksForStack = computed(() =>
-  harvestsForStack.value === Infinity ? Infinity : harvestsForStack.value * avgTicksTotal.value
+  harvestsForStack.value === Infinity ? Infinity : harvestsForStack.value * avgTicksTotal.value,
 )
 
 const avgSecondsForStack = computed(() => avgTicksForStack.value / 20)
@@ -128,7 +128,6 @@ function fmtSeconds(s: number): string {
 
     <!-- ── Inputs ── -->
     <div class="flex flex-wrap gap-4 mb-6">
-
       <div class="input-item">
         <div class="input-input">
           <CdxTextInput
@@ -145,12 +144,7 @@ function fmtSeconds(s: number): string {
 
       <div class="input-item">
         <div class="input-input">
-          <CdxTextInput
-            v-model="stages"
-            class="text-center min-w-16"
-            input-type="number"
-            min="1"
-          />
+          <CdxTextInput v-model="stages" class="text-center min-w-16" input-type="number" min="1" />
           <span>{{ t('randomTick.growth.stages') }}</span>
         </div>
       </div>
@@ -203,7 +197,7 @@ function fmtSeconds(s: number): string {
     </p>
 
     <!-- ── Results table ── -->
-    <table class="rt-results">
+    <table class="wikitable rt-results">
       <thead>
         <tr>
           <th>{{ t('randomTick.growth.metric') }}</th>
@@ -264,28 +258,12 @@ function fmtSeconds(s: number): string {
 }
 
 .rt-results {
-  border-collapse: collapse;
   width: 100%;
   font-family: monospace;
 
-  th, td {
-    padding: 4px 12px;
-    text-align: left;
-    border: 1px solid var(--border-color-base, #a2a9b1);
-  }
-
-  th {
-    background: var(--background-color-neutral, #eaecf0);
-    font-weight: bold;
-  }
-
-  tr:nth-child(even) td {
-    background: var(--background-color-neutral-subtle, #f8f9fa);
-  }
-
   .rt-divider td {
     padding: 2px;
-    background: var(--border-color-base, #a2a9b1);
+    background: var(--border-color-base);
     border: none;
   }
 }
