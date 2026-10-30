@@ -239,15 +239,6 @@ const directUrl = computed(() => {
     'https://www.chunkbase.com/apps/seed-map',
   ).toString()
 })
-
-watch([iframeUrl], () => {
-  if (iframe.value === null) return
-  iframe.value.src = ''
-  setTimeout(() => {
-    if (iframe.value === null) return
-    iframe.value.src = iframeUrl.value
-  })
-})
 </script>
 
 <template>

@@ -36,6 +36,7 @@
   "meleeDamage.victim.isInWater": "Контактирующий с водой",
   "meleeDamage.attackCondition.critical": "Критический удар",
   "meleeDamage.attackCondition.tickAfterLastAttack": "Такты с момента последней атаки",
+  "meleeDamage.attackCondition.fullCooldown": "Полная перезарядка",
   "meleeDamage.attackCondition.speed": "Скорость (м/с)",
   "meleeDamage.attackCondition.speed.sprinting": "Бег",
   "meleeDamage.attackCondition.speed.sprintingSpeedI": "Бег (Скорость I)",
