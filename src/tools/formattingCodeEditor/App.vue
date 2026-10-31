@@ -471,7 +471,7 @@ function JSONToFormatCode(json: JSONContent | undefined) {
     />
 
     <CdxField>
-      <CdxTextArea v-model="formatCode" disabled />
+      <CdxTextArea v-model="formatCode" :readonly="true" />
 
       <template #label>
         <div style="display: flex; align-items: center">
