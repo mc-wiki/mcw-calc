@@ -62,6 +62,9 @@ mw.hook('wikipage.content').add(() => {
       interactiveMap: '900px',
       chunkbase: '900px',
     }[type]
+    iframe.style.height = {
+      blockStructureRenderer: '100%',
+    }[type]
 
     iframe.allow =
       "accelerometer 'src'; clipboard-write 'src'; encrypted-media 'src'; fullscreen 'src'; picture-in-picture 'src'; autoplay 'src'"
@@ -115,7 +118,9 @@ mw.hook('wikipage.content').add(() => {
           new URL(iframe.src).origin
         )
       } else if (event.data.type === 'mcw-calc-height-change') {
-        iframe.style.height = `${event.data.data.height}px`
+        if (type !== 'blockStructureRenderer') {
+          iframe.style.height = `${event.data.data.height}px`
+        }
       } else if (event.data.type === 'mcw-calc-clipboard') {
         navigator.clipboard.writeText(event.data.data.text)
       }
