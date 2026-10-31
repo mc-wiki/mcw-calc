@@ -1,0 +1,934 @@
+{
+    "version": "26.4",
+    "data": {
+        "aqua_affinity": {
+            "anvil_cost": 4,
+            "max_level": 1,
+            "weight": 2,
+            "max_cost": {
+                "base": 41,
+                "per_level_above_first": 0
+            },
+            "min_cost": {
+                "base": 1,
+                "per_level_above_first": 0
+            },
+            "supported_items": [
+                "helmet"
+            ]
+        },
+        "bane_of_arthropods": {
+            "anvil_cost": 2,
+            "max_level": 5,
+            "weight": 5,
+            "max_cost": {
+                "base": 25,
+                "per_level_above_first": 8
+            },
+            "min_cost": {
+                "base": 5,
+                "per_level_above_first": 8
+            },
+            "supported_items": [
+                "sword",
+                "spear",
+                "axe",
+                "mace"
+            ],
+            "primary_items": [
+                "sword",
+                "spear"
+            ],
+            "exclusive_enchantments": [
+                "sharpness",
+                "smite",
+                "bane_of_arthropods",
+                "density",
+                "breach"
+            ]
+        },
+        "binding_curse": {
+            "anvil_cost": 8,
+            "max_level": 1,
+            "weight": 1,
+            "max_cost": {
+                "base": 50,
+                "per_level_above_first": 0
+            },
+            "min_cost": {
+                "base": 25,
+                "per_level_above_first": 0
+            },
+            "supported_items": [
+                "boots",
+                "leggings",
+                "chestplate",
+                "helmet",
+                "elytra",
+                "heads",
+                "carved_pumpkin"
+            ]
+        },
+        "blast_protection": {
+            "anvil_cost": 4,
+            "max_level": 4,
+            "weight": 2,
+            "max_cost": {
+                "base": 13,
+                "per_level_above_first": 8
+            },
+            "min_cost": {
+                "base": 5,
+                "per_level_above_first": 8
+            },
+            "supported_items": [
+                "boots",
+                "leggings",
+                "chestplate",
+                "helmet"
+            ],
+            "exclusive_enchantments": [
+                "protection",
+                "blast_protection",
+                "fire_protection",
+                "projectile_protection"
+            ]
+        },
+        "breach": {
+            "anvil_cost": 4,
+            "max_level": 4,
+            "weight": 2,
+            "max_cost": {
+                "base": 65,
+                "per_level_above_first": 9
+            },
+            "min_cost": {
+                "base": 15,
+                "per_level_above_first": 9
+            },
+            "supported_items": [
+                "mace"
+            ],
+            "exclusive_enchantments": [
+                "sharpness",
+                "smite",
+                "bane_of_arthropods",
+                "density",
+                "breach"
+            ]
+        },
+        "channeling": {
+            "anvil_cost": 8,
+            "max_level": 1,
+            "weight": 1,
+            "max_cost": {
+                "base": 50,
+                "per_level_above_first": 0
+            },
+            "min_cost": {
+                "base": 25,
+                "per_level_above_first": 0
+            },
+            "supported_items": [
+                "trident"
+            ],
+            "exclusive_enchantments": [
+                "loyalty",
+                "channeling"
+            ]
+        },
+        "density": {
+            "anvil_cost": 2,
+            "max_level": 5,
+            "weight": 5,
+            "max_cost": {
+                "base": 25,
+                "per_level_above_first": 8
+            },
+            "min_cost": {
+                "base": 5,
+                "per_level_above_first": 8
+            },
+            "supported_items": [
+                "mace"
+            ],
+            "exclusive_enchantments": [
+                "sharpness",
+                "smite",
+                "bane_of_arthropods",
+                "density",
+                "breach"
+            ]
+        },
+        "depth_strider": {
+            "anvil_cost": 4,
+            "max_level": 3,
+            "weight": 2,
+            "max_cost": {
+                "base": 25,
+                "per_level_above_first": 10
+            },
+            "min_cost": {
+                "base": 10,
+                "per_level_above_first": 10
+            },
+            "supported_items": [
+                "boots"
+            ],
+            "exclusive_enchantments": [
+                "frost_walker",
+                "depth_strider"
+            ]
+        },
+        "efficiency": {
+            "anvil_cost": 1,
+            "max_level": 5,
+            "weight": 10,
+            "max_cost": {
+                "base": 51,
+                "per_level_above_first": 10
+            },
+            "min_cost": {
+                "base": 1,
+                "per_level_above_first": 10
+            },
+            "supported_items": [
+                "axe",
+                "pickaxe",
+                "shovel",
+                "hoe",
+                "shears"
+            ]
+        },
+        "feather_falling": {
+            "anvil_cost": 2,
+            "max_level": 4,
+            "weight": 5,
+            "max_cost": {
+                "base": 11,
+                "per_level_above_first": 6
+            },
+            "min_cost": {
+                "base": 5,
+                "per_level_above_first": 6
+            },
+            "supported_items": [
+                "boots"
+            ]
+        },
+        "fire_aspect": {
+            "anvil_cost": 4,
+            "max_level": 2,
+            "weight": 2,
+            "max_cost": {
+                "base": 60,
+                "per_level_above_first": 20
+            },
+            "min_cost": {
+                "base": 10,
+                "per_level_above_first": 20
+            },
+            "supported_items": [
+                "sword",
+                "spear",
+                "mace"
+            ],
+            "primary_items": [
+                "sword",
+                "spear"
+            ]
+        },
+        "fire_protection": {
+            "anvil_cost": 2,
+            "max_level": 4,
+            "weight": 5,
+            "max_cost": {
+                "base": 18,
+                "per_level_above_first": 8
+            },
+            "min_cost": {
+                "base": 10,
+                "per_level_above_first": 8
+            },
+            "supported_items": [
+                "boots",
+                "leggings",
+                "chestplate",
+                "helmet"
+            ],
+            "exclusive_enchantments": [
+                "protection",
+                "blast_protection",
+                "fire_protection",
+                "projectile_protection"
+            ]
+        },
+        "flame": {
+            "anvil_cost": 4,
+            "max_level": 1,
+            "weight": 2,
+            "max_cost": {
+                "base": 50,
+                "per_level_above_first": 0
+            },
+            "min_cost": {
+                "base": 20,
+                "per_level_above_first": 0
+            },
+            "supported_items": [
+                "bow"
+            ]
+        },
+        "fortune": {
+            "anvil_cost": 4,
+            "max_level": 3,
+            "weight": 2,
+            "max_cost": {
+                "base": 65,
+                "per_level_above_first": 9
+            },
+            "min_cost": {
+                "base": 15,
+                "per_level_above_first": 9
+            },
+            "supported_items": [
+                "axe",
+                "pickaxe",
+                "shovel",
+                "hoe"
+            ],
+            "exclusive_enchantments": [
+                "fortune",
+                "silk_touch"
+            ]
+        },
+        "frost_walker": {
+            "anvil_cost": 4,
+            "max_level": 2,
+            "weight": 2,
+            "max_cost": {
+                "base": 25,
+                "per_level_above_first": 10
+            },
+            "min_cost": {
+                "base": 10,
+                "per_level_above_first": 10
+            },
+            "supported_items": [
+                "boots"
+            ],
+            "exclusive_enchantments": [
+                "frost_walker",
+                "depth_strider"
+            ]
+        },
+        "impaling": {
+            "anvil_cost": 2,
+            "max_level": 5,
+            "weight": 2,
+            "max_cost": {
+                "base": 21,
+                "per_level_above_first": 8
+            },
+            "min_cost": {
+                "base": 1,
+                "per_level_above_first": 8
+            },
+            "supported_items": [
+                "trident"
+            ]
+        },
+        "infinity": {
+            "anvil_cost": 8,
+            "max_level": 1,
+            "weight": 1,
+            "max_cost": {
+                "base": 50,
+                "per_level_above_first": 0
+            },
+            "min_cost": {
+                "base": 20,
+                "per_level_above_first": 0
+            },
+            "supported_items": [
+                "bow"
+            ],
+            "exclusive_enchantments": [
+                "mending"
+            ]
+        },
+        "knockback": {
+            "anvil_cost": 2,
+            "max_level": 2,
+            "weight": 5,
+            "max_cost": {
+                "base": 55,
+                "per_level_above_first": 20
+            },
+            "min_cost": {
+                "base": 5,
+                "per_level_above_first": 20
+            },
+            "supported_items": [
+                "sword",
+                "spear"
+            ]
+        },
+        "looting": {
+            "anvil_cost": 4,
+            "max_level": 3,
+            "weight": 2,
+            "max_cost": {
+                "base": 65,
+                "per_level_above_first": 9
+            },
+            "min_cost": {
+                "base": 15,
+                "per_level_above_first": 9
+            },
+            "supported_items": [
+                "sword",
+                "spear"
+            ]
+        },
+        "loyalty": {
+            "anvil_cost": 2,
+            "max_level": 3,
+            "weight": 5,
+            "max_cost": {
+                "base": 50,
+                "per_level_above_first": 0
+            },
+            "min_cost": {
+                "base": 12,
+                "per_level_above_first": 7
+            },
+            "supported_items": [
+                "trident"
+            ],
+            "exclusive_enchantments": [
+                "loyalty",
+                "channeling"
+            ]
+        },
+        "luck_of_the_sea": {
+            "anvil_cost": 4,
+            "max_level": 3,
+            "weight": 2,
+            "max_cost": {
+                "base": 65,
+                "per_level_above_first": 9
+            },
+            "min_cost": {
+                "base": 15,
+                "per_level_above_first": 9
+            },
+            "supported_items": [
+                "fishing_rod"
+            ]
+        },
+        "lunge": {
+            "anvil_cost": 2,
+            "max_level": 3,
+            "weight": 5,
+            "max_cost": {
+                "base": 25,
+                "per_level_above_first": 8
+            },
+            "min_cost": {
+                "base": 5,
+                "per_level_above_first": 8
+            },
+            "supported_items": [
+                "spear"
+            ]
+        },
+        "lure": {
+            "anvil_cost": 4,
+            "max_level": 3,
+            "weight": 2,
+            "max_cost": {
+                "base": 65,
+                "per_level_above_first": 9
+            },
+            "min_cost": {
+                "base": 15,
+                "per_level_above_first": 9
+            },
+            "supported_items": [
+                "fishing_rod"
+            ]
+        },
+        "mending": {
+            "anvil_cost": 4,
+            "max_level": 1,
+            "weight": 2,
+            "max_cost": {
+                "base": 75,
+                "per_level_above_first": 25
+            },
+            "min_cost": {
+                "base": 25,
+                "per_level_above_first": 25
+            },
+            "supported_items": [
+                "boots",
+                "leggings",
+                "chestplate",
+                "helmet",
+                "elytra",
+                "shield",
+                "sword",
+                "axe",
+                "pickaxe",
+                "shovel",
+                "hoe",
+                "bow",
+                "crossbow",
+                "trident",
+                "flint_and_steel",
+                "shears",
+                "brush",
+                "fishing_rod",
+                "carrot_on_a_stick",
+                "warped_fungus_on_a_stick",
+                "mace",
+                "spear"
+            ],
+            "exclusive_enchantments": [
+                "infinity",
+                "mending"
+            ]
+        },
+        "multishot": {
+            "anvil_cost": 4,
+            "max_level": 1,
+            "weight": 2,
+            "max_cost": {
+                "base": 50,
+                "per_level_above_first": 0
+            },
+            "min_cost": {
+                "base": 20,
+                "per_level_above_first": 0
+            },
+            "supported_items": [
+                "crossbow"
+            ],
+            "exclusive_enchantments": [
+                "multishot",
+                "piercing"
+            ]
+        },
+        "piercing": {
+            "anvil_cost": 1,
+            "max_level": 4,
+            "weight": 10,
+            "max_cost": {
+                "base": 50,
+                "per_level_above_first": 0
+            },
+            "min_cost": {
+                "base": 1,
+                "per_level_above_first": 10
+            },
+            "supported_items": [
+                "crossbow"
+            ],
+            "exclusive_enchantments": [
+                "multishot",
+                "piercing"
+            ]
+        },
+        "power": {
+            "anvil_cost": 1,
+            "max_level": 5,
+            "weight": 10,
+            "max_cost": {
+                "base": 16,
+                "per_level_above_first": 10
+            },
+            "min_cost": {
+                "base": 1,
+                "per_level_above_first": 10
+            },
+            "supported_items": [
+                "bow"
+            ]
+        },
+        "projectile_protection": {
+            "anvil_cost": 2,
+            "max_level": 4,
+            "weight": 5,
+            "max_cost": {
+                "base": 9,
+                "per_level_above_first": 6
+            },
+            "min_cost": {
+                "base": 3,
+                "per_level_above_first": 6
+            },
+            "supported_items": [
+                "boots",
+                "leggings",
+                "chestplate",
+                "helmet"
+            ],
+            "exclusive_enchantments": [
+                "protection",
+                "blast_protection",
+                "fire_protection",
+                "projectile_protection"
+            ]
+        },
+        "protection": {
+            "anvil_cost": 1,
+            "max_level": 4,
+            "weight": 10,
+            "max_cost": {
+                "base": 12,
+                "per_level_above_first": 11
+            },
+            "min_cost": {
+                "base": 1,
+                "per_level_above_first": 11
+            },
+            "supported_items": [
+                "boots",
+                "leggings",
+                "chestplate",
+                "helmet"
+            ],
+            "exclusive_enchantments": [
+                "protection",
+                "blast_protection",
+                "fire_protection",
+                "projectile_protection"
+            ]
+        },
+        "punch": {
+            "anvil_cost": 4,
+            "max_level": 2,
+            "weight": 2,
+            "max_cost": {
+                "base": 37,
+                "per_level_above_first": 20
+            },
+            "min_cost": {
+                "base": 12,
+                "per_level_above_first": 20
+            },
+            "supported_items": [
+                "bow"
+            ]
+        },
+        "quick_charge": {
+            "anvil_cost": 2,
+            "max_level": 3,
+            "weight": 5,
+            "max_cost": {
+                "base": 50,
+                "per_level_above_first": 0
+            },
+            "min_cost": {
+                "base": 12,
+                "per_level_above_first": 20
+            },
+            "supported_items": [
+                "crossbow"
+            ]
+        },
+        "respiration": {
+            "anvil_cost": 4,
+            "max_level": 3,
+            "weight": 2,
+            "max_cost": {
+                "base": 40,
+                "per_level_above_first": 10
+            },
+            "min_cost": {
+                "base": 10,
+                "per_level_above_first": 10
+            },
+            "supported_items": [
+                "helmet"
+            ]
+        },
+        "riptide": {
+            "anvil_cost": 4,
+            "max_level": 3,
+            "weight": 2,
+            "max_cost": {
+                "base": 50,
+                "per_level_above_first": 0
+            },
+            "min_cost": {
+                "base": 17,
+                "per_level_above_first": 7
+            },
+            "supported_items": [
+                "trident"
+            ]
+        },
+        "sharpness": {
+            "anvil_cost": 1,
+            "max_level": 5,
+            "weight": 10,
+            "max_cost": {
+                "base": 21,
+                "per_level_above_first": 11
+            },
+            "min_cost": {
+                "base": 1,
+                "per_level_above_first": 11
+            },
+            "supported_items": [
+                "sword",
+                "spear",
+                "axe"
+            ],
+            "primary_items": [
+                "sword",
+                "spear"
+            ],
+            "exclusive_enchantments": [
+                "sharpness",
+                "smite",
+                "bane_of_arthropods",
+                "density",
+                "breach"
+            ]
+        },
+        "silk_touch": {
+            "anvil_cost": 8,
+            "max_level": 1,
+            "weight": 1,
+            "max_cost": {
+                "base": 65,
+                "per_level_above_first": 0
+            },
+            "min_cost": {
+                "base": 15,
+                "per_level_above_first": 0
+            },
+            "supported_items": [
+                "axe",
+                "pickaxe",
+                "shovel",
+                "hoe",
+                "shears"
+            ],
+            "exclusive_enchantments": [
+                "fortune",
+                "silk_touch"
+            ]
+        },
+        "smite": {
+            "anvil_cost": 2,
+            "max_level": 5,
+            "weight": 5,
+            "max_cost": {
+                "base": 25,
+                "per_level_above_first": 8
+            },
+            "min_cost": {
+                "base": 5,
+                "per_level_above_first": 8
+            },
+            "supported_items": [
+                "sword",
+                "spear",
+                "axe",
+                "mace"
+            ],
+            "primary_items": [
+                "sword",
+                "spear"
+            ],
+            "exclusive_enchantments": [
+                "sharpness",
+                "smite",
+                "bane_of_arthropods",
+                "density",
+                "breach"
+            ]
+        },
+        "soul_speed": {
+            "anvil_cost": 8,
+            "max_level": 3,
+            "weight": 1,
+            "max_cost": {
+                "base": 25,
+                "per_level_above_first": 10
+            },
+            "min_cost": {
+                "base": 10,
+                "per_level_above_first": 10
+            },
+            "supported_items": [
+                "boots"
+            ]
+        },
+        "swift_sneak": {
+            "anvil_cost": 8,
+            "max_level": 3,
+            "weight": 1,
+            "max_cost": {
+                "base": 75,
+                "per_level_above_first": 25
+            },
+            "min_cost": {
+                "base": 25,
+                "per_level_above_first": 25
+            },
+            "supported_items": [
+                "leggings"
+            ]
+        },
+        "thorns": {
+            "anvil_cost": 8,
+            "max_level": 3,
+            "weight": 1,
+            "max_cost": {
+                "base": 60,
+                "per_level_above_first": 20
+            },
+            "min_cost": {
+                "base": 10,
+                "per_level_above_first": 20
+            },
+            "supported_items": [
+                "boots",
+                "leggings",
+                "chestplate",
+                "helmet"
+            ],
+            "primary_items": [
+                "chestplate"
+            ]
+        },
+        "unbreaking": {
+            "anvil_cost": 2,
+            "max_level": 3,
+            "weight": 5,
+            "max_cost": {
+                "base": 55,
+                "per_level_above_first": 8
+            },
+            "min_cost": {
+                "base": 5,
+                "per_level_above_first": 8
+            },
+            "supported_items": [
+                "boots",
+                "leggings",
+                "chestplate",
+                "helmet",
+                "elytra",
+                "shield",
+                "sword",
+                "axe",
+                "pickaxe",
+                "shovel",
+                "hoe",
+                "bow",
+                "crossbow",
+                "trident",
+                "flint_and_steel",
+                "shears",
+                "brush",
+                "fishing_rod",
+                "carrot_on_a_stick",
+                "warped_fungus_on_a_stick",
+                "mace",
+                "spear"
+            ]
+        },
+        "vanishing_curse": {
+            "anvil_cost": 8,
+            "max_level": 1,
+            "weight": 1,
+            "max_cost": {
+                "base": 50,
+                "per_level_above_first": 0
+            },
+            "min_cost": {
+                "base": 25,
+                "per_level_above_first": 0
+            },
+            "supported_items": [
+                "boots",
+                "leggings",
+                "chestplate",
+                "helmet",
+                "elytra",
+                "shield",
+                "sword",
+                "axe",
+                "pickaxe",
+                "shovel",
+                "hoe",
+                "bow",
+                "crossbow",
+                "trident",
+                "flint_and_steel",
+                "shears",
+                "brush",
+                "fishing_rod",
+                "carrot_on_a_stick",
+                "warped_fungus_on_a_stick",
+                "mace",
+                "spear",
+                "compass",
+                "recovery_compass",
+                "carved_pumpkin",
+                "heads"
+            ]
+        },
+        "wind_burst": {
+            "anvil_cost": 4,
+            "max_level": 3,
+            "weight": 2,
+            "max_cost": {
+                "base": 65,
+                "per_level_above_first": 9
+            },
+            "min_cost": {
+                "base": 15,
+                "per_level_above_first": 9
+            },
+            "supported_items": [
+                "mace"
+            ]
+        }
+    },
+    "item": [
+        "enchanted_book",
+        "helmet",
+        "chestplate",
+        "leggings",
+        "boots",
+        "sword",
+        "axe",
+        "mace",
+        "spear",
+        "bow",
+        "crossbow",
+        "pickaxe",
+        "shovel",
+        "hoe",
+        "shears",
+        "trident",
+        "fishing_rod",
+        "elytra",
+        "shield",
+        "brush",
+        "flint_and_steel",
+        "carrot_on_a_stick",
+        "warped_fungus_on_a_stick",
+        "carved_pumpkin",
+        "compass",
+        "recovery_compass",
+        "heads"
+    ]
+}

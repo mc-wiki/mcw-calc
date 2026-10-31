@@ -1,0 +1,33 @@
+{
+    "anvilHelper.title": "Anvil Helper",
+    "anvilHelper.caption.inputItems": "Input Items",
+    "anvilHelper.caption.result": "Result",
+
+    "anvilHelper.java": "Java Edition",
+    "anvilHelper.bedrock": "Bedrock Edition",
+    "anvilHelper.input": "Input Item",
+    "anvilHelper.actions": "Actions",
+    "anvilHelper.addNewEnchantment": "Add a new enchantment",
+    "anvilHelper.enchantment.defaultLabel": "Choose an enchantment...",
+
+    "anvilHelper.selectPreset": "Preset: ",
+    "anvilHelper.selectPreset.defaultLabel": "Choose a preset...",
+    "anvilHelper.newItem": "Add New Item",
+    "anvilHelper.resetAll": "Reset All",
+    "anvilHelper.restoreLastInput": "Restore Last Input",
+    "anvilHelper.startCalculate": "Calculate!",
+
+    "anvilHelper.mergeSteps.input": "Input",
+    "anvilHelper.mergeSteps.addition": "Addition",
+    "anvilHelper.mergeSteps.result": "Result",
+    "anvilHelper.mergeSteps.cost": "Cost",
+    "enchantment.format": "{id} {level}",
+    "anvilHelper.level": "Lvl",
+    "anvilHelper.failed": "No item would be combined. Please check your input.",
+    "anvilHelper.result.repairCost.format": "Repair Cost: {lvl}",
+    "anvilHelper.result.total": "Total",
+
+    "anvilHelper.result.minXp": "Equivalent minimum [[Experience]] points in total: ",
+    "anvilHelper.result.minXp.desc": "To reach the lesser value, each step must precisely zero out the xp points on yourself."
+
+}
