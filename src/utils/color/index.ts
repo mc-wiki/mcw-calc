@@ -17,15 +17,6 @@ export const imgNames = {
   pink: 'Pink',
 } as Record<Color, string>
 
-export const combs = [
-  ...combsWithRep(6, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]),
-  ...combsWithRep(5, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]),
-  ...combsWithRep(4, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]),
-  ...combsWithRep(3, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]),
-  ...combsWithRep(2, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]),
-  ...combsWithRep(1, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]),
-]
-
 export function colorStringToRgb(color: string): [number, number, number] {
   const hex = color.slice(1)
   const r = Number.parseInt(hex.slice(0, 2), 16)
@@ -124,54 +115,6 @@ function combsWithRep<T>(r: number, xs: T[] = []): T[][] {
     )
   }
   return comb(r, [])
-}
-
-export function colorToSequence(
-  colorRgbMap: Record<Color, [number, number, number]>,
-  sequenceToColor: (
-    sequence: Color[],
-    colorRgbMap: Record<Color, [number, number, number]>,
-  ) => [number, number, number],
-  targetRgb: [number, number, number],
-): [Color[], number, [number, number, number]] {
-  const targetLab = rgb2lab(targetRgb)
-
-  let minDeltaE = Infinity
-  let minSequence: Color[] = []
-
-  for (const comb of combs) {
-    const sequence: Color[] = []
-    for (let k = 0; k < comb.length; k++) {
-      sequence.push(Object.keys(colorRgbMap)[comb[k]] as Color)
-    }
-
-    const color = sequenceToColor(sequence, colorRgbMap)
-    const lab = rgb2lab(color)
-    const delta = deltaE(lab, targetLab)
-    if (delta < minDeltaE) {
-      minDeltaE = delta
-      minSequence = sequence
-    }
-  }
-
-  // slice colors from the end if deltaE can be improved or stays the same
-  for (let i = minSequence.length - 1; i >= 0; i--) {
-    const sequence = minSequence.slice(0, i)
-    const color = sequenceToColor(sequence, colorRgbMap)
-    const lab = rgb2lab(color)
-    const delta = deltaE(lab, targetLab)
-    if (delta <= minDeltaE) {
-      minDeltaE = delta
-      if (i === 1) {
-        minSequence = sequence
-        break
-      }
-    } else {
-      break
-    }
-  }
-
-  return [minSequence, minDeltaE, sequenceToColor(minSequence, colorRgbMap)]
 }
 
 export function sequenceToColorFloatAverage(
