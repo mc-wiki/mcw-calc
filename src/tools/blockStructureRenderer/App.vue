@@ -483,11 +483,6 @@ onMounted(() => {
 
 <template>
   <div
-    :style="{
-      height: '60vw',
-      width: 'max(60%, 60vw)',
-      position: 'relative',
-    }"
   >
     <div
       ref="render-target"
