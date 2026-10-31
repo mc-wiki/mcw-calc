@@ -1,0 +1,4 @@
+{
+  "desmos.nameRequired": "Parameter <code>name</code> is required.",
+  "desmos.nameInvalid": "Parameter <code>name</code> has an invalid format."
+}
