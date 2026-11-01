@@ -28,9 +28,12 @@ const colorText = computed({
     }
   },
 })
-const edition = ref<'java' | 'bedrock'>('java')
+const edition = ref<'java' | 'bedrock' | 'java_2x2' | 'java_brown' | 'java_1_4_3' | 'java_12w34a'>('java')
+const found = ref(0)
+const loading = ref(false)
+const loadedEdition = ref<'java' | 'bedrock' | 'java_2x2' | 'java_brown' | 'java_1_4_3' | 'java_12w34a' | null>(null)
 const canvasRef = useTemplateRef('canvasRef')
-const sequence = ref<[Color[], number, [number, number, number]]>([['white'], 0, [249, 255, 254]])
+const sequence = ref<[Color[][], number, [number, number, number]]>([[['white']], 0, [249, 255, 254]])
 
 function generateDye(color: Color) {
   return getImageLink(`en:Invicon_${imgNames[color]}_Dye.png`)
@@ -42,10 +45,38 @@ function generateDyeName(color: Color) {
 
 const worker = new ComlinkWorker<typeof import('./worker')>(new URL('./worker', import.meta.url))
 
+async function loadEdition() {
+  loading.value = true
+  try {
+    found.value =
+    edition.value === 'java'        ? await worker.load_f_main() :
+    edition.value === 'java_2x2'    ? await worker.load_f_2x2() :
+    edition.value === 'java_brown'  ? await worker.load_f_brown() :
+    edition.value === 'java_1_4_3'  ? await worker.load_f_1_4_3() :
+    edition.value === 'java_12w34a' ? await worker.load_f_12w34a() :
+    await worker.load_f_be()
+    loadedEdition.value = edition.value
+  } finally {
+    loading.value = false
+  }
+}
+
+async function loadEditionIfNeeded() {
+  if (loadedEdition.value === edition.value) return
+  await loadEdition()
+}
+
 async function updateSequence(targetColor: [number, number, number]) {
+  await loadEditionIfNeeded()
   await nextTick()
   sequence.value = await worker.colorToSequence(targetColor, edition.value)
 }
+
+void loadEdition()
+
+watch(edition, () => {
+  void loadEdition()
+})
 
 watch([sequence, canvasRef], ([sequence, canvasRef]) => {
   const canvas = canvasRef
@@ -122,6 +153,10 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
     <CdxTabs v-model:active="edition" class="mb-2">
       <CdxTab name="java" :label="t('armorColor.java')" />
       <CdxTab name="bedrock" :label="t('armorColor.bedrock')" />
+      <CdxTab name="java_2x2" :label="t('armorColor.java_2x2')" />
+      <CdxTab name="java_brown" :label="t('armorColor.java_brown')" />
+      <CdxTab name="java_1_4_3" :label="t('armorColor.java_1_4_3')" />
+      <CdxTab name="java_12w34a" :label="t('armorColor.java_12w34a')" />
     </CdxTabs>
     <div
       :style="{
@@ -145,7 +180,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
           <label for="color-picker">{{ t('armorColor.color') }}</label>
           <input id="color-picker" v-model="color" type="color" />
           <CdxTextInput v-model="colorText" class="min-w-[100px] font-mono" type="text" />
-          <CdxButton @click="updateSequence(colorStringToRgb(color))">
+          <CdxButton :disabled="loading" @click="updateSequence(colorStringToRgb(color))">
             {{ t('armorColor.calculate') }}
           </CdxButton>
         </div>
@@ -160,16 +195,20 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
           :title="t(`armorColor.sequence.help${edition === 'bedrock' ? 'Bedrock' : ''}`)"
         >
           {{ t('armorColor.sequence') }}
-          <div v-for="(item, index) in sequence[0]" :key="index">
-            <img
-              :src="generateDye(item)"
-              :alt="item"
-              :title="generateDyeName(item)"
-              :data-minetip-title="generateDyeName(item)"
-              style="height: 2em; width: 2em"
-              class="explain minetip pixel-image"
-            />
-          </div>
+          <template v-for="(step, stepIndex) in (edition === 'bedrock' ? sequence[0] : sequence[0])" :key="stepIndex">
+            <span v-if="stepIndex > 0" class="step-separator">➔</span>
+            <div v-for="(item, itemIndex) in step" :key="itemIndex">
+              <img
+                :src="generateDye(item)"
+                :alt="item"
+                :title="generateDyeName(item)"
+                :data-minetip-title="generateDyeName(item)"
+                style="height: 2em; width: 2em"
+                class="explain minetip pixel-image"
+              />
+            </div>
+          </template>
+          
           <span
             id="result-color"
             :style="{
@@ -178,13 +217,19 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
               '--color-b': sequence[2][2],
             }"
           >&nbsp;#{{
-              sequence[2][0].toString(16)
+              sequence[2][0].toString(16).padStart(2, '0')
             }}{{
-              sequence[2][1].toString(16)
+              sequence[2][1].toString(16).padStart(2, '0')
             }}{{
-              sequence[2][2].toString(16)
+              sequence[2][2].toString(16).padStart(2, '0')
             }}
           </span>
+        </div>
+        <div v-if="edition === 'java_2x2' || edition === 'java_brown' || edition === 'java_1_4_3' || edition === 'java_12w34a'">
+          {{ t(`armorColor.explanation.${edition}`) }}
+        </div>
+        <div>
+          {{ found.toLocaleString() }} {{ t(`armorColor.obtainable_colors`) }}.
         </div>
         <div>
           <span class="explain" :title="t('armorColor.dE.help')">

@@ -1,7 +1,5 @@
-import { rgb2lab, separateRgb } from '.'
-
 export const colorMap = {
-  white: 0xf9fffe,
+  white: 0xf0f0f0,
   lightGray: 0x9d9d97,
   gray: 0x474f52,
   black: 0x1d1d21,
@@ -37,11 +35,3 @@ export const colorCode = {
   magenta: 2,
   pink: 6,
 } as const
-
-export const colorRgbMap = Object.fromEntries(
-  Object.entries(colorMap).map(([k, v]) => [k, separateRgb(v)]),
-) as Record<keyof typeof colorMap, [number, number, number]>
-
-export const colorLabMap = Object.fromEntries(
-  Object.entries(colorRgbMap).map(([k, v]) => [k, rgb2lab(v)]),
-) as Record<keyof typeof colorMap, [number, number, number]>
