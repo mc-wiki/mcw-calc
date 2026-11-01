@@ -23,7 +23,7 @@ const playerOnlineAvatar = ref()
 const playerOfflineSkinLocation = ref(SKIN_LOCATION[6])
 const playerOfflineSkinName = ref(t('playerUuid.offlineSkinName.6'))
 const isLoading = ref(false)
-const playerOnlineLocatorBarColor = ref<[number, number, number] | null>()
+const playerOnlineLocatorBarColor = ref<[number, number, number] | null>(null)
 const playerOfflineLocatorBarColor = ref<[number, number, number]>([0, 0, 0])
 
 const errorText = ref()
@@ -203,101 +203,123 @@ updatePlayerInfo()
     <template #heading>
       {{ t('playerUuid.title') }}
     </template>
-    <div class="flex flex-col justify-between">
-      <CdxField>
-        <template #label>
-          {{ t('playerUuid.name') }}
-        </template>
-
-        <div class="flex flex-row align-center gap-2">
-          <CdxTextInput
-            v-model="playerName"
-            input-type="text"
-            @keydown="
-              (e: KeyboardEvent) => {
-                if (e.key === 'Enter') {
-                  updatePlayerInfo()
-                }
-              }
-            "
-          />
-          <CdxButton @click="updatePlayerInfo()">
-            <template v-if="isLoading">
-              {{ t('playerUuid.loading') }}
-            </template>
-            <template v-else>
-              {{ t('playerUuid.get') }}
-            </template>
-          </CdxButton>
-        </div>
-      </CdxField>
-
-      <div class="flex items-center gap-6">
+    <div class="flex flex-col gap-2">
+      <div class="flex-1">
         <CdxField>
           <template #label>
-            <span v-html="parseWikitext(t('playerUuid.uuidOffline'))" />
+            {{ t('playerUuid.name') }}
           </template>
 
           <div class="flex flex-row align-center gap-2">
-            <CdxTextInput v-model="playerOfflineUUID" input-type="text" :readonly="true" />
-            <CdxButton @click="copyUuid(playerOfflineUUID, 1)">
-              {{ copyTextOffline }}
+            <CdxTextInput
+              v-model="playerName"
+              input-type="text"
+              @keydown="
+                (e: KeyboardEvent) => {
+                  if (e.key === 'Enter') {
+                    updatePlayerInfo()
+                  }
+                }
+              "
+            />
+            <CdxButton @click="updatePlayerInfo()">
+              <template v-if="isLoading">
+                {{ t('playerUuid.loading') }}
+              </template>
+              <template v-else>
+                {{ t('playerUuid.get') }}
+              </template>
             </CdxButton>
           </div>
         </CdxField>
-        <img
-          width="48"
-          height="48"
-          class="pixel-image"
-          :src="getImageLink(`en:EntitySprite_${playerOfflineSkinLocation}.png`)"
-          :title="playerOfflineSkinName"
-        />
-        <div>
-          <span v-html="parseWikitext(t('locatorBar.title'))" /><br />
-          <span
-            :style="{
-              borderRadius: '50%',
-              width: '1em',
-              height: '1em',
-              display: 'inline-block',
-              backgroundColor: `#${colorToString(playerOfflineLocatorBarColor)}`,
-            }"
+      </div>
+
+      <div class="flex-1 flex flex-row flex-wrap items-center justify-start gap-x-6 gap-y-3">
+        <div class="flex flex-row min-w-0">
+          <CdxField class="flex-1">
+            <template #label>
+              <span v-html="parseWikitext(t('playerUuid.uuidOffline'))" />
+            </template>
+
+            <div class="flex flex-row grow align-center gap-2">
+              <CdxTextInput
+                class="grow"
+                v-model="playerOfflineUUID"
+                input-type="text"
+                :readonly="true"
+              />
+              <CdxButton @click="copyUuid(playerOfflineUUID, 1)">
+                {{ copyTextOffline }}
+              </CdxButton>
+            </div>
+          </CdxField>
+        </div>
+        <div class="flex flex-row items-center min-w-0 gap-10">
+          <img
+            width="48"
+            height="48"
+            class="pixel-image"
+            :src="getImageLink(`en:EntitySprite_${playerOfflineSkinLocation}.png`)"
+            :title="playerOfflineSkinName"
           />
-          &nbsp;#{{ colorToString(playerOfflineLocatorBarColor) }}
+
+          <div class="flex flex-col">
+            <span v-html="parseWikitext(t('locatorBar.title'))" />
+            <div>
+              <span
+                :style="{
+                  borderRadius: '50%',
+                  width: '1em',
+                  height: '1em',
+                  display: 'inline-block',
+                  backgroundColor: `#${colorToString(playerOfflineLocatorBarColor)}`,
+                }"
+              />
+              &nbsp;#{{ colorToString(playerOfflineLocatorBarColor) }}
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="flex items-center gap-6">
-        <CdxField
-          :status="playerOnlineUUID !== '' ? 'default' : 'error'"
-          :messages="{
-            error: errorText,
-          }"
-        >
-          <template #label>
-            <span v-html="parseWikitext(t('playerUuid.uuid'))" />
-          </template>
-
-          <div class="flex flex-row align-center gap-2">
-            <CdxTextInput v-model="playerOnlineUUID" input-type="text" :readonly="true" />
-            <CdxButton v-if="playerOnlineUUID !== ''" @click="copyUuid(playerOnlineUUID, 0)">
-              {{ copyTextOnline }}
-            </CdxButton>
-          </div>
-        </CdxField>
-        <img v-if="playerOnlineUUID !== ''" width="48" height="48" :src="playerOnlineAvatar" />
-        <div v-if="playerOnlineLocatorBarColor">
-          <span v-html="parseWikitext(t('locatorBar.title'))" /><br />
-          <span
-            :style="{
-              borderRadius: '50%',
-              width: '1em',
-              height: '1em',
-              display: 'inline-block',
-              backgroundColor: `#${colorToString(playerOnlineLocatorBarColor)}`,
+      <div class="flex-1 flex flex-row flex-wrap grow items-center justify-start gap-x-6 gap-y-3">
+        <div class="flex flex-row min-w-0">
+          <CdxField
+            :status="playerOnlineUUID !== '' ? 'default' : 'error'"
+            :messages="{
+              error: errorText,
             }"
-          />
-          &nbsp;#{{ colorToString(playerOnlineLocatorBarColor) }}
+          >
+            <template #label>
+              <span v-html="parseWikitext(t('playerUuid.uuid'))" />
+            </template>
+
+            <div class="flex flex-row align-center gap-2">
+              <CdxTextInput v-model="playerOnlineUUID" input-type="text" :readonly="true" />
+              <CdxButton v-if="playerOnlineUUID !== ''" @click="copyUuid(playerOnlineUUID, 0)">
+                {{ copyTextOnline }}
+              </CdxButton>
+            </div>
+          </CdxField>
+        </div>
+        <div class="flex flex-row items-center min-w-0 gap-10">
+          <img v-if="playerOnlineUUID !== ''" width="48" height="48" :src="playerOnlineAvatar" />
+          <div v-if="playerOnlineLocatorBarColor">
+            <div class="flex flex-col">
+              <span v-html="parseWikitext(t('locatorBar.title'))" />
+              <div>
+                <span
+                  :style="{
+                    borderRadius: '50%',
+                    width: '1em',
+                    height: '1em',
+                    display: 'inline-block',
+                    backgroundColor: `#${colorToString(playerOnlineLocatorBarColor)}`,
+                  }"
+                />
+                &nbsp;#{{ colorToString(playerOnlineLocatorBarColor) }}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
