@@ -1,4 +1,7 @@
 {
+  "fallDamage.block.bed": "מיטה",
+  "fallDamage.block.lava": "לבה",
   "fallDamage.damage": "נזק שנגרם:",
+  "fallDamage.lavaDepth": "לבה",
   "fallDamage.removeLayer": "הסרת שכבה"
 }
