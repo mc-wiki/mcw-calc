@@ -1,4 +1,6 @@
-export const itemIcon = {
+import { getImageLink } from '@/utils/image'
+
+const itemIcon = {
   enchanted_book: 'Invicon Enchanted Book.gif',
   helmet: 'Invicon Netherite Helmet.png',
   chestplate: 'Invicon Netherite Chestplate.png',
@@ -28,7 +30,7 @@ export const itemIcon = {
   heads: 'Invicon Creeper Head.png',
 }
 
-export const enchantedItemIcon = {
+const enchantedItemIcon = {
   enchanted_book: 'Invicon Enchanted Book.gif',
   helmet: 'Invicon Enchanted Netherite Helmet.gif',
   chestplate: 'Invicon Enchanted Netherite Chestplate.gif',
@@ -62,8 +64,21 @@ export const fallbackImage = 'en:Blank.png'
 
 const xpOrbMin = [-32767, 3, 7, 17, 37, 73, 149, 307, 617, 1237, 2477, 32768]
 
-export function getXpOrbImageUrl(xp: number) {
+export function getXpOrbImageName(xp: number) {
   let e1 = xpOrbMin.findIndex((e) => e > xp)
-  console.log(xp, e1)
   return `Experience_Orb_Value_${xpOrbMin[e1 - 1]}-${xpOrbMin[e1] - 1}.png`
+}
+
+export function getEnchantedItemImageLink(name: string, enchanted: boolean) {
+  if (enchanted) {
+    return getImageLink(
+      `zh:${enchantedItemIcon[name as keyof typeof enchantedItemIcon] || fallbackImage}`,
+    )
+  } else {
+    return getImageLink(`zh:${itemIcon[name as keyof typeof itemIcon] || fallbackImage}`)
+  }
+}
+
+export function getXpOrbImageLink(xp: number) {
+  return getImageLink(getXpOrbImageName(xp))
 }

@@ -3,19 +3,19 @@ import { useI18n } from 'vue-i18n'
 
 import type { Enchantment } from '@/utils/enchantment'
 import { getImageLink } from '@/utils/image'
-import { enchantedItemIcon, itemIcon } from './data/image'
+import { getEnchantedItemImageLink } from './data/image'
 import type { Item } from './worker'
 
 const { t } = useI18n()
-
-var BOOK = 'enchanted_book'
 
 const props = defineProps<{ item: Item; idx?: number; inputItemsLength?: number }>()
 
 function handleEnchantedImgError(event: Event, itemType: string) {
   const imgEl = event.currentTarget as HTMLImageElement
-  if (!imgEl.src.endsWith('.svg')) {
-    imgEl.src = getImageLink(`zh:${itemIcon[itemType as keyof typeof itemIcon]}`)
+  if (imgEl.src.endsWith('.gif')) {
+    let newsrc = getEnchantedItemImageLink(itemType, false)
+    console.warn(`${imgEl.src} not found, using '${newsrc}' instead.`)
+    imgEl.src = newsrc
   } else {
     imgEl.src = getImageLink('No image.svg')
     imgEl.onerror = null
@@ -26,11 +26,12 @@ function handleEnchantedImgError(event: Event, itemType: string) {
   <div class="flex flex-row items-start flex-wrap gap-2">
     <img
       :src="
-        item.enchantments !== null &&
-        item.enchantments.length > 0 &&
-        item.enchantments.flatMap((e: Enchantment) => e.id).join() !== ''
-          ? getImageLink(`zh:${enchantedItemIcon[item.type as keyof typeof enchantedItemIcon]}`)
-          : getImageLink(`zh:${itemIcon[item.type as keyof typeof itemIcon]}`)
+        getEnchantedItemImageLink(
+          item.type as string,
+          item.enchantments !== null &&
+            item.enchantments.length > 0 &&
+            item.enchantments.flatMap((e: Enchantment) => e.id).join() !== '',
+        )
       "
       width="24px"
       style="display: inline; object-fit: scale-down"
@@ -63,7 +64,7 @@ function handleEnchantedImgError(event: Event, itemType: string) {
         </div>
       </div>
       <div v-if="item.repairCost > 0" class="repairCost">
-        {{ t('anvilHelper.result.repairCost.format', { lvl: item.repairCost }) }}
+        {{ t('anvilHelper.repairCost.format', { lvl: item.repairCost }) }}
       </div>
     </div>
   </div>

@@ -3,6 +3,11 @@ import { getEnchantmentInfo } from '@/utils/enchantment'
 
 const BOOK = 'enchanted_book'
 
+export interface Settings {
+  edition: 'java' | 'bedrock'
+  mode: 'leastLvl' | 'leastXp' | 'leastRepairCost'
+}
+
 export interface Item {
   type: string
   enchantments: Enchantment[]
@@ -34,11 +39,13 @@ interface CombinedNode {
    * XP Level
    */
   cost: number
+  costXp: number
 }
 
 interface DPEntry {
   item: Item
   cost: number
+  costXp: number
   tree: MergeNode
 }
 
@@ -60,6 +67,12 @@ interface InternalMergePlan {
    * XP Level
    */
   totalCost: number
+  /**
+   * XP Points.
+   * Notice that this is under an ideal situation,
+   * where each step just zero out player's xp level.
+   */
+  totalCostXp: number
 }
 
 export interface MergePlan extends InternalMergePlan {
@@ -236,16 +249,21 @@ function maskToIndexes(mask: bigint, count: number): number[] {
  * 2. Higher total enchantment level
  * 3. Lower total experience consumption
  * 4. Less input items used
+ * Manual selection of priority:
+ * #. Theoretical Lower total experience points (before 3)
+ * #. Lower repair cost (after 3)
  */
-function isBetterPlan(a: InternalMergePlan, b: InternalMergePlan): boolean {
+function isBetterPlan(a: InternalMergePlan, b: InternalMergePlan, settings: Settings): boolean {
   // Result Item's "score"
   function enchantmentScore(item: Item): {
     count: number
     totalLevels: number
+    repairCost: number
   } {
     return {
       count: item.enchantments.length,
       totalLevels: item.enchantments.reduce((sum, e) => sum + e.level, 0),
+      repairCost: item.repairCost,
     }
   }
   const scoreA = enchantmentScore(a.finalResult)
@@ -259,8 +277,16 @@ function isBetterPlan(a: InternalMergePlan, b: InternalMergePlan): boolean {
     return scoreA.totalLevels > scoreB.totalLevels
   }
 
+  if (settings.mode === 'leastXp' && a.totalCostXp !== b.totalCostXp) {
+    return a.totalCostXp < b.totalCostXp
+  }
+
   if (a.totalCost !== b.totalCost) {
     return a.totalCost < b.totalCost
+  }
+
+  if (settings.mode === 'leastRepairCost' && scoreA.repairCost !== scoreB.repairCost) {
+    return scoreA.repairCost < scoreB.repairCost
   }
 
   return a.usedIndexes.length < b.usedIndexes.length
@@ -275,7 +301,7 @@ function isBetterPlan(a: InternalMergePlan, b: InternalMergePlan): boolean {
 function insertEntry(map: Map<string, DPEntry>, entry: DPEntry): boolean {
   const key = itemKey(entry.item)
   const existing = map.get(key)
-  if (existing !== undefined && existing.cost <= entry.cost) {
+  if (existing !== undefined && existing.costXp <= entry.costXp) {
     return false
   }
 
@@ -298,6 +324,7 @@ function processMerge(
   const item = normalizeItem(result.item)
 
   const cost = left.cost + right.cost + result.cost
+  const costXp = left.costXp + right.costXp + lvl2xp(result.cost)
 
   const tree: CombinedNode = {
     kind: 'merge',
@@ -305,11 +332,13 @@ function processMerge(
     right: right.tree,
     item,
     cost: result.cost,
+    costXp: costXp,
   }
 
   insertEntry(target, {
     item,
     cost,
+    costXp,
     tree,
   })
 }
@@ -364,7 +393,7 @@ function flattenMergeTree(root: MergeNode, initialItemCount: number): MergeStep[
   return steps
 }
 
-function findBestMergePlan(inputItems: Item[], edition: 'java' | 'bedrock'): MergePlan | null {
+function findBestMergePlan(inputItems: Item[], settings: Settings): MergePlan | null {
   if (inputItems.length === 0) {
     return null
   }
@@ -399,7 +428,7 @@ function findBestMergePlan(inputItems: Item[], edition: 'java' | 'bedrock'): Mer
       index: i,
       item,
     }
-    insertEntry(getDP(mask), { item, cost: 0, tree })
+    insertEntry(getDP(mask), { item, cost: 0, costXp: 0, tree })
   }
 
   /*
@@ -464,14 +493,14 @@ function findBestMergePlan(inputItems: Item[], edition: 'java' | 'bedrock'): Mer
             /**
              * A+B
              */
-            processMerge(left, right, target, edition)
+            processMerge(left, right, target, settings.edition)
 
             /**
              * B+A
-             * This step is necessary, because Minecraft
-             * anvil doesn't follow the commutative law,
+             * This step is necessary,
+             * Minecraft anvil doesn't follow the commutative law,
              */
-            processMerge(right, left, target, edition)
+            processMerge(right, left, target, settings.edition)
           }
         }
       }
@@ -508,9 +537,10 @@ function findBestMergePlan(inputItems: Item[], edition: 'java' | 'bedrock'): Mer
         usedIndexes: maskToIndexes(mask, inputItems.length),
         tree: entry.tree,
         totalCost: entry.cost,
+        totalCostXp: entry.costXp,
       }
 
-      if (best === null || isBetterPlan(candidate, best)) {
+      if (best === null || isBetterPlan(candidate, best, settings)) {
         best = candidate
       }
     }
@@ -532,9 +562,10 @@ function findBestMergePlan(inputItems: Item[], edition: 'java' | 'bedrock'): Mer
           usedIndexes: maskToIndexes(mask, inputItems.length),
           tree: entry.tree,
           totalCost: entry.cost,
+          totalCostXp: entry.costXp,
         }
 
-        if (best === null || isBetterPlan(candidate, best)) {
+        if (best === null || isBetterPlan(candidate, best, settings)) {
           best = candidate
         }
       }
@@ -546,8 +577,10 @@ function findBestMergePlan(inputItems: Item[], edition: 'java' | 'bedrock'): Mer
   return { ...best, steps: flattenMergeTree(best.tree, inputItems.length) }
 }
 
-export async function bestMergePlan(inputItems: Item[], edition: 'java' | 'bedrock') {
-  const best = findBestMergePlan(inputItems, edition)
-  console.log(best)
+export async function bestMergePlan(
+  inputItems: Item[],
+  settings: Settings,
+): Promise<MergePlan | null> {
+  const best = findBestMergePlan(inputItems, settings)
   return best
 }
