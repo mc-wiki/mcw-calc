@@ -66,7 +66,12 @@ const xpOrbMin = [-32767, 3, 7, 17, 37, 73, 149, 307, 617, 1237, 2477, 32768]
 
 export function getXpOrbImageName(xp: number) {
   let e1 = xpOrbMin.findIndex((e) => e > xp)
-  return `Experience_Orb_Value_${xpOrbMin[e1 - 1]}-${xpOrbMin[e1] - 1}.png`
+  console.log(e1)
+  if (e1 !== -1) {
+    return `Experience_Orb_Value_${xpOrbMin[e1 - 1]}-${xpOrbMin[e1] - 1}.png`
+  } else {
+    return `Experience_Orb_Value_2477-32767.png`
+  }
 }
 
 export function getEnchantedItemImageLink(name: string, enchanted: boolean) {

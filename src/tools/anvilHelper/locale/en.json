@@ -20,6 +20,9 @@
 
     "anvilHelper.settings.gameEdition": "Game Edition: ",
     "anvilHelper.settings.optimizationGoal": "Optimization Goal: ",
+    "anvilHelper.settings.others": "Other Settings: ",
+    "anvilHelper.settings.allowExclusive": "Allow exclusive enchantments to appear on one item",
+    "anvilHelper.settings.allowExceedProcessLimit": "Allow spending over 39 experience points in single step",
     "anvilHelper.customInputs.caption": "Input Items",
     "anvilHelper.customInputs.itemType": "Item Type",
     "anvilHelper.customInputs.enchantments": "Enchantments",
@@ -35,7 +38,6 @@
 
     "anvilHelper.newItem": "Add New Item",
 
-
     "anvilHelper.caption.result": "Steps",
     "anvilHelper.mergeSteps.input": "Input",
     "anvilHelper.mergeSteps.addition": "Addition",
@@ -50,5 +52,5 @@
     "anvilHelper.result.minXp": "* Equivalent minimum [[Experience]] points in total: ",
     "anvilHelper.result.minXp.desc": "To reach this lesser value, each step must precisely zero out the xp points on yourself.",
     "anvilHelper.result.noSolution": "No items could be combined. Please check your input.",
-    "anvilHelper.result.elapsed": "Completed in {time}ms"
+    "anvilHelper.result.stats": "Completed in {e}ms with {a} attempts"
 }

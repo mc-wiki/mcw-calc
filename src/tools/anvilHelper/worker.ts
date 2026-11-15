@@ -6,6 +6,8 @@ const BOOK = 'enchanted_book'
 export interface Settings {
   edition: 'java' | 'bedrock'
   mode: 'leastLvl' | 'leastXp' | 'leastRepairCost'
+  allowExclusive: false
+  allowExceedProcessLimit: false
 }
 
 export interface Item {
@@ -77,6 +79,15 @@ interface InternalMergePlan {
 
 export interface MergePlan extends InternalMergePlan {
   steps: MergeStep[]
+  stats: ComputeStats
+}
+
+export interface ComputeStats {
+  mergeAttempts: number
+  successfulMerges: number
+  generatedStates: number
+  maxStatesInSubset: number
+  elapsedMs: number
 }
 
 export function lvl2xp(lvl: number) {
@@ -135,7 +146,7 @@ function isBook(item: Item): boolean {
 export function combineTwoItems(
   input: Item,
   addition: Item,
-  edition: 'java' | 'bedrock',
+  settings: Settings,
 ): AnvilResult | null {
   let inputIsBook = isBook(input)
   let additionIsBook = isBook(addition)
@@ -166,7 +177,7 @@ export function combineTwoItems(
 
   // 3 loop
   for (const e2 of addition.enchantments) {
-    const info = getEnchantmentInfo(e2.id, edition)
+    const info = getEnchantmentInfo(e2.id, settings.edition)
 
     if (info === undefined) {
       throw new Error(`Unknown enchantment: ${e2.id}`)
@@ -177,13 +188,15 @@ export function combineTwoItems(
     let compatible = inputIsBook || info.supportedItems.includes(input.type)
 
     // 4 add one level for every incompatible enchantment on the target (Only JE)
-    for (const i of enchantments.keys()) {
-      if (i === e2.id) {
-        continue
-      }
-      if (info.exclusiveEnchantments.includes(i)) {
-        compatible = false
-        price = edition === 'java' ? price + 1 : price
+    if (!settings.allowExclusive) {
+      for (const i of enchantments.keys()) {
+        if (i === e2.id) {
+          continue
+        }
+        if (info.exclusiveEnchantments.includes(i)) {
+          compatible = false
+          price = settings.edition === 'java' ? price + 1 : price
+        }
       }
     }
 
@@ -200,7 +213,7 @@ export function combineTwoItems(
 
     // 7 calculate enchant level cost
     let fee = additionIsBook ? Math.max(Math.floor(info.anvilCost / 2), 1) : info.anvilCost
-    price += edition === 'java' ? fee * level : fee * (level - currentLevel)
+    price += settings.edition === 'java' ? fee * level : fee * (level - currentLevel)
 
     // 8 if all enchantments fail to be applied, fail this combine
     if (hasIncompatible && !hasCompatible) {
@@ -213,7 +226,7 @@ export function combineTwoItems(
 
   // 9 Too expensive!
   const cost = tax + price
-  if (cost >= 40) {
+  if (!settings.allowExceedProcessLimit && cost >= 40) {
     return null
   }
 
@@ -298,14 +311,22 @@ function isBetterPlan(a: InternalMergePlan, b: InternalMergePlan, settings: Sett
  * Regarding: same mask + same final item =>
  * only retain the solution with the lowest xp level cost
  */
-function insertEntry(map: Map<string, DPEntry>, entry: DPEntry): boolean {
+function insertEntry(map: Map<string, DPEntry>, entry: DPEntry, stats: ComputeStats): boolean {
   const key = itemKey(entry.item)
   const existing = map.get(key)
-  if (existing !== undefined && existing.costXp <= entry.costXp) {
-    return false
+  if (existing !== undefined) {
+    if (existing.costXp <= entry.costXp) {
+      return false
+    }
+    map.set(key, entry)
+    return true
   }
 
   map.set(key, entry)
+
+  stats.generatedStates++
+  stats.maxStatesInSubset = Math.max(stats.maxStatesInSubset, map.size)
+
   return true
 }
 
@@ -313,13 +334,16 @@ function processMerge(
   left: DPEntry,
   right: DPEntry,
   target: Map<string, DPEntry>,
-  edition: 'java' | 'bedrock',
+  setting: Settings,
+  stats: ComputeStats,
 ): void {
-  const result = combineTwoItems(left.item, right.item, edition)
+  stats.mergeAttempts++
+  const result = combineTwoItems(left.item, right.item, setting)
 
   if (result === null) {
     return
   }
+  stats.successfulMerges++
 
   const item = normalizeItem(result.item)
 
@@ -335,12 +359,16 @@ function processMerge(
     costXp: costXp,
   }
 
-  insertEntry(target, {
-    item,
-    cost,
-    costXp,
-    tree,
-  })
+  insertEntry(
+    target,
+    {
+      item,
+      cost,
+      costXp,
+      tree,
+    },
+    stats,
+  )
 }
 
 /**
@@ -394,6 +422,16 @@ function flattenMergeTree(root: MergeNode, initialItemCount: number): MergeStep[
 }
 
 function findBestMergePlan(inputItems: Item[], settings: Settings): MergePlan | null {
+  const start = performance.now()
+
+  const stats: ComputeStats = {
+    mergeAttempts: 0,
+    successfulMerges: 0,
+    generatedStates: 0,
+    maxStatesInSubset: 0,
+    elapsedMs: 0,
+  }
+
   if (inputItems.length === 0) {
     return null
   }
@@ -428,7 +466,7 @@ function findBestMergePlan(inputItems: Item[], settings: Settings): MergePlan | 
       index: i,
       item,
     }
-    insertEntry(getDP(mask), { item, cost: 0, costXp: 0, tree })
+    insertEntry(getDP(mask), { item, cost: 0, costXp: 0, tree }, stats)
   }
 
   /*
@@ -493,14 +531,14 @@ function findBestMergePlan(inputItems: Item[], settings: Settings): MergePlan | 
             /**
              * A+B
              */
-            processMerge(left, right, target, settings.edition)
+            processMerge(left, right, target, settings, stats)
 
             /**
              * B+A
              * This step is necessary,
              * Minecraft anvil doesn't follow the commutative law,
              */
-            processMerge(right, left, target, settings.edition)
+            processMerge(right, left, target, settings, stats)
           }
         }
       }
@@ -574,7 +612,9 @@ function findBestMergePlan(inputItems: Item[], settings: Settings): MergePlan | 
   if (best === null) {
     return null
   }
-  return { ...best, steps: flattenMergeTree(best.tree, inputItems.length) }
+  stats.elapsedMs = performance.now() - start
+
+  return { ...best, steps: flattenMergeTree(best.tree, inputItems.length), stats: stats }
 }
 
 export async function bestMergePlan(

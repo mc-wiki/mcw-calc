@@ -14,6 +14,7 @@ import { getImageLink, getRedirectedImageLink } from '@/utils/image'
 import { useLocalStorage } from '@vueuse/core'
 import {
   CdxButton,
+  CdxCheckbox,
   CdxField,
   CdxIcon,
   CdxRadio,
@@ -33,18 +34,20 @@ import { lvl2xp, newEnchantment, newItem, type Item, type MergePlan, type Settin
 const { t } = useI18n()
 
 var BOOK = 'enchanted_book'
+var GENERIC_MAX_PENALTY_LIMIT = 20 // still need a limit for input to prevent astronomical figures
 
 type states = 'start' | 'settings' | 'customInputs' | 'results'
 const stateControl = ref<states>('start')
 
-const settings = ref<Settings>({
+const settings = useLocalStorage<Settings>('mcwAnvilHelperSettings', {
   edition: 'java',
   mode: 'leastLvl',
+  allowExclusive: false,
+  allowExceedProcessLimit: false,
 })
 
 const mergePlan = ref<MergePlan | null>(null)
-const elapsed = ref<number>(0)
-const currentItemPreset = ref<string>('')
+const currentItemPreset = ref<string | null>(null)
 const modifyingByPreset = ref(false)
 /**steps.map((m) => ({
           input: { item: m.a, idx: m.aId },
@@ -112,7 +115,10 @@ function getfilteredEnchantmentMenuItems(
           .every(
             (e) =>
               a.id === e.id ||
-              getEnchantmentInfo(e.id, settings.value.edition).exclusiveEnchantments.includes(a.id),
+              (!settings.value.allowExclusive &&
+                getEnchantmentInfo(e.id, settings.value.edition).exclusiveEnchantments.includes(
+                  a.id,
+                )),
           ),
     }))
 }
@@ -137,7 +143,7 @@ function applyPreset(select: string) {
 function restoreLastInput() {
   modifyingByPreset.value = true
   if (lastInput.value !== null) {
-    currentItemPreset.value = ''
+    currentItemPreset.value = null
     inputItems.value = lastInput.value
   }
 }
@@ -162,15 +168,10 @@ async function updateMergePlan() {
   lastInput.value = JSON.parse(JSON.stringify(inputItems.value))
   mergePlan.value = null
   await nextTick()
-  const start = performance.now()
-  try {
-    mergePlan.value = await worker.bestMergePlan(
-      JSON.parse(JSON.stringify(lastInput.value)),
-      JSON.parse(JSON.stringify(lastSettings.value)),
-    )
-  } finally {
-    elapsed.value = performance.now() - start
-  }
+  mergePlan.value = await worker.bestMergePlan(
+    JSON.parse(JSON.stringify(lastInput.value)),
+    JSON.parse(JSON.stringify(lastSettings.value)),
+  )
   if (mergePlan.value === null || mergePlan.value.steps.length === 0) {
     alert(t('anvilHelper.result.noSolution'))
     return
@@ -178,11 +179,6 @@ async function updateMergePlan() {
     stateControl.value = 'results'
   }
 }
-
-const mergePlanXp = computed(() => ({
-  minLvlXp: mergePlan.value ? lvl2xp(mergePlan.value.totalCost) : 0,
-  minXp: mergePlan.value?.steps.map((e) => lvl2xp(e.cost)).reduce((a, b) => a + b) || 0,
-}))
 
 function handleEnchantedImgError(event: Event, itemType: string) {
   const imgEl = event.currentTarget as HTMLImageElement
@@ -214,7 +210,7 @@ watch(
           i.enchantments.push(newEnchantment())
         }
       })
-      currentItemPreset.value = ''
+      currentItemPreset.value = null
     } else {
       modifyingByPreset.value = false
     }
@@ -266,7 +262,7 @@ watch(
             class="long-handle flex-1"
             :defaultLabel="t('anvilHelper.selectPreset.defaultLabel')"
             :menu-items="presetMenuItems"
-            :selected="currentItemPreset"
+            :selected="currentItemPreset ?? ''"
             @update:selected="(select: string) => applyPreset(select)"
           >
             <template #label="{ selectedMenuItem }: { selectedMenuItem: MenuItemData }">
@@ -298,57 +294,82 @@ watch(
           <CdxButton class="items-center" @click="stateControl = 'customInputs'">
             {{ t('anvilHelper.button.customInputs') }}
           </CdxButton>
-          <CdxButton class="items-center" :disabled="!canStartCalculate" @click="updateMergePlan()">
+          <CdxButton
+            class="items-center"
+            :disabled="currentItemPreset === null"
+            @click="updateMergePlan()"
+          >
             {{ t('anvilHelper.button.startCalculate') }}
           </CdxButton>
         </div>
       </div>
       <!--Settings-->
       <div
-        class="flex-3 flex flex-col flex-wrap justify-start items-center gap-5 p-10"
+        class="flex flex-1 flex-col flex-wrap justify-center items-center gap-5 p-10"
         v-if="stateControl === 'settings'"
       >
-        <CdxField
-          :is-fieldset="true"
-          class="flex flex-1 justify-start items-center min-w-8/12 gap-2"
-        >
-          <template #label>{{ t('anvilHelper.settings.gameEdition') }}</template>
-          <CdxRadio v-model="settings.edition" name="edition" :inline="true" :input-value="'java'">
-            {{ t('anvilHelper.java') }}
-          </CdxRadio>
-          <CdxRadio
-            v-model="settings.edition"
-            name="edition"
-            :inline="true"
-            :input-value="'bedrock'"
-          >
-            {{ t('anvilHelper.bedrock') }}
-          </CdxRadio>
-        </CdxField>
-        <CdxField
-          :is-fieldset="true"
-          class="flex flex-1 justify-start items-center min-w-8/12 gap-2"
-        >
-          <template #label>{{ t('anvilHelper.settings.optimizationGoal') }}</template>
-          <CdxRadio v-model="settings.mode" name="mode" :input-value="'leastXp'">
-            {{ t('anvilHelper.leastXp') }}
-          </CdxRadio>
-          <CdxRadio v-model="settings.mode" name="mode" :input-value="'leastLvl'">
-            {{ t('anvilHelper.leastLvl') }}
-          </CdxRadio>
-          <CdxRadio v-model="settings.mode" name="mode" :input-value="'leastRepairCost'">
-            {{ t('anvilHelper.leastRepairCost') }}
-          </CdxRadio>
-        </CdxField>
+        <div class="flex flex-1 flex-wrap min-w-8/12 justify-between items-start gap-2">
+          <div class="flex min-w-80 flex-col gap-2 justify-start">
+            <CdxField :is-fieldset="true" class="flex flex-1 justify-start items-center gap-2">
+              <template #label>
+                <span class="text-lg">{{ t('anvilHelper.settings.gameEdition') }}</span>
+              </template>
+              <CdxRadio
+                v-model="settings.edition"
+                name="edition"
+                :inline="true"
+                :input-value="'java'"
+              >
+                {{ t('anvilHelper.java') }}
+              </CdxRadio>
+              <CdxRadio
+                v-model="settings.edition"
+                name="edition"
+                :inline="true"
+                :input-value="'bedrock'"
+              >
+                {{ t('anvilHelper.bedrock') }}
+              </CdxRadio>
+            </CdxField>
+            <CdxField :is-fieldset="true" class="flex flex-1 justify-start items-center gap-2">
+              <template #label>
+                <span class="text-lg">{{ t('anvilHelper.settings.optimizationGoal') }}</span>
+              </template>
+              <CdxRadio v-model="settings.mode" name="mode" :input-value="'leastXp'">
+                {{ t('anvilHelper.leastXp') }}
+              </CdxRadio>
+              <CdxRadio v-model="settings.mode" name="mode" :input-value="'leastLvl'">
+                {{ t('anvilHelper.leastLvl') }}
+              </CdxRadio>
+              <CdxRadio v-model="settings.mode" name="mode" :input-value="'leastRepairCost'">
+                {{ t('anvilHelper.leastRepairCost') }}
+              </CdxRadio>
+            </CdxField>
+          </div>
+          <div class="flex min-w-80 flex-col gap-2 justify-start">
+            <CdxField :is-fieldset="true" class="flex flex-1 justify-start items-center gap-2">
+              <template #label>
+                <span class="text-lg">{{ t('anvilHelper.settings.others') }}</span>
+              </template>
+              <CdxCheckbox
+                v-model="settings.allowExclusive"
+                name="allowExclusive             "
+                :input-value="false"
+              >
+                {{ t('anvilHelper.settings.allowExclusive') }}
+              </CdxCheckbox>
+              <CdxCheckbox
+                v-model="settings.allowExceedProcessLimit"
+                name="allowExceedProcessLimit"
+                :input-value="false"
+              >
+                {{ t('anvilHelper.settings.allowExceedProcessLimit') }}
+              </CdxCheckbox>
+            </CdxField>
+          </div>
+        </div>
         <div class="flex min-w-8/12 items-center justify-center gap-2">
-          <CdxButton
-            class="items-center"
-            @click="
-              (() => {
-                stateControl = 'customInputs'
-              })()
-            "
-          >
+          <CdxButton class="items-center" @click="stateControl = 'customInputs'">
             {{ t('anvilHelper.button.customInputs') }}
           </CdxButton>
         </div>
@@ -378,7 +399,7 @@ watch(
                   {{ t('anvilHelper.selectPreset') }}
                 </span>
                 <CdxSelect
-                  class="flex-1"
+                  class="flex-1 shrink min-w-65"
                   :defaultLabel="t('anvilHelper.selectPreset.defaultLabel')"
                   :menu-items="presetMenuItems"
                   :selected="currentItemPreset"
@@ -407,7 +428,12 @@ watch(
                 </CdxSelect>
               </div>
               <div class="flex justify-end gap-2">
-                <CdxButton action="destructive" class="items-center" @click="restoreLastInput">
+                <CdxButton
+                  action="destructive"
+                  class="items-center"
+                  :disabled="lastInput === null"
+                  @click="restoreLastInput"
+                >
                   {{ t('anvilHelper.button.restoreLastInput') }}
                 </CdxButton>
 
@@ -428,7 +454,7 @@ watch(
           <template #item-type="{ row }">
             <div class="flex">
               <CdxSelect
-                class="long-handle flex-1 shrink min-w-0"
+                class="long-handle flex-1 shrink min-w-65"
                 :menu-items="filteredItemMenuItems"
                 :selected="row.type"
                 @update:selected="(selected: string) => (row.type = selected)"
@@ -498,7 +524,15 @@ watch(
                   )
                 "
                 :selected="e.id"
-                @update:selected="(selected: string) => (e.id = selected)"
+                @update:selected="
+                  (selected: string) => {
+                    e.id = selected
+                    e.level = Math.min(
+                      e.level,
+                      getEnchantmentInfo(selected, settings.edition).maxLevel,
+                    )
+                  }
+                "
               >
                 <template #menu-item="{ menuItem }: { menuItem: MenuItemData }">
                   <div class="flex justify-between overflow-hidden">
@@ -563,17 +597,23 @@ watch(
               input-type="number"
               placeholder="0"
               min="0"
-              max="5"
+              :max="settings.allowExceedProcessLimit ? GENERIC_MAX_PENALTY_LIMIT : 5"
               step="1"
               @update:model-value="
                 (value: number) => {
-                  const n = Math.min(999, Math.max(0, Number(value)))
+                  const n = Math.min(
+                    settings.allowExceedProcessLimit ? GENERIC_MAX_PENALTY_LIMIT : 5,
+                    Math.max(0, Number(value)),
+                  )
                   row.repairCost = 2 ** n - 1
                 }
               "
               @blur="
                 () => {
-                  const n = Math.min(5, Math.max(0, Math.round(Math.log2(row.repairCost + 1))))
+                  const n = Math.min(
+                    settings.allowExceedProcessLimit ? GENERIC_MAX_PENALTY_LIMIT : 5,
+                    Math.max(0, Math.round(Math.log2(row.repairCost + 1))),
+                  )
                   row.repairCost = 2 ** n - 1
                 }
               "
@@ -617,7 +657,12 @@ watch(
           <CdxButton class="items-center" action="destructive" @click="resetAll()">
             {{ t('anvilHelper.button.resetAll') }}
           </CdxButton>
-          <CdxButton action="destructive" class="items-center" @click="restoreLastInput">
+          <CdxButton
+            action="destructive"
+            class="items-center"
+            :disabled="lastInput === null"
+            @click="restoreLastInput"
+          >
             {{ t('anvilHelper.button.restoreLastInput') }}
           </CdxButton>
           <CdxButton class="items-center" :disabled="!canStartCalculate" @click="updateMergePlan()">
@@ -708,17 +753,22 @@ watch(
             class="explain"
             :title="t('anvilHelper.result.minXp.desc')"
           >
-            {{ mergePlanXp.minXp }}
-            <img class="inline-block h-4" :src="getXpOrbImageLink(mergePlanXp.minXp)" />
+            {{ mergePlan.totalCostXp }}
+            <img class="inline-block h-4" :src="getXpOrbImageLink(mergePlan.totalCostXp)" />
           </span>
           <span v-if="mergePlan.steps.length > 1"> ~</span>
           <span>
-            {{ mergePlanXp.minLvlXp }}
-            <img class="inline-block h-4" :src="getXpOrbImageLink(mergePlanXp.minLvlXp)" />
+            {{ lvl2xp(mergePlan.totalCost) }}
+            <img class="inline-block h-4" :src="getXpOrbImageLink(lvl2xp(mergePlan.totalCost))" />
           </span>
         </div>
         <div class="flex min-w-8/12 items-center justify-end gap-2">
-          {{ t('anvilHelper.result.elapsed', { time: elapsed.toFixed(2) }) }}
+          {{
+            t('anvilHelper.result.stats', {
+              e: mergePlan.stats.elapsedMs.toFixed(2),
+              a: mergePlan.stats.mergeAttempts,
+            })
+          }}
         </div>
       </div>
     </div>
