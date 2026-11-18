@@ -111,7 +111,7 @@ watch(
       </div>
 
       <div class="flex flex-wrap flex-col gap-4">
-        <div class="flex-1 min-h-[180px]">
+        <div class="flex-1 h-[180px]">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 200 200"
