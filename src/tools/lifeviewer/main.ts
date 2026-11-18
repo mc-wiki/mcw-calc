@@ -3,6 +3,10 @@ import { getParams, handleParseError } from '@/utils/params'
 import '@/init'
 
 const targetEl = document.querySelector('#app')!
+const iframe = document.querySelector<HTMLIFrameElement>('#lifeviewer')!
+
+const EMBED_ORIGIN = 'https://mc-wiki.github.io'
+const EMBED_URL = `${EMBED_ORIGIN}/lifeviewer/`
 
 ;(async () => {
   const parsed = z
@@ -14,8 +18,16 @@ bo3b3o$b3o2bo$2bo!`),
 
   const params = handleParseError(parsed, targetEl)
 
-  const textArea = targetEl.querySelector('textarea')
-  if (textArea) {
-    textArea.textContent = params.pattern
-  }
+  window.addEventListener('message', (event) => {
+    if (event.origin !== EMBED_ORIGIN) return
+    if (event.source !== iframe.contentWindow) return
+    if (event.data?.type !== 'lifeviewer-ready') return
+
+    iframe.contentWindow?.postMessage(
+      { type: 'lifeviewer-pattern', pattern: params.pattern },
+      EMBED_ORIGIN,
+    )
+  })
+
+  iframe.src = EMBED_URL
 })()

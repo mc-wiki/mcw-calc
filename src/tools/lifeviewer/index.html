@@ -5,16 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
     <title>lifeviewer</title>
-    <meta name="LifeViewer" content="viewer textarea" />
     <base target="_parent" />
   </head>
   <body>
-    <div id="app" class="viewer">
-      <textarea style="display: none"></textarea>
-      <canvas width="560" height="560"></canvas>
+    <div id="app">
+      <iframe
+        id="lifeviewer"
+        title="LifeViewer"
+        style="
+          display: block;
+          border: 0;
+          width: 100%;
+          height: 560px;
+          color-scheme: auto;
+        "
+      ></iframe>
     </div>
 
-    <script type="module" src="/tools/lifeviewer/lv-plugin.js"></script>
     <script type="module" src="/tools/lifeviewer/main.ts"></script>
   </body>
 </html>

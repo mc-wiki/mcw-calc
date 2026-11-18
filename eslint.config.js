@@ -2,7 +2,7 @@
 import antfu from '@antfu/eslint-config'
 
 export default antfu({
-  ignores: ['dist', '**/dist/**', '**/locale/**', 'src/tools/lifeviewer/lv-plugin.js'],
+  ignores: ['dist', '**/dist/**', '**/locale/**'],
   vue: true,
   stylistic: false,
   rules: {

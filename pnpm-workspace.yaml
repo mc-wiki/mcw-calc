@@ -1,11 +1,20 @@
-allowBuilds:
-  esbuild: true
-  vue-demi: true
+
+minimumReleaseAgeExcludePrune: true
+
 minimumReleaseAgeExclude:
   - '@intlify/core-base@11.4.22'
   - '@intlify/devtools-types@11.4.22'
   - '@intlify/message-compiler@11.4.22'
   - '@intlify/shared@11.4.22'
   - vue-i18n@11.4.22
+trustPolicy: no-downgrade
+
+
+shellEmulator: true
+
+
 overrides:
   '@tiptap/extensions': ^3.34.0
+allowBuilds:
+  esbuild: true
+  vue-demi: true
