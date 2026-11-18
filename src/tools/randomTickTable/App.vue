@@ -2,8 +2,14 @@
 import { CdxCheckbox, CdxTextInput } from '@wikimedia/codex'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { parseWikitext } from '@/utils/i18n'
 import CalcField from '@/components/CalcField.vue'
+import { parseWikitext } from '@/utils/i18n'
+
+// ── Props ──────────────────────────────────────────────────────────────────────
+
+const props = defineProps<{
+  entries: Entry[]
+}>()
 
 const { t } = useI18n()
 
@@ -18,12 +24,6 @@ interface Entry {
   stackSize?: number // Stack size for that item; defaults to 64
   notes?: string
 }
-
-// ── Props ──────────────────────────────────────────────────────────────────────
-
-const props = defineProps<{
-  entries: Entry[]
-}>()
 
 // ── Inputs ─────────────────────────────────────────────────────────────────────
 

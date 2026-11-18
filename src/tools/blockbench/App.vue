@@ -59,7 +59,7 @@ iframeSrc.search = params.toString()
         </CdxButton>
       </div>
       <iframe
-        :src="iframeSrc"
+        :src="iframeSrc.href"
         class="block w-full h-full flex-1"
         style="color-scheme: auto"
         @load="iframeLoaded = true"

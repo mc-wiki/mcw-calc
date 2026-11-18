@@ -19,7 +19,7 @@ import TopBitSetTerminatedArrayType from './TopBitSetTerminatedArrayType.vue'
 
 const props = defineProps<{ data: object | string; version: number; type?: string }>()
 const { t } = useI18n()
-const recursiveRoot = inject('recursive-root', null)
+const recursiveRoot = inject<string | null>('recursive-root', null)
 
 const primitive = getAsPrimitiveProtocol(props.data)
 const type = props.type || 'td'

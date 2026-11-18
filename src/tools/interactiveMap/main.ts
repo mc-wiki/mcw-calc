@@ -1,4 +1,4 @@
-import type {LatLngTuple} from 'leaflet';
+import type { LatLngTuple } from 'leaflet'
 import L from 'leaflet'
 import { z } from 'zod'
 import { parentOrigin } from '@/utils/iframe'

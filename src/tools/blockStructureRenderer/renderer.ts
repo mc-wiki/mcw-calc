@@ -1,20 +1,19 @@
-import type {AnimatedTexture, BlockModel, BlockStateDefinition, BSRApiResponse, ModelReference, ModelReferenceWithWeight, StateData} from '@/tools/blockStructureRenderer/definitions.ts';
+import type {
+  AnimatedTexture,
+  BlockModel,
+  BlockStateDefinition,
+  BSRApiResponse,
+  ModelReference,
+  ModelReferenceWithWeight,
+  StateData,
+} from '@/tools/blockStructureRenderer/definitions.ts'
 import type { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
 import type { MaterialPicker } from '@/tools/blockStructureRenderer/texture.ts'
 import * as THREE from 'three'
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
 import { LineSegments2 } from 'three/examples/jsm/lines/LineSegments2.js'
 import { LineSegmentsGeometry } from 'three/examples/jsm/lines/LineSegmentsGeometry.js'
-import {
-  
-  
-  
-  
-  EMPTY_STATE_DATA
-  
-  
-  
-} from '@/tools/blockStructureRenderer/definitions.ts'
+import { EMPTY_STATE_DATA } from '@/tools/blockStructureRenderer/definitions.ts'
 import { renderFluid } from '@/tools/blockStructureRenderer/fluid.ts'
 import {
   hardcodedBlockTint,
@@ -275,7 +274,7 @@ export class BlockStructure {
     this.y = maxY
     this.z = maxZ
     this.structures = Array.from({ length: maxY }, () =>
-      Array.from({ length: maxZ }, () => Array.from({ length: maxX }, () => AIR_KEY)),
+      Array.from({ length: maxZ }, () => Array.from<string>({ length: maxX }).fill(AIR_KEY)),
     )
 
     for (let y = 0; y < splitHeightLines.length; y++) {

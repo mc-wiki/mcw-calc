@@ -177,13 +177,8 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
               '--color-g': sequence[2][1],
               '--color-b': sequence[2][2],
             }"
-          >&nbsp;#{{
-              sequence[2][0].toString(16)
-            }}{{
-              sequence[2][1].toString(16)
-            }}{{
-              sequence[2][2].toString(16)
-            }}
+            >&nbsp;#{{ sequence[2][0].toString(16) }}{{ sequence[2][1].toString(16)
+            }}{{ sequence[2][2].toString(16) }}
           </span>
         </div>
         <div>

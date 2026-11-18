@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type {ChipInputItem, MenuItemData} from '@wikimedia/codex';
+import type { ChipInputItem, MenuItemData } from '@wikimedia/codex'
 import {
   CdxAccordion,
   CdxButton,
@@ -10,9 +10,7 @@ import {
   CdxTab,
   CdxTabs,
   CdxTextInput,
-  CdxToggleButtonGroup
-  
-  
+  CdxToggleButtonGroup,
 } from '@wikimedia/codex'
 import { cdxIconCheck, cdxIconClose, cdxIconHelp } from '@wikimedia/codex-icons'
 import { computed, ref } from 'vue'
@@ -86,7 +84,9 @@ const isPlayer = () => {
 }
 
 const isNotPlayer = () => {
-  return ['@s', '@n', '@e'].includes(type.value) || edition.value === 'bedrock' && type.value === '@r' // @r[type=...]
+  return (
+    ['@s', '@n', '@e'].includes(type.value) || (edition.value === 'bedrock' && type.value === '@r')
+  ) // @r[type=...]
 }
 
 function getTargetTypes() {

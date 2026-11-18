@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ComponentPublicInstance } from 'vue'
 import { CdxButton, CdxIcon, CdxPopover } from '@wikimedia/codex'
 import { ref, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -10,7 +11,7 @@ const props = defineProps<{
 
 const { t } = useI18n()
 
-const button = useTemplateRef('button')
+const button = useTemplateRef<ComponentPublicInstance>('button')
 const popupOpen = ref(false)
 </script>
 

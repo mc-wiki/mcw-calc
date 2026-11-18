@@ -6,28 +6,12 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": [
-      "node",
-      "vite/client",
-      "vite-plugin-comlink/client",
-      "unplugin-vue-macros/macros-global"
-    ],
+    "types": ["node", "vite/client", "vite-plugin-comlink/client"],
     "allowImportingTsExtensions": true,
+    "strict": true,
     "noEmit": true,
     "isolatedModules": true
   },
   "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
-  "exclude": ["src/**/__tests__/*"],
-  "vueCompilerOptions": {
-    "target": 3,
-    "plugins": [
-      "@vue-macros/volar/define-models",
-      "@vue-macros/volar/define-prop",
-      "@vue-macros/volar/define-props",
-      "@vue-macros/volar/define-props-refs",
-      "@vue-macros/volar/short-vmodel",
-      "@vue-macros/volar/short-bind",
-      "@vue-macros/volar/boolean-prop"
-    ]
-  }
+  "exclude": ["src/**/__tests__/*"]
 }

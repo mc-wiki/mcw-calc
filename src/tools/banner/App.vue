@@ -380,11 +380,7 @@ function decodeShareCode(code: string) {
 }
 
 type shareCodeErrorType =
-  | 'empty'
-  | 'invalidBaseColor'
-  | 'invalidFormat'
-  | 'invalidPattern'
-  | 'invalidPatternColor'
+  'empty' | 'invalidBaseColor' | 'invalidFormat' | 'invalidPattern' | 'invalidPatternColor'
 
 class ShareCodeError extends Error {
   constructor(

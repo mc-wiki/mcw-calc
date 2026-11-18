@@ -7,8 +7,7 @@
     "types": [
       "node",
       "vite/client",
-      "vite-plugin-comlink/client",
-      "unplugin-vue-macros/macros-global"
+      "vite-plugin-comlink/client"
     ],
     "noEmit": true
   },

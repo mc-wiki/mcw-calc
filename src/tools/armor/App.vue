@@ -102,11 +102,7 @@ const armorToughnessMap = {
 }
 
 type ArmorEnchantment =
-  | 'empty'
-  | 'protection'
-  | 'fireProtection'
-  | 'blastProtection'
-  | 'projectileProtection'
+  'empty' | 'protection' | 'fireProtection' | 'blastProtection' | 'projectileProtection'
 type BootsEnchantment = 'featherFalling' | ArmorEnchantment
 
 const ePFMap: Record<BootsEnchantment, [number, number, number, number, number]> = {

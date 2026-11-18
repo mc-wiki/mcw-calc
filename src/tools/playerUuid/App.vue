@@ -243,8 +243,8 @@ updatePlayerInfo()
 
             <div class="flex flex-row grow align-center gap-2">
               <CdxTextInput
-                class="grow"
                 v-model="playerOfflineUUID"
+                class="grow"
                 input-type="text"
                 :readonly="true"
               />

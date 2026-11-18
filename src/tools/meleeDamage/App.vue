@@ -697,7 +697,7 @@ function selectOutput() {
           </CdxField>
         </div>
 
-        <div class="flex gap-0.5 items-center h-[12px]" v-if="isJavaEdition && !stabAttack">
+        <div v-if="isJavaEdition && !stabAttack" class="flex gap-0.5 items-center h-[12px]">
           <div
             class="cdx-progress-bar cdx-progress-bar--inline flex-1 max-w-24"
             style="background-color: var(--background-color-progressive-subtle, #eaf3ff)"

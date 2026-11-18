@@ -5,10 +5,10 @@ import { cdxIconAdd, cdxIconTrash } from '@wikimedia/codex-icons'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CalcField from '@/components/CalcField.vue'
-import { javaEntityTypes } from '@/tools/targetSelector/data/entity_types_java.ts'
-import { getImageLink } from '@/utils/image'
-import { parseWikitext } from '@/utils/i18n'
 import { horse_mobs, immune_mobs, mob_ids } from '@/tools/fallDamage/data/mobs.ts'
+import { javaEntityTypes } from '@/tools/targetSelector/data/entity_types_java.ts'
+import { parseWikitext } from '@/utils/i18n'
+import { getImageLink } from '@/utils/image'
 
 const { t } = useI18n()
 
@@ -65,17 +65,17 @@ const all_mob_items: MenuItemData[] = []
 for (let i = 0; i < mob_ids.length; i++) {
   const name = mob_ids[i]
   all_mob_items.push({
-    value: 'minecraft:' + name,
-    label: t('global.entity.' + name + '.java'),
+    value: `minecraft:${  name}`,
+    label: t(`global.entity.${  name  }.java`),
     description: name,
-    thumbnail: { url: getImageLink('en:' + (javaEntityTypes as Record<string, string>)[name]) },
+    thumbnail: { url: getImageLink(`en:${  (javaEntityTypes as Record<string, string>)[name]}`) },
   })
 }
 const mob_items = ref<MenuItemData[]>(all_mob_items)
 
 const block_items: MenuItemData[] = []
 for (let i = 0; i < blocks.length; i++) {
-  block_items.push({ value: blocks[i].value, label: t('fallDamage.block.' + blocks[i].value) })
+  block_items.push({ value: blocks[i].value, label: t(`fallDamage.block.${  blocks[i].value}`) })
 }
 block_items.push({ value: 'lava', label: t('fallDamage.block.lava') })
 
@@ -114,7 +114,7 @@ function build_layers(pairs: LavaLayer[]) {
       y += air
     }
   }
-  return { layers: layers, height: y }
+  return { layers, height: y }
 }
 
 function is_lava_block(layers: InternalLayer[], k: number) {
@@ -234,8 +234,12 @@ function block_r() {
 
 const mob_data = computed(() => mobs.find((m) => m.value === mob_row(mob.value))!)
 const is_lava = computed(() => block.value === 'lava')
-const lava_depth = computed(() => lava_fall_distance(lava_layers.value, mob_row(mob.value) === 'strider'))
-const fully_immune = computed(() => block_r() === 0 || resistance.value >= 5 || mob_data.value.a === 0)
+const lava_depth = computed(() =>
+  lava_fall_distance(lava_layers.value, mob_row(mob.value) === 'strider'),
+)
+const fully_immune = computed(
+  () => block_r() === 0 || resistance.value >= 5 || mob_data.value.a === 0,
+)
 
 // Formula:
 // damage = max(0, (height - c_mob - jump) * r * a - waive) * factor
@@ -317,10 +321,11 @@ function set_damage(val: string | number) {
                 (mob_items = all_mob_items.filter(
                   (item) =>
                     item.label?.toLowerCase().includes(value.toLowerCase()) ||
-                    (item.value as string).includes(value.toLowerCase())
+                    (item.value as string).includes(value.toLowerCase()),
                 ))
             "
-          >            <template #menu-item="{ menuItem }: { menuItem: MenuItemData }">
+          >
+            <template #menu-item="{ menuItem }: { menuItem: MenuItemData }">
               <span class="cdx-menu-item__content">
                 <img
                   class="cdx-menu-item__icon pixel-image"
@@ -505,10 +510,15 @@ function set_damage(val: string | number) {
         </CdxField>
       </div>
 
-      <div v-if="fully_immune || is_lava || (zero_reverse && !fully_immune && damage === 0)" class="flex flex-col">
+      <div
+        v-if="fully_immune || is_lava || (zero_reverse && !fully_immune && damage === 0)"
+        class="flex flex-col"
+      >
         <b v-if="fully_immune">{{ t('fallDamage.immuneNote') }}</b>
         <b v-if="is_lava">{{ t('fallDamage.lavaNoReverse') }}</b>
-        <b v-if="zero_reverse && !fully_immune && damage === 0">{{ t('fallDamage.zeroReverseNote') }}</b>
+        <b v-if="zero_reverse && !fully_immune && damage === 0">{{
+          t('fallDamage.zeroReverseNote')
+        }}</b>
       </div>
     </div>
   </CalcField>

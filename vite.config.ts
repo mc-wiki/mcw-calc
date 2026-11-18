@@ -4,7 +4,6 @@ import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
 import { globSync } from 'glob'
 import { visualizer } from 'rollup-plugin-visualizer'
-import vueMacros from 'unplugin-vue-macros/vite'
 import { defineConfig } from 'vite'
 import { comlink } from 'vite-plugin-comlink'
 import vueDevTools from 'vite-plugin-vue-devtools'
@@ -36,11 +35,7 @@ export default defineConfig({
     },
   },
   plugins: [
-    vueMacros({
-      plugins: {
-        vue: vue(),
-      },
-    }),
+    vue(),
     vueDevTools(),
     visualizer(),
     comlink(),

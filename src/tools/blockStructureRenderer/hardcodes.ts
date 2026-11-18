@@ -1,5 +1,5 @@
 import type { ModelFace } from '@/tools/blockStructureRenderer/definitions.ts'
-import type {BlockStateModelManager} from '@/tools/blockStructureRenderer/model.ts';
+import type { BlockStateModelManager } from '@/tools/blockStructureRenderer/model.ts'
 import type {
   BlockState,
   BlockStructure,
@@ -18,11 +18,7 @@ import {
   oppositeDirection,
   Rotation,
 } from '@/tools/blockStructureRenderer/math.ts'
-import {
-  bakeModel,
-  
-  renderModelNoCullsWithMS
-} from '@/tools/blockStructureRenderer/model.ts'
+import { bakeModel, renderModelNoCullsWithMS } from '@/tools/blockStructureRenderer/model.ts'
 import {
   ANIMATED_TEXTURE_ATLAS_SIZE,
   ATLAS_HEIGHT,
