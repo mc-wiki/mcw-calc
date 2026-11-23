@@ -43,10 +43,6 @@ export type Color =
   | 'magenta'
   | 'pink'
 
-export function floatRgbToInteger(rgb: [number, number, number]) {
-  return rgb.map((v) => Math.floor(v * 255)) as [number, number, number]
-}
-
 export function integerRgbToFloat(rgb: [number, number, number]): [number, number, number] {
   return rgb.map((v) => Number.parseFloat((v / 255.0).toFixed(2))) as [number, number, number]
 }

@@ -1,4 +1,4 @@
-import { rgb2lab, separateRgb } from '.'
+import { separateRgb } from '.'
 
 export const colorMap = {
   white: 0xf9fffe,
@@ -21,10 +21,6 @@ export const colorMap = {
 
 export const colorRgbMap = Object.fromEntries(
   Object.entries(colorMap).map(([k, v]) => [k, separateRgb(v)]),
-) as Record<keyof typeof colorMap, [number, number, number]>
-
-export const colorLabMap = Object.fromEntries(
-  Object.entries(colorRgbMap).map(([k, v]) => [k, rgb2lab(v)]),
 ) as Record<keyof typeof colorMap, [number, number, number]>
 
 // Java rounds the multiplication and division separately to single precision.
