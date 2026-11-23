@@ -228,7 +228,7 @@ const iframeUrl = computed(() => {
 
   return new URL(
     `#${searchParams.toString()}`,
-    'https://www.chunkbase.com/seed-map-embed2',
+    'https://www.chunkbase.com/seed-map-embed2?wheelZoom=cooperative',
   ).toString()
 })
 
