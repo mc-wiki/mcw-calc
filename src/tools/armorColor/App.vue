@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { Color } from '@/utils/color'
+import { useAsyncState } from '@vueuse/core'
 import { CdxButton, CdxTab, CdxTabs, CdxTextInput } from '@wikimedia/codex'
-import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
+import { endpointSymbol } from 'vite-plugin-comlink/symbol'
+import { computed, onUnmounted, ref, shallowRef, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CalcField from '@/components/CalcField.vue'
 import { colorStringToRgb, imgNames } from '@/utils/color'
@@ -30,7 +32,8 @@ const colorText = computed({
 })
 const edition = ref<'java' | 'bedrock'>('java')
 const canvasRef = useTemplateRef('canvasRef')
-const sequence = ref<[Color[], number, [number, number, number]]>([['white'], 0, [249, 255, 254]])
+const validColor = computed(() => /^#[\da-f]{6}$/i.test(color.value))
+const submitted = shallowRef(colorStringToRgb(color.value))
 
 function generateDye(color: Color) {
   return getImageLink(`en:Invicon_${imgNames[color]}_Dye.png`)
@@ -41,10 +44,22 @@ function generateDyeName(color: Color) {
 }
 
 const worker = new ComlinkWorker<typeof import('./worker')>(new URL('./worker', import.meta.url))
+onUnmounted(() => worker[endpointSymbol].terminate())
+const {
+  state: sequence,
+  isLoading,
+  executeImmediate: calculate,
+} = useAsyncState(
+  () => worker.colorToSequence(submitted.value, edition.value),
+  [['white'], 0, [249, 255, 254]] as [Color[], number, [number, number, number]],
+  { immediate: false, resetOnExecute: false },
+)
+watch(edition, () => calculate())
 
-async function updateSequence(targetColor: [number, number, number]) {
-  await nextTick()
-  sequence.value = await worker.colorToSequence(targetColor, edition.value)
+function updateSequence() {
+  if (!validColor.value) return
+  submitted.value = colorStringToRgb(color.value)
+  calculate()
 }
 
 watch([sequence, canvasRef], ([sequence, canvasRef]) => {
@@ -145,7 +160,7 @@ watch([sequence, canvasRef], ([sequence, canvasRef]) => {
           <label for="color-picker">{{ t('armorColor.color') }}</label>
           <input id="color-picker" v-model="color" type="color" />
           <CdxTextInput v-model="colorText" class="min-w-[100px] font-mono" type="text" />
-          <CdxButton @click="updateSequence(colorStringToRgb(color))">
+          <CdxButton :disabled="!validColor || isLoading" @click="updateSequence">
             {{ t('armorColor.calculate') }}
           </CdxButton>
         </div>

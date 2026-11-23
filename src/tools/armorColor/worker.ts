@@ -1,46 +1,55 @@
-import type { Color } from '@/utils/color'
-import { colorRgbMap as bedrockColorRgbMap } from '@/utils/color/bedrock'
-import { colorRgbMap as javaColorRgbMap } from '@/utils/color/java'
-import { colorToSequence as func, sequenceToColorFloatAverage } from './sequence'
+import type { DyeMatch } from './java'
+import type { Edition } from '@/utils/color/dyeMix'
+import { deltaE, rgb2lab, separateRgb } from '@/utils/color'
+import { dyePalettes, getDyeMixIndex } from '@/utils/color/dyeMix'
+import { distanceBound } from './distanceBound'
+import { findJavaDyes } from './java'
 
-function sequenceToColorJavaArmor(
-  c: Color[],
-  colorRgbMap: typeof javaColorRgbMap,
-): [number, number, number] {
-  let numberOfColors = 0
-  let totalRed = 0
-  let totalGreen = 0
-  let totalBlue = 0
-  let totalMaximum = 0
-  for (const color of c) {
-    totalRed = totalRed + colorRgbMap[color][0]
-    totalGreen = totalGreen + colorRgbMap[color][1]
-    totalBlue = totalBlue + colorRgbMap[color][2]
-    totalMaximum = totalMaximum + Math.max(...colorRgbMap[color])
-    numberOfColors++
+// A 16³ block of offsets packed as RGB bytes. The same offsets, multiplied by 16,
+// are the lower corners of the blocks covering the full 24-bit color space.
+const offsets: number[] = []
+for (let r = 0; r < 16; r++) {
+  for (let g = 0; g < 16; g++) {
+    for (let b = 0; b < 16; b++) offsets.push((r << 16) | (g << 8) | b)
   }
-  const averageRed = Math.floor(totalRed / numberOfColors)
-  const averageGreen = Math.floor(totalGreen / numberOfColors)
-  const averageBlue = Math.floor(totalBlue / numberOfColors)
-  const averageMaximum = totalMaximum / numberOfColors
-  const maximumOfAverage = Math.max(averageRed, averageGreen, averageBlue)
-
-  const gainFactor = averageMaximum / maximumOfAverage
-
-  const resultRed = averageRed * gainFactor
-  const resultGreen = averageGreen * gainFactor
-  const resultBlue = averageBlue * gainFactor
-
-  return [resultRed, resultGreen, resultBlue].map(Math.floor) as [number, number, number]
 }
 
-export async function colorToSequence(
-  targetColor: [number, number, number],
-  edition: 'java' | 'bedrock',
-) {
-  return func(
-    edition === 'java' ? javaColorRgbMap : bedrockColorRgbMap,
-    edition === 'java' ? sequenceToColorJavaArmor : sequenceToColorFloatAverage,
-    targetColor,
-  )
+function findCauldronDyes(target: [number, number, number]): DyeMatch {
+  const packed = (target[0] << 16) | (target[1] << 8) | target[2]
+  // Even white armor gets its color from a dye in the cauldron.
+  if (packed === dyePalettes.bedrock.white) return [['white'], 0, target]
+  const { depths, sequence } = getDyeMixIndex('bedrock')
+  if (depths[packed]) return [sequence(packed), 0, target]
+
+  const targetLab = rgb2lab(target)
+  const chromaScale = 1 + 0.045 * Math.hypot(targetLab[1], targetLab[2])
+  let best = dyePalettes.bedrock.white
+  let bestDistance = Infinity
+  function consider(rgb: number) {
+    const distance = deltaE(targetLab, rgb2lab(separateRgb(rgb)))
+    if (distance < bestDistance || (distance === bestDistance && depths[rgb] < depths[best])) {
+      best = rgb
+      bestDistance = distance
+    }
+  }
+  for (const dye of Object.values(dyePalettes.bedrock)) consider(dye)
+  for (const block of offsets) {
+    const low = block * 16
+    const bound = distanceBound(
+      targetLab,
+      chromaScale,
+      separateRgb(low),
+      separateRgb(low + 0x0f0f0f),
+    )
+    if (bound > bestDistance * bestDistance + 1e-9) continue
+    for (const offset of offsets) {
+      const rgb = low + offset
+      if (depths[rgb]) consider(rgb)
+    }
+  }
+  return [sequence(best), bestDistance, separateRgb(best)]
+}
+
+export function colorToSequence(target: [number, number, number], edition: Edition): DyeMatch {
+  return edition === 'java' ? findJavaDyes(target) : findCauldronDyes(target)
 }
