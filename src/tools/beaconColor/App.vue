@@ -1,166 +1,134 @@
 <script setup lang="ts">
-import type { Color } from '@/utils/color'
+import type { BeamMatch, Edition } from './worker'
+import { useAsyncState } from '@vueuse/core'
 import { CdxButton, CdxTab, CdxTabs, CdxTextInput } from '@wikimedia/codex'
-import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
+import { endpointSymbol } from 'vite-plugin-comlink/symbol'
+import { computed, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CalcField from '@/components/CalcField.vue'
-import { colorStringToRgb, imgNames } from '@/utils/color'
+import { imgNames } from '@/utils/color'
 import { getImageLink } from '@/utils/image'
 
 const { t } = useI18n()
-
-const color = ref('#f9fffe')
-const colorText = computed({
-  get() {
-    return color.value
-  },
-  set(value: string) {
-    if (value.startsWith('#')) {
-      if (value.length > 7) {
-        color.value = value.slice(0, 7)
-      } else {
-        color.value = value
-      }
-    } else {
-      color.value = `#${value}`
-    }
-  },
+const edition = ref<Edition>('java')
+const submitted = ref(0xf9fffe)
+const colorText = ref(toHex(submitted.value))
+const inputRgb = computed(() => {
+  const match = /^#?([\da-f]{6})$/i.exec(colorText.value.trim())
+  return match ? Number.parseInt(match[1], 16) : undefined
 })
-const edition = ref<'java' | 'bedrock'>('java')
-const canvasRef = useTemplateRef('canvasRef')
-const sequence = ref<[Color[], number, [number, number, number]]>([['white'], 0, [249, 255, 254]])
 
 const worker = new ComlinkWorker<typeof import('./worker')>(new URL('./worker', import.meta.url))
+onUnmounted(() => worker[endpointSymbol].terminate())
+const {
+  state: matches,
+  isLoading,
+  error,
+  executeImmediate: calculate,
+} = useAsyncState(() => worker.findBeamMatches(edition.value, submitted.value), [] as BeamMatch[])
+watch(edition, () => calculate())
 
-async function updateSequence(targetColor: [number, number, number]) {
-  await nextTick()
-  sequence.value = await worker.colorToSequence(edition.value, targetColor)
+function toHex(rgb: number) {
+  return `#${rgb.toString(16).padStart(6, '0')}`
 }
 
-function generateGlass(color: Color) {
-  return getImageLink(`en:Invicon_${imgNames[color]}_Stained_Glass_Pane.png`)
+function submit() {
+  if (inputRgb.value === undefined) return
+  submitted.value = inputRgb.value
+  colorText.value = toHex(submitted.value)
+  calculate()
 }
 
-function generateGlassName(color: Color) {
-  return t(`beaconColor.glass.${color}`)
-}
-
-watch([sequence, canvasRef], ([sequence, canvasRef]) => {
-  const canvas = canvasRef
-  if (!canvas) return
-  const color = sequence[2]
-  const colorFloat = color.map((c) => c / 255)
-  const ctx = canvas.getContext('2d', {
-    willReadFrequently: true,
-  })
-  if (!ctx) return
-  const img = new Image()
-  img.addEventListener(
-    'load',
-    () => {
-      ctx.drawImage(img, 0, 0)
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
-      const data = imageData.data
-      for (let i = 0; i < data.length; i += 4) {
-        data[i] = (data[i] / 255) * colorFloat[0] * 255
-        data[i + 1] = (data[i + 1] / 255) * colorFloat[1] * 255
-        data[i + 2] = (data[i + 2] / 255) * colorFloat[2] * 255
-      }
-      ctx.putImageData(imageData, 0, 0)
-    },
-    false,
-  )
-
-  img.src = getImageLink('en:Beacon_Beam_(texture).png')
-  img.crossOrigin = 'anonymous'
-})
+const beamTexture = `url("${getImageLink('en:Beacon_Beam_(texture).png')}")`
 </script>
 
 <template>
   <CalcField>
-    <template #heading>
-      {{ t('beaconColor.title') }}
-    </template>
+    <template #heading>{{ t('beaconColor.title') }}</template>
 
     <CdxTabs v-model:active="edition" class="mb-2">
       <CdxTab name="java" :label="t('beaconColor.java')" />
       <CdxTab name="bedrock" :label="t('beaconColor.bedrock')" />
     </CdxTabs>
 
-    <div
-      :style="{
-        display: 'flex',
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: '1rem',
-      }"
-    >
-      <div>
-        <div
-          :style="{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: '.5rem',
-          }"
-        >
-          <label for="color-picker">{{ t('beaconColor.color') }}</label>
-          <input id="color-picker" v-model="color" type="color" />
-          <CdxTextInput v-model="colorText" class="min-w-[100px] font-mono" type="text" />
-          <CdxButton @click="updateSequence(colorStringToRgb(color))">
-            {{ t('beaconColor.calculate') }}
-          </CdxButton>
-        </div>
-        <div
-          :style="{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: '.1rem',
-            padding: '.3em 0px 0px 0px',
-          }"
-        >
-          {{ t('beaconColor.sequence') }}
-          <div v-for="(item, index) in sequence[0]" :key="index">
-            <img
-              :src="generateGlass(item)"
-              :alt="item"
-              :title="generateGlassName(item)"
-              :data-minetip-title="generateGlassName(item)"
-              style="height: 2em; width: 2em"
-              class="explain minetip"
-            />
-          </div>
-          <span
-            :style="{
-              borderRadius: '50%',
-              width: '1em',
-              height: '1em',
-              display: 'inline-block',
-              backgroundColor: `rgb(${sequence[2][0]}, ${sequence[2][1]}, ${sequence[2][2]})`,
-              border: '1px solid black',
-            }"
-          />&nbsp;#{{ sequence[2][0].toString(16) }}{{ sequence[2][1].toString(16)
-          }}{{ sequence[2][2].toString(16) }}
-        </div>
-        <div>
-          <span class="explain" :title="t('beaconColor.dE.help')">
-            {{ t('beaconColor.dE') }}
-          </span>
-          = {{ sequence[1].toFixed(2) }}
-        </div>
-      </div>
-      <canvas
-        ref="canvasRef"
-        width="160"
-        height="160"
-        :style="{
-          width: '80px',
-          height: '80px',
-        }"
+    <form class="flex flex-wrap items-center gap-2" @submit.prevent="submit">
+      <label for="color-picker">{{ t('beaconColor.color') }}</label>
+      <input
+        id="color-picker"
+        type="color"
+        :value="toHex(inputRgb ?? submitted)"
+        @input="colorText = ($event.target as HTMLInputElement).value"
       />
+      <CdxTextInput
+        v-model="colorText"
+        class="w-28 font-mono"
+        placeholder="#rrggbb"
+        :aria-label="t('beaconColor.hexColor')"
+        :aria-invalid="inputRgb === undefined"
+        :aria-describedby="inputRgb === undefined ? 'color-error' : undefined"
+      />
+      <CdxButton type="submit" :disabled="inputRgb === undefined || isLoading">
+        {{ t('beaconColor.calculate') }}
+      </CdxButton>
+    </form>
+    <p v-if="inputRgb === undefined" id="color-error">{{ t('beaconColor.invalidColor') }}</p>
+
+    <p v-if="isLoading" role="status">{{ t('beaconColor.calculating') }}</p>
+    <p v-else-if="error" role="alert">{{ t('beaconColor.error') }}</p>
+    <div v-else-if="matches.length" class="overflow-x-auto">
+      <table class="wikitable">
+        <caption>
+          {{
+            t('beaconColor.matches', { color: toHex(submitted) })
+          }}
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">{{ t('beaconColor.glassCount') }}</th>
+            <th scope="col">{{ t('beaconColor.stack') }}</th>
+            <th scope="col">{{ t('beaconColor.beamColor') }}</th>
+            <th scope="col">
+              <abbr :title="t('beaconColor.dE.help')">{{ t('beaconColor.dE') }}</abbr>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="match in matches" :key="match.sequence.length">
+            <td class="text-end tabular-nums">{{ match.sequence.length }}</td>
+            <td>
+              <ol v-if="match.sequence.length" class="m-0 flex list-none flex-wrap p-0">
+                <li v-for="(glass, index) in match.sequence" :key="index">
+                  <img
+                    :src="getImageLink(`en:Invicon_${imgNames[glass]}_Stained_Glass_Pane.png`)"
+                    :alt="t(`beaconColor.glass.${glass}`)"
+                    :title="t(`beaconColor.glass.${glass}`)"
+                    :data-minetip-title="t(`beaconColor.glass.${glass}`)"
+                    class="pixel-image minetip size-7"
+                  />
+                </li>
+              </ol>
+              <span v-else>{{ t('beaconColor.noGlass') }}</span>
+            </td>
+            <td>
+              <div class="flex items-center gap-1">
+                <span
+                  class="beam-swatch pixel-image size-6 shrink-0"
+                  :style="{ backgroundColor: toHex(match.rgb), backgroundImage: beamTexture }"
+                />
+                <span class="font-mono">{{ toHex(match.rgb) }}</span>
+              </div>
+            </td>
+            <td class="text-end tabular-nums">{{ match.deltaE.toFixed(2) }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </CalcField>
 </template>
+
+<style scoped>
+.beam-swatch {
+  background-size: cover;
+  background-blend-mode: multiply;
+}
+</style>
