@@ -1,4 +1,9 @@
 {
+  "armorColor.multiCraft": "可分次染之",
+  "armorColor.craftHelp": "始以未染之甲。每行為一次，取前所得之甲，與此行諸染共製之。",
+  "armorColor.minimumDyes": "染料至少{count}份",
+  "armorColor.calculating": "方算染方…",
+  "armorColor.error": "染方未得，請復試。",
   "armorColor.title": "",
   "armorColor.java": "爪哇版",
   "armorColor.bedrock": "基石版",

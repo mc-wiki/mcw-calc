@@ -1,4 +1,9 @@
 {
+  "armorColor.multiCraft": "Разрешить несколько этапов крафта",
+  "armorColor.craftHelp": "Начните с неокрашенной брони. Для каждой строки поместите броню с предыдущего этапа на верстак вместе со всеми указанными в строке красителями.",
+  "armorColor.minimumDyes": "Минимальное количество красителей: {count}",
+  "armorColor.calculating": "Расчёт рецепта окрашивания…",
+  "armorColor.error": "Не удалось загрузить рецепт окрашивания. Попробуйте ещё раз.",
   "armorColor.title": "Рассчитать последовательность красителей для выбранного цвета",
   "armorColor.java": "Java Edition",
   "armorColor.bedrock": "Bedrock Edition",

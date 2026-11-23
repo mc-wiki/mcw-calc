@@ -1,4 +1,9 @@
 {
+  "armorColor.multiCraft": "Дозволити кілька етапів крафту",
+  "armorColor.craftHelp": "Почніть із нефарбованої броні. Для кожного рядка покладіть броню з попереднього етапу у верстак разом з усіма вказаними в рядку барвниками.",
+  "armorColor.minimumDyes": "Мінімальна кількість барвників: {count}",
+  "armorColor.calculating": "Обчислення рецепта фарбування…",
+  "armorColor.error": "Не вдалося завантажити рецепт фарбування. Спробуйте ще раз.",
   "armorColor.title": "Розрахувати послідовність барвників для кольору {type}",
   "armorColor.java": "Java Edition",
   "armorColor.bedrock": "Bedrock Edition",

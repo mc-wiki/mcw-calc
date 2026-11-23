@@ -1,4 +1,9 @@
 {
+  "armorColor.multiCraft": "Permitir várias etapas de fabrico",
+  "armorColor.craftHelp": "Começa com a armadura por tingir. Em cada linha, combina a armadura da etapa anterior com todos os corantes indicados de uma só vez.",
+  "armorColor.minimumDyes": "Número mínimo de corantes: {count}",
+  "armorColor.calculating": "A calcular a receita de tingimento…",
+  "armorColor.error": "Não foi possível carregar a receita de tingimento. Tenta novamente.",
   "armorColor.title": "Calcular a sequência de corantes para uma cor na {type}",
   "armorColor.java": "Edição Java",
   "armorColor.bedrock": "Edição Bedrock",

@@ -1,9 +1,11 @@
 import type { DyeMatch } from './java'
+import type { ArmorRecipe } from './multiCraft'
 import type { Edition } from '@/utils/color/dyeMix'
 import { deltaE, rgb2lab, separateRgb } from '@/utils/color'
 import { dyePalettes, getDyeMixIndex } from '@/utils/color/dyeMix'
 import { distanceBound } from './distanceBound'
 import { findJavaDyes } from './java'
+import { createJavaRecipeFinder } from './multiCraft'
 
 // A 16³ block of offsets packed as RGB bytes. The same offsets, multiplied by 16,
 // are the lower corners of the blocks covering the full 24-bit color space.
@@ -52,4 +54,16 @@ function findCauldronDyes(target: [number, number, number]): DyeMatch {
 
 export function colorToSequence(target: [number, number, number], edition: Edition): DyeMatch {
   return edition === 'java' ? findJavaDyes(target) : findCauldronDyes(target)
+}
+
+const findMultiCraft = createJavaRecipeFinder()
+
+export async function findArmorRecipe(
+  target: [number, number, number],
+  edition: Edition,
+  multiCraft: boolean,
+): Promise<ArmorRecipe> {
+  if (edition === 'java' && multiCraft) return findMultiCraft(target)
+  const [dyes, distance, rgb] = colorToSequence(target, edition)
+  return { rounds: [dyes], distance, rgb }
 }

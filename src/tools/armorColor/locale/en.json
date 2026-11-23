@@ -1,4 +1,9 @@
 {
+  "armorColor.multiCraft": "Allow multiple crafting steps",
+  "armorColor.craftHelp": "Start with undyed armor. For each row, craft the armor from the previous step with all the dyes shown together.",
+  "armorColor.minimumDyes": "Minimum dyes: {count}",
+  "armorColor.calculating": "Calculating the dye recipe…",
+  "armorColor.error": "Could not load the dye recipe. Please try again.",
   "armorColor.title": "Calculate dye sequence for {type} color",
   "armorColor.java": "Java Edition",
   "armorColor.bedrock": "Bedrock Edition",

@@ -1,4 +1,9 @@
 {
+  "armorColor.multiCraft": "Permitir varios pasos de fabricación",
+  "armorColor.craftHelp": "Empieza con la armadura sin teñir. En cada fila, combina la armadura del paso anterior con todos los tintes indicados a la vez.",
+  "armorColor.minimumDyes": "Cantidad mínima de tintes: {count}",
+  "armorColor.calculating": "Calculando la receta de teñido…",
+  "armorColor.error": "No se pudo cargar la receta de teñido. Vuelve a intentarlo.",
   "armorColor.title": "Calcular la secuencia de tintes para el color {type}",
   "armorColor.java": "Java Edition",
   "armorColor.bedrock": "Bedrock Edition",

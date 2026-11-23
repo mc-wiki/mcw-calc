@@ -1,6 +1,6 @@
 import type { Color } from '@/utils/color'
 import { deltaE, rgb2lab } from '@/utils/color'
-import { colorRgbMap } from '@/utils/color/java'
+import { scaleDyeChannel as channel, colorRgbMap } from '@/utils/color/java'
 import { distanceBound } from './distanceBound'
 
 type Rgb = [number, number, number]
@@ -26,11 +26,6 @@ function subtract(a: Rgb, b: Rgb): Rgb {
 
 function average(sum: Rgb, count: number): Rgb {
   return [Math.floor(sum[0] / count), Math.floor(sum[1] / count), Math.floor(sum[2] / count)]
-}
-
-// Match DyedItemColor.applyDyes: Java rounds the multiply and divide separately to float.
-function channel(value: number, brightness: number, peak: number) {
-  return Math.trunc(Math.fround(Math.fround(value * brightness) / peak))
 }
 
 function normalize(mean: Rgb, brightness: number): Rgb {
@@ -109,7 +104,7 @@ function fromMean(count: number, sumPeak: number, mean: Rgb) {
 
 // Invert the game's monotone float operation. Its scale is either exactly 1 or at
 // least 1 + 1/(8*255), so successive integer inputs produce distinct channel values.
-function inverseChannel(target: number, peak: number, brightness: number) {
+export function inverseChannel(target: number, peak: number, brightness: number) {
   let low = 0
   let high = peak
   while (low < high) {
