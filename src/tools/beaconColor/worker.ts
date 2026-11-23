@@ -12,13 +12,12 @@ export interface BeamMatch {
 }
 
 export function findBeamMatches(edition: Edition, target: number): BeamMatch[] {
-  const palette = dyePalettes[edition]
+  // In Bedrock, the bare beam is pure white until the first stained glass sets its color.
+  const bareBeam = edition === 'bedrock' ? 0xffffff : dyePalettes.java.white
   const targetLab = rgb2lab(separateRgb(target))
   const distance = (rgb: number) => deltaE(targetLab, rgb2lab(separateRgb(rgb)))
-  const matches: BeamMatch[] = [
-    { rgb: palette.white, deltaE: distance(palette.white), sequence: [] },
-  ]
-  if (target === palette.white) return matches
+  const matches: BeamMatch[] = [{ rgb: bareBeam, deltaE: distance(bareBeam), sequence: [] }]
+  if (target === bareBeam) return matches
 
   const { depths, sequence } = getDyeMixIndex(edition)
   // Once the target is reached, further layers cannot improve on it.
