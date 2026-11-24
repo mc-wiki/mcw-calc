@@ -1,9 +1,4 @@
 {
-  "armorColor.multiCraft": "Mehrere Herstellungsschritte zulassen",
-  "armorColor.craftHelp": "Beginne mit ungefärbter Rüstung. Verarbeite pro Zeile die Rüstung aus dem vorherigen Schritt zusammen mit allen gezeigten Farbstoffen.",
-  "armorColor.minimumDyes": "Benötigte Farbstoffe (Minimum): {count}",
-  "armorColor.calculating": "Färberezept wird berechnet…",
-  "armorColor.error": "Das Färberezept konnte nicht geladen werden. Bitte versuche es erneut.",
   "armorColor.title": "Farbreihenfolge für {type}-Farbe berechnen",
   "armorColor.java": "Java Edition",
   "armorColor.bedrock": "Bedrock Edition",

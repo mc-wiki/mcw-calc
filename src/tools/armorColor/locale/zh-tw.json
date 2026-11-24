@@ -1,9 +1,4 @@
 {
-  "armorColor.multiCraft": "允許分多次合成",
-  "armorColor.craftHelp": "從未染色的盔甲開始。每列合成一次，將上一步的盔甲與該列的所有染料一起放入工作台。",
-  "armorColor.minimumDyes": "最少染料數量：{count}",
-  "armorColor.calculating": "正在計算染色配方…",
-  "armorColor.error": "無法載入染色配方，請再試一次。",
   "armorColor.title": "計算{type}顏色所需的染料序列",
   "armorColor.java": "Java版",
   "armorColor.bedrock": "基岩版",

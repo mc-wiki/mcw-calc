@@ -1,9 +1,4 @@
 {
-  "armorColor.multiCraft": "לאפשר כמה שלבי יצירה",
-  "armorColor.craftHelp": "יש להתחיל בשריון לא צבוע. בכל שורה יש לשלב את השריון מהשלב הקודם עם כל הצבענים המוצגים בה בבת אחת.",
-  "armorColor.minimumDyes": "מספר הצבענים המזערי: {count}",
-  "armorColor.calculating": "מתבצע חישוב מתכון הצביעה…",
-  "armorColor.error": "טעינת מתכון הצביעה נכשלה. יש לנסות שוב.",
   "armorColor.title": "חשב את רצף הצבע עבור צבע {type}",
   "armorColor.java": "Java Edition",
   "armorColor.bedrock": "Bedrock Edition",

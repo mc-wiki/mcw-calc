@@ -1,9 +1,4 @@
 {
-  "armorColor.multiCraft": "อนุญาตให้คราฟต์หลายขั้นตอน",
-  "armorColor.craftHelp": "เริ่มจากชุดเกราะที่ยังไม่ได้ย้อมสี แต่ละแถวคือการคราฟต์หนึ่งครั้ง โดยใช้ชุดเกราะจากขั้นตอนก่อนหน้ากับสีย้อมทั้งหมดในแถวนั้นพร้อมกัน",
-  "armorColor.minimumDyes": "จำนวนสีย้อมขั้นต่ำ: {count}",
-  "armorColor.calculating": "กำลังคำนวณสูตรย้อมสี…",
-  "armorColor.error": "ไม่สามารถโหลดสูตรย้อมสีได้ โปรดลองอีกครั้ง",
   "armorColor.title": "คำนวณลำดับสีย้อมของสี{type}",
   "armorColor.java": "รุ่น Java",
   "armorColor.bedrock": "รุ่น Bedrock",

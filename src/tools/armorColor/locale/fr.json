@@ -1,9 +1,4 @@
 {
-  "armorColor.multiCraft": "Autoriser plusieurs étapes de fabrication",
-  "armorColor.craftHelp": "Commencez avec une armure non teinte. Pour chaque ligne, combinez l’armure obtenue à l’étape précédente avec tous les colorants indiqués à la fois.",
-  "armorColor.minimumDyes": "Nombre minimal de colorants : {count}",
-  "armorColor.calculating": "Calcul de la recette de teinture…",
-  "armorColor.error": "Impossible de charger la recette de teinture. Veuillez réessayer.",
   "armorColor.title": "Calculer la séquence de teintures pour une couleur {type}",
   "armorColor.java": "Édition Java",
   "armorColor.bedrock": "Édition Bedrock",

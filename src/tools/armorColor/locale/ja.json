@@ -1,9 +1,4 @@
 {
-  "armorColor.multiCraft": "複数回のクラフトを許可する",
-  "armorColor.craftHelp": "未染色の防具から始めます。各行で、前の段階の防具とその行に表示された染料をすべて一緒にクラフトしてください。",
-  "armorColor.minimumDyes": "染料の最少個数：{count}",
-  "armorColor.calculating": "染色レシピを計算中…",
-  "armorColor.error": "染色レシピを読み込めませんでした。もう一度お試しください。",
   "armorColor.title": "{type}の色の染料配列を計算",
   "armorColor.java": "Java Edition",
   "armorColor.bedrock": "Bedrock Edition",

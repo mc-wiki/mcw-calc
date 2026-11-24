@@ -1,9 +1,4 @@
 {
-  "armorColor.multiCraft": "Consenti più passaggi di fabbricazione",
-  "armorColor.craftHelp": "Inizia con un’armatura non tinta. Per ogni riga, combina l’armatura del passaggio precedente con tutti i coloranti indicati contemporaneamente.",
-  "armorColor.minimumDyes": "Numero minimo di coloranti: {count}",
-  "armorColor.calculating": "Calcolo della ricetta di tintura…",
-  "armorColor.error": "Impossibile caricare la ricetta di tintura. Riprova.",
   "armorColor.title": "Calcola la sequenza dei coloranti per un colore del{type}",
   "armorColor.java": "Java Edition",
   "armorColor.bedrock": "Bedrock Edition",
