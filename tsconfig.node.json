@@ -21,8 +21,6 @@
     "tailwind.config.js",
     "postcss.config.js",
     "scripts/*",
-    "src/utils/color/index.ts",
-    "src/utils/color/java.ts",
     "mediawiki/ui.js"
   ]
 }
