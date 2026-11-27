@@ -1,0 +1,58 @@
+{
+    "anvilHelper.title": "Anvil Helper",
+    "anvilHelper.java": "Java Edition",
+    "anvilHelper.bedrock": "Bedrock Edition",
+    "anvilHelper.leastXp": "Least Experience points in total",
+    "anvilHelper.leastLvl": "Least accumulated Experience levels",
+    "anvilHelper.leastRepairCost": "Least prior work penalty on final item",
+
+    "anvilHelper.state.start": "Start",
+    "anvilHelper.state.customInputs": "Customize Inputs",
+    "anvilHelper.state.results": "Calculation Result",
+
+    "anvilHelper.button.customInputs": "Customize Inputs...",
+
+    "anvilHelper.button.resetAll": "Reset All",
+    "anvilHelper.button.restoreLastInput": "Restore Last Input",
+    "anvilHelper.button.startCalculate": "Start Calculate!",
+
+    "anvilHelper.settings.title": "Settings",
+    "anvilHelper.settings.gameEdition": "Game Edition: ",
+    "anvilHelper.settings.optimizationGoal": "Optimization Goal: ",
+    "anvilHelper.settings.others": "Other Options: ",
+    "anvilHelper.settings.allowExclusive": "Exclusive enchantments can appear on one item.",
+    "anvilHelper.settings.allowExceedProcessLimit": "Allow spending over 39 Experience points in single step.",
+    "anvilHelper.settings.applyWarning": "* Changing settings will reset ALL the inputs.",
+    "anvilHelper.settings.apply": "Apply and Reset",
+
+    "anvilHelper.customInputs.caption": "Input Items",
+    "anvilHelper.customInputs.items": "Items",
+    "anvilHelper.customInputs.itemType": "Item Type",
+    "anvilHelper.customInputs.enchantments": "Enchantments",
+    "anvilHelper.customInputs.workPenalty": "Prior Work Penalty",
+    "anvilHelper.customInputs.actions": "Actions",
+
+    "anvilHelper.input": "Input Item",
+    "anvilHelper.addNewEnchantment": "Add a new enchantment",
+    "anvilHelper.enchantment.defaultLabel": "Choose an enchantment...",
+
+    "anvilHelper.selectPreset": "Preset: ",
+    "anvilHelper.selectPreset.defaultLabel": "Choose a preset...",
+
+    "anvilHelper.newItem": "Add New Item",
+
+    "anvilHelper.result.caption": "Steps",
+    "anvilHelper.mergeSteps.input": "Input",
+    "anvilHelper.mergeSteps.addition": "Addition",
+    "anvilHelper.mergeSteps.result": "Result",
+    "anvilHelper.mergeSteps.cost": "Cost",
+    "anvilHelper.level": "Lvl",
+    "anvilHelper.repairCost.format": "Repair Cost: {lvl}",
+
+    "anvilHelper.result.currentOptimizationGoal": "Current Goal: ",
+    "anvilHelper.result.total": "Total",
+    "anvilHelper.result.minXp": "* Equivalent minimum [[Experience]] points in total: ",
+    "anvilHelper.result.minXp.desc": "To reach this lesser value, each step must precisely zero out the xp points on yourself.",
+    "anvilHelper.result.noSolution": "No items could be combined. Please check your input.",
+    "anvilHelper.result.stats": "Completed in {e}ms with {a} attempts"
+}
