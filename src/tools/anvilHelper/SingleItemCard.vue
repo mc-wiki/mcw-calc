@@ -53,15 +53,15 @@ function handleEnchantedImgError(event: Event, itemType: string) {
         </span>
       </div>
 
-      <div v-if="item.enchantments.length > 0">
-        <div v-for="e in item.enchantments">
+      <div v-if="item.enchantments.length > 0" class="flex flex-col gap-0.5">
+        <span v-for="e in item.enchantments">
           {{
-            t('enchantment.format', {
+            t('global.enchantment.format', {
               id: t(`global.enchantment.${e.id}`),
-              level: t(`global.level.${e.level}`),
+              lvl: t(`global.level.${e.level}`),
             })
           }}
-        </div>
+        </span>
       </div>
       <div v-if="item.repairCost > 0" class="repairCost">
         {{ t('anvilHelper.repairCost.format', { lvl: item.repairCost }) }}

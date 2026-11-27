@@ -53,6 +53,9 @@
     "global.level.8": "VIII",
     "global.level.9": "IX",
     "global.level.10": "X",
+
+    "global.enchantment.format": "{id} {lvl}",
+
     "global.item.enchanted_book": "Enchanted Book",
     "global.item.helmet": "Helmet",
     "global.item.chestplate": "Chestplate",

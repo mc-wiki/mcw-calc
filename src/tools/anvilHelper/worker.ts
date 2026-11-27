@@ -6,8 +6,8 @@ const BOOK = 'enchanted_book'
 export interface Settings {
   edition: 'java' | 'bedrock'
   mode: 'leastLvl' | 'leastXp' | 'leastRepairCost'
-  allowExclusive: false
-  allowExceedProcessLimit: false
+  allowExclusive: boolean
+  allowExceedProcessLimit: boolean
 }
 
 export interface Item {
